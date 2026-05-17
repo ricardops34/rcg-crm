@@ -3,6 +3,7 @@
 services:
   rcg-api:
     image: ricardops34/rcg-backend:latest
+    build: ./backend
     networks:
       - network_db
       - network_public
@@ -34,6 +35,7 @@ services:
 
   rcg-web:
     image: ricardops34/rcg-frontend:latest
+    build: ./frontend
     networks:
       - network_public
     deploy:
@@ -52,3 +54,4 @@ networks:
     external: true
   network_public:
     external: true
+
