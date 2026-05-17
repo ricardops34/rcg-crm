@@ -1,0 +1,48 @@
+<po-page-edit 
+  [p-title]="title"
+  (p-save)="save()"
+  (p-cancel)="cancel()">
+
+  <form #formCliente="ngForm">
+    <po-tabs>
+      <po-tab p-label="Identificação" [p-active]="true">
+        <div class="po-row">
+          <po-input class="po-md-2" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" [p-disabled]="true"></po-input>
+          <po-input class="po-md-6" name="razao" [(ngModel)]="cliente.razao" p-label="Razão Social" [p-required]="true"></po-input>
+          <po-input class="po-md-4" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia"></po-input>
+        </div>
+        <div class="po-row">
+          <po-input class="po-md-3" name="cnpjCpf" [(ngModel)]="cliente.cnpjCpf" p-label="CNPJ/CPF"></po-input>
+          <po-select class="po-md-2" name="status" [(ngModel)]="cliente.status" p-label="Status" 
+            [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
+          </po-select>
+          <po-input class="po-md-4" name="email" [(ngModel)]="cliente.email" p-label="E-mail"></po-input>
+        </div>
+      </po-tab>
+
+      <po-tab p-label="Endereço">
+        <div class="po-row">
+          <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP"></po-input>
+          <po-input class="po-md-5" name="endereco" [(ngModel)]="cliente.endereco" p-label="Logradouro"></po-input>
+          <po-input class="po-md-3" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro"></po-input>
+          <po-input class="po-md-2" name="uf" [(ngModel)]="cliente.uf" p-label="UF"></po-input>
+        </div>
+        <div class="po-row">
+          <po-input class="po-md-4" name="municipio" [(ngModel)]="cliente.municipio" p-label="Cidade"></po-input>
+          <po-input class="po-md-8" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento"></po-input>
+        </div>
+      </po-tab>
+
+      <po-tab p-label="Financeiro">
+        <div class="po-row">
+          <po-number class="po-md-3" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito"></po-number>
+          <po-input class="po-md-2" name="risco" [(ngModel)]="cliente.risco" p-label="Risco" [p-disabled]="true"></po-input>
+          <po-datepicker class="po-md-3" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite"></po-datepicker>
+        </div>
+        <div class="po-row">
+          <po-textarea class="po-md-12" name="obsBloqueio" [(ngModel)]="cliente.obsBloqueio" p-label="Observações de Bloqueio"></po-textarea>
+        </div>
+      </po-tab>
+    </po-tabs>
+  </form>
+</po-page-edit>

@@ -1,0 +1,21 @@
+<po-page-edit 
+  [p-title]="title"
+  (p-save)="save()"
+  (p-cancel)="cancel()">
+
+  <form #formMeta="ngForm">
+    <div class="po-row">
+      <po-select class="po-md-6" name="vendedorId" [(ngModel)]="meta.vendedorId" p-label="Vendedor" [p-options]="vendedores" [p-required]="true"></po-select>
+      <po-input class="po-md-3" name="mes" [(ngModel)]="meta.mes" p-label="Mês" p-mask="99" [p-required]="true"></po-input>
+      <po-input class="po-md-3" name="ano" [(ngModel)]="meta.ano" p-label="Ano" p-mask="9999" [p-required]="true"></po-input>
+    </div>
+    
+    <div class="po-row">
+      <po-number class="po-md-4" name="valor" [(ngModel)]="meta.valor" p-label="Meta Financeira (R$)" [p-required]="true"></po-number>
+      <po-button class="po-md-2 po-mt-4" p-label="Sugestão +10%" (p-click)="applySuggestion()"></po-button>
+      
+      <po-number class="po-md-3" name="numeroCliente" [(ngModel)]="meta.numeroCliente" p-label="Meta Positivação (Qtd)"></po-number>
+      <po-number class="po-md-3" name="novoCliente" [(ngModel)]="meta.novoCliente" p-label="Meta Novos Clientes"></po-number>
+    </div>
+  </form>
+</po-page-edit>

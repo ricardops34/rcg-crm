@@ -1,0 +1,10 @@
+graph TD
+    A[Evento do Sistema] --> B[Chamada: SystemNotification::register]
+    B --> C[TTransaction: open communication]
+    C --> D[Criar registro com Action Serializada]
+    D --> E[Fim da Transação]
+    F[Usuário loga/navega] --> G[Cabeçalho: Query Notificações não lidas]
+    G --> H[Exibir Badge com Contagem]
+    H --> I[Usuário Clica na Notificação]
+    I --> J[TApplication::loadPage action_url]
+    J --> K[Marcar checked = Y]

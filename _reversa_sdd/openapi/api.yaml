@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: API ERP rcg - Especificação Unificada
+  description: Contrato técnico consolidado das interfaces programáticas identificadas no legado (MadRest e Adianti REST Services).
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: Sincronização
+    description: Endpoints para integração em lote com ERP legado.
+  - name: CRM
+    description: Integrações de atendimento e WhatsApp.
+  - name: Fiscal
+    description: Notas Fiscais e XMLs.
+
+paths:
+  /auth/login:
+    post:
+      summary: Autenticação de Usuário Administrativo
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login: { type: string }
+                password: { type: string }
+                reCAPTCHA: { type: string }
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  session_id: { type: string }
+
+  /b2b/login:
+    post:
+      summary: Autenticação de Cliente (Portal B2B)
+      tags: [Meu Cliente]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Acesso liberado
+
+  /cliente/store:
+    post:
+      summary: Importação/Sincronização de Clientes em Lote
+      tags: [Sincronização]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conteudo:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      cod_erp: { type: string }
+                      razao: { type: string }
+                      cnpj_cpf: { type: string }
+                      vendedor: { type: string, description: "cod_erp do vendedor" }
+      responses:
+        '200':
+          description: Resultado do processamento por item
+
+  /pedido/store:
+    post:
+      summary: Importação de Pedidos em Lote
+      tags: [Sincronização]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conteudo:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      cod_erp: { type: string }
+                      cliente: { type: string, description: "cod_erp do cliente" }
+                      vlr_total: { type: number }
+      responses:
+        '200':
+          description: Log de importação
+
+  /whatsapp/telefone:
+    post:
+      summary: Consulta de cliente e posição financeira via Telefone
+      tags: [CRM]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                telefone: { type: string, example: "5567999999999" }
+      responses:
+        '200':
+          description: Dados resumidos do cliente e títulos vencidos/vencendo
+
+  /fiscal/notas/{id}/danfe:
+    get:
+      summary: Download de DANFE (PDF)
+      tags: [Fiscal]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Stream PDF
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+
+  /estoque/load:
+    get:
+      summary: Consulta de saldo em estoque
+      tags: [Sincronização]
+      parameters:
+        - name: produto_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Saldo consolidado

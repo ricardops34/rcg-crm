@@ -1,0 +1,12 @@
+graph TD
+    A[Supervisor acessa DashboardGerencia] --> B[Selecionar Vendedor/Período]
+    B --> C[Indicador: Sugestão de Venda]
+    B --> D[Indicador: Ticket Médio]
+    B --> E[Indicador: Clientes Sem Vendedor]
+    C --> F[Query: ViewVendedorVendaMes]
+    D --> G[Query: AVG ViewTotalCatogoriaMes]
+    E --> H[Query: Clientes status A e vendedor desligado]
+    B --> I[Ranking de Vendedores]
+    I --> J[Tabela: Meta vs Realizado]
+    J --> K[Cálculo: % Atingimento]
+    K --> L[Destaque Visual: Verde/Vermelho conforme atingimento]

@@ -1,0 +1,21 @@
+<po-page-edit 
+  [p-title]="title"
+  (p-save)="save()"
+  (p-cancel)="cancel()">
+
+  <form #formVendedor="ngForm">
+    <div class="po-row">
+      <po-input class="po-md-2" name="codErp" [(ngModel)]="vendedor.codErp" p-label="Cód. ERP" [p-disabled]="true"></po-input>
+      <po-input class="po-md-6" name="nome" [(ngModel)]="vendedor.nome" p-label="Nome Completo" [p-required]="true"></po-input>
+      <po-input class="po-md-4" name="nomeReduzido" [(ngModel)]="vendedor.nomeReduzido" p-label="Nome de Guerra"></po-input>
+    </div>
+    <div class="po-row">
+      <po-input class="po-md-4" name="email" [(ngModel)]="vendedor.email" p-label="E-mail" p-icon="po-icon-mail"></po-input>
+      <po-input class="po-md-3" name="celular" [(ngModel)]="vendedor.celular" p-label="Celular" p-mask="(99) 99999-9999"></po-input>
+      <po-select class="po-md-2" name="status" [(ngModel)]="vendedor.status" p-label="Status" 
+        [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
+      </po-select>
+      <po-switch class="po-md-3" name="desligado" [(ngModel)]="vendedor.desligado" p-label="Vendedor Desligado" p-label-off="Não" p-label-on="Sim"></po-switch>
+    </div>
+  </form>
+</po-page-edit>

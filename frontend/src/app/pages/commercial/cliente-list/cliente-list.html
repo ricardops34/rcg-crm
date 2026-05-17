@@ -1,0 +1,13 @@
+<po-page-list 
+  p-title="Carteira de Clientes">
+
+  <po-actions [p-actions]="[{ label: 'Novo Cliente', action: create.bind(this), icon: 'po-icon-plus' }]"></po-actions>
+
+  <po-table
+    [p-loading]="isLoading"
+    [p-columns]="columns"
+    [p-items]="items"
+    [p-actions]="actions">
+  </po-table>
+
+</po-page-list>

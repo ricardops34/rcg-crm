@@ -1,0 +1,28 @@
+﻿<po-page-default p-title="Dashboard de Vendas">
+
+  <div class="po-row">
+    <po-widget class="po-md-4" p-primary-label="Meta do Mês" [p-help]="'Valor planejado para o período'">
+      <div class="po-font-subtitle po-text-center">{{ summary.goal | currency:'BRL' }}</div>
+    </po-widget>
+
+    <po-widget class="po-md-4" p-primary-label="Realizado" [p-help]="'Vendas líquidas faturadas'">
+      <div class="po-font-subtitle po-text-center po-text-color-10">{{ summary.realized | currency:'BRL' }}</div>
+    </po-widget>
+
+    <po-widget class="po-md-4" p-primary-label="% Atingimento" [p-help]="'Desempenho contra a meta'">
+      <div class="po-font-subtitle po-text-center" [ngClass]="{'po-text-color-07': summary.achievement < 80, 'po-text-color-10': summary.achievement >= 100}">
+        {{ summary.achievement | number:'1.1-2' }}%
+      </div>
+    </po-widget>
+  </div>
+
+  <div class="po-row">
+    <po-chart 
+      class="po-md-12"
+      p-title="Vendas por Categoria"
+      [p-series]="categorySeries"
+      [p-type]="chartType">
+    </po-chart>
+  </div>
+
+</po-page-default>
