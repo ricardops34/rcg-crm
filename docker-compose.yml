@@ -1,52 +1,54 @@
-﻿services:
-  db:
-    image: postgres:16-alpine
-    container_name: rcg-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: rcgcrm
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+﻿version: '3.8'
 
-  cache:
-    image: redis:7-alpine
-    container_name: rcg-cache
-    restart: always
-    ports:
-      - "6379:6379"
-
-  backend:
-    build: ./backend
-    container_name: rcg-backend
-    restart: always
-    ports:
-      - "3000:3000"
+services:
+  rcg-api:
+    image: ricardops34/rcg-backend:latest
+    networks:
+      - network_db
+      - network_public
     environment:
-      - DB_HOST=db
+      - DB_HOST=postgres  # Nome do host do banco na rede externa network_db
       - DB_PORT=5432
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
       - DB_DATABASE=rcgcrm
-      - REDIS_HOST=cache
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - JWT_SECRET=super-secret-key-rcg-crm
-    depends_on:
-      - db
-      - cache
+      - DB_SEED=${DB_SEED:-false}
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.rcg-api.rule=Host(`crmapi.bjsoft.com.br`)"
+        - "traefik.http.routers.rcg-api.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.rcg-api.middlewares=sslheader@swarm"
+        - "traefik.http.routers.rcg-api.entrypoints=websecure"
+        - "traefik.http.services.rcg-api.loadbalancer.server.port=3000"
+        - "traefik.docker.network=network_public"
 
-  frontend:
-    build: ./frontend
-    container_name: rcg-frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
+  rcg-web:
+    image: ricardops34/rcg-frontend:latest
+    networks:
+      - network_public
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.rcg-web.rule=Host(`crm.bjsoft.com.br`) || HostRegexp(`{subdomain:[a-z0-9]+}.crm.bjsoft.com.br`)"
+        - "traefik.http.routers.rcg-web.entrypoints=websecure"
+        - "traefik.http.routers.rcg-web.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.rcg-web.middlewares=sslheader@swarm"
+        - "traefik.http.services.rcg-web.loadbalancer.server.port=80"
+        - "traefik.docker.network=network_public"
 
-volumes:
-  pgdata:
-
+networks:
+  network_db:
+    external: true
+  network_public:
+    external: true
