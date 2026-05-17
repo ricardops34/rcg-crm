@@ -31,6 +31,8 @@
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
       - DB_DATABASE=rcgcrm
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
       - JWT_SECRET=super-secret-key-rcg-crm
     depends_on:
       - db
@@ -47,3 +49,4 @@
 
 volumes:
   pgdata:
+
