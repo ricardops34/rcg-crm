@@ -1,9 +1,16 @@
-<po-page-list p-title="Objetivos e Metas">
-  <po-button p-label="Novo Objetivo" (p-click)="create()"></po-button>
+<po-page-list 
+  p-title="Objetivos e Metas"
+  [p-actions]="pageActions"
+  [p-breadcrumb]="breadcrumb"
+  [p-filter]="filter">
+
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
     [p-items]="items"
-    [p-actions]="actions">
+    [p-actions]="actions"
+    p-container="shadow"
+    [p-striped]="true"
+    [p-sort]="true">
   </po-table>
 </po-page-list>

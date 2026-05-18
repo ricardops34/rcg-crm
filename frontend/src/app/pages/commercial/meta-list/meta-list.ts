@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoTableColumn, PoTableAction } from "@po-ui/ng-components";
+import { PoModule, PoTableColumn, PoTableAction, PoPageAction, PoPageFilter } from "@po-ui/ng-components";
 import { MetaVendedorService } from "../../../services/meta-vendedor";
 
 @Component({
@@ -15,12 +15,29 @@ export class MetaListComponent implements OnInit {
   items: Array<any> = [];
   isLoading: boolean = true;
 
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Vendas", link: "/metas" },
+      { label: "Objetivos e Metas" }
+    ]
+  };
+
+  readonly pageActions: Array<PoPageAction> = [
+    { label: "Nova Meta", action: this.create.bind(this), icon: "po-icon-plus" }
+  ];
+
+  readonly filter: PoPageFilter = {
+    action: this.loadData.bind(this),
+    placeholder: "Pesquisar por vendedor"
+  };
+
   readonly columns: Array<PoTableColumn> = [
-    { property: "vendedor", label: "Vendedor",  },
-    { property: "mes", label: "M�s", width: "100px" },
+    { property: "vendedor.nome", label: "Vendedor" },
+    { property: "mes", label: "Mês", width: "100px" },
     { property: "ano", label: "Ano", width: "100px" },
     { property: "valor", label: "Meta Financeira", type: "currency", format: "BRL" },
-    { property: "numero_cliente", label: "Meta Positiva��o", type: "number" }
+    { property: "numeroCliente", label: "Meta Positivação", type: "number" }
   ];
 
   readonly actions: Array<PoTableAction> = [
@@ -33,11 +50,16 @@ export class MetaListComponent implements OnInit {
     this.loadData();
   }
 
-  loadData() {
+  loadData(filter?: string) {
     this.isLoading = true;
     this.metaService.findAll().subscribe({
       next: (res) => {
         this.items = res.items;
+        if (filter) {
+          this.items = this.items.filter(item => 
+            item.vendedor?.nome?.toLowerCase().includes(filter.toLowerCase())
+          );
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -45,6 +67,7 @@ export class MetaListComponent implements OnInit {
       }
     });
   }
+
 
   edit(item: any) {
     this.router.navigate(["/metas/edit", item.id]);
