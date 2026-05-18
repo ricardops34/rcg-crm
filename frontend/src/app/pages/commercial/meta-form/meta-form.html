@@ -5,17 +5,17 @@
 
   <form #formMeta="ngForm">
     <div class="po-row">
-      <po-select class="po-md-6" name="vendedorId" [ngModel]="meta.vendedorId" (ngModelChange)="meta.vendedorId = \$event" p-label="Vendedor" [p-options]="vendedores" p-required="true"></po-select>
-      <po-input class="po-md-3" name="mes" [ngModel]="meta.mes" (ngModelChange)="meta.mes = \$event" p-label="M�s" p-mask="99" p-required="true"></po-input>
-      <po-input class="po-md-3" name="ano" [ngModel]="meta.ano" (ngModelChange)="meta.ano = \$event" p-label="Ano" p-mask="9999" p-required="true"></po-input>
+      <po-select class="po-md-6" name="vendedorId" [ngModel]="meta.vendedorId" (ngModelChange)="meta.vendedorId = $event" p-label="Vendedor" [p-options]="vendedores" p-required="true"></po-select>
+      <po-input class="po-md-3" name="mes" [ngModel]="meta.mes" (ngModelChange)="meta.mes = $event" p-label="M�s" p-mask="99" p-required="true"></po-input>
+      <po-input class="po-md-3" name="ano" [ngModel]="meta.ano" (ngModelChange)="meta.ano = $event" p-label="Ano" p-mask="9999" p-required="true"></po-input>
     </div>
     
     <div class="po-row">
-      <po-number class="po-md-4" name="valor" [ngModel]="meta.valor" (ngModelChange)="meta.valor = \$event" p-label="Meta Financeira (R$)" p-required="true"></po-number>
+      <po-number class="po-md-4" name="valor" [ngModel]="meta.valor" (ngModelChange)="meta.valor = $event" p-label="Meta Financeira (R$)" p-required="true"></po-number>
       <po-button class="po-md-2 po-mt-4" p-label="Sugest�o +10%" (p-click)="applySuggestion()"></po-button>
       
-      <po-number class="po-md-3" name="numeroCliente" [ngModel]="meta.numeroCliente" (ngModelChange)="meta.numeroCliente = \$event" p-label="Meta Positiva��o (Qtd)"></po-number>
-      <po-number class="po-md-3" name="novoCliente" [ngModel]="meta.novoCliente" (ngModelChange)="meta.novoCliente = \$event" p-label="Meta Novos Clientes"></po-number>
+      <po-number class="po-md-3" name="numeroCliente" [ngModel]="meta.numeroCliente" (ngModelChange)="meta.numeroCliente = $event" p-label="Meta Positiva��o (Qtd)"></po-number>
+      <po-number class="po-md-3" name="novoCliente" [ngModel]="meta.novoCliente" (ngModelChange)="meta.novoCliente = $event" p-label="Meta Novos Clientes"></po-number>
     </div>
   </form>
 </po-page-edit>
