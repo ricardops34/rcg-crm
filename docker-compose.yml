@@ -2,14 +2,13 @@
 
 services:
   postgres:
-    image: postgres:15-alpine
+    build: ./database
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=rcgcrm
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database:/docker-entrypoint-initdb.d
     networks:
       - network_db
     ports:
