@@ -1,13 +1,16 @@
 <po-page-list 
-  p-title="Carteira de Clientes">
-
-  <po-button p-label="Novo Cliente" (p-click)="create()"></po-button>
+  p-title="Carteira de Clientes"
+  [p-actions]="pageActions"
+  [p-filter]="filter">
 
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
     [p-items]="items"
-    [p-actions]="actions">
+    [p-actions]="actions"
+    p-container="shadow"
+    [p-striped]="true"
+    [p-sort]="true">
   </po-table>
 
 </po-page-list>

@@ -1,9 +1,15 @@
-<po-page-list p-title="Vendedores">
-  <po-button p-label="Novo Vendedor" (p-click)="create()"></po-button>
+<po-page-list 
+  p-title="Equipe de Vendas"
+  [p-actions]="pageActions"
+  [p-filter]="filter">
+
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
     [p-items]="items"
-    [p-actions]="actions">
+    [p-actions]="actions"
+    p-container="shadow"
+    [p-striped]="true"
+    [p-sort]="true">
   </po-table>
 </po-page-list>
