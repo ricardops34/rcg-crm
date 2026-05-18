@@ -1,25 +1,6 @@
 ﻿version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=rcgcrm
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - rcg_internal
-    ports:
-      - "5432:5432"
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: on-failure
-
   redis:
     image: redis:7-alpine
     networks:
@@ -35,11 +16,12 @@ services:
     networks:
       - rcg_internal
       - network_public
+      - network_db
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USERNAME=postgres
-      - DB_PASSWORD=admin
+      - DB_PASSWORD=Senha@1245
       - DB_DATABASE=rcgcrm
       - DB_SYNC=true
       - JWT_SECRET=${JWT_SECRET}
@@ -82,8 +64,7 @@ networks:
     driver: overlay
   network_public:
     external: true
-
-volumes:
-  postgres_data:
+  network_db:
+    external: true
 
 
