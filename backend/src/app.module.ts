@@ -50,7 +50,7 @@ import { AuthModule } from './modules/auth/auth.module';
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_SECURITY_DATABASE', configService.get<string>('DB_DATABASE')),
+        database: configService.get<string>('DB_SECURITY_DATABASE') || configService.get<string>('DB_DATABASE'),
         autoLoadEntities: true,
         synchronize: configService.get<boolean>('DB_SYNC'),
         retryAttempts: 10,
