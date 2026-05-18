@@ -9,15 +9,17 @@ export class SeedService implements OnApplicationBootstrap {
   constructor(
     private configService: ConfigService,
     @Inject(getDataSourceToken())
-    private dataSource: DataSource,
+    private crmDataSource: DataSource,
+    @Inject(getDataSourceToken('security'))
+    private securityDataSource: DataSource,
   ) {}
 
   async onApplicationBootstrap() {
     console.log(`🔍 Verificando DB_SEED: ${this.configService.get('DB_SEED')}`);
     if (this.configService.get('DB_SEED') === 'true') {
       try {
-        console.log('🚀 Iniciando processo de Seed...');
-        await seed(this.dataSource);
+        console.log('🚀 Iniciando processo de Seed Multi-DB...');
+        await seed(this.crmDataSource, this.securityDataSource);
         console.log('✨ Seed finalizado com sucesso via SeedService');
       } catch (e) {
         console.error('⚠️ Falha ao executar Seed no startup:', e.message);

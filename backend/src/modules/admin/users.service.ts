@@ -9,11 +9,11 @@ import { SystemUserUnit } from './entities/system-user-unit.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(SystemUser)
+    @InjectRepository(SystemUser, 'security')
     private userRepository: Repository<SystemUser>,
-    @InjectRepository(SystemUserGroup)
+    @InjectRepository(SystemUserGroup, 'security')
     private userGroupRepository: Repository<SystemUserGroup>,
-    @InjectRepository(SystemUserUnit)
+    @InjectRepository(SystemUserUnit, 'security')
     private userUnitRepository: Repository<SystemUserUnit>,
   ) {}
 

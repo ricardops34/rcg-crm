@@ -25,7 +25,7 @@ import { UsersController } from './users.controller';
       SystemGroupProgram,
       SystemUserUnit,
       SystemChangeLog
-    ])
+    ], 'security')
   ],
   providers: [AuditSubscriber, UsersService, PermissionsService],
   controllers: [UsersController],

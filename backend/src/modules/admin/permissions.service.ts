@@ -7,9 +7,9 @@ import { SystemGroupProgram } from './entities/system-group-program.entity';
 @Injectable()
 export class PermissionsService {
   constructor(
-    @InjectRepository(SystemUserGroup)
+    @InjectRepository(SystemUserGroup, 'security')
     private userGroupRepository: Repository<SystemUserGroup>,
-    @InjectRepository(SystemGroupProgram)
+    @InjectRepository(SystemGroupProgram, 'security')
     private groupProgramRepository: Repository<SystemGroupProgram>,
   ) {}
 

@@ -40,6 +40,23 @@ import { AuthModule } from './modules/auth/auth.module';
         retryDelay: 3000,
       }),
     }),
+    TypeOrmModule.forRootAsync({
+      name: 'security',
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_SECURITY_DATABASE', configService.get<string>('DB_DATABASE')),
+        autoLoadEntities: true,
+        synchronize: configService.get<boolean>('DB_SYNC'),
+        retryAttempts: 10,
+        retryDelay: 3000,
+      }),
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],

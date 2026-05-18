@@ -12,7 +12,7 @@ import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SystemUser]),
+    TypeOrmModule.forFeature([SystemUser], 'security'),
     PassportModule,
     AdminModule,
     JwtModule.registerAsync({
