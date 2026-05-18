@@ -13,8 +13,10 @@ export class SeedService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
+    console.log(`🔍 Verificando DB_SEED: ${this.configService.get('DB_SEED')}`);
     if (this.configService.get('DB_SEED') === 'true') {
       try {
+        console.log('🚀 Iniciando processo de Seed...');
         const dataSource = this.moduleRef.get<DataSource>(getDataSourceToken());
         await seed(dataSource);
         console.log('✨ Seed finalizado com sucesso via SeedService');
