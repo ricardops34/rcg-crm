@@ -1,14 +1,38 @@
 ﻿version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=rcgcrm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/erp_online-pgsql.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - network_db
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - network_db
+    ports:
+      - "6379:6379"
+
   rcg-api:
     image: bjsoftware/rcg-backend:latest
     build: ./backend
     networks:
       - network_db
       - network_public
+    depends_on:
+      - postgres
+      - redis
     environment:
-      - DB_HOST=postgres  # Nome do host do banco na rede externa network_db
+      - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
@@ -38,6 +62,8 @@ services:
     build: ./frontend
     networks:
       - network_public
+    depends_on:
+      - rcg-api
     deploy:
       replicas: 1
       labels:
@@ -51,8 +77,9 @@ services:
 
 networks:
   network_db:
-    external: true
   network_public:
-    external: true
+
+volumes:
+  postgres_data:
 
 
