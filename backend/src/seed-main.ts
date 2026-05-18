@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { seed } from '../seed';
+import { seed } from './seed';
 import { DataSource } from 'typeorm';
 
 async function bootstrap() {
