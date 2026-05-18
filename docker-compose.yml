@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=rcgcrm
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/erp_online-pgsql.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database:/docker-entrypoint-initdb.d
     networks:
       - network_db
     ports:
