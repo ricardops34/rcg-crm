@@ -17,6 +17,14 @@ export class ClienteFormComponent implements OnInit {
   isLoading: boolean = false;
   title: string = "Novo Cliente";
 
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Clientes", link: "/clientes" },
+      { label: "Cadastro" }
+    ]
+  };
+
   readonly contatoColumns: Array<PoTableColumn> = [
     { property: "tipoContato.descricao", label: "Tipo" },
     { property: "nome", label: "Nome" },

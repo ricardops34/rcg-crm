@@ -1,46 +1,49 @@
 <po-page-edit 
   [p-title]="title"
+  [p-breadcrumb]="breadcrumb"
   (p-save)="save()"
   (p-cancel)="cancel()">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <form #formCliente="ngForm">
     <po-tabs>
       <po-tab p-label="Identificação" [p-active]="true">
         <div class="po-row">
-          <po-input class="po-md-2" name="codErp" [ngModel]="cliente.codErp" (ngModelChange)="cliente.codErp = $event" p-label="Cód. ERP" p-disabled="true"></po-input>
-          <po-input class="po-md-6" name="razao" [ngModel]="cliente.razao" (ngModelChange)="cliente.razao = $event" p-label="Razão Social" p-required="true"></po-input>
-          <po-input class="po-md-4" name="fantasia" [ngModel]="cliente.fantasia" (ngModelChange)="cliente.fantasia = $event" p-label="Nome Fantasia"></po-input>
+          <po-input class="po-md-2" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" p-disabled="true"></po-input>
+          <po-input class="po-md-6" name="razao" [(ngModel)]="cliente.razao" p-label="Razão Social" p-required="true" p-clean></po-input>
+          <po-input class="po-md-4" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia" p-clean></po-input>
         </div>
         <div class="po-row">
-          <po-input class="po-md-3" name="cnpjCpf" [ngModel]="cliente.cnpjCpf" (ngModelChange)="cliente.cnpjCpf = $event" p-label="CNPJ/CPF"></po-input>
-          <po-select class="po-md-2" name="status" [ngModel]="cliente.status" (ngModelChange)="cliente.status = $event" p-label="Status" 
+          <po-input class="po-md-3" name="cnpjCpf" [(ngModel)]="cliente.cnpjCpf" p-label="CNPJ/CPF" p-clean></po-input>
+          <po-select class="po-md-2" name="status" [(ngModel)]="cliente.status" p-label="Status" 
             [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
           </po-select>
-          <po-input class="po-md-4" name="email" [ngModel]="cliente.email" (ngModelChange)="cliente.email = $event" p-label="E-mail"></po-input>
+          <po-input class="po-md-4" name="email" [(ngModel)]="cliente.email" p-label="E-mail" p-clean p-icon="po-icon-mail"></po-input>
         </div>
       </po-tab>
 
       <po-tab p-label="Endereço">
         <div class="po-row">
-          <po-input class="po-md-2" name="cep" [ngModel]="cliente.cep" (ngModelChange)="cliente.cep = $event" p-label="CEP"></po-input>
-          <po-input class="po-md-5" name="endereco" [ngModel]="cliente.endereco" (ngModelChange)="cliente.endereco = $event" p-label="Logradouro"></po-input>
-          <po-input class="po-md-3" name="bairro" [ngModel]="cliente.bairro" (ngModelChange)="cliente.bairro = $event" p-label="Bairro"></po-input>
-          <po-input class="po-md-2" name="uf" [ngModel]="cliente.uf" (ngModelChange)="cliente.uf = $event" p-label="UF"></po-input>
+          <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP" p-clean></po-input>
+          <po-input class="po-md-5" name="endereco" [(ngModel)]="cliente.endereco" p-label="Logradouro" p-clean></po-input>
+          <po-input class="po-md-3" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro" p-clean></po-input>
+          <po-input class="po-md-2" name="uf" [(ngModel)]="cliente.uf" p-label="UF" p-clean></po-input>
         </div>
         <div class="po-row">
-          <po-input class="po-md-4" name="municipio" [ngModel]="cliente.municipio" (ngModelChange)="cliente.municipio = $event" p-label="Cidade"></po-input>
-          <po-input class="po-md-8" name="complemento" [ngModel]="cliente.complemento" (ngModelChange)="cliente.complemento = $event" p-label="Complemento"></po-input>
+          <po-input class="po-md-4" name="municipio" [(ngModel)]="cliente.municipio" p-label="Cidade" p-clean></po-input>
+          <po-input class="po-md-8" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento" p-clean></po-input>
         </div>
       </po-tab>
 
       <po-tab p-label="Financeiro">
         <div class="po-row">
-          <po-number class="po-md-3" name="limite" [ngModel]="cliente.limite" (ngModelChange)="cliente.limite = $event" p-label="Limite de Crédito"></po-number>
-          <po-input class="po-md-2" name="risco" [ngModel]="cliente.risco" (ngModelChange)="cliente.risco = $event" p-label="Risco" p-disabled="true"></po-input>
-          <po-datepicker class="po-md-3" name="vencimentoLimite" [ngModel]="cliente.vencimentoLimite" (ngModelChange)="cliente.vencimentoLimite = $event" p-label="Vencimento do Limite"></po-datepicker>
+          <po-number class="po-md-3" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-clean></po-number>
+          <po-input class="po-md-2" name="risco" [(ngModel)]="cliente.risco" p-label="Risco" p-disabled="true"></po-input>
+          <po-datepicker class="po-md-3" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite" p-clean></po-datepicker>
         </div>
         <div class="po-row">
-          <po-textarea class="po-md-12" name="obsBloqueio" [ngModel]="cliente.obsBloqueio" (ngModelChange)="cliente.obsBloqueio = $event" p-label="Observações de Bloqueio"></po-textarea>
+          <po-textarea class="po-md-12" name="obsBloqueio" [(ngModel)]="cliente.obsBloqueio" p-label="Observações de Bloqueio" p-clean></po-textarea>
         </div>
       </po-tab>
 

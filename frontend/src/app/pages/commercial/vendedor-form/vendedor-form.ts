@@ -13,11 +13,20 @@ import { VendedorService } from "../../../services/vendedor";
 })
 export class VendedorFormComponent implements OnInit {
 
-  vendedor: any = { status: "A" };
+  vendedor: any = {};
   isLoading: boolean = false;
   title: string = "Novo Vendedor";
 
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Vendedores", link: "/vendedores" },
+      { label: "Cadastro" }
+    ]
+  };
+
   constructor(
+
     private vendedorService: VendedorService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -47,12 +56,15 @@ export class VendedorFormComponent implements OnInit {
   }
 
   save() {
+    this.isLoading = true;
     this.vendedorService.save(this.vendedor).subscribe({
       next: () => {
+        this.isLoading = false;
         this.poNotification.success("Vendedor salvo com sucesso!");
         this.router.navigate(["/vendedores"]);
       },
       error: (err) => {
+        this.isLoading = false;
         this.poNotification.error("Erro ao salvar vendedor.");
       }
     });
