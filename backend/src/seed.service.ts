@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ModuleRef } from '@nestjs/core';
-import { seed } from '../seed';
+import { seed } from './seed';
 
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
