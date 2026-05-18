@@ -1,9 +1,12 @@
 ﻿import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { VendedorService } from '../../services/vendedor/vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
+import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
 
 @Controller('commercial/vendedores')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ControllerName('VendedorList')
 export class VendedorController {
   constructor(private readonly vendedorService: VendedorService) {}
 
