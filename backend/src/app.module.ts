@@ -6,6 +6,7 @@ import { ClsModule } from 'nestjs-cls';
 import { redisStore } from 'cache-manager-redis-yet';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { SeedService } from './seed.service';
 import { MasterDataModule } from './modules/master-data/master-data.module';
 import { CommercialModule } from './modules/commercial/commercial.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
@@ -35,6 +36,8 @@ import { AuthModule } from './modules/auth/auth.module';
         database: configService.get<string>('DB_DATABASE'),
         autoLoadEntities: true,
         synchronize: configService.get<boolean>('DB_SYNC'),
+        retryAttempts: 10,
+        retryDelay: 3000,
       }),
     }),
     CacheModule.registerAsync({
@@ -76,6 +79,6 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SeedService],
 })
 export class AppModule {}
