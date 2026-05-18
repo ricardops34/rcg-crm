@@ -66,5 +66,6 @@ networks:
     external: true
   network_db:
     external: true
+    name: network_db
 
 
