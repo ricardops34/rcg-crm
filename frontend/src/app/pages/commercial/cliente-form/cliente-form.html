@@ -5,42 +5,53 @@
 
   <form #formCliente="ngForm">
     <po-tabs>
-      <po-tab p-label="Identifica��o" [p-active]="true">
+      <po-tab p-label="Identificação" [p-active]="true">
         <div class="po-row">
-          <po-input class="po-md-2" name="codErp" [ngModel]="cliente.codErp" (ngModelChange)="cliente.codErp = \$event" p-label="C�d. ERP" p-disabled="true"></po-input>
-          <po-input class="po-md-6" name="razao" [ngModel]="cliente.razao" (ngModelChange)="cliente.razao = \$event" p-label="Raz�o Social" p-required="true"></po-input>
-          <po-input class="po-md-4" name="fantasia" [ngModel]="cliente.fantasia" (ngModelChange)="cliente.fantasia = \$event" p-label="Nome Fantasia"></po-input>
+          <po-input class="po-md-2" name="codErp" [ngModel]="cliente.codErp" (ngModelChange)="cliente.codErp = $event" p-label="Cód. ERP" p-disabled="true"></po-input>
+          <po-input class="po-md-6" name="razao" [ngModel]="cliente.razao" (ngModelChange)="cliente.razao = $event" p-label="Razão Social" p-required="true"></po-input>
+          <po-input class="po-md-4" name="fantasia" [ngModel]="cliente.fantasia" (ngModelChange)="cliente.fantasia = $event" p-label="Nome Fantasia"></po-input>
         </div>
         <div class="po-row">
-          <po-input class="po-md-3" name="cnpjCpf" [ngModel]="cliente.cnpjCpf" (ngModelChange)="cliente.cnpjCpf = \$event" p-label="CNPJ/CPF"></po-input>
-          <po-select class="po-md-2" name="status" [ngModel]="cliente.status" (ngModelChange)="cliente.status = \$event" p-label="Status" 
+          <po-input class="po-md-3" name="cnpjCpf" [ngModel]="cliente.cnpjCpf" (ngModelChange)="cliente.cnpjCpf = $event" p-label="CNPJ/CPF"></po-input>
+          <po-select class="po-md-2" name="status" [ngModel]="cliente.status" (ngModelChange)="cliente.status = $event" p-label="Status" 
             [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
           </po-select>
-          <po-input class="po-md-4" name="email" [ngModel]="cliente.email" (ngModelChange)="cliente.email = \$event" p-label="E-mail"></po-input>
+          <po-input class="po-md-4" name="email" [ngModel]="cliente.email" (ngModelChange)="cliente.email = $event" p-label="E-mail"></po-input>
         </div>
       </po-tab>
 
-      <po-tab p-label="Endere�o">
+      <po-tab p-label="Endereço">
         <div class="po-row">
-          <po-input class="po-md-2" name="cep" [ngModel]="cliente.cep" (ngModelChange)="cliente.cep = \$event" p-label="CEP"></po-input>
-          <po-input class="po-md-5" name="endereco" [ngModel]="cliente.endereco" (ngModelChange)="cliente.endereco = \$event" p-label="Logradouro"></po-input>
-          <po-input class="po-md-3" name="bairro" [ngModel]="cliente.bairro" (ngModelChange)="cliente.bairro = \$event" p-label="Bairro"></po-input>
-          <po-input class="po-md-2" name="uf" [ngModel]="cliente.uf" (ngModelChange)="cliente.uf = \$event" p-label="UF"></po-input>
+          <po-input class="po-md-2" name="cep" [ngModel]="cliente.cep" (ngModelChange)="cliente.cep = $event" p-label="CEP"></po-input>
+          <po-input class="po-md-5" name="endereco" [ngModel]="cliente.endereco" (ngModelChange)="cliente.endereco = $event" p-label="Logradouro"></po-input>
+          <po-input class="po-md-3" name="bairro" [ngModel]="cliente.bairro" (ngModelChange)="cliente.bairro = $event" p-label="Bairro"></po-input>
+          <po-input class="po-md-2" name="uf" [ngModel]="cliente.uf" (ngModelChange)="cliente.uf = $event" p-label="UF"></po-input>
         </div>
         <div class="po-row">
-          <po-input class="po-md-4" name="municipio" [ngModel]="cliente.municipio" (ngModelChange)="cliente.municipio = \$event" p-label="Cidade"></po-input>
-          <po-input class="po-md-8" name="complemento" [ngModel]="cliente.complemento" (ngModelChange)="cliente.complemento = \$event" p-label="Complemento"></po-input>
+          <po-input class="po-md-4" name="municipio" [ngModel]="cliente.municipio" (ngModelChange)="cliente.municipio = $event" p-label="Cidade"></po-input>
+          <po-input class="po-md-8" name="complemento" [ngModel]="cliente.complemento" (ngModelChange)="cliente.complemento = $event" p-label="Complemento"></po-input>
         </div>
       </po-tab>
 
       <po-tab p-label="Financeiro">
         <div class="po-row">
-          <po-number class="po-md-3" name="limite" [ngModel]="cliente.limite" (ngModelChange)="cliente.limite = \$event" p-label="Limite de Cr�dito"></po-number>
-          <po-input class="po-md-2" name="risco" [ngModel]="cliente.risco" (ngModelChange)="cliente.risco = \$event" p-label="Risco" p-disabled="true"></po-input>
-          <po-datepicker class="po-md-3" name="vencimentoLimite" [ngModel]="cliente.vencimentoLimite" (ngModelChange)="cliente.vencimentoLimite = \$event" p-label="Vencimento do Limite"></po-datepicker>
+          <po-number class="po-md-3" name="limite" [ngModel]="cliente.limite" (ngModelChange)="cliente.limite = $event" p-label="Limite de Crédito"></po-number>
+          <po-input class="po-md-2" name="risco" [ngModel]="cliente.risco" (ngModelChange)="cliente.risco = $event" p-label="Risco" p-disabled="true"></po-input>
+          <po-datepicker class="po-md-3" name="vencimentoLimite" [ngModel]="cliente.vencimentoLimite" (ngModelChange)="cliente.vencimentoLimite = $event" p-label="Vencimento do Limite"></po-datepicker>
         </div>
         <div class="po-row">
-          <po-textarea class="po-md-12" name="obsBloqueio" [ngModel]="cliente.obsBloqueio" (ngModelChange)="cliente.obsBloqueio = \$event" p-label="Observa��es de Bloqueio"></po-textarea>
+          <po-textarea class="po-md-12" name="obsBloqueio" [ngModel]="cliente.obsBloqueio" (ngModelChange)="cliente.obsBloqueio = $event" p-label="Observações de Bloqueio"></po-textarea>
+        </div>
+      </po-tab>
+
+      <po-tab p-label="Contatos">
+        <po-table
+          [p-items]="cliente.contatos"
+          [p-columns]="contatoColumns"
+          [p-actions]="contatoActions">
+        </po-table>
+        <div class="po-row">
+          <po-button p-label="Adicionar Contato" (p-click)="addContato()" p-icon="po-icon-plus"></po-button>
         </div>
       </po-tab>
     </po-tabs>

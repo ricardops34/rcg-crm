@@ -1,4 +1,4 @@
-﻿import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+﻿import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ClienteService } from '../../services/cliente/cliente.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 
@@ -18,7 +18,22 @@ export class ClienteController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);
+  }
+
+  @Post()
+  async create(@Body() data: any) {
+    return this.clienteService.create(data);
+  }
+
+  @Patch(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+    return this.clienteService.update(id, data);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.clienteService.remove(id);
   }
 }

@@ -5,6 +5,8 @@ import { Cliente } from './entities/cliente.entity';
 import { CondicaoPagamento } from './entities/condicao-pagamento.entity';
 import { TabelaPreco } from './entities/tabela-preco.entity';
 import { TabelaPrecoItem } from './entities/tabela-preco-item.entity';
+import { TipoContato } from './entities/tipo-contato.entity';
+import { ClienteContato } from './entities/cliente-contato.entity';
 import { MetaVendedorMes } from './entities/meta-vendedor-mes.entity';
 import { MetaVendedorCategoria } from './entities/meta-vendedor-categoria.entity';
 import { ClienteService } from './services/cliente/cliente.service';
@@ -27,6 +29,8 @@ import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.c
       CondicaoPagamento, 
       TabelaPreco,
       TabelaPrecoItem,
+      TipoContato,
+      ClienteContato,
       MetaVendedorMes,
       MetaVendedorCategoria
     ]),

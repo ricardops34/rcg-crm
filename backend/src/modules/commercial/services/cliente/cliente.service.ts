@@ -22,7 +22,7 @@ export class ClienteService {
   async findOne(id: number): Promise<Cliente | null> {
     return this.clienteRepository.findOne({ 
       where: { id },
-      relations: ['vendedor', 'filial', 'condicaoPagamento', 'tabelaPreco']
+      relations: ['vendedor', 'filial', 'condicaoPagamento', 'tabelaPreco', 'contatos', 'contatos.tipoContato']
     });
   }
 

@@ -22,7 +22,7 @@
   - Critério de pronto: Consultar o preço unitário de um produto a partir de um ID de tabela específico.
   - Confiança: 🟢
 
-- [ ] T-04, Criar Formulário de Cliente Multi-aba
+- [x] T-04, Criar Formulário de Cliente Multi-aba
   - Origem no legado: `app/control/cadastros/ClienteForm.php`
   - Critério de pronto: Tela capaz de gerenciar todas as informações do cliente e o mestre-detalhe de contatos em uma única transação.
   - Confiança: 🟢

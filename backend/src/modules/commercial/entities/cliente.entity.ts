@@ -1,15 +1,19 @@
-﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Audited } from '../../admin/decorators/audited.decorator';
 import { Filial } from '../../master-data/entities/filial.entity';
 import { Vendedor } from './vendedor.entity';
 import { CondicaoPagamento } from './condicao-pagamento.entity';
 import { TabelaPreco } from './tabela-preco.entity';
+import { ClienteContato } from './cliente-contato.entity';
 
 @Audited()
 @Entity('cliente')
 export class Cliente {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => ClienteContato, (contato) => contato.cliente, { cascade: true })
+  contatos: ClienteContato[];
 
   @Column({ name: 'filial_id', type: 'integer', nullable: true })
   filialId: number;
