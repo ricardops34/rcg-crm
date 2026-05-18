@@ -2,7 +2,7 @@
 
 services:
   postgres:
-    build: ./database
+    image: postgres:15-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
@@ -23,7 +23,6 @@ services:
 
   rcg-api:
     image: bjsoftware/rcg-backend:latest
-    build: ./backend
     networks:
       - network_db
       - network_public
@@ -36,6 +35,7 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
       - DB_DATABASE=rcgcrm
+      - DB_SYNC=true
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -58,7 +58,6 @@ services:
 
   rcg-web:
     image: bjsoftware/rcg-frontend:latest
-    build: ./frontend
     networks:
       - network_public
     depends_on:
