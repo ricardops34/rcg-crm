@@ -13,6 +13,7 @@ import { AuditSubscriber } from './subscribers/audit.subscriber';
 import { UsersService } from './users.service';
 import { PermissionsService } from './permissions.service';
 import { UsersController } from './users.controller';
+import { GroupsController } from './groups.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { UsersController } from './users.controller';
     ], 'security')
   ],
   providers: [AuditSubscriber, UsersService, PermissionsService],
-  controllers: [UsersController],
+  controllers: [UsersController, GroupsController],
   exports: [TypeOrmModule, UsersService, PermissionsService],
 })
 export class AdminModule {}

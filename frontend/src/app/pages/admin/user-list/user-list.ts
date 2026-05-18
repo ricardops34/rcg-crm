@@ -18,7 +18,11 @@ import { UserService } from "../../../services/user";
         [p-columns]="columns"
         [p-items]="users"
         [p-actions]="tableActions"
-        [p-loading]="isLoading">
+        [p-loading]="isLoading"
+        p-container="shadow"
+        [p-striped]="true"
+        [p-sort]="true"
+        [p-draggable]="true">
       </po-table>
       
     </po-page-list>
@@ -43,9 +47,11 @@ export class UserListComponent implements OnInit {
   ];
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "id", label: "ID", width: "5%" },
-    { property: "name", label: "Nome" },
+    { property: "id", label: "ID", width: "80px" },
+    { property: "name", label: "Nome Completo" },
     { property: "login", label: "Login" },
+    { property: "systemUnit.nome", label: "Unidade" },
+    { property: "grupos", label: "Grupos" },
     { property: "email", label: "E-mail" },
     { property: "active", label: "Ativo", type: "label", labels: [
       { value: "Y", color: "color-10", label: "Sim" },
@@ -66,7 +72,10 @@ export class UserListComponent implements OnInit {
     this.isLoading = true;
     this.userService.findAll().subscribe({
       next: (res) => {
-        this.users = res;
+        this.users = res.map((u: any) => ({
+          ...u,
+          grupos: u.userGroups?.map((ug: any) => ug.systemGroup?.name).join(", ")
+        }));
         if (filter) {
           this.users = this.users.filter(u => 
             u.name?.toLowerCase().includes(filter.toLowerCase()) || 

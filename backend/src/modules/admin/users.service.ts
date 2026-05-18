@@ -19,14 +19,14 @@ export class UsersService {
 
   async findAll() {
     return this.userRepository.find({
-      relations: ['frontpage', 'systemUnit'],
+      relations: ['frontpage', 'systemUnit', 'userGroups', 'userGroups.systemGroup'],
     });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['frontpage', 'systemUnit'],
+      relations: ['frontpage', 'systemUnit', 'userGroups', 'userGroups.systemGroup'],
     });
     if (!user) throw new NotFoundException('Usuário não encontrado');
     return user;
@@ -39,18 +39,44 @@ export class UsersService {
   }
 
   async create(userData: any) {
-    if (userData.password) {
-      userData.password = await bcrypt.hash(userData.password, 10);
+    const { groups, ...data } = userData;
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
     }
-    const user = this.userRepository.create(userData);
-    return this.userRepository.save(user);
+    const user = this.userRepository.create(data);
+    const savedUser = await this.userRepository.save(user);
+
+    if (groups && groups.length > 0) {
+      const userGroups = groups.map(groupId => 
+        this.userGroupRepository.create({ systemUserId: savedUser.id, systemGroupId: groupId })
+      );
+      await this.userGroupRepository.save(userGroups);
+    }
+
+    return this.findOne(savedUser.id);
   }
 
   async update(id: number, userData: any) {
-    if (userData.password) {
-      userData.password = await bcrypt.hash(userData.password, 10);
+    const { groups, userGroups, frontpage, systemUnit, ...data } = userData;
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    } else {
+      delete data.password;
     }
-    await this.userRepository.update(id, userData);
+    
+    await this.userRepository.update(id, data);
+
+    if (groups) {
+      // Remover grupos antigos e inserir novos
+      await this.userGroupRepository.delete({ systemUserId: id });
+      if (groups.length > 0) {
+        const newUserGroups = groups.map(groupId => 
+          this.userGroupRepository.create({ systemUserId: id, systemGroupId: groupId })
+        );
+        await this.userGroupRepository.save(newUserGroups);
+      }
+    }
+
     return this.findOne(id);
   }
 
