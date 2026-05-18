@@ -11,19 +11,21 @@ import { UserService } from "../../../services/user";
   template: `
     <po-page-edit 
       [p-title]="title"
+      [p-breadcrumb]="breadcrumb"
       (p-save)="save()"
       (p-cancel)="cancel()">
       
       <form #userForm="ngForm">
+        <po-divider p-label="Informações Básicas"></po-divider>
         <div class="po-row">
-          <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome" p-required></po-input>
-          <po-input class="po-md-3" name="login" [(ngModel)]="user.login" p-label="Login" p-required></po-input>
-          <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit"></po-password>
+          <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome Completo" p-required p-clean></po-input>
+          <po-input class="po-md-3" name="login" [(ngModel)]="user.login" p-label="Login de Acesso" p-required p-clean></po-input>
+          <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit" p-clean></po-password>
         </div>
         
         <div class="po-row">
-          <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
-          <po-select class="po-md-3" name="active" [(ngModel)]="user.active" p-label="Ativo" [p-options]="activeOptions"></po-select>
+          <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
+          <po-select class="po-md-3" name="active" [(ngModel)]="user.active" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
         </div>
       </form>
       
@@ -35,6 +37,14 @@ export class UserFormComponent implements OnInit {
   user: any = { active: "Y" };
   isEdit: boolean = false;
   title: string = "Novo Usuário";
+
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Usuários", link: "/admin/users" },
+      { label: "Cadastro" }
+    ]
+  };
 
   readonly activeOptions = [
     { label: "Sim", value: "Y" },

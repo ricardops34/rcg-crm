@@ -11,11 +11,13 @@ import { UserService } from "../../../services/user";
   template: `
     <po-page-list 
       p-title="Usuários do Sistema"
-      [p-actions]="actions">
+      [p-actions]="actions"
+      [p-filter]="filter">
       
       <po-table 
         [p-columns]="columns"
-        [p-items]="users">
+        [p-items]="users"
+        [p-loading]="isLoading">
       </po-table>
       
     </po-page-list>
@@ -24,6 +26,12 @@ import { UserService } from "../../../services/user";
 export class UserListComponent implements OnInit {
 
   users: Array<any> = [];
+  isLoading: boolean = false;
+
+  readonly filter: any = {
+    action: this.loadUsers.bind(this),
+    placeholder: "Pesquisar por nome ou login"
+  };
 
   readonly actions: Array<PoPageAction> = [
     { label: "Novo Usuário", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" }
@@ -52,9 +60,22 @@ export class UserListComponent implements OnInit {
     this.loadUsers();
   }
 
-  loadUsers() {
-    this.userService.findAll().subscribe(res => {
-      this.users = res;
+  loadUsers(filter?: string) {
+    this.isLoading = true;
+    this.userService.findAll().subscribe({
+      next: (res) => {
+        this.users = res;
+        if (filter) {
+          this.users = this.users.filter(u => 
+            u.name?.toLowerCase().includes(filter.toLowerCase()) || 
+            u.login?.toLowerCase().includes(filter.toLowerCase())
+          );
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 }
