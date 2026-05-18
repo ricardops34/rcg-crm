@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { MetaVendedorMes } from '../../entities/meta-vendedor-mes.entity';
@@ -20,7 +20,7 @@ export class MetaVendedorService {
     });
   }
 
-  async findOne(id: number): Promise<MetaVendedorMes> {
+  async findOne(id: number): Promise<MetaVendedorMes | null> {
     return this.metaRepository.findOne({ 
       where: { id },
       relations: ['vendedor', 'categorias', 'categorias.categoria']

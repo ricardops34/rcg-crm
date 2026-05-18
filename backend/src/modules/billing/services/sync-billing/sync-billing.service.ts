@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { ErpTranslationService } from '../../../master-data/services/erp-translation/erp-translation.service';
 import { NotaSaida } from '../../entities/nota-saida.entity';
@@ -13,7 +13,7 @@ export class SyncBillingService {
   ) {}
 
   async syncNotasSaida(conteudo: any[]) {
-    const results = [];
+    const results: any[] = [];
     const relations = {
       cliente: 'cliente',
       filial: 'filial',

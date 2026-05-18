@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { ErpTranslationService } from '../../../master-data/services/erp-translation/erp-translation.service';
 import { TituloReceber } from '../../entities/titulo-receber.entity';
@@ -13,7 +13,7 @@ export class SyncFinanceService {
   ) {}
 
   async syncTitulos(conteudo: any[]) {
-    const results = [];
+    const results: any[] = [];
     const relations = {
       cliente: 'cliente',
       vendedor: 'vendedor',

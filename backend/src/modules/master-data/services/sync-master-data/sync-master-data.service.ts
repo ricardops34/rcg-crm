@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { ErpTranslationService } from '../erp-translation/erp-translation.service';
 import { Estado } from '../../entities/estado.entity';
@@ -15,7 +15,7 @@ export class SyncMasterDataService {
   ) {}
 
   async syncBatch(entity: any, conteudo: any[], relations: any = {}) {
-    const results = [];
+    const results: any[] = [];
     for (const item of conteudo) {
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();

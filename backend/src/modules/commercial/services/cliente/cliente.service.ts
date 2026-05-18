@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from '../../entities/cliente.entity';
@@ -19,7 +19,7 @@ export class ClienteService {
     });
   }
 
-  async findOne(id: number): Promise<Cliente> {
+  async findOne(id: number): Promise<Cliente | null> {
     return this.clienteRepository.findOne({ 
       where: { id },
       relations: ['vendedor', 'filial', 'condicaoPagamento', 'tabelaPreco']

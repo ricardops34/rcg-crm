@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vendedor } from '../../entities/vendedor.entity';
@@ -19,7 +19,7 @@ export class VendedorService {
     });
   }
 
-  async findOne(id: number): Promise<Vendedor> {
+  async findOne(id: number): Promise<Vendedor | null> {
     return this.vendedorRepository.findOne({ 
       where: { id },
       relations: ['filial']
