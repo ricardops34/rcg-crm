@@ -17,7 +17,16 @@ export class MetaFormComponent implements OnInit {
   meta: any = { mes: (new Date().getMonth() + 1).toString().padStart(2, "0"), ano: new Date().getFullYear().toString() };
   vendedores: Array<any> = [];
   isLoading: boolean = false;
-  title: string = "Novo Objetivo";
+  title: string = "Nova Meta";
+
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Vendas", link: "/metas" },
+      { label: "Objetivos e Metas" },
+      { label: "Cadastro" }
+    ]
+  };
 
   constructor(
     private metaService: MetaVendedorService,
@@ -31,7 +40,7 @@ export class MetaFormComponent implements OnInit {
     this.loadVendedores();
     const id = this.activatedRoute.snapshot.params["id"];
     if (id) {
-      this.title = "Editar Objetivo";
+      this.title = "Editar Meta";
       this.loadMeta(id);
     }
   }
@@ -58,27 +67,31 @@ export class MetaFormComponent implements OnInit {
 
   applySuggestion() {
     if (!this.meta.vendedorId || !this.meta.mes || !this.meta.ano) {
-      this.poNotification.warning("Selecione vendedor, m�s e ano para obter a sugest�o.");
+      this.poNotification.warning("Selecione vendedor, mês e ano para obter a sugestão.");
       return;
     }
 
     this.metaService.getSuggestion(this.meta.vendedorId, this.meta.mes, this.meta.ano).subscribe(res => {
       this.meta.valor = res.suggestion;
-      this.poNotification.information("Sugest�o de +10% sobre o ano anterior aplicada.");
+      this.poNotification.information("Sugestão de +10% sobre o ano anterior aplicada.");
     });
   }
 
   save() {
+    this.isLoading = true;
     this.metaService.save(this.meta).subscribe({
       next: () => {
+        this.isLoading = false;
         this.poNotification.success("Meta salva com sucesso!");
         this.router.navigate(["/metas"]);
       },
       error: (err) => {
+        this.isLoading = false;
         this.poNotification.error("Erro ao salvar meta.");
       }
     });
   }
+
 
   cancel() {
     this.router.navigate(["/metas"]);
