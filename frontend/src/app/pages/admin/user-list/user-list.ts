@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn } from "@po-ui/ng-components";
+import { PoModule, PoPageAction, PoTableColumn, PoTableAction } from "@po-ui/ng-components";
 import { UserService } from "../../../services/user";
 
 @Component({
@@ -17,6 +17,7 @@ import { UserService } from "../../../services/user";
       <po-table 
         [p-columns]="columns"
         [p-items]="users"
+        [p-actions]="tableActions"
         [p-loading]="isLoading">
       </po-table>
       
@@ -37,6 +38,10 @@ export class UserListComponent implements OnInit {
     { label: "Novo Usuário", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" }
   ];
 
+  readonly tableActions: Array<PoTableAction> = [
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "po-icon-edit" }
+  ];
+
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "5%" },
     { property: "name", label: "Nome" },
@@ -45,9 +50,6 @@ export class UserListComponent implements OnInit {
     { property: "active", label: "Ativo", type: "label", labels: [
       { value: "Y", color: "color-10", label: "Sim" },
       { value: "N", color: "color-07", label: "Não" }
-    ]},
-    { property: "actions", label: "Ações", type: "action", actions: [
-      { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "po-icon-edit" }
     ]}
   ];
 
