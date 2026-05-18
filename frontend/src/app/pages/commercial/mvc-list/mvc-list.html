@@ -1,13 +1,17 @@
 <po-page-list 
-  p-title="MVC - M�dia de Venda do Cliente"
-  p-subtitle="An�lise de consumo dos �ltimos 12 meses">
+  p-title="Média de Vendas (MCV)"
+  p-subtitle="Análise de consumo dos últimos 12 meses"
+  [p-breadcrumb]="breadcrumb"
+  [p-filter]="filter">
 
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
     [p-items]="items"
+    p-container="shadow"
     [p-striped]="true"
-    p-container="true">
+    [p-sort]="true">
   </po-table>
 
 </po-page-list>
+

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { PoModule, PoTableColumn } from "@po-ui/ng-components";
+import { PoModule, PoTableColumn, PoPageAction, PoPageFilter } from "@po-ui/ng-components";
 import { AnalyticsService } from "../../../services/analytics";
 
 @Component({
@@ -14,9 +14,22 @@ export class MvcListComponent implements OnInit {
   items: Array<any> = [];
   isLoading: boolean = true;
 
+  readonly breadcrumb: any = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Vendas", link: "/mvc" },
+      { label: "MÃ©dia de Vendas" }
+    ]
+  };
+
+  readonly filter: PoPageFilter = {
+    action: this.loadData.bind(this),
+    placeholder: "Pesquisar por cliente"
+  };
+
   readonly columns: Array<PoTableColumn> = [
-    { property: "cliente_nome", label: "Cliente", width: "200px" },
-    { property: "dias", label: "Dias s/ Compra", type: "number", width: "100px" },
+    { property: "cliente_nome", label: "Cliente", width: "250px" },
+    { property: "dias", label: "Dias s/ Compra", type: "number", width: "130px" },
     { property: "janeiro", label: "Jan", type: "currency", format: "BRL", width: "100px" },
     { property: "fevereiro", label: "Fev", type: "currency", format: "BRL", width: "100px" },
     { property: "marco", label: "Mar", type: "currency", format: "BRL", width: "100px" },
@@ -29,8 +42,8 @@ export class MvcListComponent implements OnInit {
     { property: "outubro", label: "Out", type: "currency", format: "BRL", width: "100px" },
     { property: "novembro", label: "Nov", type: "currency", format: "BRL", width: "100px" },
     { property: "dezembro", label: "Dez", type: "currency", format: "BRL", width: "100px" },
-    { property: "average3Months", label: "Média (3m)", type: "currency", format: "BRL", width: "120px" },
-    { property: "difference", label: "Diferença", type: "currency", format: "BRL", width: "120px" }
+    { property: "average3Months", label: "MÃ©dia (3m)", type: "currency", format: "BRL", width: "120px" },
+    { property: "difference", label: "DiferenÃ§a", type: "currency", format: "BRL", width: "120px" }
   ];
 
   constructor(private analyticsService: AnalyticsService) { }
@@ -39,11 +52,16 @@ export class MvcListComponent implements OnInit {
     this.loadData();
   }
 
-  loadData() {
+  loadData(filter?: string) {
     this.isLoading = true;
     this.analyticsService.getMvcData().subscribe({
       next: (res) => {
         this.items = res;
+        if (filter) {
+          this.items = this.items.filter(item => 
+            item.cliente_nome?.toLowerCase().includes(filter.toLowerCase())
+          );
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -52,3 +70,4 @@ export class MvcListComponent implements OnInit {
     });
   }
 }
+
