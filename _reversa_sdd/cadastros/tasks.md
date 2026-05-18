@@ -17,7 +17,7 @@
   - Critério de pronto: Implementar hierarquia de categorias e cadastro de produtos com suporte a NCM e Peso.
   - Confiança: 🟢
 
-- [ ] T-03, Implementar Motor de Tabelas de Preço
+- [x] T-03, Implementar Motor de Tabelas de Preço
   - Origem no legado: `app/model/TabelaPreco.php` e `tabela_preco_item.php`
   - Critério de pronto: Consultar o preço unitário de um produto a partir de um ID de tabela específico.
   - Confiança: 🟢

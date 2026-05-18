@@ -4,6 +4,7 @@ import { Vendedor } from './entities/vendedor.entity';
 import { Cliente } from './entities/cliente.entity';
 import { CondicaoPagamento } from './entities/condicao-pagamento.entity';
 import { TabelaPreco } from './entities/tabela-preco.entity';
+import { TabelaPrecoItem } from './entities/tabela-preco-item.entity';
 import { MetaVendedorMes } from './entities/meta-vendedor-mes.entity';
 import { MetaVendedorCategoria } from './entities/meta-vendedor-categoria.entity';
 import { ClienteService } from './services/cliente/cliente.service';
@@ -14,7 +15,9 @@ import { MasterDataModule } from '../master-data/master-data.module';
 import { VendedorService } from './services/vendedor/vendedor.service';
 import { VendedorController } from './controllers/vendedor/vendedor.controller';
 import { MetaVendedorService } from './services/meta-vendedor/meta-vendedor.service';
+import { TabelaPrecoService } from './services/tabela-preco/tabela-preco.service';
 import { MetaVendedorController } from './controllers/meta-vendedor/meta-vendedor.controller';
+import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.controller';
 
 @Module({
   imports: [
@@ -23,13 +26,14 @@ import { MetaVendedorController } from './controllers/meta-vendedor/meta-vendedo
       Cliente, 
       CondicaoPagamento, 
       TabelaPreco,
+      TabelaPrecoItem,
       MetaVendedorMes,
       MetaVendedorCategoria
     ]),
     MasterDataModule
   ],
-  exports: [TypeOrmModule, ClienteService, VendedorService],
-  providers: [ClienteService, SyncCommercialService, VendedorService, MetaVendedorService],
-  controllers: [ClienteController, SyncCommercialController, VendedorController, MetaVendedorController],
+  exports: [TypeOrmModule, ClienteService, VendedorService, TabelaPrecoService],
+  providers: [ClienteService, SyncCommercialService, VendedorService, MetaVendedorService, TabelaPrecoService],
+  controllers: [ClienteController, SyncCommercialController, VendedorController, MetaVendedorController, TabelaPrecoController],
 })
 export class CommercialModule {}
