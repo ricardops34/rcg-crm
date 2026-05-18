@@ -1,13 +1,16 @@
 ﻿import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
 import { AnalyticsService } from '../../services/analytics/analytics.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
+import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
 
 @Controller('analytics')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get('dashboard')
+  @ControllerName('DashboardVendedor')
   async getDashboard(
     @Query('year') year: string,
     @Query('month') month: string,
@@ -21,6 +24,7 @@ export class AnalyticsController {
   }
 
   @Get('mvc')
+  @ControllerName('MvcList')
   async getMvc(
     @Query('year') year: string,
     @Query('vendedorId') vendedorId: string,

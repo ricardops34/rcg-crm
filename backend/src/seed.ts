@@ -66,6 +66,16 @@ export async function seed(dataSource: DataSource) {
     programCliente.controller = 'ClienteList';
     const savedProgramCliente = await queryRunner.manager.save(SystemProgram, programCliente);
 
+    const programDashboard = new SystemProgram();
+    programDashboard.name = 'Dashboard';
+    programDashboard.controller = 'DashboardVendedor';
+    const savedProgramDashboard = await queryRunner.manager.save(SystemProgram, programDashboard);
+
+    const programMvc = new SystemProgram();
+    programMvc.name = 'MCV';
+    programMvc.controller = 'MvcList';
+    const savedProgramMvc = await queryRunner.manager.save(SystemProgram, programMvc);
+
     const groupProgram = new SystemGroupProgram();
     groupProgram.systemGroupId = savedGroup.id;
     groupProgram.systemProgramId = savedProgram.id;
@@ -80,6 +90,17 @@ export async function seed(dataSource: DataSource) {
     groupProgramCliente.systemGroupId = savedGroup.id;
     groupProgramCliente.systemProgramId = savedProgramCliente.id;
     await queryRunner.manager.save(SystemGroupProgram, groupProgramCliente);
+
+    const groupProgramDashboard = new SystemGroupProgram();
+    groupProgramDashboard.systemGroupId = savedGroup.id;
+    groupProgramDashboard.systemProgramId = savedProgramDashboard.id;
+    await queryRunner.manager.save(SystemGroupProgram, groupProgramDashboard);
+
+    const groupProgramMvc = new SystemGroupProgram();
+    groupProgramMvc.systemGroupId = savedGroup.id;
+    groupProgramMvc.systemProgramId = savedProgramMvc.id;
+    await queryRunner.manager.save(SystemGroupProgram, groupProgramMvc);
+
     console.log('✅ Estrutura RBAC criada');
 
     // 4. Criar Usuário (Admin) - Senha: admin
