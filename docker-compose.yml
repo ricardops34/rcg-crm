@@ -2,7 +2,7 @@
 
 services:
   rcg-api:
-    image: ricardops34/rcg-backend:latest
+    image: bjsoftware/rcg-backend:latest
     build: ./backend
     networks:
       - network_db
@@ -34,7 +34,7 @@ services:
         - "traefik.docker.network=network_public"
 
   rcg-web:
-    image: ricardops34/rcg-frontend:latest
+    image: bjsoftware/rcg-frontend:latest
     build: ./frontend
     networks:
       - network_public
@@ -54,4 +54,5 @@ networks:
     external: true
   network_public:
     external: true
+
 

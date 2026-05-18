@@ -25,11 +25,12 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ricardops34/rcg-backend:latest
+          tags: bjsoftware/rcg-backend:latest
 
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: ricardops34/rcg-frontend:latest
+          tags: bjsoftware/rcg-frontend:latest
+
