@@ -13,6 +13,12 @@ services:
       - network_db
     ports:
       - "5432:5432"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
 
   redis:
     image: redis:7-alpine
@@ -20,15 +26,15 @@ services:
       - network_db
     ports:
       - "6379:6379"
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   rcg-api:
     image: bjsoftware/rcg-backend:latest
     networks:
       - network_db
       - network_public
-    depends_on:
-      - postgres
-      - redis
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -60,8 +66,6 @@ services:
     image: bjsoftware/rcg-frontend:latest
     networks:
       - network_public
-    depends_on:
-      - rcg-api
     deploy:
       replicas: 1
       labels:
@@ -75,7 +79,9 @@ services:
 
 networks:
   network_db:
+    external: true
   network_public:
+    external: true
 
 volumes:
   postgres_data:
