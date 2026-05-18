@@ -31,4 +31,15 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!localStorage.getItem("token");
   }
+
+  getUser(): any {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  }
+
+  hasPermission(controller: string): boolean {
+    const user = this.getUser();
+    if (!user || !user.programs) return false;
+    return user.programs.some((p: any) => p.controller === controller);
+  }
 }

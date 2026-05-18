@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { SystemUser } from '../admin/entities/system-user.entity';
+import { PermissionsService } from '../admin/permissions.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     @InjectRepository(SystemUser)
     private userRepository: Repository<SystemUser>,
     private jwtService: JwtService,
+    private permissionsService: PermissionsService,
   ) {}
 
   async validateUser(login: string, pass: string): Promise<any> {
@@ -49,14 +51,31 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { username: user.login, sub: user.id };
+    const programs = await this.permissionsService.getUserPrograms(user.id);
+    
     return {
       access_token: this.jwtService.sign(payload),
-      user: {
-        id: user.id,
-        name: user.name,
-        login: user.login,
-        email: user.email
-      }
+      user: await this.getProfile(user.id)
+    };
+  }
+
+  async getProfile(userId: number) {
+    const user = await this.userRepository.findOne({ 
+      where: { id: userId },
+      relations: ['systemUnit']
+    });
+    
+    if (!user) throw new UnauthorizedException('Usuário não encontrado');
+
+    const programs = await this.permissionsService.getUserPrograms(userId);
+    
+    return {
+      id: user.id,
+      name: user.name,
+      login: user.login,
+      email: user.email,
+      unit: user.systemUnit,
+      programs: programs
     };
   }
 }
