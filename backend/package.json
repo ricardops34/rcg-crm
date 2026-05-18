@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "npx ts-node -r tsconfig-paths/register -e \"import { NestFactory } from '@nestjs/core'; import { AppModule } from './src/app.module'; import { seed } from './seed'; async function run() { const app = await NestFactory.createApplicationContext(AppModule); const ds = app.get('DataSource'); await seed(ds); await app.close(); } run();\""
+    "seed": "npx ts-node -r tsconfig-paths/register run-seed.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.2",
