@@ -41,14 +41,24 @@ import { AuthModule } from './modules/auth/auth.module';
       isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: configService.get<string>('REDIS_HOST', 'localhost'),
-            port: configService.get<number>('REDIS_PORT', 6379),
-          },
-        }),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const redisHost = configService.get<string>('REDIS_HOST');
+        if (redisHost && redisHost !== 'localhost') { // Evitar localhost se não estiver rodando
+          try {
+            return {
+              store: await redisStore({
+                socket: {
+                  host: redisHost,
+                  port: configService.get<number>('REDIS_PORT', 6379),
+                },
+              }),
+            };
+          } catch (e) {
+            console.warn('⚠️ Falha ao conectar no Redis, usando memory store:', e.message);
+          }
+        }
+        return { store: 'memory' };
+      },
     }),
     ClsModule.forRoot({
       global: true,

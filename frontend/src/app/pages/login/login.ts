@@ -25,7 +25,7 @@ export class LoginComponent {
         this.router.navigate(["/"]);
       },
       error: (err) => {
-        this.poNotification.error("Usu·rio ou senha incorretos.");
+        this.poNotification.error("Usu√°rio ou senha incorretos.");
       }
     });
   }

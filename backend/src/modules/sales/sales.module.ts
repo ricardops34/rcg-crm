@@ -5,6 +5,7 @@ import { Pedido } from './entities/pedido.entity';
 import { PedidoItem } from './entities/pedido-item.entity';
 import { SyncSalesService } from './services/sync-sales/sync-sales.service';
 import { SyncSalesController } from './controllers/sync-sales/sync-sales.controller';
+import { MasterDataModule } from '../master-data/master-data.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { SyncSalesController } from './controllers/sync-sales/sync-sales.control
       PedidoEstado,
       Pedido,
       PedidoItem
-    ])
+    ]),
+    MasterDataModule
   ],
   exports: [TypeOrmModule],
   providers: [SyncSalesService],
