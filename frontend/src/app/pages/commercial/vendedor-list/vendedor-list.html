@@ -1,5 +1,5 @@
 <po-page-list p-title="Vendedores">
-  <po-actions [p-actions]="[{ label: 'Novo Vendedor', action: create.bind(this), icon: 'po-icon-plus' }]"></po-actions>
+  <po-button p-label="Novo Vendedor" (p-click)="create()"></po-button>
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"

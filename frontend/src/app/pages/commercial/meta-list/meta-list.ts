@@ -16,11 +16,11 @@ export class MetaListComponent implements OnInit {
   isLoading: boolean = true;
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "vendedor", label: "Vendedor", format: (v: any) => v?.nome },
-    { property: "mes", label: "Mês", width: "100px" },
+    { property: "vendedor", label: "Vendedor",  },
+    { property: "mes", label: "Mï¿½s", width: "100px" },
     { property: "ano", label: "Ano", width: "100px" },
     { property: "valor", label: "Meta Financeira", type: "currency", format: "BRL" },
-    { property: "numero_cliente", label: "Meta Positivação", type: "number" }
+    { property: "numero_cliente", label: "Meta Positivaï¿½ï¿½o", type: "number" }
   ];
 
   readonly actions: Array<PoTableAction> = [

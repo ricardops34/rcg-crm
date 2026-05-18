@@ -25,4 +25,18 @@ export class ClienteService {
       relations: ['vendedor', 'filial', 'condicaoPagamento', 'tabelaPreco']
     });
   }
+
+  async create(data: Partial<Cliente>): Promise<Cliente> {
+    const cliente = this.clienteRepository.create(data);
+    return this.clienteRepository.save(cliente);
+  }
+
+  async update(id: number, data: Partial<Cliente>): Promise<Cliente | null> {
+    await this.clienteRepository.update(id, data);
+    return this.findOne(id);
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.clienteRepository.delete(id);
+  }
 }

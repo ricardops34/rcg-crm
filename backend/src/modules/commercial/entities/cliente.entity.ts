@@ -1,9 +1,11 @@
 ﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Audited } from '../../admin/decorators/audited.decorator';
 import { Filial } from '../../master-data/entities/filial.entity';
 import { Vendedor } from './vendedor.entity';
 import { CondicaoPagamento } from './condicao-pagamento.entity';
 import { TabelaPreco } from './tabela-preco.entity';
 
+@Audited()
 @Entity('cliente')
 export class Cliente {
   @PrimaryGeneratedColumn()

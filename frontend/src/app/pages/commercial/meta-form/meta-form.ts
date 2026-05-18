@@ -58,13 +58,13 @@ export class MetaFormComponent implements OnInit {
 
   applySuggestion() {
     if (!this.meta.vendedorId || !this.meta.mes || !this.meta.ano) {
-      this.poNotification.warning("Selecione vendedor, mês e ano para obter a sugestão.");
+      this.poNotification.warning("Selecione vendedor, mï¿½s e ano para obter a sugestï¿½o.");
       return;
     }
 
     this.metaService.getSuggestion(this.meta.vendedorId, this.meta.mes, this.meta.ano).subscribe(res => {
       this.meta.valor = res.suggestion;
-      this.poNotification.info("Sugestão de +10% sobre o ano anterior aplicada.");
+      this.poNotification.information("Sugestï¿½o de +10% sobre o ano anterior aplicada.");
     });
   }
 

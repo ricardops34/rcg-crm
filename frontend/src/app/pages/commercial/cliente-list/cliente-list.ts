@@ -16,14 +16,14 @@ export class ClienteListComponent implements OnInit {
   isLoading: boolean = true;
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "codErp", label: "Cód. ERP", width: "10%" },
-    { property: "razao", label: "Razão Social" },
+    { property: "codErp", label: "Cï¿½d. ERP", width: "10%" },
+    { property: "razao", label: "Razï¿½o Social" },
     { property: "cnpjCpf", label: "CNPJ/CPF", width: "15%" },
     { property: "status", label: "Status", type: "label", width: "10%", labels: [
       { value: "A", color: "color-10", label: "Ativo" },
       { value: "B", color: "color-07", label: "Bloqueado" }
     ]},
-    { property: "vendedor", label: "Vendedor", format: (v: any) => v?.nome },
+    { property: "vendedor", label: "Vendedor",  },
     { property: "uf", label: "UF", width: "5%" }
   ];
 

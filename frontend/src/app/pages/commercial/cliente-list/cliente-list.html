@@ -1,7 +1,7 @@
 <po-page-list 
   p-title="Carteira de Clientes">
 
-  <po-actions [p-actions]="[{ label: 'Novo Cliente', action: create.bind(this), icon: 'po-icon-plus' }]"></po-actions>
+  <po-button p-label="Novo Cliente" (p-click)="create()"></po-button>
 
   <po-table
     [p-loading]="isLoading"

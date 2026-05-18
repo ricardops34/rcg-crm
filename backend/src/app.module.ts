@@ -2,6 +2,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ClsModule } from 'nestjs-cls';
 import { redisStore } from 'cache-manager-redis-yet';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -48,6 +49,10 @@ import { AuthModule } from './modules/auth/auth.module';
           },
         }),
       }),
+    }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: true },
     }),
     MasterDataModule,
     CommercialModule,

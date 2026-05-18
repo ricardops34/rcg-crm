@@ -9,7 +9,7 @@ import { AuthService } from "./services/auth";
   standalone: true,
   imports: [CommonModule, RouterOutlet, PoModule],
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  // styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
 
@@ -18,9 +18,9 @@ export class AppComponent {
   readonly menus: Array<PoMenuItem> = [
     { label: "Dashboard", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-chart-area", shortLabel: "Dash" },
     { label: "Vendas", icon: "po-icon-finance", subItems: [
-      { label: "MVC (Média de Venda)", action: () => this.router.navigate(["/mvc"]) },
+      { label: "MVC (Mï¿½dia de Venda)", action: () => this.router.navigate(["/mvc"]) },
       { label: "Objetivos e Metas", action: () => this.router.navigate(["/metas"]) },
-      { label: "Orçamentos", action: () => {} }
+      { label: "Orï¿½amentos", action: () => {} }
     ]},
     { label: "Cadastros", icon: "po-icon-users", subItems: [
       { label: "Clientes", action: () => this.router.navigate(["/clientes"]) },

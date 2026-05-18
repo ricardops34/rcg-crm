@@ -7,7 +7,7 @@
 
 ## Tarefas
 
-- [ ] T-01, Implementar Entidade Mestre de Cliente com Auditoria
+- [x] T-01, Implementar Entidade Mestre de Cliente com Auditoria
   - Origem no legado: `app/model/Cliente.php` e `app/model/log/SystemChangeLogTrait.php`
   - Critério de pronto: O model deve salvar os dados e registrar o log de alterações automaticamente.
   - Confiança: 🟢

@@ -1,5 +1,5 @@
 <po-page-list p-title="Objetivos e Metas">
-  <po-actions [p-actions]="[{ label: 'Novo Objetivo', action: create.bind(this), icon: 'po-icon-plus' }]"></po-actions>
+  <po-button p-label="Novo Objetivo" (p-click)="create()"></po-button>
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
