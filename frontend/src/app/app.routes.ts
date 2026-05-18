@@ -8,6 +8,8 @@ import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor
 import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor-form';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
+import { UserListComponent } from './pages/admin/user-list/user-list';
+import { UserFormComponent } from './pages/admin/user-form/user-form';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -27,6 +29,9 @@ export const routes: Routes = [
       { path: 'metas/new', component: MetaFormComponent },
       { path: 'metas/edit/:id', component: MetaFormComponent },
       { path: 'mvc', component: MvcListComponent },
+      { path: 'admin/users', component: UserListComponent },
+      { path: 'admin/users/new', component: UserFormComponent },
+      { path: 'admin/users/edit/:id', component: UserFormComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ] 
   },
