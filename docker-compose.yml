@@ -79,7 +79,7 @@ services:
 
 networks:
   network_db:
-    external: true
+    driver: overlay
   network_public:
     external: true
 
