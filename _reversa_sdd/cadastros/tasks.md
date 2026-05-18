@@ -12,7 +12,7 @@
   - Critério de pronto: O model deve salvar os dados e registrar o log de alterações automaticamente.
   - Confiança: 🟢
 
-- [ ] T-02, Criar Catálogo de Produtos e Categorias
+- [x] T-02, Criar Catálogo de Produtos e Categorias
   - Origem no legado: `app/model/Produto.php`, `categoria.php` e `sub_categoria.php`
   - Critério de pronto: Implementar hierarquia de categorias e cadastro de produtos com suporte a NCM e Peso.
   - Confiança: 🟢
