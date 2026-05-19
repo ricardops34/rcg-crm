@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Vendedor } from './entities/vendedor.entity';
 import { Supervisor } from './entities/supervisor.entity';
@@ -12,6 +12,7 @@ import { ClienteContato } from './entities/cliente-contato.entity';
 import { MetaVendedorMes } from './entities/meta-vendedor-mes.entity';
 import { MetaVendedorCategoria } from './entities/meta-vendedor-categoria.entity';
 import { ClienteService } from './services/cliente/cliente.service';
+import { ClienteDetailsService } from './services/cliente/cliente-details.service';
 import { ClienteController } from './controllers/cliente/cliente.controller';
 import { SyncCommercialService } from './services/sync-commercial/sync-commercial.service';
 import { SyncCommercialController } from './controllers/sync-commercial/sync-commercial.controller';
@@ -50,6 +51,7 @@ import { AdminModule } from '../admin/admin.module';
   ],
   providers: [
     ClienteService,
+    ClienteDetailsService,
     SyncCommercialService,
     VendedorService,
     MetaVendedorService,

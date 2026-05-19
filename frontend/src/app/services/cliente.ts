@@ -32,4 +32,24 @@ export class ClienteService {
   update(id: number, data: any): Observable<any> {
     return this.http.patch<any>(`${this.API_URL}/${id}`, data, { headers: this.getHeaders() });
   }
+
+  getComodato(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/comodato`, { headers: this.getHeaders() });
+  }
+
+  getMix(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/mix`, { headers: this.getHeaders() });
+  }
+
+  getFinanceiro(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/financeiro`, { headers: this.getHeaders() });
+  }
+
+  getNotas(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/notas`, { headers: this.getHeaders() });
+  }
+
+  getAtendimentos(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/atendimentos`, { headers: this.getHeaders() });
+  }
 }

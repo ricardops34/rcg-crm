@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { 
   PoModule, 
   PoTableColumn, 
@@ -30,6 +31,7 @@ export class MvcListComponent implements OnInit {
   private authService = inject(AuthService);
   private vendedorService = inject(VendedorService);
   private locationService = inject(LocationService);
+  private router = inject(Router);
 
   items: Array<any> = [];
   selectedItem: any = {};
@@ -190,7 +192,6 @@ export class MvcListComponent implements OnInit {
   }
 
   showDetails(item: any) {
-    this.selectedItem = item;
-    this.modalDetails.open();
+    this.router.navigate(["/clientes/360", item.cliente_id]);
   }
 }

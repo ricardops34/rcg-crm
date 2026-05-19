@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { ClienteListComponent } from './pages/commercial/cliente-list/cliente-list';
 import { ClienteFormComponent } from './pages/commercial/cliente-form/cliente-form';
+import { Cliente360Component } from './pages/commercial/cliente-360/cliente-360';
 import { DashboardComponent } from './pages/analytics/dashboard/dashboard';
 import { MvcListComponent } from './pages/commercial/mvc-list/mvc-list';
 import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor-list';
@@ -22,6 +23,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent, data: { controller: 'DashboardVendedor' } },
       { path: 'clientes', component: ClienteListComponent, data: { controller: 'ClienteList' } },
+      { path: 'clientes/360/:id', component: Cliente360Component, data: { controller: 'PosisaoClienteFormView' } },
       { path: 'clientes/new', component: ClienteFormComponent, data: { controller: 'ClienteList' } },
       { path: 'clientes/edit/:id', component: ClienteFormComponent, data: { controller: 'ClienteList' } },
       { path: 'vendedores', component: VendedorListComponent, data: { controller: 'VendedorList' } },

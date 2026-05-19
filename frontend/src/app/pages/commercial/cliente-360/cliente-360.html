@@ -1,0 +1,64 @@
+<po-page-default [p-title]="'Posição Cliente: ' + (cliente.razao || '')" [p-actions]="[{ label: 'Fechar', action: close.bind(this), icon: 'po-icon-close' }]">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+
+  <po-tabs>
+    <po-tab p-label="Cadastro" [p-active]="true">
+      <div class="po-row po-mt-2">
+        <po-info class="po-md-2" p-label="Situação" [p-value]="cliente.status === 'A' ? 'Ativo' : 'Bloqueado'"></po-info>
+        <po-info class="po-md-2" p-label="Código" [p-value]="cliente.codErp"></po-info>
+        <po-info class="po-md-2" p-label="Tipo Pessoa" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
+        <po-info class="po-md-6" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-6" p-label="Nome de Fantasia" [p-value]="cliente.fantasia"></po-info>
+        <po-info class="po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-3" p-label="Condição de Pagamento" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
+        <po-info class="po-md-3" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
+        <po-info class="po-md-6" p-label="E-mail" [p-value]="cliente.email"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-6" p-label="Endereço" [p-value]="cliente.endereco"></po-info>
+        <po-info class="po-md-6" p-label="Complemento" [p-value]="cliente.complemento"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-3" p-label="Bairro" [p-value]="cliente.bairro"></po-info>
+        <po-info class="po-md-3" p-label="Município" [p-value]="cliente.municipio?.descricao"></po-info>
+        <po-info class="po-md-3" p-label="UF" [p-value]="cliente.uf"></po-info>
+        <po-info class="po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
+        <po-info class="po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
+        <po-info class="po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
+      </div>
+    </po-tab>
+
+    <po-tab p-label="Comodato">
+      <po-table [p-columns]="comodatoColumns" [p-items]="comodatoItems"></po-table>
+    </po-tab>
+
+    <po-tab p-label="MIX">
+      <po-table [p-columns]="mixColumns" [p-items]="mixItems"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Contas a Receber">
+      <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Nota Fiscal">
+      <po-table [p-columns]="notasColumns" [p-items]="notasItems"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Atendimentos">
+      <po-table [p-columns]="atendimentosColumns" [p-items]="atendimentosItems"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Cobrança">
+      <p class="po-p-2">Histórico de negociações de cobrança (em implementação).</p>
+    </po-tab>
+  </po-tabs>
+
+</po-page-default>
