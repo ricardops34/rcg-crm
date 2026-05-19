@@ -8,7 +8,7 @@
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService, AuthUser } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 interface LoginDto {
@@ -42,7 +42,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
-    return this.authService.login(user as any);
+    return this.authService.login(user as AuthUser);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,7 +63,10 @@ export class AuthController {
     }
 
     const user = await this.authService.getProfile(req.user.userId);
-    return this.authService.login({ ...user, twoFactorVerified: true } as AuthUser);
+    return this.authService.login({
+      ...user,
+      twoFactorVerified: true,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -76,6 +79,9 @@ export class AuthController {
 
     // TODO: Gravar aceite no banco
     const user = await this.authService.getProfile(req.user.userId);
-    return this.authService.login({ ...user, acceptedTermPolicy: 'Y' } as AuthUser);
+    return this.authService.login({
+      ...user,
+      acceptedTermPolicy: 'Y',
+    });
   }
 }

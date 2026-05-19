@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { SystemUser } from '../admin/entities/system-user.entity';
 import { PermissionsService } from '../admin/permissions.service';
 
-interface AuthUser {
+export interface AuthUser {
   id: number;
   login: string;
   twoFactorEnabled?: string;
