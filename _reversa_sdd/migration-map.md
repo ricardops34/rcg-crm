@@ -2,16 +2,40 @@
 
 Este documento lista todos os módulos e rotinas identificados no sistema legado, agrupados por domínio e prioridade de migração.
 
-## 1. Módulo: Segurança e Admin (Core)
-*Base fundamental para qualquer acesso ao sistema.*
+## 1. Módulo: Segurança, Acesso e Permissões (Core)
+*Base fundamental que garante a integridade e o controle de acesso do sistema.*
 
-| Rotina | Descrição | Origem Legada (PHP) | Status Reversa |
-|--------|-----------|---------------------|----------------|
-| **Autenticação** | Login com Rehash MD5 -> Bcrypt | `LoginForm` | 🟢 Resolvido |
-| **2FA** | Segundo fator via E-mail/Google | `System2FAForm` | 🟢 Resolvido |
-| **RBAC** | Gestão de Programas e Grupos | `SystemUsers` | 🟢 Resolvido |
-| **Log de Alterações**| Auditoria de campos (Audit Trail) | `SystemChangeLogTrait` | 🟢 Resolvido |
-| **Multi-Unidade** | Filtro de dados por Unidade/Filial | `system_unit_id` | 🟢 Resolvido |
+### 1.1. Autenticação e Sessão
+| Rotina | Descrição | Origem Legada | Status |
+|--------|-----------|---------------|--------|
+| **Multi-Hash Auth** | Suporte a MD5 (legado) com auto-migração para Bcrypt | `SystemUsers::authenticate` | 🟢 Resolvido |
+| **2FA (Email/TOTP)** | Segundo fator de autenticação configurável por perfil | `System2FAForm` | 🟢 Resolvido |
+| **Gestão de Sessão** | Controle de Single Session e expiração por inatividade | `TSession` / `application.ini`| 🟢 Resolvido |
+| **Recuperação de Senha**| Fluxo de reset via token por e-mail | `SystemUsers::resetPassword` | 🟡 Parcial |
+| **reCAPTCHA** | Proteção contra brute-force no login (v2/v3) | `LoginForm` | 🟢 Resolvido |
+
+### 1.2. Autorização e RBAC (Controle de Acesso)
+| Rotina | Descrição | Origem Legada | Status |
+|--------|-----------|---------------|--------|
+| **Gestão de Perfis** | Agrupamento de permissões por Grupos (Admin/Vendedor/etc) | `SystemGroup` | 🟢 Resolvido |
+| **Permissões de Tela** | Controle de acesso granular por Controller/Programa | `SystemProgram` | 🟢 Resolvido |
+| **Multi-Unidade** | Seleção de unidade (Filial) no login para isolamento de dados | `LoginForm::onLogin` | 🟢 Resolvido |
+| **Aceite de Termos** | Bloqueio de acesso até aceite dos Termos de Uso/LGPD | `accepted_term_policy` | 🟢 Resolvido |
+
+### 1.3. Restrição de Escopo de Dados (Filtros de Segurança)
+| Rotina | Descrição | Origem Legada | Status |
+|--------|-----------|---------------|--------|
+| **Escopo Vendedor** | Filtro automático: vê apenas seus clientes e títulos | `vendedor_id` check | 🟢 Resolvido |
+| **Escopo Supervisor** | Filtro automático: vê apenas dados de sua equipe direta | `supervisor_vendedor` | 🟢 Resolvido |
+| **Filtro de Unidade** | Isolamento de registros por Filial logada | `system_unit_id` check | 🟢 Resolvido |
+
+### 1.4. Auditoria e Conformidade
+| Rotina | Descrição | Origem Legada | Status |
+|--------|-----------|---------------|--------|
+| **Audit Trail (CRUD)** | Log de "quem alterou o que" em cada campo (mestre/detalhe) | `SystemChangeLogTrait` | 🟢 Resolvido |
+| **Log de Acessos** | Registro de logins, logouts e tentativas falhas | `system_access_log` | 🟢 Resolvido |
+| **Log de SQL** | Rastreabilidade de queries executadas por usuário | `system_sql_log` | 🟢 Resolvido |
+
 
 ## 2. Módulo: Cadastros Base
 *Entidades mestres necessárias para vendas e financeiro.*
