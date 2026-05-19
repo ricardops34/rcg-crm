@@ -1,60 +1,64 @@
 # Target Business Rules — Reversa
 
-Este documento consolida as regras de negócio confirmadas para migração do legado RCG para a stack Reversa (NestJS/Angular), mantendo o paradigma Conservador (Active Record).
+Este documento consolida as regras de negócio confirmadas para migração do legado RCG para a stack Reversa (NestJS/Angular), operando sob o paradigma **Híbrido (Equilibrado)**.
 
-## 1. Módulo Admin (Segurança e Governança)
+## 1. Módulo Admin (Segurança e Governança) — [ESTRATÉGIA: MODERNIZAR]
 
-| ID | Regra de Negócio | Status | Justificativa / Evidência |
-|----|------------------|--------|---------------------------|
-| ADM-01 | Autenticação de Usuários Ativos | MIGRAR | Somente usuários com `status = 'A'` podem logar. (`requirements.md`) |
-| ADM-02 | Rehash de Senha (MD5 -> Bcrypt) | MIGRAR | Conversão transparente no login conforme ADR 001. (`requirements.md`, `Q-01`) |
-| ADM-03 | Seleção de Unidade (Multi-unit) | MIGRAR | Bloqueio de acesso até escolha de unidade válida após login. (`requirements.md`) |
-| ADM-04 | RBAC (Controle por Perfil) | MIGRAR | Filtro de menus e dados baseado no papel (Vendedor/Supervisor/Admin). (`domain.md`) |
-| ADM-05 | Segundo Fator (2FA TOTP) | MIGRAR | Exigência de token para usuários configurados. (`requirements.md`) |
-| ADM-06 | Aceite de Termos de Uso | MIGRAR | Registro de IP e data/hora do aceite antes do primeiro acesso. (`requirements.md`) |
+| ID | Regra de Negócio | Status | Nota de Modernização |
+|----|------------------|--------|----------------------|
+| ADM-01 | Autenticação de Usuários Ativos | MIGRAR | Implementar via Guards do NestJS e JWT Stateless. |
+| ADM-02 | Rehash de Senha (MD5 -> Bcrypt) | MIGRAR | Conversão transparente no primeiro login; suporte a algoritmos modernos (Argon2 opcional). |
+| ADM-03 | Seleção de Unidade (Multi-unit) | MIGRAR | Persistir unidade ativa no Payload do JWT para evitar consultas repetitivas. |
+| ADM-04 | RBAC (Controle por Perfil) | MIGRAR | Implementar permissões granulares via Decorators e interceptores (Modernização). |
+| ADM-05 | Segundo Fator (2FA TOTP) | MIGRAR | Integrar como Middleware nativo no fluxo de login. |
+| ADM-06 | Aceite de Termos de Uso | MIGRAR | Armazenar log de aceite em banco documental ou tabela de auditoria desacoplada. |
+| ADM-07 | Trava de Sessão Única | MIGRAR | Controlar sessões ativas via Redis para suporte a escalabilidade horizontal. |
 
-## 2. Módulo Cadastros (Master Data)
-
-| ID | Regra de Negócio | Status | Justificativa / Evidência |
-|----|------------------|--------|---------------------------|
-| CAD-01 | Validação de CPF/CNPJ | MIGRAR | Verificação de máscara e integridade; consulta RFB para CNPJ. (`requirements.md`) |
-| CAD-02 | Auditoria (Change Log) | MIGRAR | Registro obrigatório de deltas para Clientes e Produtos (ADR 002). (`requirements.md`) |
-| CAD-03 | Bloqueio de Cliente ('B') | MIGRAR | Clientes bloqueados não podem gerar novos orçamentos/pedidos. (`requirements.md`, `domain.md`) |
-| CAD-04 | Vínculo Obrigatório | MIGRAR | Cliente deve ter Vendedor e Condição de Pagamento padrão. (`requirements.md`) |
-| CAD-05 | Tabelas de Preço Ativas | MIGRAR | Apenas tabelas com status 'Ativo' podem ser usadas em novas vendas. (`requirements.md`) |
-
-## 3. Módulo Cobrança (Financeiro)
+## 2. Módulo Cadastros (Master Data) — [ESTRATÉGIA: CONSERVADOR]
 
 | ID | Regra de Negócio | Status | Justificativa / Evidência |
 |----|------------------|--------|---------------------------|
-| COB-01 | Inadimplência Forçada | MIGRAR | Obrigatório selecionar TODOS os títulos vencidos em negociações. (`domain.md`, `requirements.md`) |
-| COB-02 | Destaque Visual de Atraso | MIGRAR | Fundo amarelo (#FFF9A7) e valores em vermelho para títulos vencidos. (`domain.md`) |
-| COB-03 | Situação de Carteira (0-6) | MIGRAR | Determina o fluxo de cobrança (Simples, Advogado, Judicial). (`domain.md`) |
-| COB-04 | Cálculo de Dias de Atraso | MIGRAR | Contagem em dias corridos desde `venc_real` até a data atual. (`requirements.md`) |
-| COB-05 | Agregação via Views SQL | MIGRAR | Saldos e status devem ser lidos da `view_cliente_saldo_titulo`. (`G-01`, `requirements.md`) |
+| CAD-01 | Validação de CPF/CNPJ | MIGRAR | Verificação de máscara e integridade; consulta RFB para CNPJ. |
+| CAD-02 | Auditoria (Change Log) | MIGRAR | Registro de deltas via Interceptor genérico (TypeORM Subscriber). |
+| CAD-03 | Bloqueio de Cliente ('B') | MIGRAR | Restrição mantida no nível de serviço de pedidos. |
+| CAD-04 | Vínculo Obrigatório | MIGRAR | Cliente deve ter Vendedor e Condição de Pagamento padrão. |
+| CAD-05 | Tabelas de Preço Ativas | MIGRAR | Filtro de tabelas por status 'Ativo' no momento da venda. |
 
-## 4. Módulo Vendedor (CRM e BI)
+## 3. Módulo Cobrança (Financeiro) — [ESTRATÉGIA: MODERNIZAR]
+
+| ID | Regra de Negócio | Status | Nota de Modernização |
+|----|------------------|--------|----------------------|
+| COB-01 | Inadimplência Forçada | MIGRAR | Lógica de seleção obrigatória movida para o Backend (Service Layer). |
+| COB-02 | Destaque Visual de Atraso | MIGRAR | Configuração de cores via Design Tokens no frontend Angular. |
+| COB-03 | Situação de Carteira (0-6) | MIGRAR | Transformar em um Domain Type com fluxos de transição claros. |
+| COB-04 | Cálculo de Dias de Atraso | MIGRAR | Cálculo dinâmico em tempo real, eliminando dependência de campos calculados no banco. |
+| COB-05 | Agregação de Saldos | MIGRAR | Migrar lógica das Views SQL para Read Models ou Caching via Redis (BI leve). |
+| COB-06 | Simulação de Juros/Multa | MIGRAR | Implementar calculadora dinâmica no Frontend com validação de regras no Backend. |
+
+## 4. Módulo Vendedor (CRM e BI) — [ESTRATÉGIA: MODERNIZAR]
+
+| ID | Regra de Negócio | Status | Nota de Modernização |
+|----|------------------|--------|----------------------|
+| VEN-01 | Isolamento de Carteira | MIGRAR | Multi-tenancy lógico aplicado em nível de Repository. |
+| VEN-02 | Cálculo de MVC | MIGRAR | Desacoplar regra de cálculo (Service) e permitir processamento assíncrono. |
+| VEN-03 | Dashboard de Performance | MIGRAR | Utilizar WebSockets ou Long Polling para atualizações de metas em tempo real. |
+| VEN-04 | Posição 360 do Cliente | MIGRAR | Interface unificada agregando micro-serviços ou módulos internos. |
+| VEN-05 | Níveis de Supervisão | MIGRAR | Suportar estrutura hierárquica recursiva (N níveis) vs os 2 níveis do legado. |
+
+## 5. Módulo Gerência (Estratégia) — [ESTRATÉGIA: MODERNIZAR]
+
+| ID | Regra de Negócio | Status | Nota de Modernização |
+|----|------------------|--------|----------------------|
+| GER-01 | Cascateamento de Metas | MIGRAR | Lógica de distribuição automática baseada em histórico ou peso de categoria. |
+| GER-02 | Integridade de Metas | MIGRAR | Implementar Sagas ou Transações ACID para garantir consistência no desdobramento. |
+| GER-03 | Atingimento Gerencial | MIGRAR | Agregação em memória ou via visões materializadas para alta performance. |
+| GER-04 | Indicador de Clientes Órfãos| MIGRAR | Alerta proativo via Job agendado ou Trigger de evento. |
+
+## 6. Regras Transversais — [ESTRATÉGIA: MISTA / LEGACY BRIDGE]
 
 | ID | Regra de Negócio | Status | Justificativa / Evidência |
 |----|------------------|--------|---------------------------|
-| VEN-01 | Isolamento de Carteira | MIGRAR | Vendedores acessam apenas dados vinculados ao seu `vendedor_id`. (`requirements.md`) |
-| VEN-02 | Cálculo de MVC | MIGRAR | Performance do cliente vs média ponderada dos últimos 3 meses. (`domain.md`, `requirements.md`) |
-| VEN-03 | Dashboard de Performance | MIGRAR | Exibição de Vendas Líquidas (Vendas - Devoluções) vs Meta. (`requirements.md`) |
-| VEN-04 | Posição 360 do Cliente | MIGRAR | Visão consolidada de dados fiscais, financeiros e histórico de pedidos. (`requirements.md`) |
-
-## 5. Módulo Gerência (Estratégia)
-
-| ID | Regra de Negócio | Status | Justificativa / Evidência |
-|----|------------------|--------|---------------------------|
-| GER-01 | Cascateamento de Metas | MIGRAR | Divisão de meta global em sub-metas por categoria de produto. (`requirements.md`) |
-| GER-02 | Integridade de Metas | MIGRAR | Bloqueio de exclusão de meta principal se houver desdobramentos. (`domain.md`, `requirements.md`) |
-| GER-03 | Atingimento Gerencial | MIGRAR | Cálculo baseado no realizado consolidado de toda a equipe supervisionada. (`requirements.md`) |
-
-## 6. Regras Transversais
-
-| ID | Regra de Negócio | Status | Justificativa / Evidência |
-|----|------------------|--------|---------------------------|
-| TRX-01 | Preenchimento Inteligente | MIGRAR | Carga automática de tabela/pagamento ao selecionar cliente no orçamento. (`domain.md`) |
-| TRX-02 | Cálculo de Itens | MIGRAR | Total = `(Preço * Qtd) - Desconto + Acréscimo`. (`domain.md`) |
-| TRX-03 | Conversão Orçamento -> Pedido | MIGRAR | Persistência física dupla para manter compatibilidade com ERP legado. (`G-02`, `Q-03`) |
-| TRX-04 | Visualizador DANFE | MIGRAR | Sistema atua como visualizador de XMLs autorizados via TSS (Totvs). (`Q-07`) |
+| TRX-01 | Preenchimento Inteligente | MIGRAR | Carga reativa (RxJS) no frontend ao selecionar o cliente. |
+| TRX-02 | Cálculo de Itens | MIGRAR | Centralizar lógica de cálculo em biblioteca compartilhada (TS) entre Front/Back. |
+| TRX-03 | Conversão Orçamento -> Pedido | MIGRAR | Manter persistência dupla (Legacy Bridge) mas isolada em camada de infra. |
+| TRX-04 | Visualizador DANFE | MIGRAR | Streaming de PDF gerado on-the-fly ou integração via API Totvs. |

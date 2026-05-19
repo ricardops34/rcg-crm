@@ -7,3 +7,4 @@ Este documento registra as funcionalidades e regras de negócio do legado RCG qu
 | Geolocalização de Atendimentos | CRM / Vendedor | Funcionalidade ausente no legado e mantida fora do escopo inicial de rebuild. | `G-03` |
 | Gestão de Sessão via Filesystem | Infra / Admin | Incompatível com a stack escalável proposta (NestJS + Redis). | `Q-02`, `ADR 004` |
 | Hashing de Senha MD5 (Nativo) | Admin | Descartado em favor do Bcrypt. Mantido apenas como gatilho para migração no primeiro acesso. | `ADR 001`, `Q-01` |
+| Agregação via SQL Views Pivot | BI / Gerência | Descartado o uso de Views complexas para Pivot (ex: `pivot_vendas`) em favor de processamento em memória ou ferramentas de BI. | `COB-05`, `GER-03` |
