@@ -36,7 +36,7 @@ export class AuthService {
     );
   }
 
-  private handleAuthResponse(res: any) {
+  handleAuthResponse(res: any) {
     if (res.accessToken) {
       localStorage.setItem("token", res.accessToken);
       if (!res.nextStep) {
