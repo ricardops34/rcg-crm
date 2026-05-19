@@ -119,4 +119,10 @@ export class UsersService {
       ...new Set(groupPrograms.map((gp: any) => gp.systemProgram.controller)),
     ];
   }
+
+  async remove(id: number) {
+    await this.userGroupRepository.delete({ systemUserId: id });
+    await this.userUnitRepository.delete({ systemUserId: id });
+    return this.userRepository.delete(id);
+  }
 }
