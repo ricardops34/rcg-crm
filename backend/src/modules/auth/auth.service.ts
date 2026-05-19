@@ -1,9 +1,9 @@
-﻿import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
@@ -60,9 +60,8 @@ export class AuthService {
     }
 
     if (isMatch) {
-      const result = { ...user };
-      delete result.password;
-      return result;
+      const { password, ...result } = user;
+      return result as Partial<SystemUser>;
     }
 
     return null;
