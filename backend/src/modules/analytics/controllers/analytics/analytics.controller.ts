@@ -12,13 +12,18 @@ export class AnalyticsController {
   @Get('dashboard')
   @ControllerName('DashboardVendedor')
   async getDashboard(
+    @Req() req: any,
     @Query('year') year: string,
     @Query('month') month: string,
     @Query('vendedorId') vendedorId?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
     const m = parseInt(month) || new Date().getMonth() + 1;
-    const vId = vendedorId ? parseInt(vendedorId) : undefined;
+    let vId = vendedorId ? parseInt(vendedorId) : undefined;
+
+    if (!vId && req.user) {
+      vId = (await this.analyticsService.getVendedorIdByUser(req.user.userId)) || undefined;
+    }
 
     return this.analyticsService.getDashboardStats(y, m, vId);
   }
@@ -26,11 +31,18 @@ export class AnalyticsController {
   @Get('mvc')
   @ControllerName('MvcList')
   async getMvc(
+    @Req() req: any,
     @Query('year') year: string,
     @Query('vendedorId') vendedorId: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
-    const vId = parseInt(vendedorId);
+    let vId: number | undefined = vendedorId ? parseInt(vendedorId) : undefined;
+
+    if (!vId && req.user) {
+      vId = (await this.analyticsService.getVendedorIdByUser(req.user.userId)) || undefined;
+    }
+
+    if (!vId) return []; // Ou erro, mas para MVC melhor retornar vazio se não for vendedor
 
     return this.analyticsService.getMvcData(y, vId);
   }

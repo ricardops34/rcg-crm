@@ -44,7 +44,7 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
     const user = this.userRepository.create(data);
-    const savedUser = await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user) as unknown as SystemUser;
 
     if (groups && groups.length > 0) {
       const userGroups = groups.map(groupId => 

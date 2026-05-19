@@ -1,9 +1,22 @@
 ﻿import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { Vendedor } from '../../../commercial/entities/vendedor.entity';
 
 @Injectable()
 export class AnalyticsService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    @InjectRepository(Vendedor)
+    private vendedorRepository: Repository<Vendedor>,
+  ) {}
+
+  async getVendedorIdByUser(systemUserId: number): Promise<number | null> {
+    const vendedor = await this.vendedorRepository.findOne({
+      where: { systemUsersId: systemUserId }
+    });
+    return vendedor ? vendedor.id : null;
+  }
 
   async getDashboardStats(year: number, month: number, vendedorId?: number) {
     let whereVendedor = '';

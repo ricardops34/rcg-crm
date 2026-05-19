@@ -39,8 +39,8 @@ export class GroupsService {
 
   async create(groupData: any) {
     const { programs, ...data } = groupData;
-    const group = this.groupRepository.create(data);
-    const savedGroup = await this.groupRepository.save(group);
+    const group = this.groupRepository.create(groupData);
+    const savedGroup = await this.groupRepository.save(group) as unknown as SystemGroup;
 
     if (programs && programs.length > 0) {
       const groupPrograms = programs.map(programId => 

@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Filial } from '../../entities/filial.entity';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { Filial } from '../entities/filial.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Controller('master-data/units')
 @UseGuards(JwtAuthGuard)
