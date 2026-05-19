@@ -7,6 +7,7 @@ import { ErpTranslationService } from './services/erp-translation/erp-translatio
 import { SyncMasterDataService } from './services/sync-master-data/sync-master-data.service';
 import { SyncMasterDataController } from './controllers/sync-master-data/sync-master-data.controller';
 import { UnitController } from './controllers/unit.controller';
+import { AdminModule } from '../admin/admin.module';
 
 import { Cliente } from '../commercial/entities/cliente.entity';
 import { Vendedor } from '../commercial/entities/vendedor.entity';
@@ -24,6 +25,7 @@ import { Produto } from '../catalog/entities/produto.entity';
       TabelaPreco,
       Produto,
     ]),
+    AdminModule,
   ],
   exports: [TypeOrmModule, ErpTranslationService],
   providers: [ErpTranslationService, SyncMasterDataService],

@@ -5,11 +5,13 @@ import { NotaSaidaItem } from './entities/nota-saida-item.entity';
 import { SyncBillingService } from './services/sync-billing/sync-billing.service';
 import { SyncBillingController } from './controllers/sync-billing/sync-billing.controller';
 import { MasterDataModule } from '../master-data/master-data.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([NotaSaida, NotaSaidaItem]),
     MasterDataModule,
+    AdminModule,
   ],
   exports: [TypeOrmModule],
   providers: [SyncBillingService],

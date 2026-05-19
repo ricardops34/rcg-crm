@@ -22,6 +22,7 @@ import { MetaVendedorService } from './services/meta-vendedor/meta-vendedor.serv
 import { TabelaPrecoService } from './services/tabela-preco/tabela-preco.service';
 import { MetaVendedorController } from './controllers/meta-vendedor/meta-vendedor.controller';
 import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.controller';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.c
       MetaVendedorCategoria,
     ]),
     MasterDataModule,
+    AdminModule,
   ],
   exports: [
     TypeOrmModule,

@@ -10,6 +10,7 @@ import { ProdutoService } from './services/produto/produto.service';
 import { SyncCatalogController } from './controllers/sync-catalog/sync-catalog.controller';
 import { ProdutoController } from './controllers/produto/produto.controller';
 import { MasterDataModule } from '../master-data/master-data.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MasterDataModule } from '../master-data/master-data.module';
       Fabricante,
     ]),
     MasterDataModule,
+    AdminModule,
   ],
   exports: [TypeOrmModule, ProdutoService],
   providers: [SyncCatalogService, ProdutoService],
