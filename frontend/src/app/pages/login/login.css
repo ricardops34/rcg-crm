@@ -56,7 +56,8 @@
   border: 1.5px solid #DCE6EB !important;
   background-color: #F7FAFC !important;
   transition: all 0.25s ease-in-out !important;
-  padding: 12px 16px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
   height: 48px !important;
 }
 
@@ -70,12 +71,16 @@
 /* Modernização Premium dos Botões */
 .po-page-login-button button {
   border-radius: 10px !important;
-  background-color: #076085 !important;
-  border-color: #076085 !important;
   font-weight: 600 !important;
   height: 48px !important;
   letter-spacing: 0.5px !important;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.po-page-login-button button:not(:disabled) {
+  background-color: #076085 !important;
+  border-color: #076085 !important;
+  color: #ffffff !important;
   box-shadow: 0 4px 14px rgba(7, 96, 133, 0.15) !important;
 }
 
@@ -88,6 +93,15 @@
 
 .po-page-login-button button:active:not(:disabled) {
   transform: translateY(0px) !important;
+}
+
+.po-page-login-button button:disabled {
+  background-color: #E2E8F0 !important;
+  border-color: #E2E8F0 !important;
+  color: #64748B !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
 }
 
 /* Alinhamento refinado da área de informações e Switch de Lembrar Usuário */
