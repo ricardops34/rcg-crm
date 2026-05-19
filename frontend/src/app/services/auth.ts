@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, tap } from "rxjs";
 import { environment } from "../../environments/environment";
 
@@ -78,5 +78,11 @@ export class AuthService {
     const user = this.getUser();
     if (!user || !user.programs) return false;
     return user.programs.some((p: any) => p.controller === controller);
+  }
+
+  updateProfile(data: any): Observable<any> {
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.patch<any>(`${this.API_URL}/me`, data, { headers });
   }
 }

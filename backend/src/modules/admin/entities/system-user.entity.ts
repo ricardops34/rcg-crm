@@ -69,4 +69,7 @@ export class SystemUser {
 
   @Column({ name: 'current_session_id', length: 255, nullable: true })
   currentSessionId: string;
+
+  @Column({ type: 'text', nullable: true })
+  avatar: string;
 }

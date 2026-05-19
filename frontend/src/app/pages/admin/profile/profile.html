@@ -1,0 +1,43 @@
+<po-page-default p-title="Meu Perfil" [p-actions]="actions">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+
+  <div class="po-row">
+    <div class="po-md-2 po-text-center">
+      <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/default-avatar.png'"></po-avatar>
+      <po-upload 
+        class="po-mt-1"
+        name="avatarUpload"
+        p-label="Trocar Foto"
+        [p-hide-send-button]="true"
+        (p-on-change)="onUpload($event)"
+        p-auto-upload="false">
+      </po-upload>
+    </div>
+    
+    <div class="po-md-10">
+      <div class="po-row">
+        <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome de Exibição" p-required></po-input>
+        <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
+      </div>
+      <div class="po-row">
+        <po-info class="po-md-6" p-label="Login (Não alterável)" [p-value]="user.login"></po-info>
+        <po-info class="po-md-6" p-label="Unidade" [p-value]="user.unit?.name"></po-info>
+      </div>
+    </div>
+  </div>
+
+  <po-divider p-label="Alterar Senha"></po-divider>
+
+  <div class="po-row">
+    <po-password class="po-md-4" name="newPassword" [(ngModel)]="passwordData.new" p-label="Nova Senha"></po-password>
+    <po-password class="po-md-4" name="confirmPassword" [(ngModel)]="passwordData.confirm" p-label="Confirmar Nova Senha"></po-password>
+  </div>
+
+  <div class="po-row po-mt-2">
+    <p class="po-font-text-smaller po-md-12 po-text-color-07">
+      * Deixe os campos de senha vazios se não desejar alterá-la.
+    </p>
+  </div>
+
+</po-page-default>

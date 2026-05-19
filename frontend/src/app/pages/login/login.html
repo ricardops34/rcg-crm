@@ -1,7 +1,8 @@
 <po-page-login
   p-title="RCG CRM"
-  p-background="assets/login-bg.svg"
+  p-background="assets/login_crm.png"
   p-logo="assets/logo_rcg.png"
+  [p-loading]="isLoading()"
   (p-login-submit)="loginSubmit($event)">
 </po-page-login>
 

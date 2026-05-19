@@ -1,5 +1,9 @@
 <div class="po-wrapper" *ngIf="authService.isAuthenticated(); else noAuth">
-  <po-toolbar p-title="rcgcrm - RCG CRM"></po-toolbar>
+  <po-toolbar 
+    p-title="RCG CRM"
+    [p-profile]="profile"
+    [p-profile-actions]="profileActions">
+  </po-toolbar>
   <po-menu [p-menus]="menus"></po-menu>
 
   <router-outlet></router-outlet>

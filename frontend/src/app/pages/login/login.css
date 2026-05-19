@@ -1,0 +1,125 @@
+/* login.css */
+
+/* Remove o posicionamento absoluto do logo padrão do PO-UI e o inclui no fluxo normal da página */
+.po-page-background-main-logo {
+  position: relative !important;
+  margin-top: 40px !important;
+  margin-bottom: 0px !important;
+  text-align: center !important;
+  display: block !important;
+  z-index: 10 !important;
+}
+
+.po-page-background-main-logo-image {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 0 auto !important;
+  display: block !important;
+  max-height: 85px !important; /* Ajuste moderno para melhor visualização */
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.po-page-background-main-logo-image:hover {
+  transform: scale(1.04);
+}
+
+/* Reduz o padding superior gigante do container de formulário para aproximá-lo do logo */
+.po-page-login-panel-content {
+  padding-top: 16px !important;
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+}
+
+/* Ajusta o espaçamento do formulário */
+.po-page-login-form {
+  padding-top: 0 !important;
+}
+
+/* Título de Boas-Vindas ultra-moderno */
+.po-page-login-header-welcome {
+  font-family: 'Outfit', 'Inter', 'Roboto', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #076085 !important; /* Deep blue RCG */
+  margin-top: 8px !important;
+  margin-bottom: 20px !important;
+  letter-spacing: -0.5px !important;
+  text-align: center !important;
+}
+
+/* Estilização moderna e suave dos campos de entrada */
+.po-page-login-container po-input input,
+.po-page-login-container po-password input {
+  border-radius: 10px !important;
+  border: 1.5px solid #DCE6EB !important;
+  background-color: #F7FAFC !important;
+  transition: all 0.25s ease-in-out !important;
+  padding: 12px 16px !important;
+  height: 48px !important;
+}
+
+.po-page-login-container po-input input:focus,
+.po-page-login-container po-password input:focus {
+  border-color: #4097CC !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 4px rgba(64, 151, 204, 0.12) !important;
+}
+
+/* Modernização Premium dos Botões */
+.po-page-login-button button {
+  border-radius: 10px !important;
+  background-color: #076085 !important;
+  border-color: #076085 !important;
+  font-weight: 600 !important;
+  height: 48px !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 14px rgba(7, 96, 133, 0.15) !important;
+}
+
+.po-page-login-button button:hover:not(:disabled) {
+  background-color: #4097CC !important;
+  border-color: #4097CC !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(64, 151, 204, 0.25) !important;
+}
+
+.po-page-login-button button:active:not(:disabled) {
+  transform: translateY(0px) !important;
+}
+
+/* Alinhamento refinado da área de informações e Switch de Lembrar Usuário */
+.po-page-login-info-container {
+  margin-top: 14px !important;
+  margin-bottom: 20px !important;
+}
+
+.po-page-login-info-container po-switch {
+  font-weight: 500 !important;
+  color: #4E6571 !important;
+}
+
+/* Links de recuperação de senha e registro estilizados */
+.po-page-login-recovery-link a,
+.po-page-login-register-link a {
+  color: #076085 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  display: inline-block !important;
+}
+
+.po-page-login-recovery-link a:hover,
+.po-page-login-register-link a:hover {
+  color: #4097CC !important;
+}
+
+/* Melhorias no painel de destaque direito */
+.po-page-login-highlight-image {
+  background-size: cover !important;
+  background-position: center center !important;
+  box-shadow: inset 100px 0 120px rgba(0, 0, 0, 0.3) !important;
+}
