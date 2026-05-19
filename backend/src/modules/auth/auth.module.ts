@@ -9,12 +9,14 @@ import { MeController } from './me.controller';
 import { SystemUser } from '../admin/entities/system-user.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { AdminModule } from '../admin/admin.module';
+import { CommercialModule } from '../commercial/commercial.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SystemUser], 'security'),
     PassportModule,
     AdminModule,
+    CommercialModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

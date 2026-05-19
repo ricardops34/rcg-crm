@@ -9,6 +9,9 @@ import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { SystemUser } from '../admin/entities/system-user.entity';
 import { PermissionsService } from '../admin/permissions.service';
+import { Vendedor } from '../commercial/entities/vendedor.entity';
+import { Supervisor } from '../commercial/entities/supervisor.entity';
+import { SupervisorVendedor } from '../commercial/entities/supervisor-vendedor.entity';
 
 export interface AuthUser {
   id: number;
@@ -22,8 +25,14 @@ export interface AuthUser {
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(SystemUser)
+    @InjectRepository(SystemUser, 'security')
     private userRepository: Repository<SystemUser>,
+    @InjectRepository(Vendedor)
+    private vendedorRepository: Repository<Vendedor>,
+    @InjectRepository(Supervisor)
+    private supervisorRepository: Repository<Supervisor>,
+    @InjectRepository(SupervisorVendedor)
+    private supervisorVendedorRepository: Repository<SupervisorVendedor>,
     private jwtService: JwtService,
     private permissionsService: PermissionsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -113,7 +122,31 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException('Usuário não encontrado');
 
+    // 1. Verificar se é Vendedor
+    const vendedor = await this.vendedorRepository.findOne({
+      where: { systemUsersId: userId },
+    });
+
+    // 2. Verificar se é Supervisor
+    const supervisor = await this.supervisorRepository.findOne({
+      where: { systemUsersId: userId },
+    });
+
+    const managedVendedorIds: number[] = [];
+    if (supervisor) {
+      const relationships = await this.supervisorVendedorRepository.find({
+        where: { supervisorId: supervisor.id },
+      });
+      managedVendedorIds.push(...relationships.map((r) => r.vendedorId));
+    }
+
     const programs = await this.permissionsService.getUserPrograms(userId);
+    const groupNames = (await this.userRepository.query(
+      `SELECT name FROM system_group sg 
+       JOIN system_user_group sug ON sug.system_group_id = sg.id 
+       WHERE sug.system_user_id = $1`,
+      [userId],
+    )).map((g: any) => g.name);
 
     return {
       id: user.id,
@@ -121,6 +154,10 @@ export class AuthService {
       login: user.login,
       email: user.email,
       unit: user.systemUnit,
+      vendedorId: vendedor?.id || null,
+      supervisorId: supervisor?.id || null,
+      managedVendedorIds,
+      isGerente: groupNames.includes('Gerência') || groupNames.includes('Administrador'),
       programs: programs,
     };
   }

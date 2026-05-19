@@ -1,6 +1,8 @@
 ﻿import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Vendedor } from './entities/vendedor.entity';
+import { Supervisor } from './entities/supervisor.entity';
+import { SupervisorVendedor } from './entities/supervisor-vendedor.entity';
 import { Cliente } from './entities/cliente.entity';
 import { CondicaoPagamento } from './entities/condicao-pagamento.entity';
 import { TabelaPreco } from './entities/tabela-preco.entity';
@@ -25,6 +27,8 @@ import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.c
   imports: [
     TypeOrmModule.forFeature([
       Vendedor,
+      Supervisor,
+      SupervisorVendedor,
       Cliente,
       CondicaoPagamento,
       TabelaPreco,
@@ -36,7 +40,12 @@ import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.c
     ]),
     MasterDataModule,
   ],
-  exports: [TypeOrmModule, ClienteService, VendedorService, TabelaPrecoService],
+  exports: [
+    TypeOrmModule,
+    ClienteService,
+    VendedorService,
+    TabelaPrecoService,
+  ],
   providers: [
     ClienteService,
     SyncCommercialService,

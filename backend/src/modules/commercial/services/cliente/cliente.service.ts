@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 import { Cliente } from '../../entities/cliente.entity';
 
 @Injectable()
@@ -8,10 +9,28 @@ export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    private readonly cls: ClsService,
   ) {}
 
   async findAll(page = 1, limit = 10): Promise<[Cliente[], number]> {
+    const user = this.cls.get('user');
+    const where: any = {};
+
+    // Hierarquia de Acesso (T-05)
+    if (!user?.isGerente) {
+      if (user?.supervisorId) {
+        // Supervisor vê os seus próprios e os dos seus vendedores
+        const sellerIds = [...(user.managedVendedorIds || [])];
+        if (user.vendedorId) sellerIds.push(user.vendedorId);
+        where.vendedorId = In(sellerIds);
+      } else if (user?.vendedorId) {
+        // Vendedor vê apenas os seus
+        where.vendedorId = user.vendedorId;
+      }
+    }
+
     return this.clienteRepository.findAndCount({
+      where,
       relations: ['vendedor', 'filial'],
       skip: (page - 1) * limit,
       take: limit,
@@ -20,7 +39,8 @@ export class ClienteService {
   }
 
   async findOne(id: number): Promise<Cliente | null> {
-    return this.clienteRepository.findOne({
+    const user = this.cls.get('user');
+    const cliente = await this.clienteRepository.findOne({
       where: { id },
       relations: [
         'vendedor',
@@ -31,6 +51,23 @@ export class ClienteService {
         'contatos.tipoContato',
       ],
     });
+
+    if (!cliente) return null;
+
+    // Validar hierarquia no acesso individual
+    if (!user?.isGerente) {
+      if (user?.supervisorId) {
+        const sellerIds = [...(user.managedVendedorIds || [])];
+        if (user.vendedorId) sellerIds.push(user.vendedorId);
+        if (!sellerIds.includes(cliente.vendedorId)) {
+          throw new ForbiddenException('Acesso negado a este cliente (fora da sua equipe)');
+        }
+      } else if (user?.vendedorId && cliente.vendedorId !== user.vendedorId) {
+        throw new ForbiddenException('Você não tem permissão para acessar este cliente');
+      }
+    }
+
+    return cliente;
   }
 
   async create(data: Partial<Cliente>): Promise<Cliente> {

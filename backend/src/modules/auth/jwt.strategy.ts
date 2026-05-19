@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 
+import { AuthService } from './auth.service';
+
 interface JwtPayload {
   sub: number;
   username: string;
@@ -17,6 +19,7 @@ interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
+    private authService: AuthService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super({
@@ -46,11 +49,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
     }
 
+    const profile = await this.authService.getProfile(payload.sub);
+
     return {
       userId: payload.sub,
       username: payload.username,
       unitId: payload.unitId,
       sid: payload.sid,
+      vendedorId: profile.vendedorId,
+      supervisorId: profile.supervisorId,
+      managedVendedorIds: profile.managedVendedorIds,
+      isGerente: profile.isGerente,
     };
   }
 }
