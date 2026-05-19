@@ -5,18 +5,24 @@ import { DataSource } from 'typeorm';
 export class ErpTranslationService {
   constructor(private dataSource: DataSource) {}
 
-  async findIdByCodErp(tableName: string, codErp: string): Promise<number | null> {
+  async findIdByCodErp(
+    tableName: string,
+    codErp: string,
+  ): Promise<number | null> {
     if (!codErp) return null;
 
     const result = await this.dataSource.query(
       `SELECT id FROM "${tableName}" WHERE cod_erp = $1 LIMIT 1`,
-      [codErp.trim()]
+      [codErp.trim()],
     );
 
     return result.length > 0 ? result[0].id : null;
   }
 
-  async resolveRelationIds(data: any, relations: { [key: string]: string }): Promise<any> {
+  async resolveRelationIds(
+    data: any,
+    relations: { [key: string]: string },
+  ): Promise<any> {
     const resolvedData = { ...data };
 
     for (const [field, targetTable] of Object.entries(relations)) {

@@ -17,14 +17,14 @@ export class ProdutoService {
     return this.produtoRepository.find({
       relations: ['categoria', 'subCategoria', 'filial'],
       where: { status: 'A', ...query },
-      take: 100 // Limite básico
+      take: 100, // Limite básico
     });
   }
 
   async findOne(id: number): Promise<Produto> {
     const produto = await this.produtoRepository.findOne({
       where: { id },
-      relations: ['categoria', 'subCategoria', 'filial']
+      relations: ['categoria', 'subCategoria', 'filial'],
     });
 
     if (!produto) {

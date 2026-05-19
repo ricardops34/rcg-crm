@@ -28,16 +28,22 @@ export class SyncSalesService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       try {
-        const resolvedData = await this.erpTranslation.resolveRelationIds(item, relations);
+        const resolvedData = await this.erpTranslation.resolveRelationIds(
+          item,
+          relations,
+        );
         resolvedData.sinc = 'S';
-        
-        const existing = await queryRunner.manager.findOne(Pedido, { 
-          where: { codErp: resolvedData.cod_erp } 
+
+        const existing = await queryRunner.manager.findOne(Pedido, {
+          where: { codErp: resolvedData.cod_erp },
         });
 
         let saved;
         if (existing) {
-          saved = await queryRunner.manager.save(Pedido, { ...existing, ...resolvedData });
+          saved = await queryRunner.manager.save(Pedido, {
+            ...existing,
+            ...resolvedData,
+          });
         } else {
           saved = await queryRunner.manager.save(Pedido, resolvedData);
         }
@@ -46,8 +52,14 @@ export class SyncSalesService {
         results.push({ status: 'OK', cod_erp: item.cod_erp, id: saved.id });
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        this.logger.error(`Erro ao sincronizar Pedido ${item.cod_erp}: ${err.message}`);
-        results.push({ status: 'error', cod_erp: item.cod_erp, message: err.message });
+        this.logger.error(
+          `Erro ao sincronizar Pedido ${item.cod_erp}: ${err.message}`,
+        );
+        results.push({
+          status: 'error',
+          cod_erp: item.cod_erp,
+          message: err.message,
+        });
       } finally {
         await queryRunner.release();
       }

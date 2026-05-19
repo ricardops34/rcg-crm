@@ -9,9 +9,11 @@ import * as readline from 'readline';
 async function migrate() {
   console.log('🚀 Iniciando Ferramenta de Migração (MySQL -> PostgreSQL)...');
   const app = await NestFactory.createApplicationContext(AppModule);
-  
+
   const crmDataSource = app.get<DataSource>(DataSource);
-  const securityDataSource = app.get<DataSource>(getDataSourceToken('security'));
+  const securityDataSource = app.get<DataSource>(
+    getDataSourceToken('security'),
+  );
 
   try {
     // 1. Migrar Permissões (Security DB)
@@ -41,7 +43,7 @@ async function processSqlFile(filePath: string, dataSource: DataSource) {
   const fileStream = fs.createReadStream(filePath);
   const rl = readline.createInterface({
     input: fileStream,
-    crlfDelay: Infinity
+    crlfDelay: Infinity,
   });
 
   let currentStatement = '';
@@ -50,14 +52,15 @@ async function processSqlFile(filePath: string, dataSource: DataSource) {
 
   for await (const line of rl) {
     // Pular comentários e linhas vazias
-    if (line.startsWith('--') || line.startsWith('/*') || line.trim() === '') continue;
+    if (line.startsWith('--') || line.startsWith('/*') || line.trim() === '')
+      continue;
 
     currentStatement += line + ' ';
 
     if (line.endsWith(';')) {
       try {
         // Adaptações básicas MySQL -> Postgres
-        let finalSql = currentStatement
+        const finalSql = currentStatement
           .replace(/`/g, '"') // Backticks para aspas duplas
           .replace(/\\'/g, "''") // Escapar aspas simples
           .replace(/AUTO_INCREMENT/gi, '') // Remover auto increment (usamos SERIAL no Postgres)

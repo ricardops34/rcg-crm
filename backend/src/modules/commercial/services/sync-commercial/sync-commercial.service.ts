@@ -33,17 +33,23 @@ export class SyncCommercialService {
       await queryRunner.startTransaction();
 
       try {
-        const resolvedData = await this.erpTranslation.resolveRelationIds(item, relations);
+        const resolvedData = await this.erpTranslation.resolveRelationIds(
+          item,
+          relations,
+        );
         resolvedData.sinc = 'S';
 
         // Busca se já existe pelo cod_erp para fazer Upsert manual
-        const existing = await this.clienteRepository.findOne({ 
-          where: { codErp: resolvedData.cod_erp } 
+        const existing = await this.clienteRepository.findOne({
+          where: { codErp: resolvedData.cod_erp },
         });
 
         let saved;
         if (existing) {
-          saved = await queryRunner.manager.save(Cliente, { ...existing, ...resolvedData });
+          saved = await queryRunner.manager.save(Cliente, {
+            ...existing,
+            ...resolvedData,
+          });
         } else {
           saved = await queryRunner.manager.save(Cliente, resolvedData);
         }
@@ -52,8 +58,14 @@ export class SyncCommercialService {
         results.push({ status: 'OK', cod_erp: item.cod_erp, id: saved.id });
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        this.logger.error(`Erro ao sincronizar cliente ${item.cod_erp}: ${err.message}`);
-        results.push({ status: 'error', cod_erp: item.cod_erp, message: err.message });
+        this.logger.error(
+          `Erro ao sincronizar cliente ${item.cod_erp}: ${err.message}`,
+        );
+        results.push({
+          status: 'error',
+          cod_erp: item.cod_erp,
+          message: err.message,
+        });
       } finally {
         await queryRunner.release();
       }

@@ -50,7 +50,9 @@ import { AuthModule } from './modules/auth/auth.module';
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_SECURITY_DATABASE') || configService.get<string>('DB_DATABASE'),
+        database:
+          configService.get<string>('DB_SECURITY_DATABASE') ||
+          configService.get<string>('DB_DATABASE'),
         autoLoadEntities: true,
         synchronize: configService.get<boolean>('DB_SYNC'),
         retryAttempts: 10,
@@ -63,7 +65,8 @@ import { AuthModule } from './modules/auth/auth.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const redisHost = configService.get<string>('REDIS_HOST');
-        if (redisHost && redisHost !== 'localhost') { // Evitar localhost se não estiver rodando
+        if (redisHost && redisHost !== 'localhost') {
+          // Evitar localhost se não estiver rodando
           try {
             return {
               store: await redisStore({
@@ -74,7 +77,10 @@ import { AuthModule } from './modules/auth/auth.module';
               }),
             };
           } catch (e) {
-            console.warn('⚠️ Falha ao conectar no Redis, usando memory store:', e.message);
+            console.warn(
+              '⚠️ Falha ao conectar no Redis, usando memory store:',
+              e.message,
+            );
           }
         }
         return { store: 'memory' };

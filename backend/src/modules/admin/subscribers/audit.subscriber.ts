@@ -1,5 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent, RemoveEvent } from 'typeorm';
+import {
+  DataSource,
+  EntitySubscriberInterface,
+  EventSubscriber,
+  InsertEvent,
+  UpdateEvent,
+  RemoveEvent,
+} from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { SystemChangeLog } from '../entities/system-change-log.entity';
 
@@ -31,7 +38,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     log.operation = 'INSERT';
     log.pkvalue = String((event as any).entityId || event.entity?.id);
     log.newvalue = JSON.stringify(event.entity);
-    
+
     await event.manager.save(log);
   }
 
@@ -56,7 +63,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     log.login = this.getLogin();
     log.tablename = event.metadata.tableName;
     log.operation = 'DELETE';
-    log.pkvalue = String(event.entityId || event.entity?.id || event.databaseEntity?.id);
+    log.pkvalue = String(
+      event.entityId || event.entity?.id || event.databaseEntity?.id,
+    );
     log.oldvalue = JSON.stringify(event.databaseEntity);
 
     await event.manager.save(log);

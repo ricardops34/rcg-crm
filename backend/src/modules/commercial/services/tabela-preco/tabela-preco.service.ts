@@ -20,22 +20,29 @@ export class TabelaPrecoService {
   async findOne(id: number): Promise<TabelaPreco> {
     const table = await this.tabelaPrecoRepository.findOne({ where: { id } });
     if (!table) {
-      throw new NotFoundException(`Tabela de preço com ID ${id} não encontrada`);
+      throw new NotFoundException(
+        `Tabela de preço com ID ${id} não encontrada`,
+      );
     }
     return table;
   }
 
-  async getProductPrice(tabelaPrecoId: number, produtoId: number): Promise<number> {
+  async getProductPrice(
+    tabelaPrecoId: number,
+    produtoId: number,
+  ): Promise<number> {
     const item = await this.tabelaPrecoItemRepository.findOne({
       where: {
         tabelaPrecoId,
         produtoId,
-        status: 'A'
-      }
+        status: 'A',
+      },
     });
 
     if (!item) {
-      throw new NotFoundException('Preço não encontrado para este produto nesta tabela');
+      throw new NotFoundException(
+        'Preço não encontrado para este produto nesta tabela',
+      );
     }
 
     return item.preco;

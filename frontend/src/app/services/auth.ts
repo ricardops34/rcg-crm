@@ -14,13 +14,35 @@ export class AuthService {
 
   login(loginData: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/login`, loginData).pipe(
-      tap(res => {
-        if (res.access_token) {
-          localStorage.setItem("token", res.access_token);
-          localStorage.setItem("user", JSON.stringify(res.user));
-        }
-      })
+      tap(res => this.handleAuthResponse(res))
     );
+  }
+
+  verify2fa(code: string): Observable<any> {
+    const token = localStorage.getItem("token");
+    return this.http.post<any>(`${this.API_URL}/verify-2fa`, { code }, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(res => this.handleAuthResponse(res))
+    );
+  }
+
+  acceptTerms(): Observable<any> {
+    const token = localStorage.getItem("token");
+    return this.http.post<any>(`${this.API_URL}/accept-terms`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(res => this.handleAuthResponse(res))
+    );
+  }
+
+  private handleAuthResponse(res: any) {
+    if (res.accessToken) {
+      localStorage.setItem("token", res.accessToken);
+      if (!res.nextStep) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+      }
+    }
   }
 
   logout(): void {

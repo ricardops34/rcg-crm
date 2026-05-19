@@ -6,12 +6,7 @@ import { SyncFinanceController } from './controllers/sync-finance/sync-finance.c
 import { MasterDataModule } from '../master-data/master-data.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      TituloReceber
-    ]),
-    MasterDataModule
-  ],
+  imports: [TypeOrmModule.forFeature([TituloReceber]), MasterDataModule],
   exports: [TypeOrmModule],
   providers: [SyncFinanceService],
   controllers: [SyncFinanceController],

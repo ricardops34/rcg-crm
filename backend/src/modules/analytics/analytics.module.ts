@@ -7,6 +7,6 @@ import { Vendedor } from '../commercial/entities/vendedor.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Vendedor])],
   providers: [AnalyticsService],
-  controllers: [AnalyticsController]
+  controllers: [AnalyticsController],
 })
 export class AnalyticsModule {}

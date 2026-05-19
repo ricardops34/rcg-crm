@@ -1,4 +1,13 @@
-﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+﻿import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { AtendimentoTipo } from './atendimento-tipo.entity';
 import { Vendedor } from '../../commercial/entities/vendedor.entity';
 import { Cliente } from '../../commercial/entities/cliente.entity';

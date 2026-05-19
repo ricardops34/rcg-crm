@@ -22,7 +22,9 @@ export class AnalyticsController {
     let vId = vendedorId ? parseInt(vendedorId) : undefined;
 
     if (!vId && req.user) {
-      vId = (await this.analyticsService.getVendedorIdByUser(req.user.userId)) || undefined;
+      vId =
+        (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
+        undefined;
     }
 
     return this.analyticsService.getDashboardStats(y, m, vId);
@@ -39,7 +41,9 @@ export class AnalyticsController {
     let vId: number | undefined = vendedorId ? parseInt(vendedorId) : undefined;
 
     if (!vId && req.user) {
-      vId = (await this.analyticsService.getVendedorIdByUser(req.user.userId)) || undefined;
+      vId =
+        (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
+        undefined;
     }
 
     if (!vId) return []; // Ou erro, mas para MVC melhor retornar vazio se não for vendedor

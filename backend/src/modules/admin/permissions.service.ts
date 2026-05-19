@@ -18,13 +18,13 @@ export class PermissionsService {
       where: { systemUserId: userId },
     });
 
-    const groupIds = userGroups.map(ug => ug.systemGroupId);
+    const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return false;
 
     const permissions = await this.groupProgramRepository.find({
       where: {
         systemGroupId: In(groupIds),
-        systemProgram: { controller: controller }
+        systemProgram: { controller: controller },
       },
       relations: ['systemProgram'],
     });
@@ -37,7 +37,7 @@ export class PermissionsService {
       where: { systemUserId: userId },
     });
 
-    const groupIds = userGroups.map(ug => ug.systemGroupId);
+    const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return [];
 
     const groupPrograms = await this.groupProgramRepository.find({
@@ -47,7 +47,7 @@ export class PermissionsService {
 
     // Remover duplicatas e formatar
     const programs = new Map();
-    groupPrograms.forEach(gp => {
+    groupPrograms.forEach((gp) => {
       programs.set(gp.systemProgramId, gp.systemProgram);
     });
 

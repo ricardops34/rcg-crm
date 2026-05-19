@@ -18,9 +18,9 @@ import { MasterDataModule } from '../master-data/master-data.module';
       SubCategoria,
       Produto,
       Armazem,
-      Fabricante
+      Fabricante,
     ]),
-    MasterDataModule
+    MasterDataModule,
   ],
   exports: [TypeOrmModule, ProdutoService],
   providers: [SyncCatalogService, ProdutoService],

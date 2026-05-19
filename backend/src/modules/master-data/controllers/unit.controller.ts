@@ -16,7 +16,7 @@ export class UnitController {
   async findAll() {
     return this.filialRepository.find({
       where: { status: 'A' },
-      order: { nome: 'ASC' }
+      order: { nome: 'ASC' },
     });
   }
 }

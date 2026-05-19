@@ -20,9 +20,9 @@ export class VendedorService {
   }
 
   async findOne(id: number): Promise<Vendedor | null> {
-    return this.vendedorRepository.findOne({ 
+    return this.vendedorRepository.findOne({
       where: { id },
-      relations: ['filial']
+      relations: ['filial'],
     });
   }
 

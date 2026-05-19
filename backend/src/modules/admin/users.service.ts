@@ -19,14 +19,24 @@ export class UsersService {
 
   async findAll() {
     return this.userRepository.find({
-      relations: ['frontpage', 'systemUnit', 'userGroups', 'userGroups.systemGroup'],
+      relations: [
+        'frontpage',
+        'systemUnit',
+        'userGroups',
+        'userGroups.systemGroup',
+      ],
     });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['frontpage', 'systemUnit', 'userGroups', 'userGroups.systemGroup'],
+      relations: [
+        'frontpage',
+        'systemUnit',
+        'userGroups',
+        'userGroups.systemGroup',
+      ],
     });
     if (!user) throw new NotFoundException('Usuário não encontrado');
     return user;
@@ -44,11 +54,16 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
     const user = this.userRepository.create(data);
-    const savedUser = await this.userRepository.save(user) as unknown as SystemUser;
+    const savedUser = (await this.userRepository.save(
+      user,
+    )) as unknown as SystemUser;
 
     if (groups && groups.length > 0) {
-      const userGroups = groups.map(groupId => 
-        this.userGroupRepository.create({ systemUserId: savedUser.id, systemGroupId: groupId })
+      const userGroups = groups.map((groupId) =>
+        this.userGroupRepository.create({
+          systemUserId: savedUser.id,
+          systemGroupId: groupId,
+        }),
       );
       await this.userGroupRepository.save(userGroups);
     }
@@ -63,15 +78,18 @@ export class UsersService {
     } else {
       delete data.password;
     }
-    
+
     await this.userRepository.update(id, data);
 
     if (groups) {
       // Remover grupos antigos e inserir novos
       await this.userGroupRepository.delete({ systemUserId: id });
       if (groups.length > 0) {
-        const newUserGroups = groups.map(groupId => 
-          this.userGroupRepository.create({ systemUserId: id, systemGroupId: groupId })
+        const newUserGroups = groups.map((groupId) =>
+          this.userGroupRepository.create({
+            systemUserId: id,
+            systemGroupId: groupId,
+          }),
         );
         await this.userGroupRepository.save(newUserGroups);
       }
@@ -86,14 +104,19 @@ export class UsersService {
       relations: ['systemGroup'],
     });
 
-    const groupIds = userGroups.map(ug => ug.systemGroupId);
+    const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return [];
 
-    const groupPrograms = await this.userRepository.manager.find('SystemGroupProgram', {
-      where: { systemGroupId: In(groupIds) },
-      relations: ['systemProgram'],
-    });
+    const groupPrograms = await this.userRepository.manager.find(
+      'SystemGroupProgram',
+      {
+        where: { systemGroupId: In(groupIds) },
+        relations: ['systemProgram'],
+      },
+    );
 
-    return [...new Set(groupPrograms.map((gp: any) => gp.systemProgram.controller))];
+    return [
+      ...new Set(groupPrograms.map((gp: any) => gp.systemProgram.controller)),
+    ];
   }
 }

@@ -7,7 +7,7 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 async function bootstrap() {
   console.log('🚀 Iniciando contexto para Seeding Multi-DB...');
   const app = await NestFactory.createApplicationContext(AppModule);
-  
+
   try {
     const crmDataSource = app.get(DataSource);
     const securityDataSource = app.get(getDataSourceToken('security'));

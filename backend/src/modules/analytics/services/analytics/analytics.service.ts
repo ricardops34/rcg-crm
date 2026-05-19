@@ -13,7 +13,7 @@ export class AnalyticsService {
 
   async getVendedorIdByUser(systemUserId: number): Promise<number | null> {
     const vendedor = await this.vendedorRepository.findOne({
-      where: { systemUsersId: systemUserId }
+      where: { systemUsersId: systemUserId },
     });
     return vendedor ? vendedor.id : null;
   }
@@ -34,7 +34,7 @@ export class AnalyticsService {
         AVG(perc_liquido) as achievement
        FROM view_vendedor_venda_mes 
        WHERE ano = $1::text AND mes = $2::text` + whereVendedor,
-      params
+      params,
     );
 
     const categories = await this.dataSource.query(
@@ -42,14 +42,18 @@ export class AnalyticsService {
         descricao as label,
         SUM(vlr_liquido) as value
        FROM view_total_catogoria_mes
-       WHERE ano = $1::text AND mes = $2::text` + whereVendedor +
-      ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
-      params
+       WHERE ano = $1::text AND mes = $2::text` +
+        whereVendedor +
+        ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
+      params,
     );
 
     return {
       summary: kpis[0] || { goal: 0, realized: 0, achievement: 0 },
-      categories: categories.map(c => ({ label: c.label, data: [parseFloat(c.value)] }))
+      categories: categories.map((c) => ({
+        label: c.label,
+        data: [parseFloat(c.value)],
+      })),
     };
   }
 
@@ -58,23 +62,36 @@ export class AnalyticsService {
     const mvcData = await this.dataSource.query(
       `SELECT * FROM pivot_venda_mes_cliente 
        WHERE ano = $1::text AND nota_saida_vendedor_id = $2`,
-      [year, vendedorId]
+      [year, vendedorId],
     );
 
     // Complementa com dados da view mvc (dias desde a última compra, etc)
     const mvcDetails = await this.dataSource.query(
       `SELECT id as cliente_id, situacao, ultima_compra, dias FROM mvc WHERE vendedor_id = $1`,
-      [vendedorId]
+      [vendedorId],
     );
 
     // Merge dos dados
-    return mvcData.map(item => {
-      const detail = mvcDetails.find(d => d.cliente_id === item.cliente_id);
-      
+    return mvcData.map((item) => {
+      const detail = mvcDetails.find((d) => d.cliente_id === item.cliente_id);
+
       // Cálculo de média dos últimos 3 meses (lógica baseada no Archaeologist)
       const currentMonth = new Date().getMonth() + 1;
-      const monthNames = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-      
+      const monthNames = [
+        'janeiro',
+        'fevereiro',
+        'marco',
+        'abril',
+        'maio',
+        'junho',
+        'julho',
+        'agosto',
+        'setembro',
+        'outubro',
+        'novembro',
+        'dezembro',
+      ];
+
       let sumLast3 = 0;
       let count = 0;
       for (let i = 1; i <= 3; i++) {
@@ -83,13 +100,15 @@ export class AnalyticsService {
         count++;
       }
       const average3Months = sumLast3 / count;
-      const currentMonthSales = parseFloat(item[monthNames[currentMonth - 1]] || 0);
+      const currentMonthSales = parseFloat(
+        item[monthNames[currentMonth - 1]] || 0,
+      );
 
       return {
         ...item,
         ...detail,
         average3Months,
-        difference: currentMonthSales - average3Months
+        difference: currentMonthSales - average3Months,
       };
     });
   }

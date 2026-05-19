@@ -1,4 +1,10 @@
-﻿import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+﻿import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { SystemProgram } from './system-program.entity';
 import { SystemUnit } from './system-unit.entity';
 
@@ -36,13 +42,23 @@ export class SystemUser {
   @Column({ type: 'char', length: 1, nullable: true })
   active: string;
 
-  @Column({ name: 'accepted_term_policy', type: 'char', length: 1, nullable: true })
+  @Column({
+    name: 'accepted_term_policy',
+    type: 'char',
+    length: 1,
+    nullable: true,
+  })
   acceptedTermPolicy: string;
 
   @Column({ name: 'accepted_term_policy_at', type: 'text', nullable: true })
   acceptedTermPolicyAt: string;
 
-  @Column({ name: 'two_factor_enabled', type: 'char', length: 1, nullable: true })
+  @Column({
+    name: 'two_factor_enabled',
+    type: 'char',
+    length: 1,
+    nullable: true,
+  })
   twoFactorEnabled: string;
 
   @Column({ name: 'two_factor_type', length: 100, nullable: true })
@@ -50,4 +66,7 @@ export class SystemUser {
 
   @Column({ name: 'two_factor_secret', length: 255, nullable: true })
   twoFactorSecret: string;
+
+  @Column({ name: 'current_session_id', length: 255, nullable: true })
+  currentSessionId: string;
 }

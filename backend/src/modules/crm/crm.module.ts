@@ -4,12 +4,7 @@ import { AtendimentoTipo } from './entities/atendimento-tipo.entity';
 import { Atendimento } from './entities/atendimento.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      AtendimentoTipo,
-      Atendimento
-    ])
-  ],
+  imports: [TypeOrmModule.forFeature([AtendimentoTipo, Atendimento])],
   exports: [TypeOrmModule],
 })
 export class CrmModule {}

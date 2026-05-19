@@ -20,19 +20,34 @@ import { ProgramsController } from './programs.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      SystemUnit,
-      SystemGroup,
-      SystemProgram,
-      SystemUser,
-      SystemUserGroup,
-      SystemGroupProgram,
-      SystemUserUnit,
-      SystemChangeLog
-    ], 'security')
+    TypeOrmModule.forFeature(
+      [
+        SystemUnit,
+        SystemGroup,
+        SystemProgram,
+        SystemUser,
+        SystemUserGroup,
+        SystemGroupProgram,
+        SystemUserUnit,
+        SystemChangeLog,
+      ],
+      'security',
+    ),
   ],
-  providers: [AuditSubscriber, UsersService, PermissionsService, GroupsService, ProgramsService],
+  providers: [
+    AuditSubscriber,
+    UsersService,
+    PermissionsService,
+    GroupsService,
+    ProgramsService,
+  ],
   controllers: [UsersController, GroupsController, ProgramsController],
-  exports: [TypeOrmModule, UsersService, PermissionsService, GroupsService, ProgramsService],
+  exports: [
+    TypeOrmModule,
+    UsersService,
+    PermissionsService,
+    GroupsService,
+    ProgramsService,
+  ],
 })
 export class AdminModule {}

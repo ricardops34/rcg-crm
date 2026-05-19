@@ -1,4 +1,15 @@
-﻿import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+﻿import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ClienteService } from '../../services/cliente/cliente.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
@@ -11,12 +22,15 @@ export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Get()
-  async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
     const [items, total] = await this.clienteService.findAll(page, limit);
     return {
       items,
       total,
-      hasNext: total > page * limit
+      hasNext: total > page * limit,
     };
   }
 

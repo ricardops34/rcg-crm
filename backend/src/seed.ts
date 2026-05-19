@@ -10,14 +10,17 @@ import { Cliente } from './modules/commercial/entities/cliente.entity';
 import { MetaVendedorMes } from './modules/commercial/entities/meta-vendedor-mes.entity';
 import * as bcrypt from 'bcrypt';
 
-export async function seed(crmDataSource: DataSource, securityDataSource: DataSource) {
+export async function seed(
+  crmDataSource: DataSource,
+  securityDataSource: DataSource,
+) {
   console.log('🌱 Iniciando seeding de dados de teste (Multi-DB)...');
 
   try {
     // 1. Verificar/Criar Filial no CRM
     const filialRepo = crmDataSource.getRepository(Filial);
     let filial = await filialRepo.findOne({ where: { codErp: '001' } });
-    
+
     if (!filial) {
       filial = new Filial();
       filial.nome = 'RCG Matriz';
@@ -32,7 +35,9 @@ export async function seed(crmDataSource: DataSource, securityDataSource: DataSo
     const existingAdmin = await userRepo.findOne({ where: { login: 'admin' } });
 
     if (existingAdmin) {
-      console.log('ℹ️ Usuário admin já existe no Security. Pulando seeding de permissões.');
+      console.log(
+        'ℹ️ Usuário admin já existe no Security. Pulando seeding de permissões.',
+      );
     } else {
       console.log('📦 Inserindo dados iniciais no Security...');
 
@@ -85,7 +90,9 @@ export async function seed(crmDataSource: DataSource, securityDataSource: DataSo
 
     // 3. Seeding de Negócios no CRM (se não houver vendedores)
     const vendedorRepo = crmDataSource.getRepository(Vendedor);
-    const existingVendedor = await vendedorRepo.findOne({ where: { codErp: 'V001' } });
+    const existingVendedor = await vendedorRepo.findOne({
+      where: { codErp: 'V001' },
+    });
 
     if (!existingVendedor) {
       const vendedor = new Vendedor();

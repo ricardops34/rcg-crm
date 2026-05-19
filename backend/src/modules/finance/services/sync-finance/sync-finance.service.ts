@@ -25,15 +25,26 @@ export class SyncFinanceService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       try {
-        const resolvedData = await this.erpTranslation.resolveRelationIds(item, relations);
-        
-        const existing = await queryRunner.manager.findOne(TituloReceber, { 
-          where: { numero: resolvedData.numero, parcela: resolvedData.parcela, prefixo: resolvedData.prefixo, filialId: resolvedData.filial_id } 
+        const resolvedData = await this.erpTranslation.resolveRelationIds(
+          item,
+          relations,
+        );
+
+        const existing = await queryRunner.manager.findOne(TituloReceber, {
+          where: {
+            numero: resolvedData.numero,
+            parcela: resolvedData.parcela,
+            prefixo: resolvedData.prefixo,
+            filialId: resolvedData.filial_id,
+          },
         });
 
         let saved;
         if (existing) {
-          saved = await queryRunner.manager.save(TituloReceber, { ...existing, ...resolvedData });
+          saved = await queryRunner.manager.save(TituloReceber, {
+            ...existing,
+            ...resolvedData,
+          });
         } else {
           saved = await queryRunner.manager.save(TituloReceber, resolvedData);
         }
@@ -42,8 +53,14 @@ export class SyncFinanceService {
         results.push({ status: 'OK', numero: item.numero, id: saved.id });
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        this.logger.error(`Erro ao sincronizar Título ${item.numero}: ${err.message}`);
-        results.push({ status: 'error', numero: item.numero, message: err.message });
+        this.logger.error(
+          `Erro ao sincronizar Título ${item.numero}: ${err.message}`,
+        );
+        results.push({
+          status: 'error',
+          numero: item.numero,
+          message: err.message,
+        });
       } finally {
         await queryRunner.release();
       }

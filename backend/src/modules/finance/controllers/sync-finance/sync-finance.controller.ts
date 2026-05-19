@@ -9,5 +9,7 @@ export class SyncFinanceController {
   constructor(private readonly syncService: SyncFinanceService) {}
 
   @Post('titulos')
-  async syncTitulos(@Body() dto: SyncBatchDto) { return this.syncService.syncTitulos(dto.conteudo); }
+  async syncTitulos(@Body() dto: SyncBatchDto) {
+    return this.syncService.syncTitulos(dto.conteudo);
+  }
 }

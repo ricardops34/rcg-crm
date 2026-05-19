@@ -9,5 +9,7 @@ export class SyncBillingController {
   constructor(private readonly syncService: SyncBillingService) {}
 
   @Post('notas-saida')
-  async syncNotasSaida(@Body() dto: SyncBatchDto) { return this.syncService.syncNotasSaida(dto.conteudo); }
+  async syncNotasSaida(@Body() dto: SyncBatchDto) {
+    return this.syncService.syncNotasSaida(dto.conteudo);
+  }
 }

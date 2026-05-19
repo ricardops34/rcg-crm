@@ -8,7 +8,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest(err, user, info, context: ExecutionContext) {
+  handleRequest<TUser = any>(
+    err: any,
+    user: TUser,
+    info: any,
+    context: ExecutionContext,
+  ): TUser {
     if (user) {
       this.cls.set('user', user);
     }

@@ -9,12 +9,8 @@ import { MasterDataModule } from '../master-data/master-data.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      PedidoEstado,
-      Pedido,
-      PedidoItem
-    ]),
-    MasterDataModule
+    TypeOrmModule.forFeature([PedidoEstado, Pedido, PedidoItem]),
+    MasterDataModule,
   ],
   exports: [TypeOrmModule],
   providers: [SyncSalesService],

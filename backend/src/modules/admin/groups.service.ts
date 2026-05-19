@@ -15,7 +15,7 @@ export class GroupsService {
 
   async findAll() {
     return this.groupRepository.find({
-      order: { name: 'ASC' }
+      order: { name: 'ASC' },
     });
   }
 
@@ -33,18 +33,23 @@ export class GroupsService {
 
     return {
       ...group,
-      programs: groupPrograms.map(gp => gp.systemProgramId)
+      programs: groupPrograms.map((gp) => gp.systemProgramId),
     };
   }
 
   async create(groupData: any) {
     const { programs, ...data } = groupData;
     const group = this.groupRepository.create(groupData);
-    const savedGroup = await this.groupRepository.save(group) as unknown as SystemGroup;
+    const savedGroup = (await this.groupRepository.save(
+      group,
+    )) as unknown as SystemGroup;
 
     if (programs && programs.length > 0) {
-      const groupPrograms = programs.map(programId => 
-        this.groupProgramRepository.create({ systemGroupId: savedGroup.id, systemProgramId: programId })
+      const groupPrograms = programs.map((programId) =>
+        this.groupProgramRepository.create({
+          systemGroupId: savedGroup.id,
+          systemProgramId: programId,
+        }),
       );
       await this.groupProgramRepository.save(groupPrograms);
     }
@@ -59,8 +64,11 @@ export class GroupsService {
     if (programs) {
       await this.groupProgramRepository.delete({ systemGroupId: id });
       if (programs.length > 0) {
-        const newGroupPrograms = programs.map(programId => 
-          this.groupProgramRepository.create({ systemGroupId: id, systemProgramId: programId })
+        const newGroupPrograms = programs.map((programId) =>
+          this.groupProgramRepository.create({
+            systemGroupId: id,
+            systemProgramId: programId,
+          }),
         );
         await this.groupProgramRepository.save(newGroupPrograms);
       }

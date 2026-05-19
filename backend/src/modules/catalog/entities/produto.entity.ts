@@ -1,4 +1,12 @@
-﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+﻿import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Filial } from '../../master-data/entities/filial.entity';
 import { Categoria } from './categoria.entity';
 import { SubCategoria } from './sub-categoria.entity';
@@ -50,7 +58,12 @@ export class Produto {
   @Column({ name: 'codigo_barras', length: 30, nullable: true })
   codigoBarras: string;
 
-  @Column({ name: 'codigo_fabricante', type: 'char', length: 60, nullable: true })
+  @Column({
+    name: 'codigo_fabricante',
+    type: 'char',
+    length: 60,
+    nullable: true,
+  })
   codigoFabricante: string;
 
   @Column({ name: 'qtd_embalagem', type: 'float', nullable: true })

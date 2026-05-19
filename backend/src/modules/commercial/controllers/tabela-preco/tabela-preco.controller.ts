@@ -1,4 +1,10 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { TabelaPrecoService } from '../../services/tabela-preco/tabela-preco.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 
@@ -20,7 +26,7 @@ export class TabelaPrecoController {
   @Get(':id/produto/:produtoId')
   getProductPrice(
     @Param('id', ParseIntPipe) id: number,
-    @Param('produtoId', ParseIntPipe) produtoId: number
+    @Param('produtoId', ParseIntPipe) produtoId: number,
   ) {
     return this.tabelaPrecoService.getProductPrice(id, produtoId);
   }

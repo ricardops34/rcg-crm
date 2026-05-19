@@ -14,7 +14,17 @@ import { TabelaPreco } from '../commercial/entities/tabela-preco.entity';
 import { Produto } from '../catalog/entities/produto.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Filial, Municipio, Estado, Cliente, Vendedor, TabelaPreco, Produto])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Filial,
+      Municipio,
+      Estado,
+      Cliente,
+      Vendedor,
+      TabelaPreco,
+      Produto,
+    ]),
+  ],
   exports: [TypeOrmModule, ErpTranslationService],
   providers: [ErpTranslationService, SyncMasterDataService],
   controllers: [SyncMasterDataController, UnitController],

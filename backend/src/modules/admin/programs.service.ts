@@ -12,7 +12,7 @@ export class ProgramsService {
 
   async findAll() {
     return this.programRepository.find({
-      order: { name: 'ASC' }
+      order: { name: 'ASC' },
     });
   }
 }

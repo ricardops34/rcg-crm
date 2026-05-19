@@ -47,14 +47,16 @@ describe('TabelaPrecoService', () => {
       const price = await service.getProductPrice(1, 10);
       expect(price).toBe(100.5);
       expect(tabelaPrecoItemRepository.findOne).toHaveBeenCalledWith({
-        where: { tabelaPrecoId: 1, produtoId: 10, status: 'A' }
+        where: { tabelaPrecoId: 1, produtoId: 10, status: 'A' },
       });
     });
 
     it('should throw NotFoundException when item does not exist', async () => {
       tabelaPrecoItemRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getProductPrice(1, 10)).rejects.toThrow(NotFoundException);
+      await expect(service.getProductPrice(1, 10)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

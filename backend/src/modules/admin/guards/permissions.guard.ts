@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PermissionsService } from '../permissions.service';
 
@@ -10,9 +15,10 @@ export class PermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredController = this.reflector.get<string>('controller', context.getHandler()) || 
-                               this.reflector.get<string>('controller', context.getClass());
-    
+    const requiredController =
+      this.reflector.get<string>('controller', context.getHandler()) ||
+      this.reflector.get<string>('controller', context.getClass());
+
     if (!requiredController) {
       return true; // Se não houver controller definido, permite o acesso (rotas públicas ou abertas)
     }
@@ -24,10 +30,15 @@ export class PermissionsGuard implements CanActivate {
       return false;
     }
 
-    const hasPermission = await this.permissionsService.hasPermission(user.sub, requiredController);
-    
+    const hasPermission = await this.permissionsService.hasPermission(
+      user.sub,
+      requiredController,
+    );
+
     if (!hasPermission) {
-      throw new ForbiddenException(`Acesso negado ao programa: ${requiredController}`);
+      throw new ForbiddenException(
+        `Acesso negado ao programa: ${requiredController}`,
+      );
     }
 
     return true;

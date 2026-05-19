@@ -21,9 +21,9 @@ export class MetaVendedorService {
   }
 
   async findOne(id: number): Promise<MetaVendedorMes | null> {
-    return this.metaRepository.findOne({ 
+    return this.metaRepository.findOne({
       where: { id },
-      relations: ['vendedor', 'categorias', 'categorias.categoria']
+      relations: ['vendedor', 'categorias', 'categorias.categoria'],
     });
   }
 
@@ -31,19 +31,24 @@ export class MetaVendedorService {
     return this.metaRepository.save(data);
   }
 
-  async getSuggestion(vendedorId: number, month: string, year: string): Promise<number> {
+  async getSuggestion(
+    vendedorId: number,
+    month: string,
+    year: string,
+  ): Promise<number> {
     const lastYear = (parseInt(year) - 1).toString();
-    
+
     // Busca o realizado do ano passado na view de BI
     const result = await this.dataSource.query(
       `SELECT vlr_liquido FROM view_vendedor_venda_mes 
        WHERE vendedor_id = $1 AND ano = $2 AND mes = $3`,
-      [vendedorId, lastYear, month]
+      [vendedorId, lastYear, month],
     );
 
-    const realizedLastYear = result.length > 0 ? parseFloat(result[0].vlr_liquido) : 0;
-    
+    const realizedLastYear =
+      result.length > 0 ? parseFloat(result[0].vlr_liquido) : 0;
+
     // Decisão aprovada: +10% de sugestão padrão
-    return realizedLastYear * 1.10;
+    return realizedLastYear * 1.1;
   }
 }

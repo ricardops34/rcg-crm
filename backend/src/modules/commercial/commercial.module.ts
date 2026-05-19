@@ -24,20 +24,32 @@ import { TabelaPrecoController } from './controllers/tabela-preco/tabela-preco.c
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Vendedor, 
-      Cliente, 
-      CondicaoPagamento, 
+      Vendedor,
+      Cliente,
+      CondicaoPagamento,
       TabelaPreco,
       TabelaPrecoItem,
       TipoContato,
       ClienteContato,
       MetaVendedorMes,
-      MetaVendedorCategoria
+      MetaVendedorCategoria,
     ]),
-    MasterDataModule
+    MasterDataModule,
   ],
   exports: [TypeOrmModule, ClienteService, VendedorService, TabelaPrecoService],
-  providers: [ClienteService, SyncCommercialService, VendedorService, MetaVendedorService, TabelaPrecoService],
-  controllers: [ClienteController, SyncCommercialController, VendedorController, MetaVendedorController, TabelaPrecoController],
+  providers: [
+    ClienteService,
+    SyncCommercialService,
+    VendedorService,
+    MetaVendedorService,
+    TabelaPrecoService,
+  ],
+  controllers: [
+    ClienteController,
+    SyncCommercialController,
+    VendedorController,
+    MetaVendedorController,
+    TabelaPrecoController,
+  ],
 })
 export class CommercialModule {}

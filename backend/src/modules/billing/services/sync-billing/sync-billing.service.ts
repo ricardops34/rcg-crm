@@ -26,25 +26,45 @@ export class SyncBillingService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       try {
-        const resolvedData = await this.erpTranslation.resolveRelationIds(item, relations);
-        
-        const existing = await queryRunner.manager.findOne(NotaSaida, { 
-          where: { notaFiscal: resolvedData.nota_fiscal, serieFiscal: resolvedData.serie_fiscal, filialId: resolvedData.filial_id } 
+        const resolvedData = await this.erpTranslation.resolveRelationIds(
+          item,
+          relations,
+        );
+
+        const existing = await queryRunner.manager.findOne(NotaSaida, {
+          where: {
+            notaFiscal: resolvedData.nota_fiscal,
+            serieFiscal: resolvedData.serie_fiscal,
+            filialId: resolvedData.filial_id,
+          },
         });
 
         let saved;
         if (existing) {
-          saved = await queryRunner.manager.save(NotaSaida, { ...existing, ...resolvedData });
+          saved = await queryRunner.manager.save(NotaSaida, {
+            ...existing,
+            ...resolvedData,
+          });
         } else {
           saved = await queryRunner.manager.save(NotaSaida, resolvedData);
         }
 
         await queryRunner.commitTransaction();
-        results.push({ status: 'OK', nota_fiscal: item.nota_fiscal, id: saved.id });
+        results.push({
+          status: 'OK',
+          nota_fiscal: item.nota_fiscal,
+          id: saved.id,
+        });
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        this.logger.error(`Erro ao sincronizar Nota ${item.nota_fiscal}: ${err.message}`);
-        results.push({ status: 'error', nota_fiscal: item.nota_fiscal, message: err.message });
+        this.logger.error(
+          `Erro ao sincronizar Nota ${item.nota_fiscal}: ${err.message}`,
+        );
+        results.push({
+          status: 'error',
+          nota_fiscal: item.nota_fiscal,
+          message: err.message,
+        });
       } finally {
         await queryRunner.release();
       }

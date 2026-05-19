@@ -8,11 +8,8 @@ import { MasterDataModule } from '../master-data/master-data.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      NotaSaida,
-      NotaSaidaItem
-    ]),
-    MasterDataModule
+    TypeOrmModule.forFeature([NotaSaida, NotaSaidaItem]),
+    MasterDataModule,
   ],
   exports: [TypeOrmModule],
   providers: [SyncBillingService],
