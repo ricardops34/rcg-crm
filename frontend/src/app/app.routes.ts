@@ -10,6 +10,8 @@ import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
 import { UserListComponent } from './pages/admin/user-list/user-list';
 import { UserFormComponent } from './pages/admin/user-form/user-form';
+import { GroupListComponent } from './pages/admin/group-list/group-list';
+import { GroupFormComponent } from './pages/admin/group-form/group-form';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -32,6 +34,9 @@ export const routes: Routes = [
       { path: 'admin/users', component: UserListComponent, data: { controller: 'SystemUserList' } },
       { path: 'admin/users/new', component: UserFormComponent, data: { controller: 'SystemUserList' } },
       { path: 'admin/users/edit/:id', component: UserFormComponent, data: { controller: 'SystemUserList' } },
+      { path: 'admin/groups', component: GroupListComponent, data: { controller: 'SystemGroupList' } },
+      { path: 'admin/groups/new', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
+      { path: 'admin/groups/edit/:id', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ] 
   },

@@ -54,6 +54,9 @@ export class AppComponent {
     if (this.authService.hasPermission("VendedorList")) {
       subItems.push({ label: "Vendedores", action: () => this.router.navigate(["/vendedores"]) });
     }
+    if (this.authService.hasPermission("SystemGroupList")) {
+      subItems.push({ label: "Grupos de Permissão", action: () => this.router.navigate(["/admin/groups"]) });
+    }
     if (this.authService.hasPermission("SystemUserList")) {
       subItems.push({ label: "Usuários", action: () => this.router.navigate(["/admin/users"]) });
     }

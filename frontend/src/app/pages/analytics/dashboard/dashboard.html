@@ -1,28 +1,38 @@
-﻿<po-page-default p-title="Dashboard de Vendas">
+﻿<po-page-default p-title="Dashboard Gerencial" [p-actions]="pageActions">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <div class="po-row">
-    <po-widget class="po-md-4" p-primary-label="Meta do Mês" [p-help]="'Valor planejado para o período'">
-      <div class="po-font-subtitle po-text-center">{{ summary.goal | currency:'BRL' }}</div>
+    <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
+      <div class="po-font-subtitle po-text-center po-py-2">
+        <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
+        {{ summary.goal | currency:'BRL' }}
+      </div>
     </po-widget>
 
-    <po-widget class="po-md-4" p-primary-label="Realizado" [p-help]="'Vendas líquidas faturadas'">
-      <div class="po-font-subtitle po-text-center po-text-color-10">{{ summary.realized | currency:'BRL' }}</div>
+    <po-widget class="po-md-4 po-mb-2" p-title="Realizado">
+      <div class="po-font-subtitle po-text-center po-py-2">
+        <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
+        {{ summary.realized | currency:'BRL' }}
+      </div>
     </po-widget>
 
-    <po-widget class="po-md-4" p-primary-label="% Atingimento" [p-help]="'Desempenho contra a meta'">
-      <div class="po-font-subtitle po-text-center" [ngClass]="{'po-text-color-07': summary.achievement < 80, 'po-text-color-10': summary.achievement >= 100}">
+    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" p-primary="true">
+      <div class="po-font-subtitle po-text-center po-py-2" [ngClass]="{'po-text-color-07': summary.achievement < 80, 'po-text-color-10': summary.achievement >= 100}">
+        <po-icon [p-icon]="summary.achievement >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
         {{ summary.achievement | number:'1.1-2' }}%
       </div>
     </po-widget>
   </div>
 
   <div class="po-row">
-    <po-chart 
-      class="po-md-12"
-      p-title="Vendas por Categoria"
-      [p-series]="categorySeries"
-      [p-type]="chartType">
-    </po-chart>
+    <po-widget class="po-md-12 po-mt-2" p-title="Vendas por Categoria">
+      <po-chart 
+        [p-series]="categorySeries" 
+        [p-type]="chartType"
+        p-height="350">
+      </po-chart>
+    </po-widget>
   </div>
 
 </po-page-default>

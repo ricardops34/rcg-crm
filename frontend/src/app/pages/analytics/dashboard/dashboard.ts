@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PoModule, PoChartType, PoChartSerie } from '@po-ui/ng-components';
+import { PoModule, PoChartType, PoChartSerie, PoPageAction } from '@po-ui/ng-components';
 import { AnalyticsService } from '../../../services/analytics';
 
 @Component({
@@ -15,6 +15,10 @@ export class DashboardComponent implements OnInit {
   categorySeries: Array<PoChartSerie> = [];
   chartType: PoChartType = PoChartType.Donut;
   isLoading: boolean = true;
+
+  readonly pageActions: Array<PoPageAction> = [
+    { label: 'Atualizar', action: this.loadDashboard.bind(this), icon: 'po-icon-refresh' }
+  ];
 
   constructor(private analyticsService: AnalyticsService) { }
 

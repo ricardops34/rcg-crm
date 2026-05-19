@@ -12,8 +12,11 @@ import { AuditSubscriber } from './subscribers/audit.subscriber';
 
 import { UsersService } from './users.service';
 import { PermissionsService } from './permissions.service';
+import { GroupsService } from './groups.service';
+import { ProgramsService } from './programs.service';
 import { UsersController } from './users.controller';
 import { GroupsController } from './groups.controller';
+import { ProgramsController } from './programs.controller';
 
 @Module({
   imports: [
@@ -28,8 +31,8 @@ import { GroupsController } from './groups.controller';
       SystemChangeLog
     ], 'security')
   ],
-  providers: [AuditSubscriber, UsersService, PermissionsService],
-  controllers: [UsersController, GroupsController],
-  exports: [TypeOrmModule, UsersService, PermissionsService],
+  providers: [AuditSubscriber, UsersService, PermissionsService, GroupsService, ProgramsService],
+  controllers: [UsersController, GroupsController, ProgramsController],
+  exports: [TypeOrmModule, UsersService, PermissionsService, GroupsService, ProgramsService],
 })
 export class AdminModule {}
