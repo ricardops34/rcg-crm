@@ -51,7 +51,22 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    try {
+      // Decodifica a carga útil (payload) do JWT para verificar a data de expiração (exp)
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp && Date.now() >= payload.exp * 1000) {
+        this.logout(); // Limpa o token expirado do localStorage
+        return false;
+      }
+    } catch (e) {
+      this.logout(); // Limpa em caso de token corrompido
+      return false;
+    }
+
+    return true;
   }
 
   getUser(): any {

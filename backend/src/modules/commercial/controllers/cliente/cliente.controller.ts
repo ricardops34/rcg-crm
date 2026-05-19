@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -11,6 +11,7 @@
   ParseIntPipe,
 } from '@nestjs/common';
 import { ClienteService } from '../../services/cliente/cliente.service';
+import { ClienteDetailsService } from '../../services/cliente/cliente-details.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
 import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
@@ -19,7 +20,10 @@ import { ControllerName } from '../../../admin/decorators/controller-name.decora
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ControllerName('ClienteList')
 export class ClienteController {
-  constructor(private readonly clienteService: ClienteService) {}
+  constructor(
+    private readonly clienteService: ClienteService,
+    private readonly detailsService: ClienteDetailsService,
+  ) {}
 
   @Get()
   async findAll(
@@ -37,6 +41,31 @@ export class ClienteController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);
+  }
+
+  @Get(':id/comodato')
+  async getComodato(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getComodato(id);
+  }
+
+  @Get(':id/mix')
+  async getMix(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getMix(id);
+  }
+
+  @Get(':id/financeiro')
+  async getFinanceiro(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getFinanceiro(id);
+  }
+
+  @Get(':id/notas')
+  async getNotas(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getNotasFiscais(id);
+  }
+
+  @Get(':id/atendimentos')
+  async getAtendimentos(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getAtendimentos(id);
   }
 
   @Post()
