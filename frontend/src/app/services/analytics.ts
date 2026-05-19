@@ -25,7 +25,10 @@ export class AnalyticsService {
 
   getMvcData(year?: number, vendedorId?: number): Observable<any> {
     const y = year || new Date().getFullYear();
-    const vId = vendedorId || 1;
-    return this.http.get<any>(`${this.API_URL}/mvc?year=${y}&vendedorId=${vId}`, { headers: this.getHeaders() });
+    let url = `${this.API_URL}/mvc?year=${y}`;
+    if (vendedorId) {
+      url += `&vendedorId=${vendedorId}`;
+    }
+    return this.http.get<any>(url, { headers: this.getHeaders() });
   }
 }

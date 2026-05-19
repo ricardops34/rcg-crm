@@ -1,17 +1,69 @@
 <po-page-list 
-  p-title="Média de Vendas (MCV)"
-  p-subtitle="Análise de consumo dos últimos 12 meses"
+  p-title="Análise CRM (MCV)"
+  p-subtitle="Média de Vendas e Tendência de Consumo"
   [p-breadcrumb]="breadcrumb"
   [p-filter]="filter">
+
+  <div class="po-row">
+    <po-select 
+      class="po-md-2" 
+      name="year" 
+      p-label="Ano Base" 
+      [p-options]="years" 
+      [ngModel]="selectedYear" 
+      (p-change)="selectedYear = $event; loadData()">
+    </po-select>
+
+    <po-select 
+      *ngIf="isGerente"
+      class="po-md-4" 
+      name="vendedor" 
+      p-label="Vendedor" 
+      [p-options]="vendedores" 
+      [ngModel]="selectedVendedor" 
+      (p-change)="selectedVendedor = $event; loadData()"
+      p-placeholder="Todos os Vendedores">
+    </po-select>
+  </div>
+
+  <po-divider></po-divider>
 
   <po-table
     [p-loading]="isLoading"
     [p-columns]="columns"
     [p-items]="items"
+    [p-actions]="tableActions"
     p-container="shadow"
     [p-striped]="true"
     [p-sort]="true">
   </po-table>
 
 </po-page-list>
+
+<po-modal #modalDetails p-title="Detalhes do Cliente (MCV)" [p-primary-action]="{ label: 'Fechar', action: modalDetails.close.bind(modalDetails) }">
+  <div class="po-row">
+    <po-info class="po-md-6" p-label="Razão Social" [p-value]="selectedItem.cliente_nome || ''"></po-info>
+    <po-info class="po-md-3" p-label="Status" [p-value]="selectedItem.situacao === 'A' ? 'Ativo' : 'Bloqueado'"></po-info>
+    <po-info class="po-md-3" p-label="Dias sem Compra" [p-value]="selectedItem.dias || '0'"></po-info>
+  </div>
+  
+  <div class="po-row">
+    <po-info class="po-md-4" p-label="Cidade/UF" [p-value]="(selectedItem.municipio_descricao || '') + '/' + (selectedItem.estado_sigla || '')"></po-info>
+    <po-info class="po-md-4" p-label="Última Compra" [p-value]="(selectedItem.ultima_compra | date:'dd/MM/yyyy') || ''"></po-info>
+    <po-info class="po-md-4" p-label="Média 3 Meses" [p-value]="(selectedItem.average3Months | currency:'BRL') || ''"></po-info>
+  </div>
+
+  <div class="po-row">
+    <po-info class="po-md-4" p-label="Carteira" [p-value]="selectedItem.carteira === 'S' ? 'Sim' : 'Não'"></po-info>
+    <po-info class="po-md-4" p-label="Primeira Compra" [p-value]="(selectedItem.primeira_compra | date:'dd/MM/yyyy') || ''"></po-info>
+    <div class="po-md-4">
+      <div class="po-font-text-smaller-bold po-mb-1">Tendência</div>
+      <po-tag [p-value]="selectedItem.difference === 1 ? 'Alta' : 'Queda'" [p-color]="selectedItem.difference === 1 ? 'color-10' : 'color-07'"></po-tag>
+    </div>
+  </div>
+
+  <div class="po-row">
+    <po-info class="po-md-12" p-label="Histórico 12 Meses" p-value="Valores líquidos após devoluções"></po-info>
+  </div>
+</po-modal>
 

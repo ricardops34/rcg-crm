@@ -65,9 +65,12 @@ export class AnalyticsService {
       [year, vendedorId],
     );
 
-    // Complementa com dados da view mvc (dias desde a última compra, etc)
+    // Complementa com dados da view mvc (detalhes geográficos e de carteira)
     const mvcDetails = await this.dataSource.query(
-      `SELECT id as cliente_id, situacao, ultima_compra, dias FROM mvc WHERE vendedor_id = $1`,
+      `SELECT 
+        id as cliente_id, situacao, ultima_compra, primeira_compra, 
+        dias, municipio_descricao, estado_sigla, carteira 
+       FROM mvc WHERE vendedor_id = $1`,
       [vendedorId],
     );
 
