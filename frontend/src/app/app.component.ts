@@ -17,20 +17,24 @@ export class AppComponent {
 
   get menus(): Array<PoMenuItem> {
     const items: Array<PoMenuItem> = [
-      { label: "Dashboard", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-chart-area", shortLabel: "Dash" },
+      { label: "Dashboard Operacional", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-chart-area", shortLabel: "Dash" },
       { 
-        label: "Vendas", 
+        label: "Vendas e CRM", 
         icon: "po-icon-finance", 
         subItems: [
-          { label: "MVC (Média de Venda)", action: () => this.router.navigate(["/mvc"]) },
-          { label: "Objetivos e Metas", action: () => this.router.navigate(["/metas"]) },
-          { label: "Orçamentos", action: () => {} }
+          { label: "Análise CRM (MVC)", action: () => this.router.navigate(["/mvc"]), icon: "po-icon-vendas" },
+          { label: "Objetivos e Metas", action: () => this.router.navigate(["/metas"]), icon: "po-icon-target" },
+          { label: "Gestão de Equipe", action: () => this.router.navigate(["/vendedores"]), icon: "po-icon-user" },
+          { label: "Clientes", action: () => this.router.navigate(["/clientes"]), icon: "po-icon-users" }
         ]
       },
       { 
-        label: "Cadastros", 
-        icon: "po-icon-users", 
-        subItems: this.getFilteredCadastros()
+        label: "Segurança e Acesso", 
+        icon: "po-icon-security", 
+        subItems: [
+          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "po-icon-user-add" },
+          { label: "Grupos de Permissão", action: () => this.router.navigate(["/admin/groups"]), icon: "po-icon-users" }
+        ]
       }
     ];
 
@@ -44,23 +48,6 @@ export class AppComponent {
     });
 
     return items;
-  }
-
-  private getFilteredCadastros(): Array<PoMenuItem> {
-    const subItems = [];
-    if (this.authService.hasPermission("ClienteList")) {
-      subItems.push({ label: "Clientes", action: () => this.router.navigate(["/clientes"]) });
-    }
-    if (this.authService.hasPermission("VendedorList")) {
-      subItems.push({ label: "Vendedores", action: () => this.router.navigate(["/vendedores"]) });
-    }
-    if (this.authService.hasPermission("SystemGroupList")) {
-      subItems.push({ label: "Grupos de Permissão", action: () => this.router.navigate(["/admin/groups"]) });
-    }
-    if (this.authService.hasPermission("SystemUserList")) {
-      subItems.push({ label: "Usuários", action: () => this.router.navigate(["/admin/users"]) });
-    }
-    return subItems;
   }
 
 }

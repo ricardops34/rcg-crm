@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SystemUser } from './entities/system-user.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
@@ -80,8 +80,7 @@ export class UsersService {
     return this.findOne(id);
   }
 
-  async getUserPermissions(userId: number) {
-    // Buscar grupos do usuário
+  async getUserPermissions(userId: number): Promise<string[]> {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
       relations: ['systemGroup'],
@@ -90,8 +89,11 @@ export class UsersService {
     const groupIds = userGroups.map(ug => ug.systemGroupId);
     if (groupIds.length === 0) return [];
 
-    // Esta parte requeriria injetar Repository<SystemGroupProgram>
-    // Vou simplificar ou adicionar o repositório necessário
-    return groupIds; 
+    const groupPrograms = await this.userRepository.manager.find('SystemGroupProgram', {
+      where: { systemGroupId: In(groupIds) },
+      relations: ['systemProgram'],
+    });
+
+    return [...new Set(groupPrograms.map((gp: any) => gp.systemProgram.controller))];
   }
 }
