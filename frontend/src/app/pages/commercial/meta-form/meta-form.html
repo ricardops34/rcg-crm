@@ -8,7 +8,7 @@
 
   <form #formMeta="ngForm">
     <div class="po-row">
-      <po-select class="po-md-6" name="vendedorId" [(ngModel)]="meta.vendedorId" p-label="Vendedor" [p-options]="vendedores" p-required="true"></po-select>
+      <po-select class="po-md-6" name="vendedorId" [ngModel]="meta.vendedorId" (p-change)="meta.vendedorId = $event" p-label="Vendedor" [p-options]="vendedores" p-required="true"></po-select>
       <po-input class="po-md-3" name="mes" [(ngModel)]="meta.mes" p-label="Mês" p-mask="99" p-required="true" p-clean></po-input>
       <po-input class="po-md-3" name="ano" [(ngModel)]="meta.ano" p-label="Ano" p-mask="9999" p-required="true" p-clean></po-input>
     </div>

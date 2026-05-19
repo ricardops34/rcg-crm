@@ -17,7 +17,7 @@
       </div>
     </po-widget>
 
-    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" p-primary="true">
+    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
       <div class="po-font-subtitle po-text-center po-py-2" [ngClass]="{'po-text-color-07': summary.achievement < 80, 'po-text-color-10': summary.achievement >= 100}">
         <po-icon [p-icon]="summary.achievement >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
         {{ summary.achievement | number:'1.1-2' }}%
@@ -30,7 +30,7 @@
       <po-chart 
         [p-series]="categorySeries" 
         [p-type]="chartType"
-        p-height="350">
+        [p-height]="350">
       </po-chart>
     </po-widget>
   </div>

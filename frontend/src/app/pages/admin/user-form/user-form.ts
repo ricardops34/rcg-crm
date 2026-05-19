@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PoModule, PoNotificationService, PoSelectOption, PoMultiselectOption } from "@po-ui/ng-components";
+import { FormsModule } from "@angular/forms";
 import { UserService } from "../../../services/user";
 import { UnitService } from "../../../services/unit";
 import { GroupService } from "../../../services/group";
@@ -9,7 +10,7 @@ import { GroupService } from "../../../services/group";
 @Component({
   selector: "app-user-form",
   standalone: true,
-  imports: [CommonModule, PoModule],
+  imports: [CommonModule, PoModule, FormsModule],
   template: `
     <po-page-edit 
       [p-title]="title"
@@ -24,13 +25,13 @@ import { GroupService } from "../../../services/group";
         <div class="po-row">
           <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome Completo" p-required p-clean></po-input>
           <po-input class="po-md-3" name="login" [(ngModel)]="user.login" p-label="Login de Acesso" p-required p-clean></po-input>
-          <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit" p-clean></po-password>
+          <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit ? 'true' : 'false'" p-clean></po-password>
         </div>
         
         <div class="po-row">
           <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
-          <po-select class="po-md-3" name="systemUnitId" [(ngModel)]="user.systemUnitId" p-label="Unidade / Filial" [p-options]="unitOptions" p-required></po-select>
-          <po-select class="po-md-3" name="active" [(ngModel)]="user.active" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
+          <po-select class="po-md-3" name="systemUnitId" [ngModel]="user.systemUnitId" (p-change)="user.systemUnitId = $event" p-label="Unidade / Filial" [p-options]="unitOptions" p-required="true"></po-select>
+          <po-select class="po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
         </div>
 
         <po-divider p-label="Permissões e Acesso"></po-divider>
