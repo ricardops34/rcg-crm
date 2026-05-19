@@ -35,10 +35,14 @@ export class AnalyticsController {
   async getMvc(
     @Req() req: any,
     @Query('year') year: string,
-    @Query('vendedorId') vendedorId: string,
+    @Query('vendedorId') vendedorId?: string,
+    @Query('estadoId') estadoId?: string,
+    @Query('municipioId') municipioId?: string,
+    @Query('dias') dias?: string,
+    @Query('situacao') situacao?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
-    let vId: number | undefined = vendedorId ? parseInt(vendedorId) : undefined;
+    let vId = vendedorId ? parseInt(vendedorId) : undefined;
 
     if (!vId && req.user) {
       vId =
@@ -46,8 +50,11 @@ export class AnalyticsController {
         undefined;
     }
 
-    if (!vId) return []; // Ou erro, mas para MVC melhor retornar vazio se não for vendedor
-
-    return this.analyticsService.getMvcData(y, vId);
+    return this.analyticsService.getMvcData(y, vId, {
+      estadoId: estadoId ? parseInt(estadoId) : undefined,
+      municipioId: municipioId ? parseInt(municipioId) : undefined,
+      dias: dias ? parseInt(dias) : undefined,
+      situacao,
+    });
   }
 }

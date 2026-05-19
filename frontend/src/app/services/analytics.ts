@@ -23,12 +23,23 @@ export class AnalyticsService {
     return this.http.get<any>(`${this.API_URL}/dashboard?year=${y}&month=${m}`, { headers: this.getHeaders() });
   }
 
-  getMvcData(year?: number, vendedorId?: number): Observable<any> {
-    const y = year || new Date().getFullYear();
+  getMvcData(params: {
+    year?: number;
+    vendedorId?: number;
+    estadoId?: number;
+    municipioId?: number;
+    dias?: number;
+    situacao?: string;
+  } = {}): Observable<any> {
+    const y = params.year || new Date().getFullYear();
     let url = `${this.API_URL}/mvc?year=${y}`;
-    if (vendedorId) {
-      url += `&vendedorId=${vendedorId}`;
-    }
+    
+    if (params.vendedorId) url += `&vendedorId=${params.vendedorId}`;
+    if (params.estadoId) url += `&estadoId=${params.estadoId}`;
+    if (params.municipioId) url += `&municipioId=${params.municipioId}`;
+    if (params.dias) url += `&dias=${params.dias}`;
+    if (params.situacao) url += `&situacao=${params.situacao}`;
+    
     return this.http.get<any>(url, { headers: this.getHeaders() });
   }
 }

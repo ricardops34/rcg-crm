@@ -1,10 +1,21 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { PoModule, PoTableColumn, PoPageAction, PoPageFilter, PoSelectOption, PoTableAction, PoModalComponent } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoTableColumn, 
+  PoPageAction, 
+  PoPageFilter, 
+  PoSelectOption, 
+  PoTableAction, 
+  PoModalComponent, 
+  PoBreadcrumb, 
+  PoDropdownAction 
+} from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { AnalyticsService } from "../../../services/analytics";
 import { AuthService } from "../../../services/auth";
 import { VendedorService } from "../../../services/vendedor";
+import { LocationService } from "../../../services/location";
 
 @Component({
   selector: "app-mvc-list",
@@ -14,6 +25,11 @@ import { VendedorService } from "../../../services/vendedor";
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalDetails", { static: true }) modalDetails!: PoModalComponent;
+
+  private analyticsService = inject(AnalyticsService);
+  private authService = inject(AuthService);
+  private vendedorService = inject(VendedorService);
+  private locationService = inject(LocationService);
 
   items: Array<any> = [];
   selectedItem: any = {};
@@ -27,15 +43,23 @@ export class MvcListComponent implements OnInit {
   
   selectedYear: number = new Date().getFullYear();
   selectedVendedor: number | undefined;
+  selectedEstado: number | undefined;
+  selectedMunicipio: number | undefined;
+  selectedSituacao: string | undefined;
+  minDias: number | undefined;
+
   vendedores: Array<PoSelectOption> = [];
+  estados: Array<PoSelectOption> = [];
+  municipios: Array<PoSelectOption> = [];
+  
+  situacoes: Array<PoSelectOption> = [
+    { label: "Ativo", value: "A" },
+    { label: "Bloqueado", value: "B" }
+  ];
+
   isGerente: boolean = false;
 
-  readonly filter: PoPageFilter = {
-    action: this.loadData.bind(this),
-    placeholder: "Pesquisar por cliente"
-  };
-
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Vendas", link: "/mvc" },
@@ -43,75 +67,120 @@ export class MvcListComponent implements OnInit {
     ]
   };
 
+  readonly filter: PoPageFilter = {
+    action: this.loadData.bind(this),
+    placeholder: "Pesquisar por cliente"
+  };
+
+  readonly actions: Array<PoPageAction> = [
+    { label: " XLS", action: () => {}, icon: "po-icon-export" },
+    { label: " PDF", action: () => {}, icon: "po-icon-pdf" }
+  ];
+
+  readonly quickFilters: Array<PoDropdownAction> = [
+    { label: " + 120 Dias", action: this.applyQuickFilter.bind(this, 120), icon: "po-icon-plus" },
+    { label: " + 90 Dias", action: this.applyQuickFilter.bind(this, 90), icon: "po-icon-plus" },
+    { label: " + 60 Dias", action: this.applyQuickFilter.bind(this, 60), icon: "po-icon-plus" },
+    { label: " + 30 Dias", action: this.applyQuickFilter.bind(this, 30), icon: "po-icon-plus" },
+    { label: " + 15 Dias", action: this.applyQuickFilter.bind(this, 15), icon: "po-icon-plus" },
+    { label: " Bloqueados", action: this.applySituacaoFilter.bind(this, 'B'), icon: "po-icon-lock" },
+    { label: " Ativos", action: this.applySituacaoFilter.bind(this, 'A'), icon: "po-icon-unlock" }
+  ];
+
   readonly tableActions: Array<PoTableAction> = [
     { label: "Ver Detalhes", action: this.showDetails.bind(this), icon: "po-icon-eye" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "cliente_nome", label: "Cliente", width: "250px" },
-    { property: "situacao", label: "Status", type: "label", labels: [
-      { value: "A", color: "color-10", label: "Ativo" },
-      { value: "B", color: "color-07", label: "Bloqueado" },
-      { value: "S", color: "color-11", label: "Suspenso" }
+    { property: "financeiro_status", label: "$", type: "subtitle", width: "50px", subtitles: [
+      { value: "R", color: "color-07", label: "Atrasado", content: "Vencido" },
+      { value: "B", color: "color-10", label: "Em dia", content: "A Vencer" }
     ]},
-    { property: "dias", label: "Dias s/ Compra", type: "number", width: "130px" },
-    { property: "janeiro", label: "Jan", type: "currency", format: "BRL", width: "100px" },
-    { property: "fevereiro", label: "Fev", type: "currency", format: "BRL", width: "100px" },
-    { property: "marco", label: "Mar", type: "currency", format: "BRL", width: "100px" },
-    { property: "abril", label: "Abr", type: "currency", format: "BRL", width: "100px" },
-    { property: "maio", label: "Mai", type: "currency", format: "BRL", width: "100px" },
-    { property: "junho", label: "Jun", type: "currency", format: "BRL", width: "100px" },
-    { property: "julho", label: "Jul", type: "currency", format: "BRL", width: "100px" },
-    { property: "agosto", label: "Ago", type: "currency", format: "BRL", width: "100px" },
-    { property: "setembro", label: "Set", type: "currency", format: "BRL", width: "100px" },
-    { property: "outubro", label: "Out", type: "currency", format: "BRL", width: "100px" },
-    { property: "novembro", label: "Nov", type: "currency", format: "BRL", width: "100px" },
-    { property: "dezembro", label: "Dez", type: "currency", format: "BRL", width: "100px" },
-    { property: "average3Months", label: "Média (3m)", type: "currency", format: "BRL", width: "120px" },
-    { property: "difference", label: "Tendência", type: "subtitle", width: "150px", subtitles: [
-      { value: 0, color: "color-07", label: "Queda", content: "Queda de Consumo" },
-      { value: 1, color: "color-10", label: "Alta", content: "Crescimento" }
-    ]}
+    { property: "situacao", label: "Situação", type: "label", width: "100px", labels: [
+      { value: "A", color: "color-10", label: "Ativo" },
+      { value: "B", color: "color-07", label: "Bloqueado" }
+    ]},
+    { property: "codigo", label: "Código", width: "100px" },
+    { property: "ultima_compra", label: "Última Compra", type: "date", format: "dd/MM/yyyy", width: "120px" },
+    { property: "cliente_nome", label: "Razão Social", width: "250px" },
+    { property: "municipio_descricao", label: "Cidade", width: "150px" },
+    { property: "difference", label: "Dif. mês e média", type: "currency", format: "BRL", width: "130px" },
+    { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "110px" },
+    { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "110px" },
+    { property: "dias", label: "Dias", type: "number", width: "80px" },
+    { property: "carteira", label: "Carteira", type: "label", width: "100px", labels: [
+      { value: "S", color: "color-11", label: "Sim" },
+      { value: "N", color: "color-08", label: "Não" }
+    ]},
+    { property: "vendedor_reduzido", label: "Vendedor", width: "120px" }
   ];
-
-  constructor(
-    private analyticsService: AnalyticsService,
-    private authService: AuthService,
-    private vendedorService: VendedorService
-  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getUser();
     this.isGerente = user?.isGerente || !!user?.supervisorId;
     
-    if (this.isGerente) {
-      this.loadVendedores();
-    }
-    
+    this.loadInitialData();
     this.loadData();
   }
 
-  loadVendedores() {
-    this.vendedorService.findAll().subscribe(res => {
-      this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
+  loadInitialData() {
+    if (this.isGerente) {
+      this.vendedorService.findAll().subscribe(res => {
+        this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
+      });
+    }
+
+    this.locationService.getEstados().subscribe(res => {
+      this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
     });
   }
 
-  loadData(filter?: string) {
+  onEstadoChange(estadoId: any) {
+    this.selectedEstado = estadoId;
+    this.selectedMunicipio = undefined;
+    if (estadoId) {
+      this.locationService.getMunicipios(estadoId).subscribe(res => {
+        this.municipios = res.map((m: any) => ({ label: m.descricao, value: m.id }));
+      });
+    } else {
+      this.municipios = [];
+    }
+    this.loadData();
+  }
+
+  applyQuickFilter(dias: number) {
+    this.minDias = dias;
+    this.loadData();
+  }
+
+  applySituacaoFilter(situacao: string) {
+    this.selectedSituacao = situacao;
+    this.loadData();
+  }
+
+  loadData(filterText?: string) {
     this.isLoading = true;
-    this.analyticsService.getMvcData(this.selectedYear, this.selectedVendedor).subscribe({
+    this.analyticsService.getMvcData({
+      year: this.selectedYear,
+      vendedorId: this.selectedVendedor,
+      estadoId: this.selectedEstado,
+      municipioId: this.selectedMunicipio,
+      situacao: this.selectedSituacao,
+      dias: this.minDias
+    }).subscribe({
       next: (res) => {
-        this.items = res.map((item: any) => ({
+        let data = res.map((item: any) => ({
           ...item,
-          // 0 para queda (negativo), 1 para alta (positivo ou zero)
-          difference: item.difference < 0 ? 0 : 1
+          $rowColor: item.difference < 0 ? "#FFF9A7" : undefined
         }));
 
-        if (filter) {
-          this.items = this.items.filter(item => 
-            item.cliente_nome?.toLowerCase().includes(filter.toLowerCase())
+        if (filterText) {
+          data = data.filter((item: any) => 
+            item.cliente_nome?.toLowerCase().includes(filterText.toLowerCase())
           );
         }
+
+        this.items = data;
         this.isLoading = false;
       },
       error: () => {
@@ -125,4 +194,3 @@ export class MvcListComponent implements OnInit {
     this.modalDetails.open();
   }
 }
-
