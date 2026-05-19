@@ -7,11 +7,16 @@
 
 ### G-01: Cálculo de Juros na Cobrança
 - **Descrição:** O sistema não possui a fórmula de cálculo de juros/multa parametrizada no PHP.
-- **Status:** Resolvido operacionalmente. O rebuild deve manter o saldo seco na lista e permitir simulação manual no detalhe.
+- **Status:** Resolvido via análise de banco. A inteligência reside na `view_cliente_saldo_titulo`. O rebuild deve replicar as subqueries de saldo aberto/vencido. 🟢
 
 ### G-02: Conversão de Orçamento para Pedido
 - **Descrição:** Lógica de conversão manual/automática entre tabelas de bancos diferentes.
-- **Status:** Planejado para ser implementado como escrita física no banco legado.
+- **Status:** Confirmado vínculo de FK no banco. O Rebuild deve realizar a persistência dupla para manter legado. 🟢
+
+### G-04: Jobs e Triggers
+- **Descrição:** Suspeita de triggers ou procedures ocultas.
+- **Status:** Resolvido. A análise do dump SQL `erp_online-pgsql.sql` não revelou gatilhos ativos. A inteligência de BI é 100% baseada em Views. 🟢
+
 
 ## Severidade: Cosmética 🔵
 
