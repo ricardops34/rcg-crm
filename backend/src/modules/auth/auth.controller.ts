@@ -63,7 +63,7 @@ export class AuthController {
     }
 
     const user = await this.authService.getProfile(req.user.userId);
-    return this.authService.login({ ...user, twoFactorVerified: true });
+    return this.authService.login({ ...user, twoFactorVerified: true } as AuthUser);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -76,6 +76,6 @@ export class AuthController {
 
     // TODO: Gravar aceite no banco
     const user = await this.authService.getProfile(req.user.userId);
-    return this.authService.login({ ...user, acceptedTermPolicy: 'Y' });
+    return this.authService.login({ ...user, acceptedTermPolicy: 'Y' } as AuthUser);
   }
 }
