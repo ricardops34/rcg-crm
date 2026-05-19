@@ -88,6 +88,16 @@ Este documento lista todos os módulos e rotinas identificados no sistema legado
 | **Consulta WhatsApp**| API para Bot de autoatendimento | `WhatsAppRestService` | 🟢 Resolvido |
 | **Notificações** | Disparo de alertas via E-mail/Msg | `CommunicationService` | 🟡 Parcial |
 
+## 7. Estrutura de Menus e Navegação (UX)
+*Mapeamento da hierarquia original para fidelidade na interface Angular/PO-UI.*
+
+- **Cadastros:** Notícias, Comunicados, Aniversários.
+- **Vendedor:** Dashboard, Clientes, Agenda (Calendário), MVC (BI), Atendimentos.
+- **Gerencia:** Vendedores (Equipe), Metas (Objetivos), Dashboard Estratégico, Evolução de Venda, Ranking Top 10.
+- **Cobrança:** Movimentação, Negociação de Títulos.
+- **Sistema:** Configurações de Estados (Pedido/Orçamento), Parâmetros, Tipos de Atendimento.
+- **Administração:** Gestão de Usuários, Programas, Grupos, Logs Técnicos.
+
 ---
 **Nota sobre a Estratégia de Migração:**
 As rotinas marcadas como 🟢 estão prontas para serem implementadas no novo sistema (NestJS/Angular) pois suas regras de negócio e estruturas de dados estão 100% mapeadas. Rotinas 🟡 possuem dependências externas (como o ERP legado) que exigem atenção especial na camada de Service.

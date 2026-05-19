@@ -60,6 +60,35 @@ Este documento traduz as rotinas funcionais para os artefatos técnicos reais do
 | **Log de SQL** | `SystemSqlLog.php` | Gravação de queries brutas com `debug_backtrace`. |
 | **Sincronização ERP** | `AdiantiRecordService.php` | Motor genérico de importação via REST. |
 
+## 7. Mapeamento de Menus e Navegação (menu.xml)
+
+Este mapeamento define a hierarquia de navegação e os Controllers disparados por cada item de menu.
+
+| Módulo (Menu) | Item de Menu | Controller Legado (Action) |
+|---------------|--------------|----------------------------|
+| **Cadastros** | Comunicados | `BlogComunicadosList` |
+| | Aniversários | `BlogAniversariosList` |
+| | Notícias | `BlogNoticiasList` |
+| **Vendedor** | Cadastro de Clientes | `ClienteList` |
+| | Dashboard Vendedor | `DashboardVendedor` |
+| | Atendimento (Calendário) | `AtendimentoCalendarFormView` |
+| | MVC | `MvcList` |
+| **Gerencia** | Vendedores | `VendedorList` |
+| | Objetivo Mês (Metas) | `MetaVendedorMesList` |
+| | Dashboard Gerencial | `DashboardGerencia` |
+| | Evolução de Venda | `VendaMesClienteList` |
+| | Top 10 Clientes | `ClienteTop10List` |
+| **Cobrança** | Negociação | `NegociacaoList` |
+| **Desenvolvimento** | Produtos | `ProdutoList` |
+| | Orçamentos | `OrcamentoList` |
+| | Tabela de Preço | `TabelaPrecoList` |
+| | Títulos a Receber | `TituloReceberList` |
+| **Supervisor** | Dashboard Supervisor | `DashboardSupervisor` |
+| **Sistema** | Configuração Pedidos | `PedidoEstadoList` |
+| | Parâmetros | `ParametroList` |
+| | Configuração Orçamentos | `OrcamentoEstadoList` |
+| | Tipos de Atendimento | `AtendimentoTipoList` |
+
 ---
 ### Como utilizar este guia:
 1. Ao implementar uma funcionalidade no NestJS, procure pela classe PHP correspondente para entender a lógica de validação.
