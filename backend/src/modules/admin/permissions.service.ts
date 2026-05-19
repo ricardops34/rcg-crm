@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
+import { SystemProgram } from './entities/system-program.entity';
 
 @Injectable()
 export class PermissionsService {
@@ -11,12 +12,23 @@ export class PermissionsService {
     private userGroupRepository: Repository<SystemUserGroup>,
     @InjectRepository(SystemGroupProgram, 'security')
     private groupProgramRepository: Repository<SystemGroupProgram>,
+    @InjectRepository(SystemProgram, 'security')
+    private programRepository: Repository<SystemProgram>,
   ) {}
 
   async hasPermission(userId: number, controller: string): Promise<boolean> {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
+      relations: ['systemGroup'],
     });
+
+    // AJUSTE: Se o usuário pertencer ao grupo 'Admin', ele tem acesso total a todos os programas/controllers
+    const isAdmin = userGroups.some(
+      (ug) => ug.systemGroup && ug.systemGroup.name?.toLowerCase().includes('admin'),
+    );
+    if (isAdmin) {
+      return true;
+    }
 
     const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return false;
@@ -35,7 +47,16 @@ export class PermissionsService {
   async getUserPrograms(userId: number) {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
+      relations: ['systemGroup'],
     });
+
+    // AJUSTE: Se for Admin, retorna todos os programas cadastrados no sistema
+    const isAdmin = userGroups.some(
+      (ug) => ug.systemGroup && ug.systemGroup.name?.toLowerCase().includes('admin'),
+    );
+    if (isAdmin) {
+      return this.programRepository.find();
+    }
 
     const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return [];

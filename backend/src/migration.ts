@@ -1,87 +1,94 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { getDataSourceToken } from '@nestjs/typeorm';
 import * as fs from 'fs';
-import * as path from 'fs';
 import * as readline from 'readline';
+import * as path from 'path';
 
-async function migrate() {
-  console.log('🚀 Iniciando Ferramenta de Migração (MySQL -> PostgreSQL)...');
-  const app = await NestFactory.createApplicationContext(AppModule);
+@Injectable()
+export class MigrationDataService {
+  constructor(private dataSource: DataSource) {}
 
-  const crmDataSource = app.get<DataSource>(DataSource);
-  const securityDataSource = app.get<DataSource>(
-    getDataSourceToken('security'),
-  );
-
-  try {
-    // 1. Migrar Permissões (Security DB)
-    const permissionsFile = 'C:/Ricardo/rcgcrm/backup/permissao_mysql.sql';
-    if (fs.existsSync(permissionsFile)) {
-      console.log('📑 Processando Permissões...');
-      await processSqlFile(permissionsFile, securityDataSource);
+  async migrateMySQLtoPG(filePath: string) {
+    const absolutePath = path.resolve(filePath);
+    if (!fs.existsSync(absolutePath)) {
+      console.error(`Arquivo não encontrado: ${absolutePath}`);
+      return;
     }
 
-    // 2. Migrar Dados de Negócio (CRM DB)
-    const backupFile = 'C:/Ricardo/rcgcrm/backup/backup_mysql.sql';
-    if (fs.existsSync(backupFile)) {
-      console.log('📑 Processando Backup CRM (este processo pode demorar)...');
-      await processSqlFile(backupFile, crmDataSource);
-    }
+    const fileStream = fs.createReadStream(absolutePath);
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
 
-    console.log('✨ Migração finalizada com sucesso!');
-  } catch (error) {
-    console.error('❌ Erro durante a migração:', error.message);
-  } finally {
-    await app.close();
-    process.exit(0);
-  }
-}
+    console.log(`Iniciando migração de: ${filePath}...`);
+    
+    let queryBuffer = '';
+    let lineCount = 0;
+    let insertCount = 0;
 
-async function processSqlFile(filePath: string, dataSource: DataSource) {
-  const fileStream = fs.createReadStream(filePath);
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
-
-  let currentStatement = '';
-  const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.connect();
-
-  for await (const line of rl) {
-    // Pular comentários e linhas vazias
-    if (line.startsWith('--') || line.startsWith('/*') || line.trim() === '')
-      continue;
-
-    currentStatement += line + ' ';
-
-    if (line.endsWith(';')) {
-      try {
-        // Adaptações básicas MySQL -> Postgres
-        const finalSql = currentStatement
-          .replace(/`/g, '"') // Backticks para aspas duplas
-          .replace(/\\'/g, "''") // Escapar aspas simples
-          .replace(/AUTO_INCREMENT/gi, '') // Remover auto increment (usamos SERIAL no Postgres)
-          .replace(/ENGINE=InnoDB/gi, '')
-          .replace(/DEFAULT CHARSET=utf8mb4/gi, '')
-          .replace(/COLLATE=utf8mb4_unicode_ci/gi, '')
-          .replace(/datetime/gi, 'timestamp')
-          .replace(/0000-00-00 00:00:00/g, '1970-01-01 00:00:00');
-
-        // Se for um INSERT, tentar executar
-        if (finalSql.trim().toUpperCase().startsWith('INSERT')) {
-          await queryRunner.query(finalSql);
-        }
-      } catch (e) {
-        // Log de erro mas continua (pode haver duplicatas ou tabelas que mudaram)
-        // console.warn(`⚠️ Aviso em instrução: ${e.message}`);
+    for await (const line of rl) {
+      lineCount++;
+      
+      // Ignorar comentários, linhas vazias e comandos de estrutura (CREATE/DROP)
+      // assumindo que as tabelas já foram criadas pelo sincronismo do TypeORM ou script SQL.
+      if (
+        line.startsWith('--') || 
+        line.trim() === '' || 
+        line.startsWith('/*') ||
+        line.toUpperCase().startsWith('CREATE TABLE') ||
+        line.toUpperCase().startsWith('DROP TABLE') ||
+        line.toUpperCase().startsWith('ALTER TABLE')
+      ) {
+        continue;
       }
-      currentStatement = '';
-    }
-  }
-  await queryRunner.release();
-}
 
-migrate();
+      // Processar apenas comandos INSERT
+      if (line.toUpperCase().startsWith('INSERT INTO')) {
+        let pgLine = line
+          .replace(/`/g, '"') // Trocar backticks por aspas duplas
+          .replace(/\\'/g, "''") // Escapar aspas simples
+          .replace(/\\"/g, '"') // Ajustar aspas duplas
+          .replace(/\\r\\n/g, '\n') // Ajustar quebras de linha
+          .replace(/\\n/g, '\n');
+
+        try {
+          await this.dataSource.query(pgLine);
+          insertCount++;
+          if (insertCount % 100 === 0) {
+            console.log(`${insertCount} registros importados...`);
+          }
+        } catch (err) {
+          console.error(`Erro na linha ${lineCount}: ${err.message}`);
+          // console.error(`Query: ${pgLine.substring(0, 100)}...`);
+        }
+      }
+    }
+
+    console.log('Migração de dados finalizada!');
+    await this.fixSequences();
+  }
+
+  async fixSequences() {
+    console.log('Sincronizando sequences do PostgreSQL...');
+    const tables = await this.dataSource.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_type = 'BASE TABLE'
+    `);
+
+    for (const table of tables) {
+      const tableName = table.table_name;
+      try {
+        // Tentar resetar a sequence assumindo o padrão "tabela_id_seq"
+        await this.dataSource.query(`
+          SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), coalesce(max(id), 1)) FROM "${tableName}";
+        `);
+      } catch (e) {
+        // Algumas tabelas podem não ter ID serial ou sequence padrão
+      }
+    }
+    console.log('Sequences sincronizadas com sucesso!');
+  }
+}

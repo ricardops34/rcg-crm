@@ -7,6 +7,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SeedService } from './seed.service';
+import { MigrationDataService } from './migration';
 import { MasterDataModule } from './modules/master-data/master-data.module';
 import { CommercialModule } from './modules/commercial/commercial.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
@@ -102,6 +103,6 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SeedService],
+  providers: [AppService, SeedService, MigrationDataService],
 })
 export class AppModule {}
