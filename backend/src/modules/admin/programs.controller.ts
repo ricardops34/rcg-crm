@@ -14,4 +14,24 @@ export class ProgramsController {
   async findAll() {
     return this.programsService.findAll();
   }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.programsService.findOne(+id);
+  }
+
+  @Post()
+  async create(@Body() data: any) {
+    return this.programsService.create(data);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() data: any) {
+    return this.programsService.update(+id, data);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.programsService.remove(+id);
+  }
 }

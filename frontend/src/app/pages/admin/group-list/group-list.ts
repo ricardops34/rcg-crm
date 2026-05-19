@@ -10,7 +10,7 @@ import { GroupService } from "../../../services/group";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list 
-      p-title="Grupos de Permissão"
+      p-title="Perfis de Acesso"
       [p-actions]="actions"
       [p-filter]="filter">
       
@@ -34,11 +34,11 @@ export class GroupListComponent implements OnInit {
 
   readonly filter: PoPageFilter = {
     action: this.loadGroups.bind(this),
-    placeholder: "Pesquisar por nome"
+    placeholder: "Pesquisar perfil"
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo Grupo", action: () => this.router.navigate(["/admin/groups/new"]), icon: "po-icon-plus" }
+    { label: "Novo Perfil", action: () => this.router.navigate(["/admin/groups/new"]), icon: "po-icon-plus" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
@@ -48,7 +48,14 @@ export class GroupListComponent implements OnInit {
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
-    { property: "name", label: "Nome do Grupo" }
+    { property: "name", label: "Nome do Perfil" },
+    { property: "role", label: "Tipo de Acesso (Behavior)", type: "label", labels: [
+      { value: "ADMIN", color: "color-07", label: "Administrador" },
+      { value: "GERENTE", color: "color-11", label: "Gerente" },
+      { value: "SUPERVISOR", color: "color-08", label: "Supervisor" },
+      { value: "VENDEDOR", color: "color-10", label: "Vendedor" },
+      { value: "CLIENTE", color: "color-09", label: "Cliente" }
+    ]}
   ];
 
   constructor(

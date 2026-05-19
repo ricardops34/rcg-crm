@@ -32,4 +32,8 @@ export class UserService {
       return this.http.post<any>(this.API_URL, user, { headers: this.getHeaders() });
     }
   }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
 }

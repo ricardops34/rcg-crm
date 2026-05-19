@@ -25,7 +25,7 @@ export class GroupsService {
     });
     if (!group) throw new NotFoundException('Grupo não encontrado');
 
-    // Buscar programas vinculados
+    // Buscar programas vinculados com suas permissões (actions)
     const groupPrograms = await this.groupProgramRepository.find({
       where: { systemGroupId: id },
       relations: ['systemProgram'],
@@ -33,22 +33,28 @@ export class GroupsService {
 
     return {
       ...group,
-      programs: groupPrograms.map((gp) => gp.systemProgramId),
+      programs: groupPrograms.map((gp) => ({
+        id: gp.systemProgramId,
+        name: gp.systemProgram.name,
+        controller: gp.systemProgram.controller,
+        actions: gp.actions ? JSON.parse(gp.actions) : { view: true, insert: false, update: false, delete: false }
+      })),
     };
   }
 
   async create(groupData: any) {
     const { programs, ...data } = groupData;
-    const group = this.groupRepository.create(groupData);
+    const group = this.groupRepository.create(data);
     const savedGroup = (await this.groupRepository.save(
       group,
     )) as unknown as SystemGroup;
 
     if (programs && programs.length > 0) {
-      const groupPrograms = programs.map((programId) =>
+      const groupPrograms = programs.map((p) =>
         this.groupProgramRepository.create({
           systemGroupId: savedGroup.id,
-          systemProgramId: programId,
+          systemProgramId: p.id,
+          actions: JSON.stringify(p.actions || { view: true, insert: false, update: false, delete: false }),
         }),
       );
       await this.groupProgramRepository.save(groupPrograms);
@@ -63,15 +69,14 @@ export class GroupsService {
 
     if (programs) {
       await this.groupProgramRepository.delete({ systemGroupId: id });
-      if (programs.length > 0) {
-        const newGroupPrograms = programs.map((programId) =>
-          this.groupProgramRepository.create({
-            systemGroupId: id,
-            systemProgramId: programId,
-          }),
-        );
-        await this.groupProgramRepository.save(newGroupPrograms);
-      }
+      const newGroupPrograms = programs.map((p) =>
+        this.groupProgramRepository.create({
+          systemGroupId: id,
+          systemProgramId: p.id,
+          actions: JSON.stringify(p.actions || { view: true, insert: false, update: false, delete: false }),
+        }),
+      );
+      await this.groupProgramRepository.save(newGroupPrograms);
     }
 
     return this.findOne(id);

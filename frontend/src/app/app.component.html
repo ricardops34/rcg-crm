@@ -2,9 +2,15 @@
   <po-toolbar 
     p-title="RCG CRM"
     [p-profile]="profile"
-    [p-profile-actions]="profileActions">
+    [p-profile-actions]="profileActions"
+    [p-actions]="toolbarActions">
   </po-toolbar>
-  <po-menu [p-menus]="menus"></po-menu>
+  
+  <po-menu 
+    [p-menus]="menus"
+    [p-logo]="logo"
+    [p-filter]="true">
+  </po-menu>
 
   <router-outlet></router-outlet>
 </div>

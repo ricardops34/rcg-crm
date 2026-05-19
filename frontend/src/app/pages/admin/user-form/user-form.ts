@@ -11,37 +11,7 @@ import { GroupService } from "../../../services/group";
   selector: "app-user-form",
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
-  template: `
-    <po-page-edit 
-      [p-title]="title"
-      [p-breadcrumb]="breadcrumb"
-      (p-save)="save()"
-      (p-cancel)="cancel()">
-      
-      <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
-
-      <form #userForm="ngForm">
-        <po-divider p-label="Informações Básicas"></po-divider>
-        <div class="po-row">
-          <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome Completo" p-required p-clean></po-input>
-          <po-input class="po-md-3" name="login" [(ngModel)]="user.login" p-label="Login de Acesso" p-required p-clean></po-input>
-          <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit ? 'true' : 'false'" p-clean></po-password>
-        </div>
-        
-        <div class="po-row">
-          <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
-          <po-select class="po-md-3" name="systemUnitId" [ngModel]="user.systemUnitId" (p-change)="user.systemUnitId = $event" p-label="Unidade / Filial" [p-options]="unitOptions" p-required="true"></po-select>
-          <po-select class="po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
-        </div>
-
-        <po-divider p-label="Permissões e Acesso"></po-divider>
-        <div class="po-row">
-          <po-multiselect class="po-md-12" name="groups" [(ngModel)]="user.groups" p-label="Grupos de Permissão" [p-options]="groupOptions" p-placeholder="Selecione um ou mais grupos"></po-multiselect>
-        </div>
-      </form>
-      
-    </po-page-edit>
-  `
+  templateUrl: "./user-form.html"
 })
 export class UserFormComponent implements OnInit {
 
@@ -57,7 +27,7 @@ export class UserFormComponent implements OnInit {
     items: [
       { label: "Home", link: "/" },
       { label: "Usuários", link: "/admin/users" },
-      { label: "Cadastro" }
+      { label: "Manutenção" }
     ]
   };
 
@@ -76,8 +46,7 @@ export class UserFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadUnits();
-    this.loadGroups();
+    this.loadInitialData();
 
     const id = this.activatedRoute.snapshot.params["id"];
     if (id) {
@@ -87,13 +56,10 @@ export class UserFormComponent implements OnInit {
     }
   }
 
-  loadUnits() {
+  loadInitialData() {
     this.unitService.findAll().subscribe(res => {
       this.unitOptions = res.map((u: any) => ({ label: u.nome, value: u.id }));
     });
-  }
-
-  loadGroups() {
     this.groupService.findAll().subscribe(res => {
       this.groupOptions = res.map((g: any) => ({ label: g.name, value: g.id }));
     });

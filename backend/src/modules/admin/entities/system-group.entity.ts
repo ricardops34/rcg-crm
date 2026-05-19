@@ -10,4 +10,7 @@ export class SystemGroup {
 
   @Column({ length: 36, nullable: true })
   uuid: string;
+
+  @Column({ length: 50, nullable: true })
+  role: string;
 }

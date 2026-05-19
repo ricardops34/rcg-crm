@@ -85,4 +85,10 @@ export class AuthService {
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
     return this.http.patch<any>(`${this.API_URL}/me`, data, { headers });
   }
+
+  getMenu(): Observable<any> {
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.get<any>(`${this.API_URL}/me/menu`, { headers });
+  }
 }

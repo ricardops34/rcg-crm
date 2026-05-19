@@ -1,9 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PoModule, PoNotificationService, PoTableColumn, PoTableAction } from "@po-ui/ng-components";
+import { PoModule, PoNotificationService, PoTableColumn, PoTableAction, PoSelectOption } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ClienteService } from "../../../services/cliente";
+import { VendedorService } from "../../../services/vendedor";
+import { LocationService } from "../../../services/location";
 
 @Component({
   selector: "app-cliente-form",
@@ -12,16 +14,26 @@ import { ClienteService } from "../../../services/cliente";
   templateUrl: "./cliente-form.html"
 })
 export class ClienteFormComponent implements OnInit {
+  private clienteService = inject(ClienteService);
+  private vendedorService = inject(VendedorService);
+  private locationService = inject(LocationService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
-  cliente: any = { contatos: [] };
+  cliente: any = { contatos: [], status: "A" };
   isLoading: boolean = false;
   title: string = "Novo Cliente";
+
+  vendedores: Array<PoSelectOption> = [];
+  estados: Array<PoSelectOption> = [];
+  municipios: Array<PoSelectOption> = [];
 
   readonly breadcrumb: any = {
     items: [
       { label: "Home", link: "/" },
       { label: "Clientes", link: "/clientes" },
-      { label: "Cadastro" }
+      { label: "Manutenção" }
     ]
   };
 
@@ -36,18 +48,30 @@ export class ClienteFormComponent implements OnInit {
     { label: "Remover", action: this.removeContato.bind(this), icon: "po-icon-delete", type: "danger" }
   ];
 
-  constructor(
-    private clienteService: ClienteService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private poNotification: PoNotificationService
-  ) { }
-
   ngOnInit(): void {
+    this.loadInitialData();
+
     const id = this.activatedRoute.snapshot.params["id"];
     if (id) {
       this.title = "Editar Cliente";
       this.loadCliente(id);
+    }
+  }
+
+  loadInitialData() {
+    this.vendedorService.findAll().subscribe(res => {
+      this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
+    });
+    this.locationService.getEstados().subscribe(res => {
+      this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
+    });
+  }
+
+  onEstadoChange(estadoId: any) {
+    if (estadoId) {
+      this.locationService.getMunicipios(estadoId).subscribe(res => {
+        this.municipios = res.map((m: any) => ({ label: m.descricao, value: m.id }));
+      });
     }
   }
 
@@ -56,6 +80,7 @@ export class ClienteFormComponent implements OnInit {
     this.clienteService.findOne(id).subscribe({
       next: (res) => {
         this.cliente = res;
+        if (this.cliente.estadoId) this.onEstadoChange(this.cliente.estadoId);
         this.isLoading = false;
       },
       error: () => {
@@ -80,7 +105,6 @@ export class ClienteFormComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.poNotification.error("Erro ao salvar cadastro.");
-        console.error(err);
       }
     });
   }

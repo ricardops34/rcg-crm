@@ -16,16 +16,21 @@ export class ClienteService {
     const user = this.cls.get('user');
     const where: any = {};
 
-    // Hierarquia de Acesso (T-05)
-    if (!user?.isGerente) {
-      if (user?.supervisorId) {
+    // Hierarquia de Acesso Baseada em Perfis (Role-Based)
+    const roles = user?.roles || [];
+    
+    if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
+      if (roles.includes('SUPERVISOR') && user.managedVendedorIds?.length > 0) {
         // Supervisor vê os seus próprios e os dos seus vendedores
-        const sellerIds = [...(user.managedVendedorIds || [])];
+        const sellerIds = [...user.managedVendedorIds];
         if (user.vendedorId) sellerIds.push(user.vendedorId);
         where.vendedorId = In(sellerIds);
-      } else if (user?.vendedorId) {
+      } else if (roles.includes('VENDEDOR') && user.vendedorId) {
         // Vendedor vê apenas os seus
         where.vendedorId = user.vendedorId;
+      } else {
+        // Papel desconhecido ou sem vínculo: não vê nada por segurança
+        return [[], 0];
       }
     }
 
@@ -54,15 +59,17 @@ export class ClienteService {
 
     if (!cliente) return null;
 
-    // Validar hierarquia no acesso individual
-    if (!user?.isGerente) {
-      if (user?.supervisorId) {
+    // Validar hierarquia no acesso individual (Role-Based)
+    const roles = user?.roles || [];
+
+    if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
+      if (roles.includes('SUPERVISOR')) {
         const sellerIds = [...(user.managedVendedorIds || [])];
         if (user.vendedorId) sellerIds.push(user.vendedorId);
         if (!sellerIds.includes(cliente.vendedorId)) {
           throw new ForbiddenException('Acesso negado a este cliente (fora da sua equipe)');
         }
-      } else if (user?.vendedorId && cliente.vendedorId !== user.vendedorId) {
+      } else if (roles.includes('VENDEDOR') && cliente.vendedorId !== user.vendedorId) {
         throw new ForbiddenException('Você não tem permissão para acessar este cliente');
       }
     }

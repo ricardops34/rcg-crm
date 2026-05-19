@@ -14,6 +14,10 @@ import { UserFormComponent } from './pages/admin/user-form/user-form';
 import { ProfileComponent } from './pages/admin/profile/profile';
 import { GroupListComponent } from './pages/admin/group-list/group-list';
 import { GroupFormComponent } from './pages/admin/group-form/group-form';
+import { ProgramListComponent } from './pages/admin/program-list/program-list';
+import { ProgramFormComponent } from './pages/admin/program-form/program-form';
+import { ModuleListComponent } from './pages/admin/module-list/module-list';
+import { ModuleFormComponent } from './pages/admin/module-form/module-form';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -40,6 +44,12 @@ export const routes: Routes = [
       { path: 'admin/groups', component: GroupListComponent, data: { controller: 'SystemGroupList' } },
       { path: 'admin/groups/new', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
       { path: 'admin/groups/edit/:id', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
+      { path: 'admin/modules', component: ModuleListComponent, data: { controller: 'SystemModuleList' } },
+      { path: 'admin/modules/new', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },
+      { path: 'admin/modules/edit/:id', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },
+      { path: 'admin/programs', component: ProgramListComponent, data: { controller: 'SystemProgramList' } },
+      { path: 'admin/programs/new', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
+      { path: 'admin/programs/edit/:id', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
       { path: 'profile', component: ProfileComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ] 

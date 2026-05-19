@@ -141,12 +141,14 @@ export class AuthService {
     }
 
     const programs = await this.permissionsService.getUserPrograms(userId);
-    const groupNames = (await this.userRepository.query(
-      `SELECT name FROM system_group sg 
+    const userRoles = (await this.userRepository.query(
+      `SELECT sg.role FROM system_group sg 
        JOIN system_user_group sug ON sug.system_group_id = sg.id 
        WHERE sug.system_user_id = $1`,
       [userId],
-    )).map((g: any) => g.name);
+    )).map((g: any) => g.role?.toUpperCase());
+
+    const isGerente = userRoles.includes('GERENTE') || userRoles.includes('ADMIN');
 
     return {
       id: user.id,
@@ -157,8 +159,13 @@ export class AuthService {
       vendedorId: vendedor?.id || null,
       supervisorId: supervisor?.id || null,
       managedVendedorIds,
-      isGerente: groupNames.includes('Gerência') || groupNames.includes('Administrador'),
+      isGerente,
+      roles: userRoles,
       programs: programs,
     };
+  }
+
+  async getMenu(userId: number) {
+    return this.permissionsService.getMenuStructure(userId);
   }
 }

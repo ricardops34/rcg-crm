@@ -6,9 +6,9 @@ import { environment } from "../../environments/environment";
 @Injectable({
   providedIn: "root"
 })
-export class ProgramService {
+export class ModuleService {
 
-  private readonly API_URL = `${environment.apiUrl}/admin/programs`;
+  private readonly API_URL = `${environment.apiUrl}/admin/modules`;
 
   constructor(private http: HttpClient) { }
 

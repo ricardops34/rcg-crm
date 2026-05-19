@@ -52,4 +52,8 @@ export class ClienteService {
   getAtendimentos(id: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${id}/atendimentos`, { headers: this.getHeaders() });
   }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
 }

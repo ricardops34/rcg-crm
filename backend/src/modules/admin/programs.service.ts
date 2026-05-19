@@ -15,4 +15,24 @@ export class ProgramsService {
       order: { name: 'ASC' },
     });
   }
+
+  async findOne(id: number) {
+    const program = await this.programRepository.findOne({ where: { id } });
+    if (!program) throw new NotFoundException('Rotina não encontrada');
+    return program;
+  }
+
+  async create(data: any) {
+    const program = this.programRepository.create(data);
+    return this.programRepository.save(program);
+  }
+
+  async update(id: number, data: any) {
+    await this.programRepository.update(id, data);
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    return this.programRepository.delete(id);
+  }
 }

@@ -23,6 +23,11 @@ export class MeController {
     return this.authService.getProfile(req.user.userId);
   }
 
+  @Get('menu')
+  async getMenu(@Request() req: AuthenticatedRequest) {
+    return this.authService.getMenu(req.user.userId);
+  }
+
   @Patch()
   async updateProfile(@Request() req: AuthenticatedRequest, @Body() data: any) {
     // Apenas permitir atualização de campos seguros pelo próprio usuário

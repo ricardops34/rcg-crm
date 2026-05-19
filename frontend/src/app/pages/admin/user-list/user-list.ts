@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn, PoTableAction } from "@po-ui/ng-components";
+import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoNotificationService } from "@po-ui/ng-components";
 import { UserService } from "../../../services/user";
 
 @Component({
@@ -21,8 +21,7 @@ import { UserService } from "../../../services/user";
         [p-loading]="isLoading"
         p-container="shadow"
         [p-striped]="true"
-        [p-sort]="true"
-        [p-draggable]="true">
+        [p-sort]="true">
       </po-table>
       
     </po-page-list>
@@ -43,15 +42,16 @@ export class UserListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "po-icon-edit" }
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "po-icon-edit" },
+    { label: "Excluir", action: this.deleteUser.bind(this), icon: "po-icon-delete", type: "danger" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
     { property: "name", label: "Nome Completo" },
     { property: "login", label: "Login" },
-    { property: "systemUnit.nome", label: "Unidade" },
-    { property: "grupos", label: "Grupos" },
+    { property: "systemUnit.name", label: "Unidade" },
+    { property: "grupos", label: "Perfis" },
     { property: "email", label: "E-mail" },
     { property: "active", label: "Ativo", type: "label", labels: [
       { value: "Y", color: "color-10", label: "Sim" },
@@ -61,7 +61,8 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private poNotification: PoNotificationService
   ) {}
 
   ngOnInit() {
@@ -88,5 +89,21 @@ export class UserListComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  deleteUser(user: any) {
+    if (confirm(`Deseja realmente excluir o usuário ${user.name}?`)) {
+      this.isLoading = true;
+      this.userService.delete(user.id).subscribe({
+        next: () => {
+          this.poNotification.success("Usuário excluído com sucesso!");
+          this.loadUsers();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.poNotification.error("Erro ao excluir usuário.");
+        }
+      });
+    }
   }
 }

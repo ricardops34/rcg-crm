@@ -9,37 +9,53 @@
   <form #formCliente="ngForm">
     <po-tabs>
       <po-tab p-label="Identificação" [p-active]="true">
-        <div class="po-row">
-          <po-input class="po-md-2" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" p-disabled="true"></po-input>
+        <div class="po-row po-mt-2">
           <po-input class="po-md-6" name="razao" [(ngModel)]="cliente.razao" p-label="Razão Social" p-required="true" p-clean></po-input>
-          <po-input class="po-md-4" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia" p-clean></po-input>
+          <po-input class="po-md-6" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia" p-clean></po-input>
         </div>
         <div class="po-row">
           <po-input class="po-md-3" name="cnpjCpf" [(ngModel)]="cliente.cnpjCpf" p-label="CNPJ/CPF" p-clean></po-input>
-          <po-select class="po-md-2" name="status" [ngModel]="cliente.status" (p-change)="cliente.status = $event" p-label="Status"
+          <po-select class="po-md-3" name="status" [ngModel]="cliente.status" (p-change)="cliente.status = $event" p-label="Status"
             [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
-          </po-select>          <po-input class="po-md-4" name="email" [(ngModel)]="cliente.email" p-label="E-mail" p-clean p-icon="po-icon-mail"></po-input>
+          </po-select>
+          <po-select class="po-md-3" name="vendedorId" [ngModel]="cliente.vendedorId" (p-change)="cliente.vendedorId = $event" p-label="Vendedor"
+            [p-options]="vendedores" p-required="true">
+          </po-select>
+          <po-input class="po-md-3" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" p-clean></po-input>
+        </div>
+        <div class="po-row">
+          <po-input class="po-md-12" name="email" [(ngModel)]="cliente.email" p-label="E-mail" p-clean p-icon="po-icon-mail"></po-input>
         </div>
       </po-tab>
 
       <po-tab p-label="Endereço">
-        <div class="po-row">
-          <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP" p-clean></po-input>
-          <po-input class="po-md-5" name="endereco" [(ngModel)]="cliente.endereco" p-label="Logradouro" p-clean></po-input>
-          <po-input class="po-md-3" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro" p-clean></po-input>
-          <po-input class="po-md-2" name="uf" [(ngModel)]="cliente.uf" p-label="UF" p-clean></po-input>
+        <div class="po-row po-mt-2">
+          <po-input class="po-md-12" name="endereco" [(ngModel)]="cliente.endereco" p-label="Logradouro / Endereço" p-clean></po-input>
         </div>
         <div class="po-row">
-          <po-input class="po-md-4" name="municipio" [(ngModel)]="cliente.municipio" p-label="Cidade" p-clean></po-input>
-          <po-input class="po-md-8" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento" p-clean></po-input>
+          <po-input class="po-md-4" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro" p-clean></po-input>
+          <po-select class="po-md-2" name="estadoId" [ngModel]="cliente.estadoId" (p-change)="onEstadoChange($event)" p-label="Estado"
+            [p-options]="estados">
+          </po-select>
+          <po-select class="po-md-4" name="municipioId" [ngModel]="cliente.municipioId" (p-change)="cliente.municipioId = $event" p-label="Cidade"
+            [p-options]="municipios" [p-disabled]="!cliente.estadoId">
+          </po-select>
+          <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP" p-mask="99999-999" p-clean></po-input>
+        </div>
+        <div class="po-row">
+          <po-input class="po-md-12" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento" p-clean></po-input>
+        </div>
+        <div class="po-row">
+          <po-input class="po-md-6" name="telefone1" [(ngModel)]="cliente.telefone1" p-label="Telefone" p-mask="(99) 9999-9999" p-clean></po-input>
+          <po-input class="po-md-6" name="celular" [(ngModel)]="cliente.celular" p-label="Celular" p-mask="(99) 9999-9999" p-clean></po-input>
         </div>
       </po-tab>
 
       <po-tab p-label="Financeiro">
-        <div class="po-row">
-          <po-number class="po-md-3" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-clean></po-number>
-          <po-input class="po-md-2" name="risco" [(ngModel)]="cliente.risco" p-label="Risco" p-disabled="true"></po-input>
-          <po-datepicker class="po-md-3" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite" p-clean></po-datepicker>
+        <div class="po-row po-mt-2">
+          <po-number class="po-md-4" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-clean></po-number>
+          <po-datepicker class="po-md-4" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite" p-clean></po-datepicker>
+          <po-input class="po-md-4" name="risco" [(ngModel)]="cliente.risco" p-label="Risco" p-disabled="true"></po-input>
         </div>
         <div class="po-row">
           <po-textarea class="po-md-12" name="obsBloqueio" [(ngModel)]="cliente.obsBloqueio" p-label="Observações de Bloqueio" p-clean></po-textarea>
@@ -47,13 +63,18 @@
       </po-tab>
 
       <po-tab p-label="Contatos">
-        <po-table
-          [p-items]="cliente.contatos"
-          [p-columns]="contatoColumns"
-          [p-actions]="contatoActions">
-        </po-table>
-        <div class="po-row">
-          <po-button p-label="Adicionar Contato" (p-click)="addContato()" p-icon="po-icon-plus"></po-button>
+        <div class="po-row po-mt-2">
+          <div class="po-md-12">
+            <po-table
+              [p-items]="cliente.contatos"
+              [p-columns]="contatoColumns"
+              [p-actions]="contatoActions"
+              p-container="shadow">
+            </po-table>
+            <div class="po-row po-mt-1">
+              <po-button p-label="Adicionar Contato" (p-click)="addContato()" p-icon="po-icon-plus"></po-button>
+            </div>
+          </div>
         </div>
       </po-tab>
     </po-tabs>

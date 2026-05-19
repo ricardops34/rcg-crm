@@ -16,16 +16,20 @@ export class VendedorService {
     const user = this.cls.get('user');
     const where: any = {};
 
-    // Hierarquia de Acesso (T-05)
-    if (!user?.isGerente) {
-      if (user?.supervisorId) {
+    // Hierarquia de Acesso Baseada em Perfis (Role-Based)
+    const roles = user?.roles || [];
+
+    if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
+      if (roles.includes('SUPERVISOR') && user.managedVendedorIds?.length > 0) {
         // Supervisor vê a si mesmo e sua equipe
-        const sellerIds = [...(user.managedVendedorIds || [])];
+        const sellerIds = [...user.managedVendedorIds];
         if (user.vendedorId) sellerIds.push(user.vendedorId);
         where.id = In(sellerIds);
-      } else if (user?.vendedorId) {
+      } else if (roles.includes('VENDEDOR') && user.vendedorId) {
         // Vendedor vê apenas a si mesmo
         where.id = user.vendedorId;
+      } else {
+        return [[], 0];
       }
     }
 
@@ -41,14 +45,17 @@ export class VendedorService {
   async findOne(id: number): Promise<Vendedor | null> {
     const user = this.cls.get('user');
 
-    if (!user?.isGerente) {
-      if (user?.supervisorId) {
+    // Validar hierarquia no acesso individual (Role-Based)
+    const roles = user?.roles || [];
+
+    if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
+      if (roles.includes('SUPERVISOR')) {
         const sellerIds = [...(user.managedVendedorIds || [])];
         if (user.vendedorId) sellerIds.push(user.vendedorId);
         if (!sellerIds.includes(id)) {
           throw new ForbiddenException('Acesso negado a este vendedor (fora da sua equipe)');
         }
-      } else if (user?.vendedorId && user.vendedorId !== id) {
+      } else if (roles.includes('VENDEDOR') && user.vendedorId !== id) {
         throw new ForbiddenException('Acesso negado ao perfil de outro vendedor');
       }
     }
