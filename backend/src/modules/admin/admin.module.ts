@@ -15,10 +15,12 @@ import { PermissionsService } from './permissions.service';
 import { GroupsService } from './groups.service';
 import { ProgramsService } from './programs.service';
 import { ModulesService } from './modules.service';
+import { UnitsService } from './units.service';
 import { UsersController } from './users.controller';
 import { GroupsController } from './groups.controller';
 import { ProgramsController } from './programs.controller';
 import { ModulesController } from './modules.controller';
+import { UnitsController } from './units.controller';
 
 @Module({
   imports: [
@@ -44,12 +46,14 @@ import { ModulesController } from './modules.controller';
     GroupsService,
     ProgramsService,
     ModulesService,
+    UnitsService,
   ],
   controllers: [
     UsersController,
     GroupsController,
     ProgramsController,
     ModulesController,
+    UnitsController,
   ],
   exports: [
     TypeOrmModule,
@@ -58,6 +62,7 @@ import { ModulesController } from './modules.controller';
     GroupsService,
     ProgramsService,
     ModulesService,
+    UnitsService,
   ],
 })
 export class AdminModule {}

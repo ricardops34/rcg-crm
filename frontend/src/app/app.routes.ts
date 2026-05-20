@@ -16,6 +16,8 @@ import { GroupListComponent } from './pages/admin/group-list/group-list';
 import { GroupFormComponent } from './pages/admin/group-form/group-form';
 import { ProgramListComponent } from './pages/admin/program-list/program-list';
 import { ProgramFormComponent } from './pages/admin/program-form/program-form';
+import { UnitListComponent } from './pages/admin/unit-list/unit-list';
+import { UnitFormComponent } from './pages/admin/unit-form/unit-form';
 import { ModuleListComponent } from './pages/admin/module-list/module-list';
 import { ModuleFormComponent } from './pages/admin/module-form/module-form';
 import { authGuard } from './guards/auth-guard';
@@ -44,6 +46,9 @@ export const routes: Routes = [
       { path: 'admin/groups', component: GroupListComponent, data: { controller: 'SystemGroupList' } },
       { path: 'admin/groups/new', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
       { path: 'admin/groups/edit/:id', component: GroupFormComponent, data: { controller: 'SystemGroupList' } },
+      { path: 'admin/units', component: UnitListComponent, data: { controller: 'SystemUnitList' } },
+      { path: 'admin/units/new', component: UnitFormComponent, data: { controller: 'SystemUnitList' } },
+      { path: 'admin/units/edit/:id', component: UnitFormComponent, data: { controller: 'SystemUnitList' } },
       { path: 'admin/modules', component: ModuleListComponent, data: { controller: 'SystemModuleList' } },
       { path: 'admin/modules/new', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },
       { path: 'admin/modules/edit/:id', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },

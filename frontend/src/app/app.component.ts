@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
 import { 
@@ -50,20 +50,12 @@ export class AppComponent implements OnInit {
     }
   ];
 
-  constructor() {
-    effect(() => {
-      const user = this.authService.currentUser();
-      if (user) {
-        this.refreshUserInfo();
-        this.loadMenu();
-      } else {
-        this.dynamicMenus = [];
-      }
-    });
-  }
-
   ngOnInit() {
+    this.refreshUserInfo();
     this.loadTheme();
+    if (this.authService.isAuthenticated()) {
+      this.loadMenu();
+    }
   }
 
   refreshUserInfo() {
@@ -103,6 +95,7 @@ export class AppComponent implements OnInit {
       "VendedorList": "/vendedores",
       "SystemUserList": "/admin/users",
       "SystemGroupList": "/admin/groups",
+      "SystemUnitList": "/admin/units",
       "SystemModuleList": "/admin/modules",
       "SystemProgramList": "/admin/programs",
       "SystemProfileForm": "/profile"
@@ -121,6 +114,7 @@ export class AppComponent implements OnInit {
     localStorage.setItem("theme", this.currentTheme);
     this.applyTheme();
     
+    // Atualizar o ícone conforme o tema
     const themeAction = this.toolbarActions.find(a => a.label === "Alterar Tema");
     if (themeAction) {
       themeAction.icon = this.currentTheme === "light" ? "po-icon-as-light-mode" : "po-icon-as-dark-mode";
@@ -160,6 +154,7 @@ export class AppComponent implements OnInit {
           { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
           { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "po-icon-user-add" },
           { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "po-icon-users" },
+          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "po-icon-company" },
           { label: "Módulos do Sistema", action: () => this.router.navigate(["/admin/modules"]), icon: "po-icon-vendas" },
           { label: "Rotinas do Sistema", action: () => this.router.navigate(["/admin/programs"]), icon: "po-icon-xml" }
         ]
@@ -173,4 +168,5 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(["/login"]);
   }
+
 }

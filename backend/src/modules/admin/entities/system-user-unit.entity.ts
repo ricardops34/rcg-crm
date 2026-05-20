@@ -13,14 +13,14 @@ export class SystemUserUnit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'system_user_id' })
+  @Column({ name: 'system_user_id', type: 'integer' })
   systemUserId: number;
 
-  @ManyToOne(() => SystemUser)
+  @ManyToOne(() => SystemUser, (user) => (user as any).userUnits)
   @JoinColumn({ name: 'system_user_id' })
   systemUser: SystemUser;
 
-  @Column({ name: 'system_unit_id' })
+  @Column({ name: 'system_unit_id', type: 'integer' })
   systemUnitId: number;
 
   @ManyToOne(() => SystemUnit)

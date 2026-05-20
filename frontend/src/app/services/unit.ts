@@ -8,7 +8,7 @@ import { environment } from "../../environments/environment";
 })
 export class UnitService {
 
-  private readonly API_URL = `${environment.apiUrl}/master-data/units`; // Ajustar conforme a rota real
+  private readonly API_URL = `${environment.apiUrl}/admin/units`;
 
   constructor(private http: HttpClient) { }
 
@@ -19,5 +19,20 @@ export class UnitService {
 
   findAll(): Observable<any> {
     return this.http.get<any>(this.API_URL, { headers: this.getHeaders() });
+  }
+
+  findOne(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
+
+  save(data: any): Observable<any> {
+    if (data.id) {
+      return this.http.put<any>(`${this.API_URL}/${data.id}`, data, { headers: this.getHeaders() });
+    }
+    return this.http.post<any>(this.API_URL, data, { headers: this.getHeaders() });
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 }
