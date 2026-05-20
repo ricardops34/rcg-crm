@@ -1,8 +1,9 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Filial } from './entities/filial.entity';
 import { Municipio } from './entities/municipio.entity';
 import { Estado } from './entities/estado.entity';
+import { TipoEntradaSaida } from './entities/tipo-entrada-saida.entity';
 import { ErpTranslationService } from './services/erp-translation/erp-translation.service';
 import { SyncMasterDataService } from './services/sync-master-data/sync-master-data.service';
 import { SyncMasterDataController } from './controllers/sync-master-data/sync-master-data.controller';
@@ -21,6 +22,7 @@ import { Produto } from '../catalog/entities/produto.entity';
       Filial,
       Municipio,
       Estado,
+      TipoEntradaSaida,
       Cliente,
       Vendedor,
       TabelaPreco,

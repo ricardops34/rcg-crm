@@ -15,6 +15,11 @@ export class MigrationDataService {
       return;
     }
 
+    const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
+    const logStream = fs.createWriteStream(logPath, { flags: 'a' });
+    logStream.write(`\n\n--- INÍCIO DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
+    logStream.write(`Arquivo: ${filePath}\n`);
+
     const fileStream = fs.createReadStream(absolutePath);
     const rl = readline.createInterface({
       input: fileStream,
@@ -77,10 +82,19 @@ export class MigrationDataService {
               console.log(`${insertCount} comandos de INSERT processados...`);
             }
           } catch (err) {
+            // Ignorar se a tabela não existir no novo banco (legado que não mapeamos)
+            if (err.message.includes('does not exist')) {
+               logStream.write(`Linha ${lineCount}: Tabela inexistente - ${err.message}\n`);
+               return;
+            }
+
             // Logar erros reais de dados (ex: chave estrangeira inexistente)
             // Mas ignorar se o dado já existir (já importado em rodada anterior)
-            if (!err.message.includes('already exists')) {
+            if (!err.message.includes('already exists') && !err.message.includes('duplicate key')) {
                console.error(`Erro de Dados na linha ${lineCount}: ${err.message}`);
+               logStream.write(`Linha ${lineCount}: ERRO CRÍTICO - ${err.message}\n`);
+            } else {
+               logStream.write(`Linha ${lineCount}: Já existente - ${err.message}\n`);
             }
           }
         }
@@ -90,6 +104,8 @@ export class MigrationDataService {
       }
     }
 
+    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
+    logStream.end();
     console.log('Migração de dados finalizada!');
     await this.fixSequences();
   }
