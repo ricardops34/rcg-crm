@@ -22,9 +22,12 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    // Se o usuário tiver papel de 'ADMIN', ele tem acesso total
+    // Se o usuário tiver papel de 'ADMIN' ou o grupo se chamar 'Admin', ele tem acesso total
     const isAdmin = userGroups.some(
-      (ug) => ug.systemGroup && ug.systemGroup.role?.toUpperCase() === 'ADMIN',
+      (ug) =>
+        ug.systemGroup &&
+        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
     );
     if (isAdmin) {
       return true;
@@ -52,7 +55,10 @@ export class PermissionsService {
 
     // Se for Admin, retorna todos os programas cadastrados no sistema
     const isAdmin = userGroups.some(
-      (ug) => ug.systemGroup && ug.systemGroup.role?.toUpperCase() === 'ADMIN',
+      (ug) =>
+        ug.systemGroup &&
+        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
     );
     if (isAdmin) {
       return this.programRepository.find();
@@ -98,7 +104,10 @@ export class PermissionsService {
     });
 
     const isAdmin = userGroups.some(
-      (ug) => ug.systemGroup && ug.systemGroup.role?.toUpperCase() === 'ADMIN',
+      (ug) =>
+        ug.systemGroup &&
+        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
     );
 
     let groupIds: number[];

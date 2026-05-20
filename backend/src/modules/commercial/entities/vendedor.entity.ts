@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -21,7 +21,7 @@ export class Vendedor {
   @JoinColumn({ name: 'filial_id' })
   filial: Filial;
 
-  @Column({ name: 'cod_erp', length: 6, nullable: true })
+  @Column({ name: 'cod_erp', length: 6, nullable: true, unique: true })
   codErp: string;
 
   @Column({ name: 'system_users_id', type: 'integer', nullable: true })

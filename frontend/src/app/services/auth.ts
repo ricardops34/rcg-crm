@@ -76,7 +76,9 @@ export class AuthService {
 
   hasPermission(controller: string): boolean {
     const user = this.getUser();
-    if (!user || !user.programs) return false;
+    if (!user) return false;
+    if (user.login === 'admin' || user.roles?.includes('ADMIN')) return true;
+    if (!user.programs) return false;
     return user.programs.some((p: any) => p.controller === controller);
   }
 

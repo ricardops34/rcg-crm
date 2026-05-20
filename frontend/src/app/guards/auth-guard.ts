@@ -14,7 +14,12 @@ export const authGuard: CanActivateFn = (route, state) => {
   // Verificar permissão se o controller estiver definido na rota
   const controller = route.data?.['controller'];
   if (controller && !authService.hasPermission(controller)) {
-    router.navigate(['/dashboard']); // Ou uma página de erro/403
+    // Se o usuário não tiver permissão para o próprio dashboard padrão, redireciona para o perfil para evitar loop infinito
+    if (controller === 'DashboardVendedor') {
+      router.navigate(['/profile']);
+    } else {
+      router.navigate(['/dashboard']);
+    }
     return false;
   }
 

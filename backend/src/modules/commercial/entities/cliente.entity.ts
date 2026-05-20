@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -33,7 +33,7 @@ export class Cliente {
   @JoinColumn({ name: 'filial_id' })
   filial: Filial;
 
-  @Column({ name: 'cod_erp', length: 10, nullable: true })
+  @Column({ name: 'cod_erp', length: 10, nullable: true, unique: true })
   codErp: string;
 
   @Column({ type: 'char', length: 1, nullable: true })
