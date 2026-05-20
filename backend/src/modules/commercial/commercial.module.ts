@@ -9,6 +9,7 @@ import { SituacaoCadastral } from './entities/situacao-cadastral.entity';
 import { RegiaoCliente } from './entities/regiao-cliente.entity';
 import { Segmento } from './entities/segmento.entity';
 import { TipoCliente } from './entities/tipo-cliente.entity';
+import { VendedorAtendimento } from './entities/vendedor-atendimento.entity';
 import { Cliente } from './entities/cliente.entity';
 import { CondicaoPagamento } from './entities/condicao-pagamento.entity';
 import { TabelaPreco } from './entities/tabela-preco.entity';
@@ -43,6 +44,7 @@ import { AdminModule } from '../admin/admin.module';
       RegiaoCliente,
       Segmento,
       TipoCliente,
+      VendedorAtendimento,
       Cliente,
       CondicaoPagamento,
       TabelaPreco,

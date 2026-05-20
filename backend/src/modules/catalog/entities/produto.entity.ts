@@ -114,7 +114,7 @@ export class Produto {
   @Column({ name: 'ult_preco', type: 'float', nullable: true })
   ultPreco: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'informacoes_tecnicas', type: 'text', nullable: true })
   informacoesTecnicas: string;
 
   @Column({ name: 'dados_tecnicos', type: 'text', nullable: true })
