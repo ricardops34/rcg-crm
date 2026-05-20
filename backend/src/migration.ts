@@ -8,11 +8,21 @@ import * as path from 'path';
 export class MigrationDataService {
   constructor(private dataSource: DataSource) {}
 
-  async migrateMySQLtoPG(filePath: string) {
+  async migrateMySQLtoPG(filePath: string, targetDataSource?: DataSource) {
+    const ds = targetDataSource || this.dataSource;
     const absolutePath = path.resolve(filePath);
     if (!fs.existsSync(absolutePath)) {
       console.error(`Arquivo não encontrado: ${absolutePath}`);
       return;
+    }
+
+    // Desabilitar chaves estrangeiras e triggers temporariamente
+    // No PostgreSQL, isso exige privilégios de superusuário ou ser o dono da tabela.
+    // O 'session_replication_role' é a forma mais eficaz de ignorar FKs durante migração.
+    try {
+      await ds.query("SET session_replication_role = 'replica'");
+    } catch (e) {
+      console.warn('⚠️ Não foi possível desabilitar FKs (sem privilégios?). Erros de constraint podem ocorrer.');
     }
 
     const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
@@ -52,7 +62,8 @@ export class MigrationDataService {
         trimmedLine.toUpperCase().startsWith('COMMIT') ||
         trimmedLine.toUpperCase().includes('ADD CONSTRAINT') ||
         trimmedLine.toUpperCase().includes('ADD KEY') ||
-        trimmedLine.toUpperCase().includes('ADD PRIMARY KEY')
+        trimmedLine.toUpperCase().includes('ADD PRIMARY KEY') ||
+        trimmedLine.toUpperCase().includes('ALTER COLUMN')
       ) {
         queryBuffer = ''; // Limpar buffer se cair em estrutura ou transação
         continue;
@@ -66,7 +77,6 @@ export class MigrationDataService {
         const pgQuery = queryBuffer.trim();
 
         // REGRAS DE OURO: Apenas migrar DADOS (INSERT INTO)
-        // Ignorar qualquer comando de estrutura que o MySQL dump coloca no final
         if (pgQuery.toUpperCase().startsWith('INSERT INTO')) {
           let convertedQuery = pgQuery
             .replace(/`/g, '"') // Trocar backticks por aspas duplas
@@ -76,20 +86,20 @@ export class MigrationDataService {
             .replace(/\\n/g, '\n');
 
           try {
-            await this.dataSource.query(convertedQuery);
+            await ds.query(convertedQuery);
             insertCount++;
             if (insertCount % 500 === 0) {
               console.log(`${insertCount} comandos de INSERT processados...`);
             }
           } catch (err) {
-            // Ignorar se a tabela não existir no novo banco (legado que não mapeamos)
+            // Ignorar se a tabela/coluna não existir no novo banco
             if (err.message.includes('does not exist')) {
-               logStream.write(`Linha ${lineCount}: Tabela inexistente - ${err.message}\n`);
-               return;
+               logStream.write(`Linha ${lineCount}: Tabela/Coluna inexistente - ${err.message}\n`);
+               queryBuffer = '';
+               continue;
             }
 
-            // Logar erros reais de dados (ex: chave estrangeira inexistente)
-            // Mas ignorar se o dado já existir (já importado em rodada anterior)
+            // Logar erros reais de dados
             if (!err.message.includes('already exists') && !err.message.includes('duplicate key')) {
                console.error(`Erro de Dados na linha ${lineCount}: ${err.message}`);
                logStream.write(`Linha ${lineCount}: ERRO CRÍTICO - ${err.message}\n`);
@@ -99,20 +109,26 @@ export class MigrationDataService {
           }
         }
 
-        // Limpar buffer para a próxima query, independente se foi processada ou descartada
+        // Limpar buffer para a próxima query
         queryBuffer = '';
       }
     }
 
+    // Reabilitar chaves estrangeiras
+    try {
+      await ds.query("SET session_replication_role = 'origin'");
+    } catch (e) {}
+
     logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
     logStream.end();
     console.log('Migração de dados finalizada!');
-    await this.fixSequences();
+    await this.fixSequences(ds);
   }
 
-  async fixSequences() {
+  async fixSequences(targetDataSource?: DataSource) {
+    const ds = targetDataSource || this.dataSource;
     console.log('Sincronizando sequences do PostgreSQL...');
-    const tables = await this.dataSource.query(`
+    const tables = await ds.query(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
@@ -122,13 +138,10 @@ export class MigrationDataService {
     for (const table of tables) {
       const tableName = table.table_name;
       try {
-        // Tentar resetar a sequence assumindo o padrão "tabela_id_seq"
-        await this.dataSource.query(`
+        await ds.query(`
           SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), coalesce(max(id), 1)) FROM "${tableName}";
         `);
-      } catch (e) {
-        // Algumas tabelas podem não ter ID serial ou sequence padrão
-      }
+      } catch (e) {}
     }
     console.log('Sequences sincronizadas com sucesso!');
   }

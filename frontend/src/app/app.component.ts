@@ -21,6 +21,10 @@ export class AppComponent implements OnInit {
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
 
+  get isLoginPage(): boolean {
+    return this.router.url.includes('/login');
+  }
+
   user: any;
   logo: string = "assets/logo_rcg.png";
   currentTheme: string = "light";

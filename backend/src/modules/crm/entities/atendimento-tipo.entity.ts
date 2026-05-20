@@ -17,6 +17,9 @@ export class AtendimentoTipo {
   @Column({ length: 50, nullable: true })
   descricao: string;
 
+  @Column({ type: 'char', length: 1, nullable: true })
+  retorno: string;
+
   @Column({ type: 'text', nullable: true })
   cor: string;
 

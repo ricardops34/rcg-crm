@@ -1,4 +1,4 @@
-<div class="po-wrapper" *ngIf="authService.isAuthenticated(); else noAuth">
+<div class="po-wrapper" *ngIf="authService.isAuthenticated() && !isLoginPage; else noAuth">
   <po-toolbar 
     p-title="RCG CRM"
     [p-profile]="profile"
