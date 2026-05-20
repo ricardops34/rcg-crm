@@ -6,9 +6,14 @@ import {
   PoModule, 
   PoToolbarAction, 
   PoToolbarProfile, 
-  PoNotificationService 
+  PoNotificationService,
+  PoThemeService,
+  PoThemeTypeEnum,
+  PoThemeA11yEnum
 } from "@po-ui/ng-components";
 import { AuthService } from "./services/auth";
+import { rcgPoUiTheme } from "../temas/rcg/rcg-theme";
+import { alliaPoUiTheme } from "../temas/allia/allia-theme";
 
 @Component({
   selector: "app-root",
@@ -23,7 +28,7 @@ export class AppComponent implements OnInit {
 
   user: any;
   logo: string = "assets/logo_rcg.png";
-  currentTheme: string = "light";
+  currentTheme: string = "rcg";
   dynamicMenus: Array<PoMenuItem> = [];
 
   readonly profile: PoToolbarProfile = {
@@ -45,10 +50,12 @@ export class AppComponent implements OnInit {
     },
     { 
       label: "Alterar Tema", 
-      icon: "po-icon-as-light-mode", 
+      icon: "po-icon-pallet", 
       action: () => this.toggleTheme() 
     }
   ];
+
+  private readonly themeService = inject(PoThemeService);
 
   ngOnInit() {
     this.refreshUserInfo();
@@ -110,27 +117,52 @@ export class AppComponent implements OnInit {
   }
 
   toggleTheme() {
-    this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
+    if (this.currentTheme === "rcg") {
+      this.currentTheme = "allia";
+    } else {
+      this.currentTheme = "rcg";
+    }
     localStorage.setItem("theme", this.currentTheme);
     this.applyTheme();
     
-    // Atualizar o ícone conforme o tema
-    const themeAction = this.toolbarActions.find(a => a.label === "Alterar Tema");
+    // Atualizar o label conforme o tema
+    const themeAction = this.toolbarActions.find(a => a.label.startsWith("Tema:") || a.label === "Alterar Tema");
     if (themeAction) {
-      themeAction.icon = this.currentTheme === "light" ? "po-icon-as-light-mode" : "po-icon-as-dark-mode";
+      themeAction.label = `Tema: ${this.currentTheme.toUpperCase()}`;
     }
   }
 
   loadTheme() {
-    this.currentTheme = localStorage.getItem("theme") || "light";
+    this.currentTheme = localStorage.getItem("theme") || "rcg";
+    if (this.currentTheme === "claro" || this.currentTheme === "light" || this.currentTheme === "dark") {
+      this.currentTheme = "rcg";
+      localStorage.setItem("theme", this.currentTheme);
+    }
+    
+    const themeAction = this.toolbarActions.find(a => a.label === "Alterar Tema");
+    if (themeAction) {
+      themeAction.label = `Tema: ${this.currentTheme.toUpperCase()}`;
+    }
     this.applyTheme();
   }
 
   applyTheme() {
-    if (this.currentTheme === "dark") {
-      document.body.classList.add("po-theme-dark");
+    document.body.classList.remove("po-theme-dark");
+
+    if (this.currentTheme === "allia") {
+      this.themeService.setTheme(
+        alliaPoUiTheme,
+        PoThemeTypeEnum.light,
+        PoThemeA11yEnum.AAA,
+        true
+      );
     } else {
-      document.body.classList.remove("po-theme-dark");
+      this.themeService.setTheme(
+        rcgPoUiTheme,
+        PoThemeTypeEnum.light,
+        PoThemeA11yEnum.AAA,
+        true
+      );
     }
   }
 

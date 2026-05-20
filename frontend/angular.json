@@ -1,4 +1,4 @@
-﻿{
+{
     "$schema":  "./node_modules/@angular/cli/lib/config/schema.json",
     "version":  1,
     "cli":  {
@@ -29,7 +29,9 @@
                                                                                                  ],
                                                                                       "styles":  [
                                                                                                      "src/styles.css",
-                                                                                                     "node_modules/@po-ui/style/css/po-theme-default.min.css"
+                                                                                                     "node_modules/@po-ui/style/css/po-theme-default.min.css",
+                                                                                                     "src/temas/rcg/rcg-theme-fonts.css",
+                                                                                                     "src/temas/allia/allia-theme-fonts.css"
                                                                                                  ]
                                                                                   },
                                                                       "configurations":  {

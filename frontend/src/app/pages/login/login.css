@@ -1,5 +1,42 @@
 /* login.css */
 
+.allia-top-bar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.allia-top-bar-magenta {
+  background-color: #9E1F63;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 40px;
+}
+
+.allia-top-bar-magenta img {
+  height: 28px;
+  object-fit: contain;
+}
+
+.allia-top-bar-text {
+  color: #FFFFFF;
+  font-family: 'Onest', 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  margin-left: 10px;
+  letter-spacing: 0.5px;
+}
+
+.allia-top-bar-teal {
+  background-color: #00AEA5;
+  height: 8px;
+}
 /* Remove o posicionamento absoluto do logo padrão do PO-UI e o inclui no fluxo normal da página */
 .po-page-background-main-logo {
   position: relative !important;
