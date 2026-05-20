@@ -37,6 +37,10 @@
   height: 8px;
 }
 /* Ajuste para a logo original não ficar escondida atrás da barra fixa da ALLIA */
+::ng-deep .po-page-login-panel {
+  padding-top: 56px !important;
+}
+
 ::ng-deep .po-page-background-main-logo {
-  margin-top: 56px !important;
+  margin-top: 16px !important;
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('cep')
 export class Cep {
@@ -16,6 +16,9 @@ export class Cep {
 
   @Column({ length: 200, nullable: true })
   logradouro: string;
+
+  @Column({ length: 200, nullable: true })
+  endereco: string;
 
   @Column({ length: 100, nullable: true })
   bairro: string;

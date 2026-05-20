@@ -20,6 +20,9 @@ export class Estoque {
   @Column({ type: 'float', default: 0, nullable: true })
   saldo: number;
 
+  @Column({ type: 'float', default: 0, nullable: true })
+  reserva: number;
+
   @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
   systemUnitId: number;
 

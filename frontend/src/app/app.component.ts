@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, RouterOutlet } from "@angular/router";
+import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
 import { 
   PoMenuItem, 
   PoModule, 
@@ -11,6 +11,7 @@ import {
   PoThemeTypeEnum,
   PoThemeA11yEnum
 } from "@po-ui/ng-components";
+import { filter } from "rxjs/operators";
 import { AuthService } from "./services/auth";
 import { rcgPoUiTheme } from "../temas/rcg/rcg-theme";
 import { alliaPoUiTheme } from "../temas/allia/allia-theme";
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit {
   logo: string = "assets/logo_rcg.png";
   currentTheme: string = "rcg";
   dynamicMenus: Array<PoMenuItem> = [];
+  isLoginPage: boolean = true;
 
   readonly profile: PoToolbarProfile = {
     avatar: "",
@@ -58,15 +60,33 @@ export class AppComponent implements OnInit {
   private readonly themeService = inject(PoThemeService);
 
   ngOnInit() {
+    this.checkRoute();
     this.refreshUserInfo();
     this.loadTheme();
+    
     if (this.authService.isAuthenticated()) {
       this.loadMenu();
     }
+
+    // Monitorar mudanças de rota para ocultar/exibir o shell
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+      if (!this.isLoginPage && this.authService.isAuthenticated()) {
+        this.refreshUserInfo();
+        this.loadMenu();
+      }
+    });
+  }
+
+  checkRoute() {
+    this.isLoginPage = this.router.url === "/login" || this.router.url === "/" || this.router.url === "";
   }
 
   refreshUserInfo() {
     this.user = this.authService.getUser();
+    console.log("[APP] Usuário atual:", this.user);
     if (this.user) {
       this.profile.title = this.user.name;
       this.profile.subtitle = this.user.email;
@@ -125,7 +145,6 @@ export class AppComponent implements OnInit {
     localStorage.setItem("theme", this.currentTheme);
     this.applyTheme();
     
-    // Atualizar o label conforme o tema
     const themeAction = this.toolbarActions.find(a => a.label.startsWith("Tema:") || a.label === "Alterar Tema");
     if (themeAction) {
       themeAction.label = `Tema: ${this.currentTheme.toUpperCase()}`;
@@ -134,35 +153,14 @@ export class AppComponent implements OnInit {
 
   loadTheme() {
     this.currentTheme = localStorage.getItem("theme") || "rcg";
-    if (this.currentTheme === "claro" || this.currentTheme === "light" || this.currentTheme === "dark") {
-      this.currentTheme = "rcg";
-      localStorage.setItem("theme", this.currentTheme);
-    }
-    
-    const themeAction = this.toolbarActions.find(a => a.label === "Alterar Tema");
-    if (themeAction) {
-      themeAction.label = `Tema: ${this.currentTheme.toUpperCase()}`;
-    }
     this.applyTheme();
   }
 
   applyTheme() {
-    document.body.classList.remove("po-theme-dark");
-
     if (this.currentTheme === "allia") {
-      this.themeService.setTheme(
-        alliaPoUiTheme,
-        PoThemeTypeEnum.light,
-        PoThemeA11yEnum.AAA,
-        true
-      );
+      this.themeService.setTheme(alliaPoUiTheme, PoThemeTypeEnum.light, PoThemeA11yEnum.AAA, true);
     } else {
-      this.themeService.setTheme(
-        rcgPoUiTheme,
-        PoThemeTypeEnum.light,
-        PoThemeA11yEnum.AAA,
-        true
-      );
+      this.themeService.setTheme(rcgPoUiTheme, PoThemeTypeEnum.light, PoThemeA11yEnum.AAA, true);
     }
   }
 
@@ -175,7 +173,6 @@ export class AppComponent implements OnInit {
       items.push(...this.dynamicMenus);
     }
 
-    // BYPASS PARA ADMINISTRADOR: Garante que as rotas administrativas apareçam
     const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin' || this.user?.isGerente;
 
     if (isAdmin) {
@@ -199,6 +196,7 @@ export class AppComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(["/login"]);
+    this.dynamicMenus = [];
+    this.isLoginPage = true;
   }
-
 }

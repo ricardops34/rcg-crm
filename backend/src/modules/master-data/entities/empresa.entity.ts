@@ -8,7 +8,10 @@ export class Empresa {
   @Column({ name: 'cod_erp', length: 6, nullable: true })
   codErp: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
+  nome: string;
+
+  @Column({ length: 100, nullable: true })
   razao: string;
 
   @Column({ length: 100, nullable: true })

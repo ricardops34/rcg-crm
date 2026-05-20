@@ -26,6 +26,7 @@ export class MigrationDataService {
     const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
     const logStream = fs.createWriteStream(logPath, { flags: 'a' });
     logStream.write(`\n\n--- INÍCIO DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
+    logStream.write(`Arquivo: ${filePath}\n`);
 
     const fileStream = fs.createReadStream(absolutePath);
     const rl = readline.createInterface({
@@ -43,27 +44,36 @@ export class MigrationDataService {
       lineCount++;
       const trimmedLine = line.trim();
       
-      if (trimmedLine === '' || trimmedLine.startsWith('--') || trimmedLine.startsWith('/*')) {
+      // Ignorar linhas vazias e comentários de linha única
+      if (trimmedLine === '' || trimmedLine.startsWith('--') || trimmedLine.startsWith('#') || (trimmedLine.startsWith('/*') && trimmedLine.endsWith('*/'))) {
         continue;
       }
 
       queryBuffer += ' ' + line;
 
-      if (trimmedLine.endsWith(';')) {
-        const pgQuery = queryBuffer.trim();
+      // Se a linha termina com ; (pode ter espaços ou comentários depois)
+      if (trimmedLine.match(/;(\s*(\/\*.*\*\/)?\s*)*$/)) {
+        let pgQuery = queryBuffer.trim();
+        queryBuffer = ''; 
 
-        // TRATAMENTO INTELIGENTE DE INSERTs
-        if (pgQuery.toUpperCase().startsWith('INSERT INTO')) {
-          let convertedQuery = pgQuery
-            .replace(/`/g, '"') 
-            .replace(/\\'/g, "''") 
-            .replace(/\\"/g, '"') 
-            .replace(/\\r\\n/g, '\n')
-            .replace(/\\n/g, '\n');
+        // Limpar comentários do início do buffer para detectar o comando
+        const cleanQuery = pgQuery.replace(/^\/\*[\s\S]*?\*\/|^\s*--.*?\n|^\s*#.*?\n/gm, '').trim();
 
-          // CORREÇÃO DE ASPAS EM NÚMEROS LONGOS (CNPJ/CPF que o MySQL aceita sem aspas)
-          // Procura por valores puramente numéricos com mais de 10 dígitos após uma vírgula ou parêntese e coloca aspas
-          convertedQuery = convertedQuery.replace(/([,\(])\s*(\d{11,})\s*([,\)])/g, "$1'$2'$3");
+        if (cleanQuery.toUpperCase().startsWith('INSERT INTO')) {
+          // 1. Nomes de tabelas e colunas
+          let convertedQuery = pgQuery.replace(/`/g, '"');
+
+          // 2. Escapes de string
+          convertedQuery = convertedQuery.replace(/\\'/g, "''");
+          convertedQuery = convertedQuery.replace(/\\"/g, '"');
+
+          // 3. Corrigir números longos SEM ASPAS (CNPJ/CPF)
+          // Rodamos em loop até não haver mais mudanças para evitar problemas de overlap
+          let lastQuery;
+          do {
+            lastQuery = convertedQuery;
+            convertedQuery = convertedQuery.replace(/([,\(\s])(\d{11,})([,\)\s])/g, "$1'$2'$3");
+          } while (convertedQuery !== lastQuery);
 
           try {
             await ds.query(convertedQuery);
@@ -75,10 +85,10 @@ export class MigrationDataService {
                logStream.write(`Linha ${lineCount}: Ignorado - ${err.message}\n`);
             } else {
                logStream.write(`Linha ${lineCount}: ERRO REAL - ${err.message}\n`);
+               logStream.write(`Query (truncada): ${convertedQuery.substring(0, 1000)}\n`);
             }
           }
         }
-        queryBuffer = '';
       }
     }
 
@@ -87,9 +97,9 @@ export class MigrationDataService {
       console.log('🔒 Verificações reabilitadas.');
     } catch (e) {}
 
-    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
+    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} - Total Inserções: ${insertCount} ---\n`);
     logStream.end();
-    console.log(`Finalizado: ${insertCount} registros.`);
+    console.log(`Finalizado: ${insertCount} registros inseridos.`);
     await this.fixSequences(ds);
   }
 

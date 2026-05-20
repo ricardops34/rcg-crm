@@ -14,6 +14,9 @@ export class ClienteCondicao {
   @Column({ name: 'condicao_pagamento_id', type: 'integer', nullable: true })
   condicaoPagamentoId: number;
 
+  @Column({ length: 1, nullable: true })
+  padrao: string;
+
   @Column({ name: 'dt_inclusao', type: 'timestamp', nullable: true })
   dtInclusao: Date;
 
