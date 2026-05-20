@@ -29,39 +29,52 @@ export class MigrationDataService {
 
     for await (const line of rl) {
       lineCount++;
+      const trimmedLine = line.trim();
       
-      // Ignorar comentários, linhas vazias e comandos de estrutura (CREATE/DROP)
-      // assumindo que as tabelas já foram criadas pelo sincronismo do TypeORM ou script SQL.
+      // Ignorar comentários, linhas vazias e comandos de estrutura
       if (
-        line.startsWith('--') || 
-        line.trim() === '' || 
-        line.startsWith('/*') ||
-        line.toUpperCase().startsWith('CREATE TABLE') ||
-        line.toUpperCase().startsWith('DROP TABLE') ||
-        line.toUpperCase().startsWith('ALTER TABLE')
+        trimmedLine === '' || 
+        trimmedLine.startsWith('--') || 
+        trimmedLine.startsWith('/*') ||
+        trimmedLine.toUpperCase().startsWith('CREATE TABLE') ||
+        trimmedLine.toUpperCase().startsWith('DROP TABLE') ||
+        trimmedLine.toUpperCase().startsWith('ALTER TABLE') ||
+        trimmedLine.toUpperCase().startsWith('SET ') ||
+        trimmedLine.toUpperCase().startsWith('LOCK TABLES') ||
+        trimmedLine.toUpperCase().startsWith('UNLOCK TABLES')
       ) {
         continue;
       }
 
-      // Processar apenas comandos INSERT
-      if (line.toUpperCase().startsWith('INSERT INTO')) {
-        let pgLine = line
+      // Adicionar linha ao buffer
+      queryBuffer += ' ' + line;
+
+      // Se a linha termina com ponto e vírgula, processar a query completa
+      if (trimmedLine.endsWith(';')) {
+        let pgQuery = queryBuffer
           .replace(/`/g, '"') // Trocar backticks por aspas duplas
-          .replace(/\\'/g, "''") // Escapar aspas simples
-          .replace(/\\"/g, '"') // Ajustar aspas duplas
-          .replace(/\\r\\n/g, '\n') // Ajustar quebras de linha
-          .replace(/\\n/g, '\n');
+          .replace(/\\'/g, "''") // Escapar aspas simples (MySQL style para PG)
+          .replace(/\\"/g, '"') 
+          .replace(/\\r\\n/g, '\n')
+          .replace(/\\n/g, '\n')
+          .trim();
 
         try {
-          await this.dataSource.query(pgLine);
+          // Remover o ponto e vírgula final se necessário (o driver costuma não precisar, mas PG aceita)
+          await this.dataSource.query(pgQuery);
           insertCount++;
-          if (insertCount % 100 === 0) {
-            console.log(`${insertCount} registros importados...`);
+          if (insertCount % 500 === 0) {
+            console.log(`${insertCount} comandos SQL processados...`);
           }
         } catch (err) {
-          console.error(`Erro na linha ${lineCount}: ${err.message}`);
-          // console.error(`Query: ${pgLine.substring(0, 100)}...`);
+          // Ignorar erros comuns de duplicidade ou estrutura se desejar, mas vamos logar
+          if (!err.message.includes('already exists')) {
+             console.error(`Erro na linha ${lineCount}: ${err.message}`);
+          }
         }
+
+        // Limpar buffer para a próxima query
+        queryBuffer = '';
       }
     }
 
