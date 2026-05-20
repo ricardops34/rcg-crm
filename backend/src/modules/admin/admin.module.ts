@@ -7,6 +7,7 @@ import { SystemModule } from './entities/system-module.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
 import { SystemUser } from './entities/system-user.entity';
+import { SystemUserUnit } from './entities/system-user-unit.entity';
 import { UsersService } from './users.service';
 import { PermissionsService } from './permissions.service';
 import { GroupsService } from './groups.service';
@@ -28,6 +29,7 @@ import { ModulesController } from './modules.controller';
         SystemUserGroup,
         SystemGroupProgram,
         SystemUser,
+        SystemUserUnit,
       ],
       'security',
     ),
