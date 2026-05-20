@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { 
   PoModule, 
   PoTableColumn, 
-  PoNotificationService 
+  PoNotificationService,
+  PoPageAction
 } from "@po-ui/ng-components";
 import { ClienteService } from "../../../services/cliente";
 
@@ -26,8 +27,26 @@ export class Cliente360Component implements OnInit {
   financeiroItems: Array<any> = [];
   notasItems: Array<any> = [];
   atendimentosItems: Array<any> = [];
+  sugestoesItems: Array<any> = [];
   
   isLoading: boolean = true;
+
+  readonly pageActions: Array<PoPageAction> = [
+    { label: "Voltar", action: this.close.bind(this), icon: "po-icon-arrow-left" },
+    { label: "Atualizar", action: () => this.ngOnInit(), icon: "po-icon-refresh" }
+  ];
+
+  readonly sugestaoColumns: Array<PoTableColumn> = [
+    { property: "produto_nome", label: "Produto" },
+    { property: "media_mensal", label: "Média (6m)", type: "number", format: "1.2-2" },
+    { property: "qtd_atual", label: "Comprado (Mês)", type: "number" },
+    { property: "sugestao", label: "Sugestão", type: "subtitle", subtitles: [
+      { value: 0, color: "color-08", label: "Abastecido", content: "OK" },
+      { value: 1, color: "color-10", label: "Oportunidade", content: "VENDA" }
+    ]},
+    { property: "sugestao", label: "Qtd. Sugerida", type: "number", format: "1.2-2" },
+    { property: "data_ultima_compra", label: "Última Compra", type: "date" }
+  ];
 
   readonly comodatoColumns: Array<PoTableColumn> = [
     { property: "nota_fiscal", label: "Nota Fiscal" },
@@ -97,6 +116,12 @@ export class Cliente360Component implements OnInit {
     this.clienteService.getMix(id).subscribe(res => this.mixItems = res);
     this.clienteService.getFinanceiro(id).subscribe(res => this.financeiroItems = res);
     this.clienteService.getNotas(id).subscribe(res => this.notasItems = res);
+    this.clienteService.getSugestoes(id).subscribe(res => {
+      this.sugestoesItems = res.map((s: any) => ({
+        ...s,
+        sugestao_status: s.sugestao > 0 ? 1 : 0
+      }));
+    });
     this.clienteService.getAtendimentos(id).subscribe(res => {
       this.atendimentosItems = res;
       this.isLoading = false;

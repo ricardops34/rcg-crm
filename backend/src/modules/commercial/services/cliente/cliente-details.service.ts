@@ -69,4 +69,46 @@ export class ClienteDetailsService {
       [clienteId],
     );
   }
+
+  async getPurchaseSuggestion(clienteId: number) {
+    // Lógica: Média de consumo dos últimos 6 meses vs Consumo do mês atual
+    return this.dataSource.query(
+      `WITH historico AS (
+        SELECT 
+          nsi.produto_id,
+          p.descricao as produto_nome,
+          SUM(nsi.qtd) / 6.0 as media_mensal,
+          MAX(nsi.dt_emissao) as data_ultima_compra
+        FROM nota_saida_item nsi
+        JOIN produto p ON p.id = nsi.produto_id
+        WHERE nsi.cliente_id = $1 
+          AND nsi.dt_emissao >= CURRENT_DATE - INTERVAL '6 months'
+          AND nsi.reg_ativo = 'S'
+        GROUP BY nsi.produto_id, p.descricao
+      ),
+      mes_atual AS (
+        SELECT 
+          nsi.produto_id,
+          SUM(nsi.qtd) as qtd_atual
+        FROM nota_saida_item nsi
+        WHERE nsi.cliente_id = $1 
+          AND nsi.ano = EXTRACT(YEAR FROM CURRENT_DATE)::text
+          AND nsi.mes = LPAD(EXTRACT(MONTH FROM CURRENT_DATE)::text, 2, '0')
+          AND nsi.reg_ativo = 'S'
+        GROUP BY nsi.produto_id
+      )
+      SELECT 
+        h.produto_id,
+        h.produto_nome,
+        ROUND(h.media_mensal::numeric, 2) as media_mensal,
+        COALESCE(ma.qtd_atual, 0) as qtd_atual,
+        GREATEST(0, ROUND((h.media_mensal - COALESCE(ma.qtd_atual, 0))::numeric, 2)) as sugestao,
+        h.data_ultima_compra
+      FROM historico h
+      LEFT JOIN mes_atual ma ON ma.produto_id = h.produto_id
+      WHERE (h.media_mensal - COALESCE(ma.qtd_atual, 0)) > 0
+      ORDER BY sugestao DESC`,
+      [clienteId],
+    );
+  }
 }

@@ -10,7 +10,8 @@ import {
   PoTableAction, 
   PoModalComponent, 
   PoBreadcrumb, 
-  PoDropdownAction 
+  PoMenuItem,
+  PoNotificationService
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { AnalyticsService } from "../../../services/analytics";
@@ -25,25 +26,26 @@ import { LocationService } from "../../../services/location";
   templateUrl: "./mvc-list.html"
 })
 export class MvcListComponent implements OnInit {
-  @ViewChild("modalDetails", { static: true }) modalDetails!: PoModalComponent;
-
   private analyticsService = inject(AnalyticsService);
   private authService = inject(AuthService);
   private vendedorService = inject(VendedorService);
   private locationService = inject(LocationService);
   private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
   items: Array<any> = [];
-  selectedItem: any = {};
   isLoading: boolean = true;
+  summary: any = { goal: 0, realized: 0, achievement: 0 };
   
   years: Array<PoSelectOption> = [
     { label: "2026", value: 2026 },
     { label: "2025", value: 2025 },
     { label: "2024", value: 2024 }
   ];
+  months: Array<PoSelectOption> = Array.from({ length: 12 }, (_, i) => ({ label: `Mês ${i + 1}`, value: i + 1 }));
   
   selectedYear: number = new Date().getFullYear();
+  selectedMonth: number = new Date().getMonth() + 1;
   selectedVendedor: number | undefined;
   selectedEstado: number | undefined;
   selectedMunicipio: number | undefined;
@@ -64,8 +66,7 @@ export class MvcListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Vendas", link: "/mvc" },
-      { label: "Análise CRM (MCV)" }
+      { label: "Cockpit de Vendas (MCV)" }
     ]
   };
 
@@ -75,54 +76,49 @@ export class MvcListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: " XLS", action: () => {}, icon: "po-icon-export" },
-    { label: " PDF", action: () => {}, icon: "po-icon-pdf" }
+    { label: "Novo Cliente", action: () => this.router.navigate(["/clientes/new"]), icon: "po-icon-user-add" },
+    { label: "Atualizar", action: () => this.loadAllData(), icon: "po-icon-refresh" }
   ];
 
-  readonly quickFilters: Array<PoDropdownAction> = [
+  readonly tableActions: Array<PoTableAction> = [
+    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
+    { label: "Editar Cliente", action: (item: any) => this.router.navigate(["/clientes/edit", item.cliente_id]), icon: "po-icon-edit" },
+    { label: "Novo Atendimento", action: (item: any) => this.poNotification.information("Função em desenvolvimento"), icon: "po-icon-chat" }
+  ];
+
+  readonly quickFilters: Array<any> = [
     { label: " + 120 Dias", action: this.applyQuickFilter.bind(this, 120), icon: "po-icon-plus" },
     { label: " + 90 Dias", action: this.applyQuickFilter.bind(this, 90), icon: "po-icon-plus" },
     { label: " + 60 Dias", action: this.applyQuickFilter.bind(this, 60), icon: "po-icon-plus" },
     { label: " + 30 Dias", action: this.applyQuickFilter.bind(this, 30), icon: "po-icon-plus" },
-    { label: " + 15 Dias", action: this.applyQuickFilter.bind(this, 15), icon: "po-icon-plus" },
     { label: " Bloqueados", action: this.applySituacaoFilter.bind(this, 'B'), icon: "po-icon-lock" },
     { label: " Ativos", action: this.applySituacaoFilter.bind(this, 'A'), icon: "po-icon-unlock" }
   ];
 
-  readonly tableActions: Array<PoTableAction> = [
-    { label: "Ver Detalhes", action: this.showDetails.bind(this), icon: "po-icon-eye" }
-  ];
-
   readonly columns: Array<PoTableColumn> = [
     { property: "financeiro_status", label: "$", type: "subtitle", width: "50px", subtitles: [
-      { value: "R", color: "color-07", label: "Atrasado", content: "Vencido" },
-      { value: "B", color: "color-10", label: "Em dia", content: "A Vencer" }
+      { value: "R", color: "color-07", label: "Atrasado", content: "!" },
+      { value: "B", color: "color-10", label: "Em dia", content: "$" }
     ]},
     { property: "situacao", label: "Situação", type: "label", width: "100px", labels: [
       { value: "A", color: "color-10", label: "Ativo" },
       { value: "B", color: "color-07", label: "Bloqueado" }
     ]},
     { property: "codigo", label: "Código", width: "100px" },
-    { property: "ultima_compra", label: "Última Compra", type: "date", format: "dd/MM/yyyy", width: "120px" },
     { property: "cliente_nome", label: "Razão Social", width: "250px" },
     { property: "municipio_descricao", label: "Cidade", width: "150px" },
-    { property: "difference", label: "Dif. mês e média", type: "currency", format: "BRL", width: "130px" },
+    { property: "difference", label: "Dif. Média", type: "currency", format: "BRL", width: "130px" },
     { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "110px" },
     { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "110px" },
-    { property: "dias", label: "Dias", type: "number", width: "80px" },
-    { property: "carteira", label: "Carteira", type: "label", width: "100px", labels: [
-      { value: "S", color: "color-11", label: "Sim" },
-      { value: "N", color: "color-08", label: "Não" }
-    ]},
-    { property: "vendedor_reduzido", label: "Vendedor", width: "120px" }
+    { property: "dias", label: "Dias", type: "number", width: "80px" }
   ];
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    this.isGerente = user?.isGerente || !!user?.supervisorId;
+    this.isGerente = user?.roles?.includes('ADMIN') || !!user?.supervisorId;
     
     this.loadInitialData();
-    this.loadData();
+    this.loadAllData();
   }
 
   loadInitialData() {
@@ -131,7 +127,6 @@ export class MvcListComponent implements OnInit {
         this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
       });
     }
-
     this.locationService.getEstados().subscribe(res => {
       this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
     });
@@ -139,24 +134,33 @@ export class MvcListComponent implements OnInit {
 
   onEstadoChange(estadoId: any) {
     this.selectedEstado = estadoId;
-    this.selectedMunicipio = undefined;
     if (estadoId) {
       this.locationService.getMunicipios(estadoId).subscribe(res => {
         this.municipios = res.map((m: any) => ({ label: m.descricao, value: m.id }));
       });
-    } else {
-      this.municipios = [];
     }
-    this.loadData();
+    this.loadAllData();
   }
 
   applyQuickFilter(dias: number) {
     this.minDias = dias;
-    this.loadData();
+    this.loadAllData();
   }
 
   applySituacaoFilter(situacao: string) {
     this.selectedSituacao = situacao;
+    this.loadAllData();
+  }
+
+  loadAllData() {
+    this.isLoading = true;
+    
+    // KPIs
+    this.analyticsService.getDashboardData(this.selectedYear, this.selectedMonth).subscribe(res => {
+      this.summary = res.summary;
+    });
+
+    // Lista MCV
     this.loadData();
   }
 
@@ -185,13 +189,7 @@ export class MvcListComponent implements OnInit {
         this.items = data;
         this.isLoading = false;
       },
-      error: () => {
-        this.isLoading = false;
-      }
+      error: () => this.isLoading = false
     });
-  }
-
-  showDetails(item: any) {
-    this.router.navigate(["/clientes/360", item.cliente_id]);
   }
 }

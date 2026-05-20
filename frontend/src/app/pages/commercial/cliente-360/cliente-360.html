@@ -1,63 +1,85 @@
-<po-page-default [p-title]="'Posição Cliente: ' + (cliente.razao || '')" [p-actions]="[{ label: 'Fechar', action: close.bind(this), icon: 'po-icon-close' }]">
+<po-page-default [p-title]="'Visão 360: ' + (cliente.razao || '')" [p-actions]="pageActions">
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
+  <!-- Cabeçalho Moderno com Resumo -->
+  <div class="po-row">
+    <po-widget class="po-md-3 po-mb-2" p-title="Cód. ERP">
+      <div class="po-font-subtitle po-text-center po-py-1">{{ cliente.codErp }}</div>
+    </po-widget>
+
+    <po-widget class="po-md-3 po-mb-2" p-title="Status">
+      <div class="po-font-subtitle po-text-center po-py-1">
+        <po-tag [p-value]="cliente.status === 'A' ? 'ATIVO' : 'BLOQUEADO'" [p-color]="cliente.status === 'A' ? 'color-10' : 'color-07'"></po-tag>
+      </div>
+    </po-widget>
+
+    <po-widget class="po-md-3 po-mb-2" p-title="Última Compra">
+      <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.ultimaCompra | date:'dd/MM/yyyy') || 'N/A' }}</div>
+    </po-widget>
+
+    <po-widget class="po-md-3 po-mb-2" p-title="Limite">
+      <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.limite | currency:'BRL') || 'R$ 0,00' }}</div>
+    </po-widget>
+  </div>
+
   <po-tabs>
-    <po-tab p-label="Cadastro" [p-active]="true">
+    <po-tab p-label="Sugestão de Compra" [p-active]="true">
       <div class="po-row po-mt-2">
-        <po-info class="po-md-2" p-label="Situação" [p-value]="cliente.status === 'A' ? 'Ativo' : 'Bloqueado'"></po-info>
-        <po-info class="po-md-2" p-label="Código" [p-value]="cliente.codErp"></po-info>
-        <po-info class="po-md-2" p-label="Tipo Pessoa" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
-        <po-info class="po-md-6" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
+        <div class="po-md-12">
+          <p class="po-font-text-smaller po-mb-2 po-text-color-07">
+            Produtos sugeridos com base na média de consumo dos últimos 6 meses vs compras deste mês.
+          </p>
+          <po-table [p-columns]="sugestaoColumns" [p-items]="sugestoesItems" p-container="shadow"></po-table>
+        </div>
       </div>
-      <div class="po-row">
-        <po-info class="po-md-6" p-label="Nome de Fantasia" [p-value]="cliente.fantasia"></po-info>
+    </po-tab>
+
+    <po-tab p-label="Dados Cadastrais">
+      <div class="po-row po-mt-2">
         <po-info class="po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
+        <po-info class="po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-3" p-label="Condição de Pagamento" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
-        <po-info class="po-md-3" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
-        <po-info class="po-md-6" p-label="E-mail" [p-value]="cliente.email"></po-info>
+        <po-info class="po-md-4" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
+        <po-info class="po-md-4" p-label="Inscrição Estadual" [p-value]="cliente.ie"></po-info>
+        <po-info class="po-md-4" p-label="Tipo" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-6" p-label="Endereço" [p-value]="cliente.endereco"></po-info>
-        <po-info class="po-md-6" p-label="Complemento" [p-value]="cliente.complemento"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-md-3" p-label="Bairro" [p-value]="cliente.bairro"></po-info>
-        <po-info class="po-md-3" p-label="Município" [p-value]="cliente.municipio?.descricao"></po-info>
-        <po-info class="po-md-3" p-label="UF" [p-value]="cliente.uf"></po-info>
+        <po-info class="po-md-6" p-label="Endereço Completo" [p-value]="(cliente.endereco || '') + ', ' + (cliente.bairro || '')"></po-info>
+        <po-info class="po-md-3" p-label="Cidade/UF" [p-value]="(cliente.municipio?.descricao || '') + ' - ' + (cliente.uf || '')"></po-info>
         <po-info class="po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
       </div>
       <div class="po-row">
         <po-info class="po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
         <po-info class="po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
+        <po-info class="po-md-4" p-label="E-mail" [p-value]="cliente.email"></po-info>
+      </div>
+      <div class="po-row">
         <po-info class="po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
+        <po-info class="po-md-4" p-label="Condição de PGTO" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
+        <po-info class="po-md-4" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
       </div>
     </po-tab>
 
+    <po-tab p-label="MIX de Produtos">
+      <po-table [p-columns]="mixColumns" [p-items]="mixItems" p-container="shadow"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Financeiro (Aberto)">
+      <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems" p-container="shadow"></po-table>
+    </po-tab>
+
+    <po-tab p-label="Histórico de Notas">
+      <po-table [p-columns]="notasColumns" [p-items]="notasItems" p-container="shadow"></po-table>
+    </po-tab>
+
     <po-tab p-label="Comodato">
-      <po-table [p-columns]="comodatoColumns" [p-items]="comodatoItems"></po-table>
+      <po-table [p-columns]="comodatoColumns" [p-items]="comodatoItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="MIX">
-      <po-table [p-columns]="mixColumns" [p-items]="mixItems"></po-table>
-    </po-tab>
-
-    <po-tab p-label="Contas a Receber">
-      <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems"></po-table>
-    </po-tab>
-
-    <po-tab p-label="Nota Fiscal">
-      <po-table [p-columns]="notasColumns" [p-items]="notasItems"></po-table>
-    </po-tab>
-
-    <po-tab p-label="Atendimentos">
-      <po-table [p-columns]="atendimentosColumns" [p-items]="atendimentosItems"></po-table>
-    </po-tab>
-
-    <po-tab p-label="Cobrança">
-      <p class="po-p-2">Histórico de negociações de cobrança (em implementação).</p>
+    <po-tab p-label="Atendimentos CRM">
+      <po-table [p-columns]="atendimentosColumns" [p-items]="atendimentosItems" p-container="shadow"></po-table>
     </po-tab>
   </po-tabs>
 

@@ -1,10 +1,37 @@
 <po-page-list 
-  p-title="Análise CRM (MCV)"
-  p-subtitle="Média de Vendas e Tendência de Consumo"
+  p-title="Cockpit de Vendas (MCV)"
+  p-subtitle="Gestão proativa da carteira de clientes"
   [p-breadcrumb]="breadcrumb"
   [p-filter]="filter"
   [p-actions]="actions">
 
+  <!-- Widgets de Performance -->
+  <div class="po-row">
+    <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
+      <div class="po-font-subtitle po-text-center po-py-1">
+        <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
+        {{ summary?.goal | currency:'BRL' }}
+      </div>
+    </po-widget>
+
+    <po-widget class="po-md-4 po-mb-2" p-title="Realizado">
+      <div class="po-font-subtitle po-text-center po-py-1">
+        <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
+        {{ summary?.realized | currency:'BRL' }}
+      </div>
+    </po-widget>
+
+    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
+      <div class="po-font-subtitle po-text-center po-py-1" [ngClass]="{'po-text-color-07': (summary?.achievement || 0) < 80, 'po-text-color-10': (summary?.achievement || 0) >= 100}">
+        <po-icon [p-icon]="(summary?.achievement || 0) >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
+        {{ summary?.achievement | number:'1.1-2' }}%
+      </div>
+    </po-widget>
+  </div>
+
+  <po-divider p-label="Filtros de Visão"></po-divider>
+
+  <!-- Filtros Avançados -->
   <div class="po-row">
     <po-select 
       class="po-md-1" 
@@ -12,7 +39,16 @@
       p-label="Ano" 
       [p-options]="years" 
       [ngModel]="selectedYear" 
-      (p-change)="selectedYear = $event; loadData()">
+      (p-change)="selectedYear = $event; loadAllData()">
+    </po-select>
+
+    <po-select 
+      class="po-md-1" 
+      name="month" 
+      p-label="Mês" 
+      [p-options]="months" 
+      [ngModel]="selectedMonth" 
+      (p-change)="selectedMonth = $event; loadAllData()">
     </po-select>
 
     <po-select 
@@ -22,14 +58,14 @@
       p-label="Vendedor" 
       [p-options]="vendedores" 
       [ngModel]="selectedVendedor" 
-      (p-change)="selectedVendedor = $event; loadData()"
-      p-placeholder="Todos os Vendedores">
+      (p-change)="selectedVendedor = $event; loadAllData()"
+      p-placeholder="Minha Equipe">
     </po-select>
 
     <po-select 
-      class="po-md-2" 
+      class="po-md-1" 
       name="estado" 
-      p-label="Estado" 
+      p-label="UF" 
       [p-options]="estados" 
       [ngModel]="selectedEstado" 
       (p-change)="onEstadoChange($event)"
@@ -42,32 +78,13 @@
       p-label="Cidade" 
       [p-options]="municipios" 
       [ngModel]="selectedMunicipio" 
-      (p-change)="selectedMunicipio = $event; loadData()"
+      (p-change)="selectedMunicipio = $event; loadAllData()"
       [p-disabled]="!selectedEstado"
       p-placeholder="Todas">
     </po-select>
 
-    <po-select 
-      class="po-md-3" 
-      name="situacao" 
-      p-label="Situação" 
-      [p-options]="situacoes" 
-      [ngModel]="selectedSituacao" 
-      (p-change)="selectedSituacao = $event; loadData()"
-      p-placeholder="Todas">
-    </po-select>
-  </div>
-
-  <div class="po-row po-mt-2">
-    <div class="po-md-12 po-text-right">
-      <po-button 
-        p-label="Limpar Filtros" 
-        p-icon="po-icon-delete" 
-        (p-click)="selectedEstado=undefined; selectedMunicipio=undefined; selectedSituacao=undefined; minDias=undefined; loadData()">
-      </po-button>
-      
+    <div class="po-md-3 po-mt-4 po-text-right">
       <po-dropdown 
-        class="po-ml-1"
         p-label="Filtros Rápidos" 
         [p-actions]="quickFilters">
       </po-dropdown>
@@ -87,34 +104,3 @@
   </po-table>
 
 </po-page-list>
-
-<po-modal #modalDetails p-title="Posição do Cliente" [p-primary-action]="{ label: 'Fechar', action: modalDetails.close.bind(modalDetails) }">
-  <po-tabs>
-    <po-tab p-label="Cadastro" [p-active]="true">
-      <div class="po-row po-mt-2">
-        <po-info class="po-md-6" p-label="Razão Social" [p-value]="selectedItem.cliente_nome || ''"></po-info>
-        <po-info class="po-md-3" p-label="Situação" [p-value]="selectedItem.situacao === 'A' ? 'Ativo' : 'Bloqueado'"></po-info>
-        <po-info class="po-md-3" p-label="Código ERP" [p-value]="selectedItem.codigo || ''"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-md-6" p-label="Cidade/UF" [p-value]="(selectedItem.municipio_descricao || '') + '/' + (selectedItem.estado_sigla || '')"></po-info>
-        <po-info class="po-md-3" p-label="Última Compra" [p-value]="(selectedItem.ultima_compra | date:'dd/MM/yyyy') || ''"></po-info>
-        <po-info class="po-md-3" p-label="Dias s/ Compra" [p-value]="selectedItem.dias || '0'"></po-info>
-      </div>
-    </po-tab>
-    <po-tab p-label="Comodato">
-      <p class="po-p-2">Informações de equipamentos em regime de comodato.</p>
-    </po-tab>
-    <po-tab p-label="Financeiro">
-      <div class="po-row po-mt-2">
-        <po-info class="po-md-4" p-label="Média 3 Meses" [p-value]="(selectedItem.average3Months | currency:'BRL') || ''"></po-info>
-        <po-info class="po-md-4" p-label="Diferença (Tendência)" [p-value]="(selectedItem.difference | currency:'BRL') || ''"></po-info>
-        <div class="po-md-4">
-          <div class="po-font-text-smaller-bold po-mb-1">Tendência</div>
-          <po-tag [p-value]="selectedItem.difference >= 0 ? 'Alta' : 'Queda'" [p-color]="selectedItem.difference >= 0 ? 'color-10' : 'color-07'"></po-tag>
-        </div>
-      </div>
-    </po-tab>
-  </po-tabs>
-</po-modal>
-

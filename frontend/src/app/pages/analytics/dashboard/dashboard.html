@@ -1,7 +1,42 @@
-<po-page-default p-title="Dashboard Gerencial" [p-actions]="pageActions">
+<po-page-default p-title="Painel de B.I. Comercial" [p-actions]="pageActions">
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
+  <!-- Filtros -->
+  <div class="po-row">
+    <po-select 
+      class="po-md-2" 
+      name="year" 
+      p-label="Ano" 
+      [p-options]="years" 
+      [ngModel]="selectedYear" 
+      (p-change)="selectedYear = $event; loadAllData()">
+    </po-select>
+
+    <po-select 
+      class="po-md-2" 
+      name="month" 
+      p-label="Mês" 
+      [p-options]="months" 
+      [ngModel]="selectedMonth" 
+      (p-change)="selectedMonth = $event; loadAllData()">
+    </po-select>
+
+    <po-select 
+      *ngIf="isGerente"
+      class="po-md-4" 
+      name="vendedor" 
+      p-label="Vendedor (Visão Hierárquica)" 
+      [p-options]="vendedores" 
+      [ngModel]="selectedVendedor" 
+      (p-change)="selectedVendedor = $event; loadAllData()"
+      p-placeholder="Todos da minha equipe">
+    </po-select>
+  </div>
+
+  <po-divider></po-divider>
+
+  <!-- KPIs -->
   <div class="po-row">
     <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
       <div class="po-font-subtitle po-text-center po-py-2">
@@ -25,14 +60,31 @@
     </po-widget>
   </div>
 
+  <!-- Gráficos -->
   <div class="po-row">
-    <po-widget class="po-md-12 po-mt-2" p-title="Vendas por Categoria">
+    <po-widget class="po-md-12 po-mt-2 po-mb-2" p-title="Vendas por Categoria">
       <po-chart 
         [p-series]="categorySeries" 
         [p-type]="chartType"
         [p-height]="350">
       </po-chart>
     </po-widget>
+  </div>
+
+  <po-divider p-label="Média de Vendas Mensal (MCV)"></po-divider>
+
+  <!-- Lista MCV Integrada -->
+  <div class="po-row">
+    <div class="po-md-12">
+      <po-table
+        [p-columns]="mvcColumns"
+        [p-items]="mvcItems"
+        [p-actions]="mvcActions"
+        p-container="shadow"
+        [p-striped]="true"
+        [p-sort]="true">
+      </po-table>
+    </div>
   </div>
 
 </po-page-default>

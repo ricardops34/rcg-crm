@@ -68,6 +68,11 @@ export class ClienteController {
     return this.detailsService.getAtendimentos(id);
   }
 
+  @Get(':id/sugestoes')
+  async getPurchaseSuggestion(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getPurchaseSuggestion(id);
+  }
+
   @Post()
   async create(@Body() data: any) {
     return this.clienteService.create(data);
