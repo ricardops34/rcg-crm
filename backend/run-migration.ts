@@ -19,11 +19,10 @@ async function run() {
     await migrationService.migrateMySQLtoPG(path.join(__dirname, '../backup/backup_mysql.sql'));
 
     console.log('\n✅ Migração concluída com sucesso!');
+    process.exit(0);
   } catch (error) {
     console.error('\n❌ Falha catastrófica na migração:', error);
-  } finally {
-    await app.close();
-    process.exit(0);
+    process.exit(1);
   }
 }
 

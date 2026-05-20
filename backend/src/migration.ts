@@ -31,7 +31,7 @@ export class MigrationDataService {
       lineCount++;
       const trimmedLine = line.trim();
       
-      // Ignorar comentários, linhas vazias e comandos de estrutura
+      // Ignorar comentários, linhas vazias e comandos de estrutura/transação
       if (
         trimmedLine === '' || 
         trimmedLine.startsWith('--') || 
@@ -41,8 +41,15 @@ export class MigrationDataService {
         trimmedLine.toUpperCase().startsWith('ALTER TABLE') ||
         trimmedLine.toUpperCase().startsWith('SET ') ||
         trimmedLine.toUpperCase().startsWith('LOCK TABLES') ||
-        trimmedLine.toUpperCase().startsWith('UNLOCK TABLES')
+        trimmedLine.toUpperCase().startsWith('UNLOCK TABLES') ||
+        trimmedLine.toUpperCase().startsWith('START TRANSACTION') ||
+        trimmedLine.toUpperCase().startsWith('BEGIN') ||
+        trimmedLine.toUpperCase().startsWith('COMMIT') ||
+        trimmedLine.toUpperCase().includes('ADD CONSTRAINT') ||
+        trimmedLine.toUpperCase().includes('ADD KEY') ||
+        trimmedLine.toUpperCase().includes('ADD PRIMARY KEY')
       ) {
+        queryBuffer = ''; // Limpar buffer se cair em estrutura ou transação
         continue;
       }
 
@@ -51,29 +58,34 @@ export class MigrationDataService {
 
       // Se a linha termina com ponto e vírgula, processar a query completa
       if (trimmedLine.endsWith(';')) {
-        let pgQuery = queryBuffer
-          .replace(/`/g, '"') // Trocar backticks por aspas duplas
-          .replace(/\\'/g, "''") // Escapar aspas simples (MySQL style para PG)
-          .replace(/\\"/g, '"') 
-          .replace(/\\r\\n/g, '\n')
-          .replace(/\\n/g, '\n')
-          .trim();
+        const pgQuery = queryBuffer.trim();
 
-        try {
-          // Remover o ponto e vírgula final se necessário (o driver costuma não precisar, mas PG aceita)
-          await this.dataSource.query(pgQuery);
-          insertCount++;
-          if (insertCount % 500 === 0) {
-            console.log(`${insertCount} comandos SQL processados...`);
-          }
-        } catch (err) {
-          // Ignorar erros comuns de duplicidade ou estrutura se desejar, mas vamos logar
-          if (!err.message.includes('already exists')) {
-             console.error(`Erro na linha ${lineCount}: ${err.message}`);
+        // REGRAS DE OURO: Apenas migrar DADOS (INSERT INTO)
+        // Ignorar qualquer comando de estrutura que o MySQL dump coloca no final
+        if (pgQuery.toUpperCase().startsWith('INSERT INTO')) {
+          let convertedQuery = pgQuery
+            .replace(/`/g, '"') // Trocar backticks por aspas duplas
+            .replace(/\\'/g, "''") // Escapar aspas simples (MySQL style para PG)
+            .replace(/\\"/g, '"') 
+            .replace(/\\r\\n/g, '\n')
+            .replace(/\\n/g, '\n');
+
+          try {
+            await this.dataSource.query(convertedQuery);
+            insertCount++;
+            if (insertCount % 500 === 0) {
+              console.log(`${insertCount} comandos de INSERT processados...`);
+            }
+          } catch (err) {
+            // Logar erros reais de dados (ex: chave estrangeira inexistente)
+            // Mas ignorar se o dado já existir (já importado em rodada anterior)
+            if (!err.message.includes('already exists')) {
+               console.error(`Erro de Dados na linha ${lineCount}: ${err.message}`);
+            }
           }
         }
 
-        // Limpar buffer para a próxima query
+        // Limpar buffer para a próxima query, independente se foi processada ou descartada
         queryBuffer = '';
       }
     }
