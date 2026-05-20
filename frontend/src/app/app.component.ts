@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
 import { 
@@ -50,12 +50,20 @@ export class AppComponent implements OnInit {
     }
   ];
 
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user) {
+        this.refreshUserInfo();
+        this.loadMenu();
+      } else {
+        this.dynamicMenus = [];
+      }
+    });
+  }
+
   ngOnInit() {
-    this.refreshUserInfo();
     this.loadTheme();
-    if (this.authService.isAuthenticated()) {
-      this.loadMenu();
-    }
   }
 
   refreshUserInfo() {

@@ -56,8 +56,6 @@
   border: 1.5px solid #DCE6EB !important;
   background-color: #F7FAFC !important;
   transition: all 0.25s ease-in-out !important;
-  padding-top: 12px !important;
-  padding-bottom: 12px !important;
   height: 48px !important;
 }
 
@@ -98,10 +96,10 @@
 .po-page-login-button button:disabled {
   background-color: #E2E8F0 !important;
   border-color: #E2E8F0 !important;
-  color: #64748B !important;
+  color: #475569 !important; /* Texto mais escuro para leitura clara */
   box-shadow: none !important;
   cursor: not-allowed !important;
-  opacity: 0.8 !important;
+  opacity: 1 !important; /* Removido opacidade que afetava o texto */
 }
 
 /* Alinhamento refinado da área de informações e Switch de Lembrar Usuário */

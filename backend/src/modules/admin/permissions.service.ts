@@ -97,7 +97,7 @@ export class PermissionsService {
 
     const programsMap = new Map();
 
-    const processProgram = (p: any, actionsRaw: string) => {
+    const processProgram = (p: any, actionsRaw: string | null) => {
       if (!p) return;
       const currentActions = actionsRaw ? JSON.parse(actionsRaw) : { view: true, insert: false, update: false, delete: false };
       const existing = programsMap.get(p.id);
