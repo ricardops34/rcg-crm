@@ -4,6 +4,7 @@ import { Repository, In } from 'typeorm';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
 import { SystemProgram } from './entities/system-program.entity';
+import { SystemUserProgram } from './entities/system-user-program.entity';
 
 @Injectable()
 export class PermissionsService {
@@ -14,6 +15,8 @@ export class PermissionsService {
     private groupProgramRepository: Repository<SystemGroupProgram>,
     @InjectRepository(SystemProgram, 'security')
     private programRepository: Repository<SystemProgram>,
+    @InjectRepository(SystemUserProgram, 'security')
+    private userProgramRepository: Repository<SystemUserProgram>,
   ) {}
 
   async hasPermission(userId: number, controller: string): Promise<boolean> {
@@ -22,21 +25,30 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    // Se o usuário tiver papel de 'ADMIN' ou o grupo se chamar 'Admin', ele tem acesso total
+    // Acesso Total para qualquer usuário no perfil 'Administradores' ou com Role 'ADMIN'
     const isAdmin = userGroups.some(
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
+          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
     );
-    if (isAdmin) {
-      return true;
-    }
+    if (isAdmin) return true;
 
+    // Verificar Permissões Diretas do Usuário
+    const userPermission = await this.userProgramRepository.findOne({
+      where: {
+        systemUserId: userId,
+        systemProgram: { controller: controller },
+      },
+      relations: ['systemProgram'],
+    });
+    if (userPermission) return true;
+
+    // Verificar Permissões do Grupo
     const groupIds = userGroups.map((ug) => ug.systemGroupId);
     if (groupIds.length === 0) return false;
 
-    const permissions = await this.groupProgramRepository.find({
+    const groupPermission = await this.groupProgramRepository.findOne({
       where: {
         systemGroupId: In(groupIds),
         systemProgram: { controller: controller },
@@ -44,7 +56,7 @@ export class PermissionsService {
       relations: ['systemProgram'],
     });
 
-    return permissions.length > 0;
+    return !!groupPermission;
   }
 
   async getUserPrograms(userId: number) {
@@ -53,33 +65,43 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    // Se for Admin, retorna todos os programas cadastrados no sistema
     const isAdmin = userGroups.some(
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
+          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
     );
+
     if (isAdmin) {
-      return this.programRepository.find();
+      // ADMIN: Retorna APENAS o que está implementado (cadastrado em system_program)
+      const allImplemented = await this.programRepository.find();
+      return allImplemented.map(p => ({
+          ...p,
+          permissions: { view: true, insert: true, update: true, delete: true }
+      }));
     }
 
     const groupIds = userGroups.map((ug) => ug.systemGroupId);
-    if (groupIds.length === 0) return [];
-
+    
+    // Buscar Programas via Grupo
     const groupPrograms = await this.groupProgramRepository.find({
-      where: { systemGroupId: In(groupIds) },
+      where: { systemGroupId: In(groupIds.length ? groupIds : [-1]) },
       relations: ['systemProgram'],
     });
 
-    // Remover duplicatas e formatar com ações
-    const programs = new Map();
-    groupPrograms.forEach((gp) => {
-      const existing = programs.get(gp.systemProgramId);
-      const currentActions = gp.actions ? JSON.parse(gp.actions) : { view: true };
-      
+    // Buscar Programas via Usuário Direto
+    const userPrograms = await this.userProgramRepository.find({
+      where: { systemUserId: userId },
+      relations: ['systemProgram'],
+    });
+
+    const programsMap = new Map();
+
+    const processProgram = (p: any, actionsRaw: string) => {
+      if (!p) return;
+      const currentActions = actionsRaw ? JSON.parse(actionsRaw) : { view: true, insert: false, update: false, delete: false };
+      const existing = programsMap.get(p.id);
       if (existing) {
-        // Merge de ações se o usuário estiver em múltiplos grupos com a mesma rotina
         existing.permissions = {
           view: existing.permissions.view || currentActions.view,
           insert: existing.permissions.insert || currentActions.insert,
@@ -87,14 +109,14 @@ export class PermissionsService {
           delete: existing.permissions.delete || currentActions.delete,
         };
       } else {
-        programs.set(gp.systemProgramId, {
-          ...gp.systemProgram,
-          permissions: currentActions
-        });
+        programsMap.set(p.id, { ...p, permissions: currentActions });
       }
-    });
+    };
 
-    return Array.from(programs.values());
+    groupPrograms.forEach(gp => processProgram(gp.systemProgram, gp.actions));
+    userPrograms.forEach(up => processProgram(up.systemProgram, null));
+
+    return Array.from(programsMap.values());
   }
 
   async getMenuStructure(userId: number) {
@@ -107,70 +129,60 @@ export class PermissionsService {
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMIN'),
+          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
     );
 
-    let groupIds: number[];
-    if (isAdmin) {
-      const allGroups = await this.userGroupRepository.manager.getRepository('SystemGroup').find();
-      groupIds = allGroups.map(g => (g as any).id);
-    } else {
-      groupIds = userGroups.map((ug) => ug.systemGroupId);
-    }
-
-    if (groupIds.length === 0) return [];
-
-    // Buscar programas permitidos com seus módulos
-    const groupPrograms = await this.groupProgramRepository.find({
-      where: { systemGroupId: In(groupIds) },
-      relations: ['systemProgram', 'systemProgram.systemModule'],
-    });
-
-    // Organizar em estrutura hierárquica ordenada
     const menuMap = new Map();
 
-    groupPrograms.forEach((gp) => {
-      const prog = gp.systemProgram;
-      const mod = prog.systemModule || { id: 0, name: 'Outros', icon: 'po-icon-more', order: 99 };
+    if (isAdmin) {
+      // ADMIN: Acesso Total a todas as rotinas DESENVOLVIDAS (cadastradas no banco)
+      const allImplemented = await this.programRepository.find({
+        relations: ['systemModule'],
+      });
 
-      if (!menuMap.has(mod.id)) {
-        menuMap.set(mod.id, {
-          id: mod.id,
-          label: mod.name,
-          icon: mod.icon,
-          order: mod.order,
-          subItems: []
+      allImplemented.forEach((prog: any) => {
+        const mod = prog.systemModule || { id: 0, name: 'Outros', icon: 'po-icon-more', order: 99 };
+        if (!menuMap.has(mod.id)) {
+          menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });
+        }
+        menuMap.get(mod.id).subItems.push({
+          id: prog.id,
+          label: prog.name,
+          action: prog.controller,
+          order: prog.order,
+          icon: prog.icon || 'po-icon-circle',
+          permissions: { view: true, insert: true, update: true, delete: true }
+        });
+      });
+    } else {
+      // Usuário Comum: Soma de Grupos + Direto no Usuário
+      const programs = await this.getUserPrograms(userId);
+      
+      for (const prog of programs) {
+        if (!prog.permissions?.view) continue;
+
+        const fullProg = await this.programRepository.findOne({ 
+          where: { id: prog.id }, 
+          relations: ['systemModule'] 
+        });
+
+        const mod = fullProg?.systemModule || { id: 0, name: 'Outros', icon: 'po-icon-more', order: 99 };
+        
+        if (!menuMap.has(mod.id)) {
+          menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });
+        }
+        
+        menuMap.get(mod.id).subItems.push({
+          id: prog.id,
+          label: prog.name,
+          action: prog.controller,
+          order: prog.order,
+          icon: prog.icon || 'po-icon-circle',
+          permissions: prog.permissions
         });
       }
+    }
 
-      const moduleEntry = menuMap.get(mod.id);
-      const currentActions = gp.actions ? JSON.parse(gp.actions) : { view: true };
-
-      // Apenas adicionar se tiver permissão de visualizar
-      if (currentActions.view) {
-        const existingProg = moduleEntry.subItems.find((p: any) => p.id === prog.id);
-        if (!existingProg) {
-          moduleEntry.subItems.push({
-            id: prog.id,
-            label: prog.name,
-            action: prog.controller, // Controller usado para roteamento no front
-            order: prog.order,
-            icon: prog.icon || 'po-icon-circle',
-            permissions: currentActions
-          });
-        } else {
-          // Merge permissions
-          existingProg.permissions = {
-            view: existingProg.permissions.view || currentActions.view,
-            insert: existingProg.permissions.insert || currentActions.insert,
-            update: existingProg.permissions.update || currentActions.update,
-            delete: existingProg.permissions.delete || currentActions.delete,
-          };
-        }
-      }
-    });
-
-    // Converter para array e ordenar (Módulos e depois Itens Internos)
     return Array.from(menuMap.values())
       .sort((a, b) => a.order - b.order)
       .map(mod => ({

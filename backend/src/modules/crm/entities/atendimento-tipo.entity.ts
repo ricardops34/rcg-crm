@@ -20,6 +20,12 @@ export class AtendimentoTipo {
   @Column({ type: 'char', length: 1, nullable: true })
   retorno: string;
 
+  @Column({ type: 'char', length: 1, nullable: true })
+  editar: string;
+
+  @Column({ type: 'char', length: 1, nullable: true })
+  excluir: string;
+
   @Column({ type: 'text', nullable: true })
   cor: string;
 

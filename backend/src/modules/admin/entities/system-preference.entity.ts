@@ -6,5 +6,5 @@ export class SystemPreference {
   id: string;
 
   @Column({ type: 'text', nullable: true })
-  value: string;
+  preference: string;
 }

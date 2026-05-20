@@ -6,6 +6,7 @@ import { SystemProgram } from './entities/system-program.entity';
 import { SystemModule } from './entities/system-module.entity';
 import { SystemPreference } from './entities/system-preference.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
+import { SystemUserProgram } from './entities/system-user-program.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
 import { SystemUser } from './entities/system-user.entity';
 import { SystemUserUnit } from './entities/system-user-unit.entity';
@@ -29,6 +30,7 @@ import { ModulesController } from './modules.controller';
         SystemModule,
         SystemPreference,
         SystemUserGroup,
+        SystemUserProgram,
         SystemGroupProgram,
         SystemUser,
         SystemUserUnit,

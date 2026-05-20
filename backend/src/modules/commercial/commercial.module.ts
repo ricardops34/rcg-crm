@@ -10,6 +10,7 @@ import { RegiaoCliente } from './entities/regiao-cliente.entity';
 import { Segmento } from './entities/segmento.entity';
 import { TipoCliente } from './entities/tipo-cliente.entity';
 import { VendedorAtendimento } from './entities/vendedor-atendimento.entity';
+import { ClienteCondicao } from './entities/cliente-condicao.entity';
 import { Cliente } from './entities/cliente.entity';
 import { CondicaoPagamento } from './entities/condicao-pagamento.entity';
 import { TabelaPreco } from './entities/tabela-preco.entity';
@@ -45,6 +46,7 @@ import { AdminModule } from '../admin/admin.module';
       Segmento,
       TipoCliente,
       VendedorAtendimento,
+      ClienteCondicao,
       Cliente,
       CondicaoPagamento,
       TabelaPreco,
