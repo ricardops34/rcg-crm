@@ -1,23 +1,17 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { SystemUser } from './system-user.entity';
 import { SystemUnit } from './system-unit.entity';
 
-@Entity('system_user_units')
+@Entity('system_user_unit')
 export class SystemUserUnit {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
-  @Column({ name: 'system_users_id', type: 'integer' })
+  @Column({ name: 'system_user_id', type: 'integer' })
   systemUsersId: number;
 
   @ManyToOne(() => SystemUser, (user) => (user as any).userUnits)
-  @JoinColumn({ name: 'system_users_id' })
+  @JoinColumn({ name: 'system_user_id' })
   systemUser: SystemUser;
 
   @Column({ name: 'system_unit_id', type: 'integer' })

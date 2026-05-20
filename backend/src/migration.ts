@@ -16,19 +16,16 @@ export class MigrationDataService {
       return;
     }
 
-    // DESABILITAR TUDO: Foreign Keys, Triggers e Constraints para esta sessão
-    // Isso é o segredo para migrar dados fora de ordem ou com inconsistências históricas
     try {
       await ds.query("SET session_replication_role = 'replica'");
-      console.log('🔓 Verificações de integridade desabilitadas temporariamente.');
+      console.log('🔓 Verificações de integridade desabilitadas.');
     } catch (e) {
-      console.warn('⚠️ Falha ao desabilitar FKs. O usuário do banco precisa ser superuser ou owner.');
+      console.warn('⚠️ Falha ao desabilitar FKs.');
     }
 
     const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
     const logStream = fs.createWriteStream(logPath, { flags: 'a' });
     logStream.write(`\n\n--- INÍCIO DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
-    logStream.write(`Arquivo: ${filePath}\n`);
 
     const fileStream = fs.createReadStream(absolutePath);
     const rl = readline.createInterface({
@@ -36,7 +33,7 @@ export class MigrationDataService {
       crlfDelay: Infinity,
     });
 
-    console.log(`Iniciando migração de: ${filePath}...`);
+    console.log(`Iniciando: ${filePath}...`);
     
     let queryBuffer = '';
     let lineCount = 0;
@@ -55,7 +52,7 @@ export class MigrationDataService {
       if (trimmedLine.endsWith(';')) {
         const pgQuery = queryBuffer.trim();
 
-        // APENAS INSERTs SÃO PROCESSADOS
+        // TRATAMENTO INTELIGENTE DE INSERTs
         if (pgQuery.toUpperCase().startsWith('INSERT INTO')) {
           let convertedQuery = pgQuery
             .replace(/`/g, '"') 
@@ -64,20 +61,19 @@ export class MigrationDataService {
             .replace(/\\r\\n/g, '\n')
             .replace(/\\n/g, '\n');
 
+          // CORREÇÃO DE ASPAS EM NÚMEROS LONGOS (CNPJ/CPF que o MySQL aceita sem aspas)
+          // Procura por valores puramente numéricos com mais de 10 dígitos após uma vírgula ou parêntese e coloca aspas
+          convertedQuery = convertedQuery.replace(/([,\(])\s*(\d{11,})\s*([,\)])/g, "$1'$2'$3");
+
           try {
             await ds.query(convertedQuery);
             insertCount++;
-            if (insertCount % 500 === 0) {
-              console.log(`${insertCount} comandos de INSERT processados...`);
-            }
+            if (insertCount % 500 === 0) console.log(`${insertCount} registros...`);
           } catch (err) {
             const msg = err.message.toLowerCase();
-            // Ignorar erros que não impedem a carga básica
             if (msg.includes('does not exist') || msg.includes('duplicate key') || msg.includes('already exists')) {
-               logStream.write(`Linha ${lineCount}: Ignorado (Estrutura ou Duplicidade) - ${err.message}\n`);
+               logStream.write(`Linha ${lineCount}: Ignorado - ${err.message}\n`);
             } else {
-               // Erros reais de sintaxe ou dados corrompidos
-               console.error(`Erro na linha ${lineCount}: ${err.message}`);
                logStream.write(`Linha ${lineCount}: ERRO REAL - ${err.message}\n`);
             }
           }
@@ -86,37 +82,31 @@ export class MigrationDataService {
       }
     }
 
-    // REABILITAR TUDO
     try {
       await ds.query("SET session_replication_role = 'origin'");
-      console.log('🔒 Verificações de integridade reabilitadas.');
+      console.log('🔒 Verificações reabilitadas.');
     } catch (e) {}
 
     logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
     logStream.end();
-    console.log(`Migração finalizada. ${insertCount} registros inseridos.`);
+    console.log(`Finalizado: ${insertCount} registros.`);
     await this.fixSequences(ds);
   }
 
   async fixSequences(targetDataSource?: DataSource) {
     const ds = targetDataSource || this.dataSource;
-    console.log('Sincronizando sequences...');
     const tables = await ds.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_type = 'BASE TABLE'
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
     `);
 
     for (const table of tables) {
       const tableName = table.table_name;
       try {
-        // Resetar sequences para que os próximos IDs automáticos não deem erro
         await ds.query(`
           SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), coalesce(max(id), 1), true) FROM "${tableName}";
         `);
       } catch (e) {}
     }
-    console.log('Sequences sincronizadas!');
   }
 }
