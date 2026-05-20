@@ -1,0 +1,291 @@
+{
+  "admin": {
+    "name": "Administração e Segurança",
+    "description": "Gestão de usuários, permissões (RBAC), auditoria e configurações globais do sistema.",
+    "controllers": [
+      "LoginForm",
+      "SystemUsersForm",
+      "SystemGroupForm",
+      "SystemProgramForm",
+      "SystemUnitForm",
+      "SystemPreferenceForm"
+    ],
+    "models": [
+      "SystemUsers",
+      "SystemGroup",
+      "SystemProgram",
+      "SystemUnit",
+      "SystemPreference"
+    ],
+    "features": [
+      "Autenticação Multi-fator (2FA)",
+      "Gestão de Unidades (Multi-unit)",
+      "Controle de Acesso Baseado em Grupos (RBAC)",
+      "Logs de Auditoria de Acesso",
+      "Gestão de Termos de Uso e Privacidade"
+    ],
+    "technologies": [
+      "Adianti TRecord",
+      "Adianti TPage",
+      "Bcrypt / MD5 rehash",
+      "Google reCAPTCHA",
+      "Google Authenticator"
+    ]
+  },
+  "cadastros": {
+    "name": "Cadastros Básicos (Master Data)",
+    "description": "Gestão de clientes, produtos, preços e entidades fundamentais para o ERP.",
+    "controllers": [
+      "ClienteForm",
+      "ProdutoForm",
+      "TabelaPrecoForm",
+      "BlogNoticiasForm"
+    ],
+    "models": [
+      "Cliente",
+      "Produto",
+      "TabelaPreco",
+      "TabelaPrecoItem",
+      "Categoria",
+      "CondicaoPagamento"
+    ],
+    "features": [
+      "Cadastro complexo de Clientes (multi-aba, contatos, validações de RFB)",
+      "Cadastro de Produtos com múltiplos atributos e imagens",
+      "Configuração de Tabelas de Preço com regras por item",
+      "Gestão de Metas de Vendedores"
+    ],
+    "technologies": [
+      "Adianti TRecord",
+      "Adianti TPage",
+      "BootstrapFormBuilder",
+      "SystemChangeLogTrait"
+    ]
+  },
+  "cobranca": {
+    "name": "Cobrança e Títulos",
+    "description": "Gestão de títulos a receber, negociações de dívidas e cobrança de clientes inadimplentes.",
+    "controllers": [
+      "NegociacaoList",
+      "TitulosClienteNegociacaoSimpleList"
+    ],
+    "models": [
+      "TituloReceber",
+      "Negociacao",
+      "NegociacaoTituloReceber",
+      "ViewTituloCliente"
+    ],
+    "features": [
+      "Listagem de inadimplência com saldo em aberto e vencido",
+      "Geração de cobrança em lote para títulos vencidos",
+      "Agrupamento de títulos em uma Negociação"
+    ],
+    "technologies": [
+      "Adianti TRecord",
+      "Adianti TDataGrid",
+      "Views do Banco de Dados (ViewTituloCliente)"
+    ]
+  },
+  "vendedor": {
+    "name": "Portal do Vendedor (CRM / Vendas)",
+    "description": "Ferramentas de força de vendas: agenda de atendimentos, métricas de vendas, painéis e acompanhamento de metas.",
+    "controllers": [
+      "AtendimentoCalendarForm",
+      "DashboardVendedor",
+      "ClienteList",
+      "MvcList"
+    ],
+    "models": [
+      "Atendimento",
+      "AtendimentoTipo",
+      "Mvc",
+      "ViewVendaCliente"
+    ],
+    "features": [
+      "Painel de Indicadores (Dashboard com BIndicator e BTableChart)",
+      "Agenda de Atendimentos e Visitas (Calendário)",
+      "Cálculo de Média de Vendas (MVC - Média de Venda do Cliente)",
+      "Acompanhamento de Metas por Categoria e Positivação de Clientes"
+    ],
+    "technologies": [
+      "Adianti BIndicator / BTableChart",
+      "Views Estratégicas (ViewBaseClienteMes, ViewBaseVenda)",
+      "Restrição de Visão por Hierarquia (Vendedor vs Supervisor)"
+    ]
+  },
+  "gerencia": {
+    "name": "Gestão e Estratégia Comercial",
+    "description": "Visões consolidadas para supervisores, gestão de metas da equipe e relatórios de desempenho regional.",
+    "controllers": [
+      "DashboardGerencia",
+      "MetaVendedorMesList",
+      "VendaMesClienteList",
+      "DashboardRegiao"
+    ],
+    "models": [
+      "MetaVendedorMes",
+      "MetaVendedorCategoria",
+      "PivotVendaMesCliente",
+      "ViewVendedorVendaMes"
+    ],
+    "features": [
+      "Dashboard de Supervisão com KPIs de Ticket Médio e Cobertura",
+      "Configuração de Metas Hierárquicas (Vendedor > Categoria)",
+      "Relatórios de Evolução de Venda 12 meses (Pivot)",
+      "Ranking de Desempenho de Equipe (% Meta vs Realizado)"
+    ],
+    "technologies": [
+      "Adianti TRecord / TPanelGroup",
+      "Views de BI (ViewVendedorVendaMes, ViewTotalCatogoriaMes)",
+      "Pivot Tables em Banco de Dados"
+    ]
+  },
+  "supervisor": {
+    "name": "Gestão de Equipes (Hierarquia)",
+    "description": "Controle de subordinação comercial e acompanhamento operacional de times de venda.",
+    "controllers": [
+      "DashboardSupervisor"
+    ],
+    "models": [
+      "Supervisor",
+      "SupervisorVendedor"
+    ],
+    "features": [
+      "Vinculação N:N entre Supervisor e Vendedor",
+      "Dashboard dinâmico com filtro de subordinados",
+      "Análise de saúde da carteira subordinada (Ativos vs Bloqueados)"
+    ],
+    "technologies": [
+      "Adianti TRecord",
+      "AJAX TDBCombo Reload",
+      "Lazy loading de relacionamentos"
+    ]
+  },
+  "meu_cliente": {
+    "name": "Portal Meu Cliente (B2B)",
+    "description": "Interface de autoatendimento para clientes finais consultarem dados, financeiro e notas fiscais.",
+    "controllers": [
+      "LoginClienteForm",
+      "PainelClienteForm",
+      "ClientePublicaFormView"
+    ],
+    "models": [
+      "ClienteAcesso"
+    ],
+    "features": [
+      "Autenticação separada via CPF/CNPJ",
+      "Consulta de situação financeira e segunda via (implícito)",
+      "Acesso a Notas Fiscais eletrônicas faturadas",
+      "Visualização de dados cadastrais mestre"
+    ],
+    "technologies": [
+      "Adianti TPage",
+      "Sessão customizada (cliente_logado)",
+      "MD5 Password Hashing"
+    ]
+  },
+  "relatorios": {
+    "name": "Relatórios e Documentos Fiscais",
+    "description": "Emissão de documentos fiscais (DANFE), visualização detalhada de faturamento e listagens analíticas.",
+    "controllers": [
+      "Danfe",
+      "NotaSaidaFormView",
+      "ComodatoNotafiscalSimpleList"
+    ],
+    "models": [
+      "NotaSaida",
+      "NotasaidaXml",
+      "ClienteNotafiscal"
+    ],
+    "features": [
+      "Geração de PDF de DANFE a partir de XML (SEFAZ)",
+      "Visualização de itens de Nota Fiscal com descontos e totais",
+      "Listagem analítica de comodatos por cliente"
+    ],
+    "technologies": [
+      "NFePHP (DA\\NFe\\Danfe)",
+      "Adianti TQuickGrid / TPage::openFile",
+      "Armazenamento de XML em banco de dados"
+    ]
+  },
+  "communication": {
+    "name": "Comunicação e Documentos",
+    "description": "Mensageria interna entre usuários, sistema de notificações automáticas e central de documentos compartilhados.",
+    "controllers": [
+      "SystemMessageForm",
+      "SystemNotificationList",
+      "SystemDocumentList",
+      "SystemSharedDocumentList"
+    ],
+    "models": [
+      "SystemMessage",
+      "SystemNotification",
+      "SystemDocument",
+      "SystemDocumentCategory"
+    ],
+    "features": [
+      "Troca de mensagens diretas with controle de leitura",
+      "Alertas disparados por eventos com ações contextuais (clique e vá)",
+      "Repositório de documentos com controle de acesso por Grupo/Usuário"
+    ],
+    "technologies": [
+      "Adianti Communication",
+      "Serialization de TAction para links de notificação",
+      "Multi-banco (communication vs permission)"
+    ]
+  },
+  "sistema": {
+    "name": "Infraestrutura e Utilitários",
+    "description": "Configurações globais, auditoria técnica e tabelas de suporte do sistema.",
+    "controllers": [
+      "ParametroForm",
+      "AtualizaCliente",
+      "PedidoEstadoList",
+      "OrcamentoEstadoList"
+    ],
+    "models": [
+      "Parametro",
+      "SystemSqlLog",
+      "SystemChangeLog",
+      "AtendimentoTipo",
+      "Step"
+    ],
+    "features": [
+      "Rastreabilidade total de comandos SQL executados (Log SQL)",
+      "Histórico de alteração de campos em tabelas mestre (Change Log)",
+      "Configuração dinâmica de parâmetros da aplicação por filial",
+      "Workflow de atualização cadastral de clientes"
+    ],
+    "technologies": [
+      "Adianti Traits (SystemChangeLogTrait)",
+      "Stack Trace Analysis",
+      "Multi-banco (erp_online vs log)"
+    ]
+  },
+  "desenvolvimento": {
+    "name": "Ferramentas de Desenvolvimento e Protótipos",
+    "description": "Área de testes da equipe técnica, contendo protótipos de orçamentos, emissão de boletos e componentes experimentais.",
+    "controllers": [
+      "OrcamentoForm",
+      "BoletoBradesco",
+      "ProdutoCard",
+      "DashboardGerenciaClonado"
+    ],
+    "models": [
+      "Orcamento",
+      "OrcamentoItem",
+      "OrcamentoEstado"
+    ],
+    "features": [
+      "Protótipo de fluxo Master-Detail para Orçamentos de Venda",
+      "Geração experimental de Boletos Bradesco (OpenBoleto)",
+      "Componentes de busca especializada (SeekWindows) para estoque e preço",
+      "Cards experimentais de produtos para interface mobile"
+    ],
+    "technologies": [
+      "BuilderMasterDetailTrait",
+      "OpenBoleto Library",
+      "Adianti TSeekButton / TQuickGrid"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+    "name": "quilhasoft/jasperphp",
+    "type": "library",
+    "description": "Pure PHP library to read JRXML files made with 'JasperSoft Studio' and generate reports in PDF",
+    "keywords": ["report", "jrxml", "jaspersoft", "pdf"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rogerio Muniz de Castro",
+            "email": "rogerio@quilhasoft.net"
+        }
+    ],
+    "autoload": {
+        "psr-4" : {
+            "JasperPHP\\core\\" : "src/core/",
+            "JasperPHP\\elements\\" : "src/elements/",
+            "JasperPHP\\processors\\" : "src/processors/",
+            "JasperPHP\\database\\" : "src/database/",
+            "JasperPHP\\exception\\" : "src/exception/",
+            "JasperPHP\\" : "src/"
+        }
+    },
+    "require": {
+        "php": "^7.4 || ^8.0" ,
+        "tecnickcom/tcpdf":"^6.3.5"
+    },
+    "config": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JasperPHP\\JasperPHPServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,313 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+#Adianti Framework Template default routes
+RewriteRule ^system-program-list$ index.php?class=SystemProgramList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-edit$ index.php?class=SystemProgramForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-ondelete$ index.php?class=SystemProgramList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-delete$ index.php?class=SystemProgramList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-program-list$ engine.php?class=SystemProgramList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-ondelete$ engine.php?class=SystemProgramList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-delete$ engine.php?class=SystemProgramList&method=Delete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-edit$ engine.php?class=SystemProgramForm&method=onEdit&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-group-list$ index.php?class=SystemGroupList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-group-edit$ index.php?class=SystemGroupForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-group-ondelete$ index.php?class=SystemGroupList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-group-delete$ index.php?class=SystemGroupList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-group-list$ engine.php?class=SystemGroupList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-group-edit$ engine.php?class=SystemGroupForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-group-ondelete$ engine.php?class=SystemGroupList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-group-delete$ engine.php?class=SystemGroupList&method=Delete&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-unit-list$ index.php?class=SystemUnitList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-unit-edit$ index.php?class=SystemUnitForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-unit-ondelete$ index.php?class=SystemUnitList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-unit-delete$ index.php?class=SystemUnitList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-unit-list$ engine.php?class=SystemUnitList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-unit-edit$ engine.php?class=SystemUnitForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-unit-ondelete$ engine.php?class=SystemUnitList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-unit-delete$ engine.php?class=SystemUnitList&method=Delete&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-user-list$ index.php?class=SystemUserList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-user-edit$ index.php?class=SystemUserForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-user-ondelete$ index.php?class=SystemUserList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-user-delete$ index.php?class=SystemUserList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-user-list$ engine.php?class=SystemUserList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-user-edit$ engine.php?class=SystemUserForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-user-ondelete$ engine.php?class=SystemUserList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-user-delete$ engine.php?class=SystemUserList&method=Delete&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-database-explorer$ index.php?class=SystemDatabaseExplorer&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-database-explorer$ engine.php?class=SystemDatabaseExplorer&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-sqlpanel$ index.php?class=SystemSQLPanel&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-sqlpanel$ engine.php?class=SystemSQLPanel&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-phpinfo$ index.php?class=SystemPHPInfoView&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-phpinfo$ engine.php?class=SystemPHPInfoView&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-modules$ index.php?class=SystemModulesCheckView&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-modules$ engine.php?class=SystemModulesCheckView&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-preferences$ index.php?class=SystemPreferenceForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-preferences$ engine.php?class=SystemPreferenceForm&method=onEdit&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-document-upload$ index.php?class=SystemDocumentUploadForm&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-upload$ engine.php?class=SystemDocumentUploadForm&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-document-list$ index.php?class=SystemDocumentList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-edit$ index.php?class=SystemDocumentForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-ondelete$ index.php?class=SystemDocumentList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-delete$ index.php?class=SystemDocumentList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-document-list$ engine.php?class=SystemDocumentList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-edit$ engine.php?class=SystemDocumentForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-ondelete$ engine.php?class=SystemDocumentList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-delete$ engine.php?class=SystemDocumentList&method=Delete&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-document-category-list$ index.php?class=SystemDocumentCategoryFormList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-category-edit$ index.php?class=SystemDocumentCategoryFormList&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-category-ondelete$ index.php?class=SystemDocumentCategoryFormList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-document-category-delete$ index.php?class=SystemDocumentCategoryFormList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-document-category-list$ engine.php?class=SystemDocumentCategoryFormList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-category-edit$ engine.php?class=SystemDocumentCategoryFormList&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-category-ondelete$ engine.php?class=SystemDocumentCategoryFormList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-document-category-delete$ engine.php?class=SystemDocumentCategoryFormList&method=Delete&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-access-log-stat$ index.php?class=SystemAccessLogStats&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-access-log-stat$ engine.php?class=SystemAccessLogStats&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-access-log-list$ index.php?class=SystemAccessLogList&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-access-log-list$ engine.php?class=SystemAccessLogList&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-change-log-list$ index.php?class=SystemChangeLogView&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-change-log-list$ engine.php?class=SystemChangeLogView&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-sql-log-list$ index.php?class=SystemSqlLogList&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-sql-log-list$ engine.php?class=SystemSqlLogList&%{QUERY_STRING} [NC]
+
+RewriteRule ^system-php-log-list$ index.php?class=SystemPHPErrorLogView&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-php-log-list$ engine.php?class=SystemPHPErrorLogView&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^system-shared-document-list$ index.php?class=SystemSharedDocumentList&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-shared-document-list$ engine.php?class=SystemSharedDocumentList&%{QUERY_STRING} [NC]
+
+RewriteRule ^welcome-view$ index.php?class=WelcomeView&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-welcome-view$ engine.php?class=WelcomeView&%{QUERY_STRING} [NC]
+
+RewriteRule ^login-form$ index.php?class=LoginForm&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-login-form$ engine.php?class=LoginForm&%{QUERY_STRING} [NC]
+
+#AUTH routes
+RewriteRule ^auth/([A-Za-z0-9]*)/([A-Za-z0-9]*)$ rest.php?class=ApplicationAuthenticationRestService&method=getToken&login=$1&password=$2&%{QUERY_STRING} [NC]
+
+#Application specific routes
+RewriteRule ^contact-edit$ index.php?class=ContactForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^contact-list$ index.php?class=ContactList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^contact-ondelete$ index.php?class=ContactList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^contact-delete$ index.php?class=ContactList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-contact-edit$ engine.php?class=ContactForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-contact-list$ engine.php?class=ContactList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-contact-ondelete$ engine.php?class=ContactList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-contact-delete$ engine.php?class=ContactList&method=Delete&%{QUERY_STRING} [NC]
+
+
+
+#RESTFUL routes
+RewriteRule ^contacts/([A-Za-z0-9]*)$ rest.php?class=ContactRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^contacts/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ContactRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^contacts$ rest.php?class=ContactRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+# Redirecionar todas as outras solicitações para rest.php
+RewriteRule ^api/(.*)$ MadRestServer.php [L,QSA]
+
+#Rotas geradas pelo Builder
+
+RewriteRule ^estado/([A-Za-z0-9]*)$ rest.php?class=EstadoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^estado/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=EstadoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^estado$ rest.php?class=EstadoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^cliente/([A-Za-z0-9]*)$ rest.php?class=ClienteRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^cliente/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ClienteRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^cliente$ rest.php?class=ClienteRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^categoria/([A-Za-z0-9]*)$ rest.php?class=CategoriaRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^categoria/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=CategoriaRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^categoria$ rest.php?class=CategoriaRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^subcategoria/([A-Za-z0-9]*)$ rest.php?class=SubCategoriaRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^subcategoria/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=SubCategoriaRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^subcategoria$ rest.php?class=SubCategoriaRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^fabricante/([A-Za-z0-9]*)$ rest.php?class=FabricanteRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^fabricante/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=FabricanteRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^fabricante$ rest.php?class=FabricanteRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^notasaida/([A-Za-z0-9]*)$ rest.php?class=NotaSaidaRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaida/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=NotaSaidaRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaida$ rest.php?class=NotaSaidaRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^filial/([A-Za-z0-9]*)$ rest.php?class=FilialRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^filial/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=FilialRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^filial$ rest.php?class=FilialRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^pedidoitem/([A-Za-z0-9]*)$ rest.php?class=PedidoItemRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^pedidoitem/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=PedidoItemRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^pedidoitem$ rest.php?class=PedidoItemRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^pedido/([A-Za-z0-9]*)$ rest.php?class=PedidoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^pedido/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=PedidoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^pedido$ rest.php?class=PedidoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^parametro/([A-Za-z0-9]*)$ rest.php?class=ParametroService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^parametro/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ParametroService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^parametro$ rest.php?class=ParametroService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^seguimento/([A-Za-z0-9]*)$ rest.php?class=SegmentoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^seguimento/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=SegmentoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^seguimento$ rest.php?class=SegmentoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^estoque/([A-Za-z0-9]*)$ rest.php?class=EstoqueRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^estoque/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=EstoqueRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^estoque$ rest.php?class=EstoqueRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^produtos/([A-Za-z0-9]*)$ rest.php?class=ProdutosRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^produtos/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ProdutosRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^produtos$ rest.php?class=ProdutosRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^tabelapreco/([A-Za-z0-9]*)$ rest.php?class=TabelaPrecoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tabelapreco/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=TabelaPrecoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tabelapreco$ rest.php?class=TabelaPrecoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^tabelaprecoitem/([A-Za-z0-9]*)$ rest.php?class=TabelaPrecoItemRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tabelaprecoitem/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=TabelaPrecoItemRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tabelaprecoitem$ rest.php?class=TabelaPrecoItemRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^condicaopagamento/([A-Za-z0-9]*)$ rest.php?class=CondicaoPagamentoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^condicaopagamento/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=CondicaoPagamentoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^condicaopagamento$ rest.php?class=CondicaoPagamentoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^clientecondicao/([A-Za-z0-9]*)$ rest.php?class=ClienteCondicaoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^clientecondicao/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ClienteCondicaoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^clientecondicao$ rest.php?class=ClienteCondicaoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^vendamescliente/([A-Za-z0-9]*)$ rest.php?class=VendaMesClienteRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendamescliente/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=VendaMesClienteRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendamescliente$ rest.php?class=VendaMesClienteRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^vendedorcliente/([A-Za-z0-9]*)$ rest.php?class=VendedorClienteRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendedorcliente/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=VendedorClienteRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendedorcliente$ rest.php?class=VendedorClienteRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^clientevendedormes/([A-Za-z0-9]*)$ rest.php?class=ClienteVendedorMesRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^clientevendedormes/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ClienteVendedorMesRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^clientevendedormes$ rest.php?class=ClienteVendedorMesRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^vendamesproduto/([A-Za-z0-9]*)$ rest.php?class=VendaMesProdutoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendamesproduto/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=VendaMesProdutoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendamesproduto$ rest.php?class=VendaMesProdutoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^municipio/([A-Za-z0-9]*)$ rest.php?class=MunicipioRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^municipio/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=MunicipioRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^municipio$ rest.php?class=MunicipioRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^empresa/([A-Za-z0-9]*)$ rest.php?class=EmpresaRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^empresa/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=EmpresaRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^empresa$ rest.php?class=EmpresaRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^regiao/([A-Za-z0-9]*)$ rest.php?class=RegiaoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^regiao/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=RegiaoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^regiao$ rest.php?class=RegiaoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^notasaidaxml/([A-Za-z0-9]*)$ rest.php?class=NotaSaidaXMLRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaidaxml/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=NotaSaidaXMLRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaidaxml$ rest.php?class=NotaSaidaXMLRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^armazem/([A-Za-z0-9]*)$ rest.php?class=ArmazemRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^armazem/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=ArmazemRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^armazem$ rest.php?class=ArmazemRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^tes/([A-Za-z0-9]*)$ rest.php?class=TESRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tes/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=TESRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tes$ rest.php?class=TESRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^vendedor/([A-Za-z0-9]*)$ rest.php?class=VendedorRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendedor/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=VendedorRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^vendedor$ rest.php?class=VendedorRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^notasaidaitem/([A-Za-z0-9]*)$ rest.php?class=NotaSaidatemRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaidaitem/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=NotaSaidatemRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^notasaidaitem$ rest.php?class=NotaSaidatemRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^atendimento/([A-Za-z0-9]*)$ rest.php?class=AtendimentoRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^atendimento/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=AtendimentoRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^atendimento$ rest.php?class=AtendimentoRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^tituloreceber/([A-Za-z0-9]*)$ rest.php?class=TituloReceberRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tituloreceber/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=TituloReceberRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^tituloreceber$ rest.php?class=TituloReceberRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^supervisor/([A-Za-z0-9]*)$ rest.php?class=SupervisorRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^supervisor/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=SupervisorRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^supervisor$ rest.php?class=SupervisorRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^supervisorvendedor/([A-Za-z0-9]*)$ rest.php?class=SupervisorVendedorRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^supervisorvendedor/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=SupervisorVendedorRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^supervisorvendedor$ rest.php?class=SupervisorVendedorRestService&method=handle&%{QUERY_STRING} [NC]
+
+
+RewriteRule ^whatsapp/([A-Za-z0-9]*)$ rest.php?class=WhatsAppRestService&method=handle&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^whatsapp/([A-Za-z-_0-9]*)/([A-Za-z-_0-9]*)$ rest.php?class=WhatsAppRestService&method=$2&id=$1&%{QUERY_STRING} [NC]
+RewriteRule ^whatsapp$ rest.php?class=WhatsAppRestService&method=handle&%{QUERY_STRING} [NC]
+

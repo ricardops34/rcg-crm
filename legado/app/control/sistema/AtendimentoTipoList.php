@@ -1,0 +1,489 @@
+<?php
+
+class AtendimentoTipoList extends TPage
+{
+    private $form; // form
+    private $datagrid; // listing
+    private $pageNavigation;
+    private $loaded;
+    private $filter_criteria;
+    private static $database = 'erp_online';
+    private static $activeRecord = 'AtendimentoTipo';
+    private static $primaryKey = 'id';
+    private static $formName = 'form_AtendimentoTipoList';
+    private $showMethods = ['onReload', 'onSearch', 'onRefresh', 'onClearFilters', 'onGlobalSearch'];
+    private $limit = 20;
+
+    /**
+     * Class constructor
+     * Creates the page, the form and the listing
+     */
+    public function __construct($param = null)
+    {
+        parent::__construct();
+
+        if(!empty($param['target_container']))
+        {
+            $this->adianti_target_container = $param['target_container'];
+        }
+
+        // creates the form
+        $this->form = new BootstrapFormBuilder(self::$formName);
+
+        // define the form title
+        $this->form->setFormTitle("Listagem de tipos de atendimento");
+        $this->limit = 20;
+
+        $cod_erp = new TEntry('cod_erp');
+        $descricao = new TEntry('descricao');
+
+
+        $cod_erp->setSize('100%');
+        $descricao->setSize('100%');
+
+        $cod_erp->setMaxLength(10);
+        $descricao->setMaxLength(50);
+
+        $row1 = $this->form->addFields([new TLabel("Código:", null, '14px', null, '100%'),$cod_erp],[new TLabel("Descrição:", null, '14px', null, '100%'),$descricao]);
+        $row1->layout = ['col-sm-6','col-sm-6'];
+
+        // keep the form filled during navigation with session data
+        $this->form->setData( TSession::getValue(__CLASS__.'_filter_data') );
+
+        $btn_onsearch = $this->form->addAction("Buscar", new TAction([$this, 'onSearch']), 'fas:search #ffffff');
+        $this->btn_onsearch = $btn_onsearch;
+        $btn_onsearch->addStyleClass('btn-primary'); 
+
+        // creates a Datagrid
+        $this->datagrid = new TDataGrid;
+        $this->datagrid->setId(__CLASS__.'_datagrid');
+
+        $this->datagrid_form = new TForm('datagrid_'.self::$formName);
+        $this->datagrid_form->onsubmit = 'return false';
+
+        $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
+        $this->filter_criteria = new TCriteria;
+
+        $this->datagrid->style = 'width: 100%';
+        $this->datagrid->setHeight(250);
+
+        $column_cod_erp = new TDataGridColumn('cod_erp', "Código", 'left');
+        $column_descricao = new TDataGridColumn('descricao', "Descrição", 'left');
+        $column_retorno_transformed = new TDataGridColumn('retorno', "Retorno", 'left');
+        $column_icone_transformed = new TDataGridColumn('icone', "Legenda", 'left');
+
+        $column_retorno_transformed->setTransformer(function($value, $object, $row, $cell = null, $last_row = null)
+        {
+            if($value === true || $value == 't' || $value === 1 || $value == '1' || $value == 's' || $value == 'S' || $value == 'T')
+            {
+                return 'Sim';
+            }
+            elseif($value === false || $value == 'f' || $value === 0 || $value == '0' || $value == 'n' || $value == 'N' || $value == 'F')   
+            {
+                return 'Não';
+            }
+
+            return $value;
+
+        });
+
+        $column_icone_transformed->setTransformer(function($value, $object, $row, $cell = null, $last_row = null)
+        {
+
+            TTransaction::open('erp_online');
+
+            $oAtendimento = AtendimentoTipo::find( $object->id );
+
+            if($oAtendimento){
+
+                $icone = new TElement('i');
+                $icone->style="; color:'{$oAtendimento->cor}';"; //; 
+                $icone->class="{$oAtendimento->icone}";
+
+                $div = new TElement('span');
+                $div->class="label label-default";
+                $div->style="background-color:{$oAtendimento->cor} "; //width:120px; text-shadow:none;
+                $div->add($icone);
+                $div->add(" ");
+                $div->add($oAtendimento->descricao);
+                /*
+                $cReturn  = "<span class='label label-default' ";
+                $cReturn .= "style='background-color:{$oEstado->cor} '>"; 
+                $cReturn .= "<i class='{$oEstado->icone}' ; style='; color: {$oEstado->cor_texto}'>{$oEstado->descricao}</i> ";
+                $cReturn .= "</span>";
+                */
+            }
+
+            TTransaction::close();
+
+            return $div;
+
+        });        
+
+        $this->datagrid->addColumn($column_cod_erp);
+        $this->datagrid->addColumn($column_descricao);
+        $this->datagrid->addColumn($column_retorno_transformed);
+        $this->datagrid->addColumn($column_icone_transformed);
+
+        $action_onEdit = new TDataGridAction(array('AtendimentoTipoForm', 'onEdit'));
+        $action_onEdit->setUseButton(false);
+        $action_onEdit->setButtonClass('btn btn-default btn-sm');
+        $action_onEdit->setLabel("Editar");
+        $action_onEdit->setImage('far:edit #478fca');
+        $action_onEdit->setField(self::$primaryKey);
+
+        $this->datagrid->addAction($action_onEdit);
+
+        $action_onDelete = new TDataGridAction(array('AtendimentoTipoList', 'onDelete'));
+        $action_onDelete->setUseButton(false);
+        $action_onDelete->setButtonClass('btn btn-default btn-sm');
+        $action_onDelete->setLabel("Excluir");
+        $action_onDelete->setImage('fas:trash-alt #dd5a43');
+        $action_onDelete->setField(self::$primaryKey);
+
+        $this->datagrid->addAction($action_onDelete);
+
+        // create the datagrid model
+        $this->datagrid->createModel();
+
+        // creates the page navigation
+        $this->pageNavigation = new TPageNavigation;
+        $this->pageNavigation->enableCounters();
+        $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
+        $this->pageNavigation->setWidth($this->datagrid->getWidth());
+
+        $panel = new TPanelGroup("Listagem de tipos de atendimento");
+        $panel->datagrid = 'datagrid-container';
+        $this->datagridPanel = $panel;
+
+        $panel->add($this->datagrid_form);
+
+        $panel->getBody()->class .= ' table-responsive';
+
+        $panel->addFooter($this->pageNavigation);
+
+        $headerActions = new TElement('div');
+        $headerActions->class = ' datagrid-header-actions ';
+        $headerActions->style = 'justify-content: space-between;';
+
+        $head_left_actions = new TElement('div');
+        $head_left_actions->class = ' datagrid-header-actions-left-actions ';
+
+        $head_right_actions = new TElement('div');
+        $head_right_actions->class = ' datagrid-header-actions-left-actions ';
+
+        $headerActions->add($head_left_actions);
+        $headerActions->add($head_right_actions);
+
+        $this->datagrid_form->add($headerActions);
+
+        $button_cadastrar = new TButton('button_button_cadastrar');
+        $button_cadastrar->setAction(new TAction(['AtendimentoTipoForm', 'onShow']), "Cadastrar");
+        $button_cadastrar->addStyleClass('btn-default');
+        $button_cadastrar->setImage('fas:plus #69aa46');
+
+        $this->datagrid_form->addField($button_cadastrar);
+
+        $btnShowCurtainFilters = new TButton('button_btnShowCurtainFilters');
+        $btnShowCurtainFilters->setAction(new TAction(['AtendimentoTipoList', 'onShowCurtainFilters']), "Filtros");
+        $btnShowCurtainFilters->addStyleClass('btn-default');
+        $btnShowCurtainFilters->setImage('fas:filter #000000');
+
+        $this->datagrid_form->addField($btnShowCurtainFilters);
+
+        $button_atualizar = new TButton('button_button_atualizar');
+        $button_atualizar->setAction(new TAction(['AtendimentoTipoList', 'onRefresh']), "Atualizar");
+        $button_atualizar->addStyleClass('btn-default');
+        $button_atualizar->setImage('fas:sync-alt #03a9f4');
+
+        $this->datagrid_form->addField($button_atualizar);
+
+        $button_limpar_filtros = new TButton('button_button_limpar_filtros');
+        $button_limpar_filtros->setAction(new TAction(['AtendimentoTipoList', 'onClearFilters']), "Limpar filtros");
+        $button_limpar_filtros->addStyleClass('btn-default');
+        $button_limpar_filtros->setImage('fas:eraser #f44336');
+
+        $this->datagrid_form->addField($button_limpar_filtros);
+
+        $head_left_actions->add($button_cadastrar);
+        $head_left_actions->add($btnShowCurtainFilters);
+        $head_left_actions->add($button_atualizar);
+        $head_left_actions->add($button_limpar_filtros);
+
+        $this->datagrid_form->add($this->datagrid);
+
+        $this->btnShowCurtainFilters = $btnShowCurtainFilters;
+
+        // vertical box container
+        $container = new TVBox;
+        $container->style = 'width: 100%';
+        if(empty($param['target_container']))
+        {
+            $container->add(TBreadCrumb::create(["Sistema","Tipos de Atendimento"]));
+        }
+
+        $container->add($panel);
+
+        parent::add($container);
+
+    }
+
+    public function onDelete($param = null) 
+    { 
+        if(isset($param['delete']) && $param['delete'] == 1)
+        {
+            try
+            {
+                // get the paramseter $key
+                $key = $param['key'];
+                // open a transaction with database
+                TTransaction::open(self::$database);
+
+                // instantiates object
+                $object = new AtendimentoTipo($key, FALSE); 
+
+                // deletes the object from the database
+                $object->delete();
+
+                // close the transaction
+                TTransaction::close();
+
+                // reload the listing
+                $this->onReload( $param );
+                // shows the success message
+                new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'));
+            }
+            catch (Exception $e) // in case of exception
+            {
+                // shows the exception error message
+                new TMessage('error', $e->getMessage());
+                // undo all pending operations
+                TTransaction::rollback();
+            }
+        }
+        else
+        {
+            // define the delete action
+            $action = new TAction(array($this, 'onDelete'));
+            $action->setParameters($param); // pass the key paramseter ahead
+            $action->setParameter('delete', 1);
+            // shows a dialog to the user
+            new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);   
+        }
+    }
+    public static function onShowCurtainFilters($param = null) 
+    {
+        try 
+        {
+            //code here
+
+                        $filter = new self([]);
+
+            $btnClose = new TButton('closeCurtain');
+            $btnClose->class = 'btn btn-sm btn-default';
+            $btnClose->style = 'margin-right:10px;';
+            $btnClose->onClick = "Template.closeRightPanel();";
+            $btnClose->setLabel("Fechar");
+            $btnClose->setImage('fas:times');
+
+            $filter->form->addHeaderWidget($btnClose);
+
+            $page = new TPage();
+            $page->setTargetContainer('adianti_right_panel');
+            $page->setProperty('page-name', 'AtendimentoTipoListSearch');
+            $page->setProperty('page_name', 'AtendimentoTipoListSearch');
+            $page->adianti_target_container = 'adianti_right_panel';
+            $page->target_container = 'adianti_right_panel';
+            $page->add($filter->form);
+            $page->setIsWrapped(true);
+            $page->show();
+
+            //</autoCode>
+        }
+        catch (Exception $e) 
+        {
+            new TMessage('error', $e->getMessage());    
+        }
+    }
+    public function onRefresh($param = null) 
+    {
+        $this->onReload([]);
+    }
+    public function onClearFilters($param = null) 
+    {
+        TSession::setValue(__CLASS__.'_filter_data', NULL);
+        TSession::setValue(__CLASS__.'_filters', NULL);
+
+        $this->onReload(['offset' => 0, 'first_page' => 1]);
+    }
+
+    /**
+     * Register the filter in the session
+     */
+    public function onSearch($param = null)
+    {
+        $data = $this->form->getData();
+        $filters = [];
+
+        TSession::setValue(__CLASS__.'_filter_data', NULL);
+        TSession::setValue(__CLASS__.'_filters', NULL);
+
+        if (isset($data->cod_erp) AND ( (is_scalar($data->cod_erp) AND $data->cod_erp !== '') OR (is_array($data->cod_erp) AND (!empty($data->cod_erp)) )) )
+        {
+
+            $filters[] = new TFilter('cod_erp', 'like', "%{$data->cod_erp}%");// create the filter 
+        }
+
+        if (isset($data->descricao) AND ( (is_scalar($data->descricao) AND $data->descricao !== '') OR (is_array($data->descricao) AND (!empty($data->descricao)) )) )
+        {
+
+            $filters[] = new TFilter('descricao', 'like', "%{$data->descricao}%");// create the filter 
+        }
+
+        // fill the form with data again
+        $this->form->setData($data);
+
+        // keep the search data in the session
+        TSession::setValue(__CLASS__.'_filter_data', $data);
+        TSession::setValue(__CLASS__.'_filters', $filters);
+
+        $this->onReload(['offset' => 0, 'first_page' => 1]);
+    }
+
+    /**
+     * Load the datagrid with data
+     */
+    public function onReload($param = NULL)
+    {
+        try
+        {
+            // open a transaction with database 'erp_online'
+            TTransaction::open(self::$database);
+
+            // creates a repository for AtendimentoTipo
+            $repository = new TRepository(self::$activeRecord);
+
+            $criteria = clone $this->filter_criteria;
+
+            if (empty($param['order']))
+            {
+                $param['order'] = 'cod_erp';    
+            }
+
+            if (empty($param['direction']))
+            {
+                $param['direction'] = 'asc';
+            }
+
+            $criteria->setProperties($param); // order, offset
+            $criteria->setProperty('limit', $this->limit);
+
+            if($filters = TSession::getValue(__CLASS__.'_filters'))
+            {
+                foreach ($filters as $filter) 
+                {
+                    $criteria->add($filter);       
+                }
+            }
+
+            //</blockLine><btnShowCurtainFiltersAutoCode>
+            if(!empty($this->btnShowCurtainFilters) && empty($this->btnShowCurtainFiltersAdjusted))
+            {
+                $this->btnShowCurtainFiltersAdjusted = true;
+                $this->btnShowCurtainFilters->style = 'position: relative';
+                $countFilters = count($filters ?? []);
+                $this->btnShowCurtainFilters->setLabel($this->btnShowCurtainFilters->getLabel(). "<span class='badge badge-success' style='position: absolute'>{$countFilters}<span>");
+            }
+            //</blockLine></btnShowCurtainFiltersAutoCode>
+
+            // load the objects according to criteria
+            $objects = $repository->load($criteria, FALSE);
+
+            $this->datagrid->clear();
+            if ($objects)
+            {
+                // iterate the collection of active records
+                foreach ($objects as $object)
+                {
+
+                    $row = $this->datagrid->addItem($object);
+                    $row->id = "row_{$object->id}";
+
+                }
+            }
+
+            // reset the criteria for record count
+            $criteria->resetProperties();
+            $count= $repository->count($criteria);
+
+            $this->pageNavigation->setCount($count); // count of records
+            $this->pageNavigation->setProperties($param); // order, page
+            $this->pageNavigation->setLimit($this->limit); // limit
+
+            // close the transaction
+            TTransaction::close();
+            $this->loaded = true;
+
+            return $objects;
+        }
+        catch (Exception $e) // in case of exception
+        {
+            // shows the exception error message
+            new TMessage('error', $e->getMessage());
+            // undo all pending operations
+            TTransaction::rollback();
+        }
+    }
+
+    public function onShow($param = null)
+    {
+
+    }
+
+    /**
+     * method show()
+     * Shows the page
+     */
+    public function show()
+    {
+        // check if the datagrid is already loaded
+        if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'],  $this->showMethods))) )
+        {
+            if (func_num_args() > 0)
+            {
+                $this->onReload( func_get_arg(0) );
+            }
+            else
+            {
+                $this->onReload();
+            }
+        }
+        parent::show();
+    }
+
+    public static function manageRow($id, $param = [])
+    {
+        $list = new self($param);
+
+        $openTransaction = TTransaction::getDatabase() != self::$database ? true : false;
+
+        if($openTransaction)
+        {
+            TTransaction::open(self::$database);    
+        }
+
+        $object = new AtendimentoTipo($id);
+
+        $row = $list->datagrid->addItem($object);
+        $row->id = "row_{$object->id}";
+
+        if($openTransaction)
+        {
+            TTransaction::close();    
+        }
+
+        TDataGrid::replaceRowById(__CLASS__.'_datagrid', $row->id, $row);
+    }
+
+}
+

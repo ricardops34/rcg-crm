@@ -1,0 +1,100 @@
+
+body[page-name="LoginForm"]{
+  background: #B51B7E;
+  background-image: url(https://rcgdist.com.br/logo-allias.png);
+  /*margin: 0;*/
+  /*padding: 5px;*/
+  text-align: center;
+  /*display: flex;*/
+  /*justify-content: center;*/
+}
+
+div[page-name="LoginClienteForm"] .card{
+    width: 500px !important;
+    margin: auto;
+    margin-top: 200px;
+    border-radius: 25px;
+}
+
+div[page-name="LoginClienteForm"] .tfield{
+
+    border-radius: 6px;
+
+}
+
+
+[wrapped-widget="tpassword"] {
+    position: relative;
+}
+
+[page-name="LoginClienteForm"] .barra-superior {
+    background: #B51B7E;
+    margin: 0;
+    padding: 5px;
+}
+
+div[page-name="PainelClienteForm"] .menuesquerda{
+
+    display: flex;
+    flex-direction: column;
+    /*
+    justify-content: center;
+    align-items: center;
+    margin: 0px 0px;
+    */
+}
+
+div[page-name="PainelClienteForm"] .ul{
+    display: flex;
+    flex-direction: column;
+    margin: 1px 1px;
+}
+
+div[page-name="PainelClienteForm"] .top{
+
+    width: 100% !important;
+    justify-content: center;
+    align-items: center;
+
+    /*
+    border-radius: 25px;
+    margin: auto;
+    margin-top: 200px;
+    */
+}
+
+div[page-name="PainelClienteForm"] .card{
+    display: flex;
+    height: 100vh !important;
+    /*
+    width: 80vw !important;
+    background-color: #cdcdcd !important;
+    */
+
+}
+
+div[page-name="PainelClienteForm"] .main{
+    justify-content: center;
+    /*background-color: #cdcdcd !important;*/
+
+}
+
+div[page-name="PainelClienteForm"] .btnmeucliente{
+    text-align: left !important;
+    /*
+    display: block;
+    justify-content: left;
+    width: 100%;
+    padding: 16px 0px;
+    margin: 25px;
+    */
+    
+}
+
+div[page-name="PainelClienteForm"] .cliente{
+
+    justify-content: center;
+    align-items: center;
+    
+}
+

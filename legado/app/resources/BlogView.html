@@ -1,0 +1,100 @@
+<!--[main]-->
+
+<div class="container-fluid">
+    <div class="separador"></div>
+    
+    <div class="row">
+        
+        
+        <div class="col-7 offset-1">
+            
+            <!--[blog-noticias]-->
+            <div class="row">
+                <div class="col-12 noticia" style="background-color: white">
+                    <div class="tit-noticia">
+                        <h1 class="display-4">{$titulo}</h1>
+                    </div>
+                    <div class="subt-noticia">
+                        <h6 class="lead">{$data_postagem}</h6>
+                    </div>
+                    <div>
+                        <hr class="my-12"/>
+                    </div>
+                    <div class="div-img-noticia img-responsive">
+                        <img class="img-noticia" src="{$imagem}">
+                    </div>
+                    <div class="txt-noticia">
+                        {$texto}
+                    </div>
+                    <div>
+                        <hr class="my-12"/>
+                    </div>
+                    <div class="rodape-noticia">
+                        <h6 class="lead">Publicado por {$autor} em {$data_postagem}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="separador"></div>
+            <!--[/blog-noticias]-->
+            
+        </div>
+        
+        
+        
+        
+        <div class="col-3 offset-1 postag">
+            
+            <!--[blog-anivcard]-->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><b>Aniversariantes da semana</b></h5>
+                        </div>
+                        
+                        <ul class="list-group list-group-flush">
+                            
+                            <!--[blog-anivlist]-->
+                            <li class="list-group-item"><b>{$dia}</b>:<BR>{$nome}<BR>{$filial}</li>
+                            <!--[/blog-anivlist]-->
+                            
+                        </ul>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <hr class="my-12 linha"/>
+            </div>
+            <!--[/blog-anivcard]-->
+            
+            
+            <!--[blog-comunicados]-->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="cardtitulo">
+                                <h5>{$titulo}</h5>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">{$data_postagem}</h6>
+                            <p class="card-text">{$texto}</p>
+                            <a href="{$link_externo}" class="card-link" target="_blank">{$link_texto}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <hr class="my-12 linha"/>
+            </div>
+            <!--[/blog-comunicados]-->
+            
+        </div>
+    </div>
+</div>
+
+
+<!--[/main]-->

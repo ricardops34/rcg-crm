@@ -1,0 +1,50 @@
+{
+  "project": "rcg",
+  "stack": {
+    "language": "PHP",
+    "version": "unknown",
+    "framework": "Adianti Framework 4.2",
+    "package_manager": "Composer"
+  },
+  "structure": {
+    "modules": [
+      "admin",
+      "cadastros",
+      "cobranca",
+      "communication",
+      "desenvolvimento",
+      "gerencia",
+      "meu_cliente",
+      "relatorios",
+      "sistema",
+      "supervisor",
+      "vendedor"
+    ],
+    "entry_points": [
+      "index.php",
+      "rest.php",
+      "cmd.php",
+      "engine.php"
+    ],
+    "config_files": [
+      "app/config/application.ini",
+      "app/config/erp_online.php"
+    ]
+  },
+  "database": {
+    "present": true,
+    "types": ["sqlite", "mysql", "pgsql", "mssql", "oracle"],
+    "main_db": "erp_online",
+    "orm_models_path": "app/model"
+  },
+  "organization_suggestion": {
+    "granularity": "module",
+    "rationale": "A estrutura de pastas top-level em `app/control` e `app/model` é organizada por domínios de negócio claros.",
+    "signals": [
+      {
+        "type": "directory_structure",
+        "evidence": ["app/control/cadastros", "app/control/vendedor", "app/control/cobranca"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,2108 @@
+{
+    "packages": [
+        {
+            "name": "adianti/pdfdesigner",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adianti/pdfdesigner.git",
+                "reference": "07d6d55dda4db801964d28becd868729f434ecd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adianti/pdfdesigner/zipball/07d6d55dda4db801964d28becd868729f434ecd6",
+                "reference": "07d6d55dda4db801964d28becd868729f434ecd6",
+                "shasum": ""
+            },
+            "require": {
+                "pablodalloglio/fpdf": "*"
+            },
+            "time": "2023-10-30T19:09:11+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "TPDFDesigner": "./",
+                    "AdiantiPDFDesigner": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "./"
+            ],
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pablo Dall'Oglio",
+                    "email": "pablo@php.net",
+                    "role": "Lead"
+                }
+            ],
+            "description": "PDF Designer wrapper around FPDF.",
+            "support": {
+                "issues": "https://github.com/adianti/pdfdesigner/issues",
+                "source": "https://github.com/adianti/pdfdesigner"
+            },
+            "install-path": "../adianti/pdfdesigner"
+        },
+        {
+            "name": "adianti/plugins",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adianti/plugins.git",
+                "reference": "53e2704203635915f3375dbdb66a97af52c56e6c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adianti/plugins/zipball/53e2704203635915f3375dbdb66a97af52c56e6c",
+                "reference": "53e2704203635915f3375dbdb66a97af52c56e6c",
+                "shasum": ""
+            },
+            "time": "2020-10-25T01:29:57+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Adianti\\Plugins\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pablo Dall Oglio",
+                    "email": "pablo@dalloglio.net"
+                }
+            ],
+            "description": "Plugins for Adianti Framework",
+            "support": {
+                "issues": "https://github.com/adianti/plugins/issues",
+                "source": "https://github.com/adianti/plugins/tree/master"
+            },
+            "install-path": "../adianti/plugins"
+        },
+        {
+            "name": "bacon/bacon-qr-code",
+            "version": "2.0.8",
+            "version_normalized": "2.0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bacon/BaconQrCode.git",
+                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/8674e51bb65af933a5ffaf1c308a660387c35c22",
+                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22",
+                "shasum": ""
+            },
+            "require": {
+                "dasprid/enum": "^1.0.3",
+                "ext-iconv": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "phly/keep-a-changelog": "^2.1",
+                "phpunit/phpunit": "^7 | ^8 | ^9",
+                "spatie/phpunit-snapshot-assertions": "^4.2.9",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "suggest": {
+                "ext-imagick": "to generate QR code images"
+            },
+            "time": "2022-12-07T17:46:57+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "BaconQrCode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Scholzen 'DASPRiD'",
+                    "email": "mail@dasprids.de",
+                    "homepage": "https://dasprids.de/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "BaconQrCode is a QR code generator for PHP.",
+            "homepage": "https://github.com/Bacon/BaconQrCode",
+            "support": {
+                "issues": "https://github.com/Bacon/BaconQrCode/issues",
+                "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
+            },
+            "install-path": "../bacon/bacon-qr-code"
+        },
+        {
+            "name": "chillerlan/php-qrcode",
+            "version": "5.0.5",
+            "version_normalized": "5.0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chillerlan/php-qrcode.git",
+                "reference": "7b66282572fc14075c0507d74d9837dab25b38d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chillerlan/php-qrcode/zipball/7b66282572fc14075c0507d74d9837dab25b38d6",
+                "reference": "7b66282572fc14075c0507d74d9837dab25b38d6",
+                "shasum": ""
+            },
+            "require": {
+                "chillerlan/php-settings-container": "^2.1.6 || ^3.2.1",
+                "ext-mbstring": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "chillerlan/php-authenticator": "^4.3.1 || ^5.2.1",
+                "ext-fileinfo": "*",
+                "phan/phan": "^5.5.2",
+                "phpcompatibility/php-compatibility": "10.x-dev",
+                "phpmd/phpmd": "^2.15",
+                "phpunit/phpunit": "^9.6",
+                "setasign/fpdf": "^1.8.2",
+                "slevomat/coding-standard": "^8.23.0",
+                "squizlabs/php_codesniffer": "^4.0.0"
+            },
+            "suggest": {
+                "chillerlan/php-authenticator": "Yet another Google authenticator! Also creates URIs for mobile apps.",
+                "setasign/fpdf": "Required to use the QR FPDF output.",
+                "simple-icons/simple-icons": "SVG icons that you can use to embed as logos in the QR Code"
+            },
+            "time": "2025-11-23T23:51:44+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "chillerlan\\QRCode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT",
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Kazuhiko Arase",
+                    "homepage": "https://github.com/kazuhikoarase/qrcode-generator"
+                },
+                {
+                    "name": "ZXing Authors",
+                    "homepage": "https://github.com/zxing/zxing"
+                },
+                {
+                    "name": "Ashot Khanamiryan",
+                    "homepage": "https://github.com/khanamiryan/php-qrcode-detector-decoder"
+                },
+                {
+                    "name": "Smiley",
+                    "email": "smiley@chillerlan.net",
+                    "homepage": "https://github.com/codemasher"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/chillerlan/php-qrcode/graphs/contributors"
+                }
+            ],
+            "description": "A QR Code generator and reader with a user-friendly API. PHP 7.4+",
+            "homepage": "https://github.com/chillerlan/php-qrcode",
+            "keywords": [
+                "phpqrcode",
+                "qr",
+                "qr code",
+                "qr-reader",
+                "qrcode",
+                "qrcode-generator",
+                "qrcode-reader"
+            ],
+            "support": {
+                "docs": "https://php-qrcode.readthedocs.io",
+                "issues": "https://github.com/chillerlan/php-qrcode/issues",
+                "source": "https://github.com/chillerlan/php-qrcode"
+            },
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/codemasher",
+                    "type": "Ko-Fi"
+                }
+            ],
+            "install-path": "../chillerlan/php-qrcode"
+        },
+        {
+            "name": "chillerlan/php-settings-container",
+            "version": "3.3.0",
+            "version_normalized": "3.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chillerlan/php-settings-container.git",
+                "reference": "a0a487cbf5344f721eb504bf0f59bada40c381b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chillerlan/php-settings-container/zipball/a0a487cbf5344f721eb504bf0f59bada40c381b7",
+                "reference": "a0a487cbf5344f721eb504bf0f59bada40c381b7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phan/phan": "^5.5.2",
+                "phpmd/phpmd": "^2.15",
+                "phpstan/phpstan": "^2.1.31",
+                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpunit/phpunit": "^10.5",
+                "slevomat/coding-standard": "^8.22",
+                "squizlabs/php_codesniffer": "^4.0"
+            },
+            "time": "2026-03-20T21:10:52+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "chillerlan\\Settings\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Smiley",
+                    "email": "smiley@chillerlan.net",
+                    "homepage": "https://github.com/codemasher"
+                }
+            ],
+            "description": "A container class for immutable settings objects. Not a DI container.",
+            "homepage": "https://github.com/chillerlan/php-settings-container",
+            "keywords": [
+                "Settings",
+                "configuration",
+                "container",
+                "helper",
+                "property hook"
+            ],
+            "support": {
+                "issues": "https://github.com/chillerlan/php-settings-container/issues",
+                "source": "https://github.com/chillerlan/php-settings-container"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://ko-fi.com/codemasher",
+                    "type": "ko_fi"
+                }
+            ],
+            "install-path": "../chillerlan/php-settings-container"
+        },
+        {
+            "name": "dasprid/enum",
+            "version": "1.0.5",
+            "version_normalized": "1.0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DASPRiD/Enum.git",
+                "reference": "6faf451159fb8ba4126b925ed2d78acfce0dc016"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DASPRiD/Enum/zipball/6faf451159fb8ba4126b925ed2d78acfce0dc016",
+                "reference": "6faf451159fb8ba4126b925ed2d78acfce0dc016",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1 <9.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7 | ^8 | ^9",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "time": "2023-08-25T16:18:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DASPRiD\\Enum\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Scholzen 'DASPRiD'",
+                    "email": "mail@dasprids.de",
+                    "homepage": "https://dasprids.de/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP 7.1 enum implementation",
+            "keywords": [
+                "enum",
+                "map"
+            ],
+            "support": {
+                "issues": "https://github.com/DASPRiD/Enum/issues",
+                "source": "https://github.com/DASPRiD/Enum/tree/1.0.5"
+            },
+            "install-path": "../dasprid/enum"
+        },
+        {
+            "name": "dompdf/dompdf",
+            "version": "v2.0.4",
+            "version_normalized": "2.0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/dompdf.git",
+                "reference": "093f2d9739cec57428e39ddadedfd4f3ae862c0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/093f2d9739cec57428e39ddadedfd4f3ae862c0f",
+                "reference": "093f2d9739cec57428e39ddadedfd4f3ae862c0f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "masterminds/html5": "^2.0",
+                "phenx/php-font-lib": ">=0.5.4 <1.0.0",
+                "phenx/php-svg-lib": ">=0.3.3 <1.0.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "ext-zip": "*",
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^7.5 || ^8 || ^9",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "suggest": {
+                "ext-gd": "Needed to process images",
+                "ext-gmagick": "Improves image processing performance",
+                "ext-imagick": "Improves image processing performance",
+                "ext-zlib": "Needed for pdf stream compression"
+            },
+            "time": "2023-12-12T20:19:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Dompdf\\": "src/"
+                },
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "The Dompdf Community",
+                    "homepage": "https://github.com/dompdf/dompdf/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
+            "homepage": "https://github.com/dompdf/dompdf",
+            "support": {
+                "issues": "https://github.com/dompdf/dompdf/issues",
+                "source": "https://github.com/dompdf/dompdf/tree/v2.0.4"
+            },
+            "install-path": "../dompdf/dompdf"
+        },
+        {
+            "name": "firebase/php-jwt",
+            "version": "v6.10.0",
+            "version_normalized": "6.10.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firebase/php-jwt.git",
+                "reference": "a49db6f0a5033aef5143295342f1c95521b075ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/a49db6f0a5033aef5143295342f1c95521b075ff",
+                "reference": "a49db6f0a5033aef5143295342f1c95521b075ff",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4||^8.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.5||^7.4",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.5",
+                "psr/cache": "^1.0||^2.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0"
+            },
+            "suggest": {
+                "ext-sodium": "Support EdDSA (Ed25519) signatures",
+                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
+            },
+            "time": "2023-12-01T16:26:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Firebase\\JWT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Neuman Vong",
+                    "email": "neuman+pear@twilio.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anant Narayanan",
+                    "email": "anant@php.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+            "homepage": "https://github.com/firebase/php-jwt",
+            "keywords": [
+                "jwt",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/firebase/php-jwt/issues",
+                "source": "https://github.com/firebase/php-jwt/tree/v6.10.0"
+            },
+            "install-path": "../firebase/php-jwt"
+        },
+        {
+            "name": "justinrainbow/json-schema",
+            "version": "5.3.4",
+            "version_normalized": "5.3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jsonrainbow/json-schema.git",
+                "reference": "7df70ffaf31d98726801b4bc099e1fbdbe2e5e54"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jsonrainbow/json-schema/zipball/7df70ffaf31d98726801b4bc099e1fbdbe2e5e54",
+                "reference": "7df70ffaf31d98726801b4bc099e1fbdbe2e5e54",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.2.20||~2.15.1",
+                "json-schema/json-schema-test-suite": "1.2.0",
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "time": "2026-05-04T18:54:58+00:00",
+            "bin": [
+                "bin/validate-json"
+            ],
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "JsonSchema\\": "src/JsonSchema/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bruno Prieto Reis",
+                    "email": "bruno.p.reis@gmail.com"
+                },
+                {
+                    "name": "Justin Rainbow",
+                    "email": "justin.rainbow@gmail.com"
+                },
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                },
+                {
+                    "name": "Robert Schönthal",
+                    "email": "seroscho@googlemail.com"
+                }
+            ],
+            "description": "A library to validate a json schema.",
+            "homepage": "https://github.com/justinrainbow/json-schema",
+            "keywords": [
+                "json",
+                "schema"
+            ],
+            "support": {
+                "issues": "https://github.com/jsonrainbow/json-schema/issues",
+                "source": "https://github.com/jsonrainbow/json-schema/tree/5.3.4"
+            },
+            "install-path": "../justinrainbow/json-schema"
+        },
+        {
+            "name": "linfo/linfo",
+            "version": "v4.0.8",
+            "version_normalized": "4.0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jrgp/linfo.git",
+                "reference": "69c76c4613932d4a3ca36c36faebb122093522f6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jrgp/linfo/zipball/69c76c4613932d4a3ca36c36faebb122093522f6",
+                "reference": "69c76c4613932d4a3ca36c36faebb122093522f6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "9.4.3"
+            },
+            "suggest": {
+                "ext-com": "On Windows"
+            },
+            "time": "2023-08-09T20:09:20+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Linfo\\": "src/Linfo"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joe Gillotti",
+                    "email": "joe@joegillotti.com",
+                    "homepage": "http://joegillotti.com",
+                    "role": "Author"
+                }
+            ],
+            "description": "App and library for easily parsing and displaying system information of the host, like network/torrents/cpu/memory/usb/pci/sound cards/filesystems/raid array/ipmi/etc.",
+            "homepage": "http://github.com/jrgp/linfo",
+            "keywords": [
+                "CPU",
+                "health",
+                "linux",
+                "specs",
+                "system"
+            ],
+            "support": {
+                "issues": "https://github.com/jrgp/linfo/issues",
+                "source": "https://github.com/jrgp/linfo/tree/v4.0.8"
+            },
+            "install-path": "../linfo/linfo"
+        },
+        {
+            "name": "madbuild3r/pquery",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/madbuild3r/pquery.git",
+                "reference": "b6322dd4106b67185078125862ab47eadeaa9e05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/madbuild3r/pquery/zipball/b6322dd4106b67185078125862ab47eadeaa9e05",
+                "reference": "b6322dd4106b67185078125862ab47eadeaa9e05",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "htmlawed/htmlawed": "dev-master"
+            },
+            "time": "2023-12-19T00:02:38+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "IQuery.php",
+                    "gan_formatter.php",
+                    "gan_node_html.php",
+                    "gan_parser_html.php",
+                    "gan_selector_html.php",
+                    "gan_tokenizer.php",
+                    "gan_xml2array.php",
+                    "pQuery.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "Todd Burry",
+                    "email": "todd@vanillaforums.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A jQuery like html dom parser written in php. This fork add fixes for php 8",
+            "keywords": [
+                "dom",
+                "ganon",
+                "php"
+            ],
+            "support": {
+                "source": "https://github.com/madbuild3r/pquery/tree/master"
+            },
+            "install-path": "../madbuild3r/pquery"
+        },
+        {
+            "name": "masterminds/html5",
+            "version": "2.8.1",
+            "version_normalized": "2.8.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Masterminds/html5-php.git",
+                "reference": "f47dcf3c70c584de14f21143c55d9939631bc6cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f47dcf3c70c584de14f21143c55d9939631bc6cf",
+                "reference": "f47dcf3c70c584de14f21143c55d9939631bc6cf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8"
+            },
+            "time": "2023-05-10T11:58:31+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Masterminds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Butcher",
+                    "email": "technosophos@gmail.com"
+                },
+                {
+                    "name": "Matt Farina",
+                    "email": "matt@mattfarina.com"
+                },
+                {
+                    "name": "Asmir Mustafic",
+                    "email": "goetas@gmail.com"
+                }
+            ],
+            "description": "An HTML5 parser and serializer.",
+            "homepage": "http://masterminds.github.io/html5-php",
+            "keywords": [
+                "HTML5",
+                "dom",
+                "html",
+                "parser",
+                "querypath",
+                "serializer",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/Masterminds/html5-php/issues",
+                "source": "https://github.com/Masterminds/html5-php/tree/2.8.1"
+            },
+            "install-path": "../masterminds/html5"
+        },
+        {
+            "name": "nfephp-org/sped-common",
+            "version": "v5.1.16",
+            "version_normalized": "5.1.16.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-common.git",
+                "reference": "1c6b03dd06b396ee3680d07c9c071b82f869fd42"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-common/zipball/1c6b03dd06b396ee3680d07c9c071b82f869fd42",
+                "reference": "1c6b03dd06b396ee3680d07c9c071b82f869fd42",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "ext-soap": "*",
+                "php": ">= 7.4",
+                "psr/log": "^1.0||^2.0||^3.0"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3",
+                "scrutinizer/ocular": "^1.8",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "time": "2025-07-02T12:34:43+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-v5.0": "5.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\Common\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "http://www.nfephp.org",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Gustavo Lidani",
+                    "email": "lidanig0@gmail.com",
+                    "homepage": "https://github.com/lidani",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-common/graphs/contributors"
+                }
+            ],
+            "description": "sped-common é parte do projeto NFePHP.",
+            "homepage": "https://github.com/nfephp-org/sped-common",
+            "keywords": [
+                "nfe",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "issues": "https://github.com/nfephp-org/sped-common/issues",
+                "source": "https://github.com/nfephp-org/sped-common/tree/v5.1.16"
+            },
+            "install-path": "../nfephp-org/sped-common"
+        },
+        {
+            "name": "nfephp-org/sped-da",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-da.git",
+                "reference": "1fdf9dd3ab28309fcad92253a00ffef6f1b31f41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-da/zipball/1fdf9dd3ab28309fcad92253a00ffef6f1b31f41",
+                "reference": "1fdf9dd3ab28309fcad92253a00ffef6f1b31f41",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-mbstring": "*",
+                "nfephp-org/sped-common": "^5.1.0",
+                "php": ">= 7.4",
+                "tecnickcom/tc-lib-barcode": "^1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3",
+                "scrutinizer/ocular": "^1.8",
+                "sebastian/phpcpd": "^6.0",
+                "smalot/pdfparser": "^2.12",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "suggest": {
+                "nfephp-org/posprint": "^0.1"
+            },
+            "time": "2026-04-16T20:23:54+00:00",
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.3.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\DA\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later+",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "http://www.nfephp.org",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-da/graphs/contributors"
+                }
+            ],
+            "description": "sped-da contêm as classes para criação dos documentos auxiliares referidos no projeto Sped.",
+            "homepage": "https://github.com/nfephp-org/sped-da",
+            "keywords": [
+                "CCe",
+                "Dacte",
+                "Danfe",
+                "nfe",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "issues": "https://github.com/nfephp-org/sped-da/issues",
+                "source": "https://github.com/nfephp-org/sped-da/tree/master"
+            },
+            "install-path": "../nfephp-org/sped-da"
+        },
+        {
+            "name": "nfephp-org/sped-gtin",
+            "version": "v1.1.2",
+            "version_normalized": "1.1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-gtin.git",
+                "reference": "a00b9bc26f91bd5583f24ec341b7e5149a9769a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-gtin/zipball/a00b9bc26f91bd5583f24ec341b7e5149a9769a1",
+                "reference": "a00b9bc26f91bd5583f24ec341b7e5149a9769a1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "ext-soap": "*",
+                "nfephp-org/sped-common": "^5.1.0",
+                "php": ">= 7.4"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3",
+                "scrutinizer/ocular": "^1.8",
+                "squizlabs/php_codesniffer": "dev-master"
+            },
+            "time": "2025-05-30T20:52:05+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "v1.0": "1.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\Gtin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "https://github.com/nfephp-org",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Gustavo Lidani",
+                    "email": "lidanig0@gmail.com",
+                    "homepage": "https://github.com/lidani",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-gtin/graphs/contributors"
+                }
+            ],
+            "description": "Classes for validation of GTIN codes.",
+            "homepage": "https://github.com/nfephp-org/sped-gtin",
+            "keywords": [
+                "gtin",
+                "nfce",
+                "nfe",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "issues": "https://github.com/nfephp-org/sped-gtin/issues",
+                "source": "https://github.com/nfephp-org/sped-gtin/tree/v1.1.2"
+            },
+            "install-path": "../nfephp-org/sped-gtin"
+        },
+        {
+            "name": "nfephp-org/sped-nfe",
+            "version": "v5.2.5",
+            "version_normalized": "5.2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-nfe.git",
+                "reference": "f49d543e735d30afacd92c3fe286c677a7d0ee35"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-nfe/zipball/f49d543e735d30afacd92c3fe286c677a7d0ee35",
+                "reference": "f49d543e735d30afacd92c3fe286c677a7d0ee35",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "ext-soap": "*",
+                "ext-zlib": "*",
+                "justinrainbow/json-schema": "^5.2",
+                "nfephp-org/sped-common": "^5.1.0",
+                "nfephp-org/sped-gtin": "^1.1.0",
+                "php": ">= 7.4"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "time": "2026-02-04T13:27:20+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "v5.1": "5.1-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\NFe\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "https://www.nfephp.com.br/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Gustavo Lidani",
+                    "email": "lidanig0@gmail.com",
+                    "homepage": "https://github.com/lidani",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-nfe/graphs/contributors"
+                }
+            ],
+            "description": "API para geração e comunicação da NFe e NFCe com as SEFAZ autorizadoras.",
+            "homepage": "https://github.com/nfephp-org/sped-nfe",
+            "keywords": [
+                "nfce",
+                "nfe",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "issues": "https://github.com/nfephp-org/sped-nfe/issues",
+                "source": "https://github.com/nfephp-org/sped-nfe/tree/v5.2.5"
+            },
+            "install-path": "../nfephp-org/sped-nfe"
+        },
+        {
+            "name": "nnnick/chartjs",
+            "version": "v4.5.1",
+            "version_normalized": "4.5.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chartjs/Chart.js.git",
+                "reference": "9c5cf9fac7ec04a71b516e2aff3f7d76876be369"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chartjs/Chart.js/zipball/9c5cf9fac7ec04a71b516e2aff3f7d76876be369",
+                "reference": "9c5cf9fac7ec04a71b516e2aff3f7d76876be369",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "2025-10-13T05:37:11+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "release/2.0": "v2.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "NICK DOWNIE",
+                    "email": "hello@nickdownie.com"
+                }
+            ],
+            "description": "Simple HTML5 charts using the canvas element.",
+            "homepage": "https://www.chartjs.org/",
+            "keywords": [
+                "JS",
+                "chart"
+            ],
+            "support": {
+                "issues": "https://github.com/chartjs/Chart.js/issues",
+                "source": "https://github.com/chartjs/Chart.js/tree/v4.5.1"
+            },
+            "install-path": "../nnnick/chartjs"
+        },
+        {
+            "name": "openboleto/openboleto",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openboleto/openboleto.git",
+                "reference": "1ac608d40533ab91a42d3988832867e6306451c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openboleto/openboleto/zipball/1ac608d40533ab91a42d3988832867e6306451c7",
+                "reference": "1ac608d40533ab91a42d3988832867e6306451c7",
+                "shasum": ""
+            },
+            "require": {
+                "chillerlan/php-qrcode": "^5.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^8.5"
+            },
+            "time": "2026-02-13T19:50:41+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "OpenBoleto\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "José Frederico",
+                    "email": "contato@livetechtecnologia.com.br"
+                },
+                {
+                    "name": "Daniel Garajau",
+                    "email": "daniel@garajau.com.br"
+                },
+                {
+                    "name": "Rogerio Muniz",
+                    "email": "rogerio@quilhasoft.com.br"
+                }
+            ],
+            "description": "Biblioteca para geração de boletos bancários.",
+            "homepage": "http://github.com/openboleto/openboleto",
+            "keywords": [
+                "boleto",
+                "boleto bancario"
+            ],
+            "support": {
+                "issues": "https://github.com/openboleto/openboleto/issues",
+                "source": "https://github.com/openboleto/openboleto/tree/master"
+            },
+            "install-path": "../openboleto/openboleto"
+        },
+        {
+            "name": "pablodalloglio/fpdf",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pablodalloglio/fpdf.git",
+                "reference": "d618db8f2b8549613c3b5b31e6afd9915bda9330"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pablodalloglio/fpdf/zipball/d618db8f2b8549613c3b5b31e6afd9915bda9330",
+                "reference": "d618db8f2b8549613c3b5b31e6afd9915bda9330",
+                "shasum": ""
+            },
+            "time": "2023-06-01T18:33:08+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "FPDF": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "./"
+            ],
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pablo Dall'Oglio",
+                    "email": "pablo@php.net",
+                    "role": "Lead"
+                }
+            ],
+            "description": "Derivation of FPDF with callbacks for headers, footers.",
+            "support": {
+                "issues": "https://github.com/pablodalloglio/fpdf/issues",
+                "source": "https://github.com/pablodalloglio/fpdf"
+            },
+            "install-path": "../pablodalloglio/fpdf"
+        },
+        {
+            "name": "pablodalloglio/ole",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pablodalloglio/ole.git",
+                "reference": "7f363227708424cdc6ff9ca4764f59895b4b27a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pablodalloglio/ole/zipball/7f363227708424cdc6ff9ca4764f59895b4b27a8",
+                "reference": "7f363227708424cdc6ff9ca4764f59895b4b27a8",
+                "shasum": ""
+            },
+            "time": "2023-06-01T19:22:33+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "OLE": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "./"
+            ],
+            "license": [
+                "PHP-3.01"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Schmidt",
+                    "email": "schmidt@php.net",
+                    "role": "Lead"
+                },
+                {
+                    "name": "Xavier Noguer",
+                    "email": "xnoguer@php.net",
+                    "role": "Lead"
+                }
+            ],
+            "description": "Derivation from pear OLE without PEAR dependency, and with Exceptions instead of PearErrors.",
+            "support": {
+                "issues": "https://github.com/pablodalloglio/ole/issues",
+                "source": "https://github.com/pablodalloglio/OLE"
+            },
+            "install-path": "../pablodalloglio/ole"
+        },
+        {
+            "name": "pablodalloglio/phprtflite",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pablodalloglio/phprtflite.git",
+                "reference": "591081612a66d5c770b847a0420a61c8d2793e66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pablodalloglio/phprtflite/zipball/591081612a66d5c770b847a0420a61c8d2793e66",
+                "reference": "591081612a66d5c770b847a0420a61c8d2793e66",
+                "shasum": ""
+            },
+            "time": "2023-10-30T19:07:45+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "PHPRtfLite": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Steffen Zeidler",
+                    "email": "sigma_z@sigma-scripts.de"
+                }
+            ],
+            "description": "PHPRtfLite is an API enabling developers to create rtf documents with php. This fork add fixes for PHP8.",
+            "support": {
+                "issues": "https://github.com/pablodalloglio/phprtflite/issues",
+                "source": "https://github.com/pablodalloglio/phprtflite/tree/master"
+            },
+            "install-path": "../pablodalloglio/phprtflite"
+        },
+        {
+            "name": "pablodalloglio/spreadsheet_excel_writer",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pablodalloglio/spreadsheet_excel_writer.git",
+                "reference": "21022df9029a58f2f812bfcb1879a1f83678d571"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pablodalloglio/spreadsheet_excel_writer/zipball/21022df9029a58f2f812bfcb1879a1f83678d571",
+                "reference": "21022df9029a58f2f812bfcb1879a1f83678d571",
+                "shasum": ""
+            },
+            "require": {
+                "pablodalloglio/ole": "*",
+                "php": ">=5.3.3"
+            },
+            "time": "2023-06-01T19:11:16+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Spreadsheet": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "./"
+            ],
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Carsten Schmitz",
+                    "email": "cschmitz@limesurvey.org",
+                    "role": "Lead"
+                },
+                {
+                    "name": "Xavier Noguer",
+                    "email": "xnoguer@php.net",
+                    "role": "Lead"
+                },
+                {
+                    "name": "Franck Lefevre",
+                    "email": "progi1984@gmail.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Mika Tuupola",
+                    "email": "tuupola@appelsiini.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Derivation from SpreadsheetExcelWriter without PEAR dependency, and with Exceptions instead of PearErrors.",
+            "support": {
+                "issues": "https://github.com/pablodalloglio/spreadsheet_excel_writer/issues",
+                "source": "https://github.com/pablodalloglio/spreadsheet_excel_writer"
+            },
+            "install-path": "../pablodalloglio/spreadsheet_excel_writer"
+        },
+        {
+            "name": "phenx/php-font-lib",
+            "version": "0.5.4",
+            "version_normalized": "0.5.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-font-lib.git",
+                "reference": "dd448ad1ce34c63d09baccd05415e361300c35b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/dd448ad1ce34c63d09baccd05415e361300c35b4",
+                "reference": "dd448ad1ce34c63d09baccd05415e361300c35b4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3 || ^4 || ^5"
+            },
+            "time": "2021-12-17T19:44:54+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "FontLib\\": "src/FontLib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Ménager",
+                    "email": "fabien.menager@gmail.com"
+                }
+            ],
+            "description": "A library to read, parse, export and make subsets of different types of font files.",
+            "homepage": "https://github.com/PhenX/php-font-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-font-lib/issues",
+                "source": "https://github.com/dompdf/php-font-lib/tree/0.5.4"
+            },
+            "install-path": "../phenx/php-font-lib"
+        },
+        {
+            "name": "phenx/php-svg-lib",
+            "version": "0.5.1",
+            "version_normalized": "0.5.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-svg-lib.git",
+                "reference": "8a8a1ebcf6aea861ef30197999f096f7bd4b4456"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/8a8a1ebcf6aea861ef30197999f096f7bd4b4456",
+                "reference": "8a8a1ebcf6aea861ef30197999f096f7bd4b4456",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1 || ^8.0",
+                "sabberworm/php-css-parser": "^8.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5"
+            },
+            "time": "2023-12-11T20:56:08+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Svg\\": "src/Svg"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Ménager",
+                    "email": "fabien.menager@gmail.com"
+                }
+            ],
+            "description": "A library to read, parse and export to PDF SVG files.",
+            "homepage": "https://github.com/PhenX/php-svg-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-svg-lib/issues",
+                "source": "https://github.com/dompdf/php-svg-lib/tree/0.5.1"
+            },
+            "install-path": "../phenx/php-svg-lib"
+        },
+        {
+            "name": "phpmailer/phpmailer",
+            "version": "v6.9.1",
+            "version_normalized": "6.9.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPMailer/PHPMailer.git",
+                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/039de174cd9c17a8389754d3b877a2ed22743e18",
+                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-filter": "*",
+                "ext-hash": "*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+                "doctrine/annotations": "^1.2.6 || ^1.13.3",
+                "php-parallel-lint/php-console-highlighter": "^1.0.0",
+                "php-parallel-lint/php-parallel-lint": "^1.3.2",
+                "phpcompatibility/php-compatibility": "^9.3.5",
+                "roave/security-advisories": "dev-latest",
+                "squizlabs/php_codesniffer": "^3.7.2",
+                "yoast/phpunit-polyfills": "^1.0.4"
+            },
+            "suggest": {
+                "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
+                "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
+                "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
+                "greew/oauth2-azure-provider": "Needed for Microsoft Azure XOAUTH2 authentication",
+                "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
+                "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
+                "psr/log": "For optional PSR-3 debug logging",
+                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
+                "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
+            },
+            "time": "2023-11-25T22:23:28+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "PHPMailer\\PHPMailer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Marcus Bointon",
+                    "email": "phpmailer@synchromedia.co.uk"
+                },
+                {
+                    "name": "Jim Jagielski",
+                    "email": "jimjag@gmail.com"
+                },
+                {
+                    "name": "Andy Prevost",
+                    "email": "codeworxtech@users.sourceforge.net"
+                },
+                {
+                    "name": "Brent R. Matzelle"
+                }
+            ],
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "support": {
+                "issues": "https://github.com/PHPMailer/PHPMailer/issues",
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Synchro",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../phpmailer/phpmailer"
+        },
+        {
+            "name": "picqer/php-barcode-generator",
+            "version": "v2.4.0",
+            "version_normalized": "2.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/picqer/php-barcode-generator.git",
+                "reference": "4cec18909dffd86e14beb69b1040f2520c2e1bb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/4cec18909dffd86e14beb69b1040f2520c2e1bb1",
+                "reference": "4cec18909dffd86e14beb69b1040f2520c2e1bb1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5"
+            },
+            "suggest": {
+                "ext-bcmath": "Barcode IMB (Intelligent Mail Barcode) needs bcmath extension",
+                "ext-gd": "For JPG and PNG generators, GD or Imagick is required",
+                "ext-imagick": "For JPG and PNG generators, GD or Imagick is required"
+            },
+            "time": "2023-09-16T08:58:52+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Picqer\\Barcode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "homepage": "http://nicolaasuni.tecnick.com"
+                },
+                {
+                    "name": "Casper Bakker",
+                    "email": "info@picqer.com",
+                    "homepage": "https://picqer.com"
+                }
+            ],
+            "description": "An easy to use, non-bloated, barcode generator in PHP. Creates SVG, PNG, JPG and HTML images from the most used 1D barcode standards.",
+            "homepage": "https://github.com/picqer/php-barcode-generator",
+            "keywords": [
+                "CODABAR",
+                "Code11",
+                "Code93",
+                "EAN13",
+                "KIX",
+                "KIXCODE",
+                "MSI",
+                "POSTNET",
+                "Pharma",
+                "Standard 2 of 5",
+                "barcode",
+                "barcode generator",
+                "code128",
+                "code39",
+                "ean",
+                "html",
+                "jpeg",
+                "jpg",
+                "php",
+                "png",
+                "svg",
+                "upc"
+            ],
+            "support": {
+                "issues": "https://github.com/picqer/php-barcode-generator/issues",
+                "source": "https://github.com/picqer/php-barcode-generator/tree/v2.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/casperbakker",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../picqer/php-barcode-generator"
+        },
+        {
+            "name": "psr/log",
+            "version": "3.0.2",
+            "version_normalized": "3.0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "time": "2024-09-11T13:17:53+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
+            },
+            "install-path": "../psr/log"
+        },
+        {
+            "name": "quilhasoft/jasperphp",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/QuilhaSoft/JasperPHP.git",
+                "reference": "b71b8d145173a1d3fd6305260a75c438edd75cbe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/QuilhaSoft/JasperPHP/zipball/b71b8d145173a1d3fd6305260a75c438edd75cbe",
+                "reference": "b71b8d145173a1d3fd6305260a75c438edd75cbe",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0",
+                "tecnickcom/tcpdf": "^6.3.5"
+            },
+            "time": "2026-03-17T10:44:05+00:00",
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JasperPHP\\JasperPHPServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "JasperPHP\\": "src/",
+                    "JasperPHP\\core\\": "src/core/",
+                    "JasperPHP\\database\\": "src/database/",
+                    "JasperPHP\\elements\\": "src/elements/",
+                    "JasperPHP\\exception\\": "src/exception/",
+                    "JasperPHP\\processors\\": "src/processors/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rogerio Muniz de Castro",
+                    "email": "rogerio@quilhasoft.net"
+                }
+            ],
+            "description": "Pure PHP library to read JRXML files made with 'JasperSoft Studio' and generate reports in PDF",
+            "keywords": [
+                "jaspersoft",
+                "jrxml",
+                "pdf",
+                "report"
+            ],
+            "support": {
+                "issues": "https://github.com/QuilhaSoft/JasperPHP/issues",
+                "source": "https://github.com/QuilhaSoft/JasperPHP/tree/master"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Rctnet",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../quilhasoft/jasperphp"
+        },
+        {
+            "name": "sabberworm/php-css-parser",
+            "version": "8.4.0",
+            "version_normalized": "8.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sabberworm/PHP-CSS-Parser.git",
+                "reference": "e41d2140031d533348b2192a83f02d8dd8a71d30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sabberworm/PHP-CSS-Parser/zipball/e41d2140031d533348b2192a83f02d8dd8a71d30",
+                "reference": "e41d2140031d533348b2192a83f02d8dd8a71d30",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": ">=5.6.20"
+            },
+            "require-dev": {
+                "codacy/coverage": "^1.4",
+                "phpunit/phpunit": "^4.8.36"
+            },
+            "suggest": {
+                "ext-mbstring": "for parsing UTF-8 CSS"
+            },
+            "time": "2021-12-11T13:40:54+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Sabberworm\\CSS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raphael Schweikert"
+                }
+            ],
+            "description": "Parser for CSS Files written in PHP",
+            "homepage": "https://www.sabberworm.com/blog/2010/6/10/php-css-parser",
+            "keywords": [
+                "css",
+                "parser",
+                "stylesheet"
+            ],
+            "support": {
+                "issues": "https://github.com/sabberworm/PHP-CSS-Parser/issues",
+                "source": "https://github.com/sabberworm/PHP-CSS-Parser/tree/8.4.0"
+            },
+            "install-path": "../sabberworm/php-css-parser"
+        },
+        {
+            "name": "tecnickcom/tc-lib-barcode",
+            "version": "1.18.4",
+            "version_normalized": "1.18.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tecnickcom/tc-lib-barcode.git",
+                "reference": "cd81392e6e1e57e0f6ff8519b1edbc11d8e47a44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tecnickcom/tc-lib-barcode/zipball/cd81392e6e1e57e0f6ff8519b1edbc11d8e47a44",
+                "reference": "cd81392e6e1e57e0f6ff8519b1edbc11d8e47a44",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-date": "*",
+                "ext-gd": "*",
+                "ext-pcre": "*",
+                "php": ">=5.6",
+                "tecnickcom/tc-lib-color": "^1.14"
+            },
+            "require-dev": {
+                "pdepend/pdepend": "2.13.0",
+                "phpmd/phpmd": "2.13.0",
+                "phpunit/phpunit": "10.1.2 || 9.6.7 || 8.5.31 || 7.5.20 || 6.5.14 || 5.7.27 || 4.8.36",
+                "squizlabs/php_codesniffer": "3.7.2 || 2.9.2"
+            },
+            "time": "2023-10-23T09:30:01+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Com\\Tecnick\\Barcode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP library to generate linear and bidimensional barcodes",
+            "homepage": "http://www.tecnick.com",
+            "keywords": [
+                "3 of 9",
+                "ANSI MH10.8M-1983",
+                "CBC",
+                "CODABAR",
+                "CODE 11",
+                "CODE 128 A B C",
+                "CODE 39",
+                "CODE 93",
+                "EAN 13",
+                "EAN 8",
+                "ECC200",
+                "ISO IEC 15438 2006",
+                "ISO IEC 16022",
+                "ISO IEC 24778 2008",
+                "Intelligent Mail Barcode",
+                "Interleaved 2 of 5",
+                "KIX",
+                "Klant",
+                "MSI",
+                "Onecode",
+                "PHARMACODE",
+                "PHARMACODE TWO-TRACKS",
+                "POSTNET",
+                "RMS4CC",
+                "Standard 2 of 5",
+                "UPC-A",
+                "UPC-E",
+                "USD-3",
+                "USPS-B-3200",
+                "USS-93",
+                "aztec",
+                "barcode",
+                "datamatrix",
+                "pdf417",
+                "planet",
+                "qr-code",
+                "royal mail",
+                "tc-lib-barcode",
+                "upc"
+            ],
+            "support": {
+                "issues": "https://github.com/tecnickcom/tc-lib-barcode/issues",
+                "source": "https://github.com/tecnickcom/tc-lib-barcode/tree/1.18.4"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&currency_code=GBP&business=paypal@tecnick.com&item_name=donation%20for%20tc-lib-barcode%20project",
+                    "type": "custom"
+                }
+            ],
+            "install-path": "../tecnickcom/tc-lib-barcode"
+        },
+        {
+            "name": "tecnickcom/tc-lib-color",
+            "version": "1.14.39",
+            "version_normalized": "1.14.39.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tecnickcom/tc-lib-color.git",
+                "reference": "f7a414e7ddbdcd98105506ca1eecc68d4820fb89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tecnickcom/tc-lib-color/zipball/f7a414e7ddbdcd98105506ca1eecc68d4820fb89",
+                "reference": "f7a414e7ddbdcd98105506ca1eecc68d4820fb89",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "pdepend/pdepend": "2.13.0",
+                "phpmd/phpmd": "2.13.0",
+                "phpunit/phpunit": "10.1.2 || 9.6.7 || 8.5.31 || 7.5.20 || 6.5.14 || 5.7.27 || 4.8.36",
+                "squizlabs/php_codesniffer": "3.7.2 || 2.9.2"
+            },
+            "time": "2023-10-23T09:28:20+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Com\\Tecnick\\Color\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP library to manipulate various color representations",
+            "homepage": "http://www.tecnick.com",
+            "keywords": [
+                "cmyk",
+                "color",
+                "colors",
+                "colour",
+                "colours",
+                "hsl",
+                "hsla",
+                "javascript",
+                "rgb",
+                "rgba",
+                "tc-lib-color",
+                "web"
+            ],
+            "support": {
+                "issues": "https://github.com/tecnickcom/tc-lib-color/issues",
+                "source": "https://github.com/tecnickcom/tc-lib-color/tree/1.14.39"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&currency_code=GBP&business=paypal@tecnick.com&item_name=donation%20for%20tc-lib-color%20project",
+                    "type": "custom"
+                }
+            ],
+            "install-path": "../tecnickcom/tc-lib-color"
+        },
+        {
+            "name": "tecnickcom/tcpdf",
+            "version": "6.11.3",
+            "version_normalized": "6.11.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tecnickcom/TCPDF.git",
+                "reference": "b18f6119161019916c5bb07cb8da5205ae5c1b63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/b18f6119161019916c5bb07cb8da5205ae5c1b63",
+                "reference": "b18f6119161019916c5bb07cb8da5205ae5c1b63",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=7.1.0"
+            },
+            "suggest": {
+                "ext-gd": "Enables additional image handling in some workflows.",
+                "ext-imagick": "Enables additional image format support when available.",
+                "ext-zlib": "Recommended for compressed streams and related features.",
+                "tecnickcom/tc-lib-pdf": "Modern replacement for TCPDF for new projects."
+            },
+            "time": "2026-04-21T17:00:18+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "config",
+                    "include",
+                    "tcpdf.php",
+                    "tcpdf_barcodes_1d.php",
+                    "tcpdf_barcodes_2d.php",
+                    "include/tcpdf_colors.php",
+                    "include/tcpdf_filters.php",
+                    "include/tcpdf_font_data.php",
+                    "include/tcpdf_fonts.php",
+                    "include/tcpdf_images.php",
+                    "include/tcpdf_static.php",
+                    "include/barcodes/datamatrix.php",
+                    "include/barcodes/pdf417.php",
+                    "include/barcodes/qrcode.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "Deprecated legacy PDF engine for PHP. For new projects use tecnickcom/tc-lib-pdf.",
+            "homepage": "https://tcpdf.org",
+            "keywords": [
+                "PDFD32000-2008",
+                "TCPDF",
+                "barcodes",
+                "datamatrix",
+                "pdf",
+                "pdf417",
+                "qrcode"
+            ],
+            "support": {
+                "issues": "https://github.com/tecnickcom/TCPDF/issues",
+                "source": "https://github.com/tecnickcom/TCPDF"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/donate/?hosted_button_id=NZUEC5XS8MFBJ",
+                    "type": "paypal"
+                }
+            ],
+            "install-path": "../tecnickcom/tcpdf"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

@@ -1,0 +1,435 @@
+<?php
+
+class OrcamentoEstado extends TRecord
+{
+    const TABLENAME  = 'orcamento_estado';
+    const PRIMARYKEY = 'id';
+    const IDPOLICY   =  'serial'; // {max, serial}
+
+    const CREATEDAT  = 'dt_inclusao';
+    const UPDATEDAT  = 'dt_alteracao';
+
+    const ABERTO = '1';
+    const FATURADO = '2';
+    const AGENDADO = '3';
+    const CANCELADO = '4';
+    const OUTROS = '5';
+    const ERRO = '6';
+
+    /**
+     * Constructor method
+     */
+    public function __construct($id = NULL, $callObjectLoad = TRUE)
+    {
+        parent::__construct($id, $callObjectLoad);
+        parent::addAttribute('cod_erp');
+        parent::addAttribute('descricao');
+        parent::addAttribute('cor');
+        parent::addAttribute('cor_texto');
+        parent::addAttribute('editar');
+        parent::addAttribute('excluir');
+        parent::addAttribute('imprimir');
+        parent::addAttribute('cancelar');
+        parent::addAttribute('dt_inclusao');
+        parent::addAttribute('dt_alteracao');
+        parent::addAttribute('sistema');
+        parent::addAttribute('ordem');
+        parent::addAttribute('icone');
+        parent::addAttribute('exibir_regua');
+    
+    }
+
+    /**
+     * Method getOrcamentoProximoEstados
+     */
+    public function getOrcamentoProximoEstadosByOrcamentoEstados()
+    {
+        $criteria = new TCriteria;
+        $criteria->add(new TFilter('orcamento_estado_id', '=', $this->id));
+        return OrcamentoProximoEstado::getObjects( $criteria );
+    }
+    /**
+     * Method getOrcamentoHistoricos
+     */
+    public function getOrcamentoHistoricosByOrcamentoEstados()
+    {
+        $criteria = new TCriteria;
+        $criteria->add(new TFilter('orcamento_estado_id', '=', $this->id));
+        return OrcamentoHistorico::getObjects( $criteria );
+    }
+    /**
+     * Method getOrcamentoProximoEstados
+     */
+    public function getOrcamentoProximoEstadosByProximoEstados()
+    {
+        $criteria = new TCriteria;
+        $criteria->add(new TFilter('proximo_estado_id', '=', $this->id));
+        return OrcamentoProximoEstado::getObjects( $criteria );
+    }
+    /**
+     * Method getOrcamentoHistoricos
+     */
+    public function getOrcamentoHistoricosByOrcamentoProximoEstados()
+    {
+        $criteria = new TCriteria;
+        $criteria->add(new TFilter('orcamento_proximo_estado_id', '=', $this->id));
+        return OrcamentoHistorico::getObjects( $criteria );
+    }
+    /**
+     * Method getOrcamentos
+     */
+    public function getOrcamentos()
+    {
+        $criteria = new TCriteria;
+        $criteria->add(new TFilter('orcamento_estado_id', '=', $this->id));
+        return Orcamento::getObjects( $criteria );
+    }
+
+    public function set_orcamento_proximo_estado_orcamento_estado_to_string($orcamento_proximo_estado_orcamento_estado_to_string)
+    {
+        if(is_array($orcamento_proximo_estado_orcamento_estado_to_string))
+        {
+            $values = OrcamentoEstado::where('id', 'in', $orcamento_proximo_estado_orcamento_estado_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_proximo_estado_orcamento_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_proximo_estado_orcamento_estado_to_string = $orcamento_proximo_estado_orcamento_estado_to_string;
+        }
+
+        $this->vdata['orcamento_proximo_estado_orcamento_estado_to_string'] = $this->orcamento_proximo_estado_orcamento_estado_to_string;
+    }
+
+    public function get_orcamento_proximo_estado_orcamento_estado_to_string()
+    {
+        if(!empty($this->orcamento_proximo_estado_orcamento_estado_to_string))
+        {
+            return $this->orcamento_proximo_estado_orcamento_estado_to_string;
+        }
+    
+        $values = OrcamentoProximoEstado::where('proximo_estado_id', '=', $this->id)->getIndexedArray('orcamento_estado_id','{orcamento_estado->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_proximo_estado_proximo_estado_to_string($orcamento_proximo_estado_proximo_estado_to_string)
+    {
+        if(is_array($orcamento_proximo_estado_proximo_estado_to_string))
+        {
+            $values = OrcamentoEstado::where('id', 'in', $orcamento_proximo_estado_proximo_estado_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_proximo_estado_proximo_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_proximo_estado_proximo_estado_to_string = $orcamento_proximo_estado_proximo_estado_to_string;
+        }
+
+        $this->vdata['orcamento_proximo_estado_proximo_estado_to_string'] = $this->orcamento_proximo_estado_proximo_estado_to_string;
+    }
+
+    public function get_orcamento_proximo_estado_proximo_estado_to_string()
+    {
+        if(!empty($this->orcamento_proximo_estado_proximo_estado_to_string))
+        {
+            return $this->orcamento_proximo_estado_proximo_estado_to_string;
+        }
+    
+        $values = OrcamentoProximoEstado::where('proximo_estado_id', '=', $this->id)->getIndexedArray('proximo_estado_id','{proximo_estado->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_historico_orcamento_to_string($orcamento_historico_orcamento_to_string)
+    {
+        if(is_array($orcamento_historico_orcamento_to_string))
+        {
+            $values = Orcamento::where('id', 'in', $orcamento_historico_orcamento_to_string)->getIndexedArray('dt_faturamento', 'dt_faturamento');
+            $this->orcamento_historico_orcamento_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_historico_orcamento_to_string = $orcamento_historico_orcamento_to_string;
+        }
+
+        $this->vdata['orcamento_historico_orcamento_to_string'] = $this->orcamento_historico_orcamento_to_string;
+    }
+
+    public function get_orcamento_historico_orcamento_to_string()
+    {
+        if(!empty($this->orcamento_historico_orcamento_to_string))
+        {
+            return $this->orcamento_historico_orcamento_to_string;
+        }
+    
+        $values = OrcamentoHistorico::where('orcamento_proximo_estado_id', '=', $this->id)->getIndexedArray('orcamento_id','{orcamento->dt_faturamento}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_historico_orcamento_estado_to_string($orcamento_historico_orcamento_estado_to_string)
+    {
+        if(is_array($orcamento_historico_orcamento_estado_to_string))
+        {
+            $values = OrcamentoEstado::where('id', 'in', $orcamento_historico_orcamento_estado_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_historico_orcamento_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_historico_orcamento_estado_to_string = $orcamento_historico_orcamento_estado_to_string;
+        }
+
+        $this->vdata['orcamento_historico_orcamento_estado_to_string'] = $this->orcamento_historico_orcamento_estado_to_string;
+    }
+
+    public function get_orcamento_historico_orcamento_estado_to_string()
+    {
+        if(!empty($this->orcamento_historico_orcamento_estado_to_string))
+        {
+            return $this->orcamento_historico_orcamento_estado_to_string;
+        }
+    
+        $values = OrcamentoHistorico::where('orcamento_proximo_estado_id', '=', $this->id)->getIndexedArray('orcamento_estado_id','{orcamento_estado->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_historico_orcamento_proximo_estado_to_string($orcamento_historico_orcamento_proximo_estado_to_string)
+    {
+        if(is_array($orcamento_historico_orcamento_proximo_estado_to_string))
+        {
+            $values = OrcamentoEstado::where('id', 'in', $orcamento_historico_orcamento_proximo_estado_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_historico_orcamento_proximo_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_historico_orcamento_proximo_estado_to_string = $orcamento_historico_orcamento_proximo_estado_to_string;
+        }
+
+        $this->vdata['orcamento_historico_orcamento_proximo_estado_to_string'] = $this->orcamento_historico_orcamento_proximo_estado_to_string;
+    }
+
+    public function get_orcamento_historico_orcamento_proximo_estado_to_string()
+    {
+        if(!empty($this->orcamento_historico_orcamento_proximo_estado_to_string))
+        {
+            return $this->orcamento_historico_orcamento_proximo_estado_to_string;
+        }
+    
+        $values = OrcamentoHistorico::where('orcamento_proximo_estado_id', '=', $this->id)->getIndexedArray('orcamento_proximo_estado_id','{orcamento_proximo_estado->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_cliente_to_string($orcamento_cliente_to_string)
+    {
+        if(is_array($orcamento_cliente_to_string))
+        {
+            $values = Cliente::where('id', 'in', $orcamento_cliente_to_string)->getIndexedArray('razao', 'razao');
+            $this->orcamento_cliente_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_cliente_to_string = $orcamento_cliente_to_string;
+        }
+
+        $this->vdata['orcamento_cliente_to_string'] = $this->orcamento_cliente_to_string;
+    }
+
+    public function get_orcamento_cliente_to_string()
+    {
+        if(!empty($this->orcamento_cliente_to_string))
+        {
+            return $this->orcamento_cliente_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('cliente_id','{cliente->razao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_tabela_preco_to_string($orcamento_tabela_preco_to_string)
+    {
+        if(is_array($orcamento_tabela_preco_to_string))
+        {
+            $values = TabelaPreco::where('id', 'in', $orcamento_tabela_preco_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_tabela_preco_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_tabela_preco_to_string = $orcamento_tabela_preco_to_string;
+        }
+
+        $this->vdata['orcamento_tabela_preco_to_string'] = $this->orcamento_tabela_preco_to_string;
+    }
+
+    public function get_orcamento_tabela_preco_to_string()
+    {
+        if(!empty($this->orcamento_tabela_preco_to_string))
+        {
+            return $this->orcamento_tabela_preco_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('tabela_preco_id','{tabela_preco->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_condicao_pagamento_to_string($orcamento_condicao_pagamento_to_string)
+    {
+        if(is_array($orcamento_condicao_pagamento_to_string))
+        {
+            $values = CondicaoPagamento::where('id', 'in', $orcamento_condicao_pagamento_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_condicao_pagamento_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_condicao_pagamento_to_string = $orcamento_condicao_pagamento_to_string;
+        }
+
+        $this->vdata['orcamento_condicao_pagamento_to_string'] = $this->orcamento_condicao_pagamento_to_string;
+    }
+
+    public function get_orcamento_condicao_pagamento_to_string()
+    {
+        if(!empty($this->orcamento_condicao_pagamento_to_string))
+        {
+            return $this->orcamento_condicao_pagamento_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('condicao_pagamento_id','{condicao_pagamento->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_pedido_to_string($orcamento_pedido_to_string)
+    {
+        if(is_array($orcamento_pedido_to_string))
+        {
+            $values = Pedido::where('id', 'in', $orcamento_pedido_to_string)->getIndexedArray('id', 'id');
+            $this->orcamento_pedido_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_pedido_to_string = $orcamento_pedido_to_string;
+        }
+
+        $this->vdata['orcamento_pedido_to_string'] = $this->orcamento_pedido_to_string;
+    }
+
+    public function get_orcamento_pedido_to_string()
+    {
+        if(!empty($this->orcamento_pedido_to_string))
+        {
+            return $this->orcamento_pedido_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('pedido_id','{pedido->id}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_vendedor_to_string($orcamento_vendedor_to_string)
+    {
+        if(is_array($orcamento_vendedor_to_string))
+        {
+            $values = Vendedor::where('id', 'in', $orcamento_vendedor_to_string)->getIndexedArray('nome', 'nome');
+            $this->orcamento_vendedor_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_vendedor_to_string = $orcamento_vendedor_to_string;
+        }
+
+        $this->vdata['orcamento_vendedor_to_string'] = $this->orcamento_vendedor_to_string;
+    }
+
+    public function get_orcamento_vendedor_to_string()
+    {
+        if(!empty($this->orcamento_vendedor_to_string))
+        {
+            return $this->orcamento_vendedor_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('vendedor_id','{vendedor->nome}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_estado_to_string($orcamento_estado_to_string)
+    {
+        if(is_array($orcamento_estado_to_string))
+        {
+            $values = Estado::where('id', 'in', $orcamento_estado_to_string)->getIndexedArray('sigla', 'sigla');
+            $this->orcamento_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_estado_to_string = $orcamento_estado_to_string;
+        }
+
+        $this->vdata['orcamento_estado_to_string'] = $this->orcamento_estado_to_string;
+    }
+
+    public function get_orcamento_estado_to_string()
+    {
+        if(!empty($this->orcamento_estado_to_string))
+        {
+            return $this->orcamento_estado_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('estado_id','{estado->sigla}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_municipio_to_string($orcamento_municipio_to_string)
+    {
+        if(is_array($orcamento_municipio_to_string))
+        {
+            $values = Municipio::where('id', 'in', $orcamento_municipio_to_string)->getIndexedArray('cod_erp', 'cod_erp');
+            $this->orcamento_municipio_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_municipio_to_string = $orcamento_municipio_to_string;
+        }
+
+        $this->vdata['orcamento_municipio_to_string'] = $this->orcamento_municipio_to_string;
+    }
+
+    public function get_orcamento_municipio_to_string()
+    {
+        if(!empty($this->orcamento_municipio_to_string))
+        {
+            return $this->orcamento_municipio_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('municipio_id','{municipio->cod_erp}');
+        return implode(', ', $values);
+    }
+
+    public function set_orcamento_orcamento_estado_to_string($orcamento_orcamento_estado_to_string)
+    {
+        if(is_array($orcamento_orcamento_estado_to_string))
+        {
+            $values = OrcamentoEstado::where('id', 'in', $orcamento_orcamento_estado_to_string)->getIndexedArray('descricao', 'descricao');
+            $this->orcamento_orcamento_estado_to_string = implode(', ', $values);
+        }
+        else
+        {
+            $this->orcamento_orcamento_estado_to_string = $orcamento_orcamento_estado_to_string;
+        }
+
+        $this->vdata['orcamento_orcamento_estado_to_string'] = $this->orcamento_orcamento_estado_to_string;
+    }
+
+    public function get_orcamento_orcamento_estado_to_string()
+    {
+        if(!empty($this->orcamento_orcamento_estado_to_string))
+        {
+            return $this->orcamento_orcamento_estado_to_string;
+        }
+    
+        $values = Orcamento::where('orcamento_estado_id', '=', $this->id)->getIndexedArray('orcamento_estado_id','{orcamento_estado->descricao}');
+        return implode(', ', $values);
+    }
+
+    public function get_icone_formatado()
+    {
+        if($this->icone){
+            return "<i class='{$this->icone}' ></i>";
+        }
+    
+    }
+
+}
+
