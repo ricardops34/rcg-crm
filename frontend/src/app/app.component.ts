@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
 import { 
@@ -32,6 +32,26 @@ export class AppComponent implements OnInit {
     title: ""
   };
 
+  constructor() {
+    // Efeito reativo moderno para detectar login/logout e atualizar o menu lateral/perfil instantaneamente
+    effect(() => {
+      const currentUser = this.authService.currentUser();
+      if (currentUser) {
+        this.user = currentUser;
+        this.profile.title = currentUser.name;
+        this.profile.subtitle = currentUser.email;
+        this.profile.avatar = currentUser.avatar || "assets/default-avatar.png";
+        this.loadMenu();
+      } else {
+        this.user = null;
+        this.profile.title = "";
+        this.profile.subtitle = "";
+        this.profile.avatar = "";
+        this.dynamicMenus = [];
+      }
+    });
+  }
+
   readonly profileActions: Array<PoToolbarAction> = [
     { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
     { label: "Sair", action: () => this.logout(), icon: "po-icon-exit", type: "danger" }
@@ -51,11 +71,7 @@ export class AppComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.refreshUserInfo();
     this.loadTheme();
-    if (this.authService.isAuthenticated()) {
-      this.loadMenu();
-    }
   }
 
   refreshUserInfo() {

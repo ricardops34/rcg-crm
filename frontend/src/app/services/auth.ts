@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, tap } from "rxjs";
 import { environment } from "../../environments/environment";
@@ -9,6 +9,8 @@ import { environment } from "../../environments/environment";
 export class AuthService {
 
   private readonly API_URL = `${environment.apiUrl}/auth`;
+
+  currentUser = signal<any>(this.getUser());
 
   constructor(private http: HttpClient) { }
 
@@ -41,6 +43,7 @@ export class AuthService {
       localStorage.setItem("token", res.accessToken);
       if (!res.nextStep) {
         localStorage.setItem("user", JSON.stringify(res.user));
+        this.currentUser.set(res.user);
       }
     }
   }
@@ -48,6 +51,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    this.currentUser.set(null);
   }
 
   isAuthenticated(): boolean {
@@ -85,7 +89,12 @@ export class AuthService {
   updateProfile(data: any): Observable<any> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-    return this.http.patch<any>(`${this.API_URL}/me`, data, { headers });
+    return this.http.patch<any>(`${this.API_URL}/me`, data, { headers }).pipe(
+      tap(updatedUser => {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        this.currentUser.set(updatedUser);
+      })
+    );
   }
 
   getMenu(): Observable<any> {

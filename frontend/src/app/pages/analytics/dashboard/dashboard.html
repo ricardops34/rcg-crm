@@ -1,4 +1,4 @@
-﻿<po-page-default p-title="Dashboard Gerencial" [p-actions]="pageActions">
+<po-page-default p-title="Dashboard Gerencial" [p-actions]="pageActions">
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
@@ -6,21 +6,21 @@
     <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
       <div class="po-font-subtitle po-text-center po-py-2">
         <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
-        {{ summary.goal | currency:'BRL' }}
+        {{ summary?.goal | currency:'BRL' }}
       </div>
     </po-widget>
 
     <po-widget class="po-md-4 po-mb-2" p-title="Realizado">
       <div class="po-font-subtitle po-text-center po-py-2">
         <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
-        {{ summary.realized | currency:'BRL' }}
+        {{ summary?.realized | currency:'BRL' }}
       </div>
     </po-widget>
 
     <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
-      <div class="po-font-subtitle po-text-center po-py-2" [ngClass]="{'po-text-color-07': summary.achievement < 80, 'po-text-color-10': summary.achievement >= 100}">
-        <po-icon [p-icon]="summary.achievement >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
-        {{ summary.achievement | number:'1.1-2' }}%
+      <div class="po-font-subtitle po-text-center po-py-2" [ngClass]="{'po-text-color-07': (summary?.achievement || 0) < 80, 'po-text-color-10': (summary?.achievement || 0) >= 100}">
+        <po-icon [p-icon]="(summary?.achievement || 0) >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
+        {{ summary?.achievement | number:'1.1-2' }}%
       </div>
     </po-widget>
   </div>
