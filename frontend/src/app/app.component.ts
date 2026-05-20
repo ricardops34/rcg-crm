@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
 import { 
@@ -21,10 +21,6 @@ export class AppComponent implements OnInit {
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
 
-  get isLoginPage(): boolean {
-    return this.router.url.includes('/login');
-  }
-
   user: any;
   logo: string = "assets/logo_rcg.png";
   currentTheme: string = "light";
@@ -35,26 +31,6 @@ export class AppComponent implements OnInit {
     subtitle: "",
     title: ""
   };
-
-  constructor() {
-    // Efeito reativo moderno para detectar login/logout e atualizar o menu lateral/perfil instantaneamente
-    effect(() => {
-      const currentUser = this.authService.currentUser();
-      if (currentUser) {
-        this.user = currentUser;
-        this.profile.title = currentUser.name;
-        this.profile.subtitle = currentUser.email;
-        this.profile.avatar = currentUser.avatar || "assets/default-avatar.png";
-        this.loadMenu();
-      } else {
-        this.user = null;
-        this.profile.title = "";
-        this.profile.subtitle = "";
-        this.profile.avatar = "";
-        this.dynamicMenus = [];
-      }
-    });
-  }
 
   readonly profileActions: Array<PoToolbarAction> = [
     { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
@@ -75,7 +51,11 @@ export class AppComponent implements OnInit {
   ];
 
   ngOnInit() {
+    this.refreshUserInfo();
     this.loadTheme();
+    if (this.authService.isAuthenticated()) {
+      this.loadMenu();
+    }
   }
 
   refreshUserInfo() {
@@ -133,7 +113,6 @@ export class AppComponent implements OnInit {
     localStorage.setItem("theme", this.currentTheme);
     this.applyTheme();
     
-    // Atualizar o ícone conforme o tema
     const themeAction = this.toolbarActions.find(a => a.label === "Alterar Tema");
     if (themeAction) {
       themeAction.icon = this.currentTheme === "light" ? "po-icon-as-light-mode" : "po-icon-as-dark-mode";
@@ -155,15 +134,17 @@ export class AppComponent implements OnInit {
 
   get menus(): Array<PoMenuItem> {
     const items: Array<PoMenuItem> = [
-      { label: "Dashboard", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-chart-area", shortLabel: "Dash" },
+      { label: "Início", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-home", shortLabel: "Home" },
     ];
 
     if (this.dynamicMenus.length > 0) {
       items.push(...this.dynamicMenus);
     }
 
-    // Se for Admin, forçar itens de segurança se o menu dinâmico não trouxer (ex: banco vazio)
-    if (this.user?.roles?.includes('ADMIN') && !this.dynamicMenus.some(m => m.label.includes("Admin"))) {
+    // BYPASS PARA ADMINISTRADOR: Garante que as rotas administrativas apareçam
+    const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin' || this.user?.isGerente;
+
+    if (isAdmin) {
       items.push({ 
         label: "Segurança e Acesso", 
         icon: "po-icon-security", 
@@ -184,5 +165,4 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(["/login"]);
   }
-
 }

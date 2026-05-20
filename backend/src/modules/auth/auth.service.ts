@@ -117,7 +117,7 @@ export class AuthService {
   async getProfile(userId: number) {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['systemUnit'],
+      relations: ['systemUnit', 'frontpage'],
     });
 
     if (!user) throw new UnauthorizedException('Usuário não encontrado');
@@ -161,6 +161,11 @@ export class AuthService {
       managedVendedorIds,
       isGerente,
       roles: userRoles,
+      frontpage: user.frontpage ? {
+        id: user.frontpage.id,
+        name: user.frontpage.name,
+        controller: user.frontpage.controller
+      } : null,
       programs: programs,
     };
   }

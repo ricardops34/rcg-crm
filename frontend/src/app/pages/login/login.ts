@@ -45,8 +45,24 @@ export class LoginComponent {
     } else if (res.nextStep === "TERMS") {
       this.modalTerms.open();
     } else {
-      this.poNotification.success("Bem-vindo ao RCG CRM!");
-      this.router.navigate(["/"]);
+      // Redirecionamento Inteligente (Baseado no Legado)
+      const user = res.user;
+      const frontpage = user?.frontpage?.controller;
+      
+      this.poNotification.success(`Bem-vindo, ${user?.name}!`);
+
+      if (frontpage) {
+        const routes: any = {
+          "DashboardVendedor": "/dashboard",
+          "MvcList": "/mvc",
+          "ClienteList": "/clientes",
+          "SystemUserList": "/admin/users"
+        };
+        const target = routes[frontpage] || "/dashboard";
+        this.router.navigate([target]);
+      } else {
+        this.router.navigate(["/dashboard"]);
+      }
     }
   }
 
