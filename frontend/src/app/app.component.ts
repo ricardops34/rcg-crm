@@ -81,7 +81,11 @@ export class AppComponent implements OnInit {
   }
 
   checkRoute() {
-    this.isLoginPage = this.router.url === "/login" || this.router.url === "/" || this.router.url === "";
+    let urlPath = this.router.url.split('?')[0].split('#')[0];
+    if (urlPath.endsWith('/') && urlPath.length > 1) {
+      urlPath = urlPath.slice(0, -1);
+    }
+    this.isLoginPage = urlPath === "/login" || urlPath === "/" || urlPath === "";
   }
 
   refreshUserInfo() {
