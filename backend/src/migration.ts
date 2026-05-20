@@ -16,13 +16,13 @@ export class MigrationDataService {
       return;
     }
 
-    // Desabilitar chaves estrangeiras e triggers temporariamente
-    // No PostgreSQL, isso exige privilégios de superusuário ou ser o dono da tabela.
-    // O 'session_replication_role' é a forma mais eficaz de ignorar FKs durante migração.
+    // DESABILITAR TUDO: Foreign Keys, Triggers e Constraints para esta sessão
+    // Isso é o segredo para migrar dados fora de ordem ou com inconsistências históricas
     try {
       await ds.query("SET session_replication_role = 'replica'");
+      console.log('🔓 Verificações de integridade desabilitadas temporariamente.');
     } catch (e) {
-      console.warn('⚠️ Não foi possível desabilitar FKs (sem privilégios?). Erros de constraint podem ocorrer.');
+      console.warn('⚠️ Falha ao desabilitar FKs. O usuário do banco precisa ser superuser ou owner.');
     }
 
     const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
@@ -46,41 +46,20 @@ export class MigrationDataService {
       lineCount++;
       const trimmedLine = line.trim();
       
-      // Ignorar comentários, linhas vazias e comandos de estrutura/transação
-      if (
-        trimmedLine === '' || 
-        trimmedLine.startsWith('--') || 
-        trimmedLine.startsWith('/*') ||
-        trimmedLine.toUpperCase().startsWith('CREATE TABLE') ||
-        trimmedLine.toUpperCase().startsWith('DROP TABLE') ||
-        trimmedLine.toUpperCase().startsWith('ALTER TABLE') ||
-        trimmedLine.toUpperCase().startsWith('SET ') ||
-        trimmedLine.toUpperCase().startsWith('LOCK TABLES') ||
-        trimmedLine.toUpperCase().startsWith('UNLOCK TABLES') ||
-        trimmedLine.toUpperCase().startsWith('START TRANSACTION') ||
-        trimmedLine.toUpperCase().startsWith('BEGIN') ||
-        trimmedLine.toUpperCase().startsWith('COMMIT') ||
-        trimmedLine.toUpperCase().includes('ADD CONSTRAINT') ||
-        trimmedLine.toUpperCase().includes('ADD KEY') ||
-        trimmedLine.toUpperCase().includes('ADD PRIMARY KEY') ||
-        trimmedLine.toUpperCase().includes('ALTER COLUMN')
-      ) {
-        queryBuffer = ''; // Limpar buffer se cair em estrutura ou transação
+      if (trimmedLine === '' || trimmedLine.startsWith('--') || trimmedLine.startsWith('/*')) {
         continue;
       }
 
-      // Adicionar linha ao buffer
       queryBuffer += ' ' + line;
 
-      // Se a linha termina com ponto e vírgula, processar a query completa
       if (trimmedLine.endsWith(';')) {
         const pgQuery = queryBuffer.trim();
 
-        // REGRAS DE OURO: Apenas migrar DADOS (INSERT INTO)
+        // APENAS INSERTs SÃO PROCESSADOS
         if (pgQuery.toUpperCase().startsWith('INSERT INTO')) {
           let convertedQuery = pgQuery
-            .replace(/`/g, '"') // Trocar backticks por aspas duplas
-            .replace(/\\'/g, "''") // Escapar aspas simples (MySQL style para PG)
+            .replace(/`/g, '"') 
+            .replace(/\\'/g, "''") 
             .replace(/\\"/g, '"') 
             .replace(/\\r\\n/g, '\n')
             .replace(/\\n/g, '\n');
@@ -92,42 +71,36 @@ export class MigrationDataService {
               console.log(`${insertCount} comandos de INSERT processados...`);
             }
           } catch (err) {
-            // Ignorar se a tabela/coluna não existir no novo banco
-            if (err.message.includes('does not exist')) {
-               logStream.write(`Linha ${lineCount}: Tabela/Coluna inexistente - ${err.message}\n`);
-               queryBuffer = '';
-               continue;
-            }
-
-            // Logar erros reais de dados
-            if (!err.message.includes('already exists') && !err.message.includes('duplicate key')) {
-               console.error(`Erro de Dados na linha ${lineCount}: ${err.message}`);
-               logStream.write(`Linha ${lineCount}: ERRO CRÍTICO - ${err.message}\n`);
+            const msg = err.message.toLowerCase();
+            // Ignorar erros que não impedem a carga básica
+            if (msg.includes('does not exist') || msg.includes('duplicate key') || msg.includes('already exists')) {
+               logStream.write(`Linha ${lineCount}: Ignorado (Estrutura ou Duplicidade) - ${err.message}\n`);
             } else {
-               logStream.write(`Linha ${lineCount}: Já existente - ${err.message}\n`);
+               // Erros reais de sintaxe ou dados corrompidos
+               console.error(`Erro na linha ${lineCount}: ${err.message}`);
+               logStream.write(`Linha ${lineCount}: ERRO REAL - ${err.message}\n`);
             }
           }
         }
-
-        // Limpar buffer para a próxima query
         queryBuffer = '';
       }
     }
 
-    // Reabilitar chaves estrangeiras
+    // REABILITAR TUDO
     try {
       await ds.query("SET session_replication_role = 'origin'");
+      console.log('🔒 Verificações de integridade reabilitadas.');
     } catch (e) {}
 
     logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} ---\n`);
     logStream.end();
-    console.log('Migração de dados finalizada!');
+    console.log(`Migração finalizada. ${insertCount} registros inseridos.`);
     await this.fixSequences(ds);
   }
 
   async fixSequences(targetDataSource?: DataSource) {
     const ds = targetDataSource || this.dataSource;
-    console.log('Sincronizando sequences do PostgreSQL...');
+    console.log('Sincronizando sequences...');
     const tables = await ds.query(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -138,11 +111,12 @@ export class MigrationDataService {
     for (const table of tables) {
       const tableName = table.table_name;
       try {
+        // Resetar sequences para que os próximos IDs automáticos não deem erro
         await ds.query(`
-          SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), coalesce(max(id), 1)) FROM "${tableName}";
+          SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), coalesce(max(id), 1), true) FROM "${tableName}";
         `);
       } catch (e) {}
     }
-    console.log('Sequences sincronizadas com sucesso!');
+    console.log('Sequences sincronizadas!');
   }
 }

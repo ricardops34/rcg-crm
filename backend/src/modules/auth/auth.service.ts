@@ -42,37 +42,50 @@ export class AuthService {
     login: string,
     pass: string,
   ): Promise<Partial<SystemUser> | null> {
+    console.log(`[AUTH] 🔐 Tentativa de login: "${login}"`);
+    
     const user = await this.userRepository.findOne({
       where: { login, active: 'Y' },
     });
 
     if (!user) {
-      throw new UnauthorizedException('Usuário não encontrado ou inativo');
+      console.warn(`[AUTH] ❌ Usuário não encontrado ou inativo: "${login}"`);
+      return null;
     }
 
     let isMatch = false;
-
-    // Lógica ADR 001: Suporte a migração de MD5 para Bcrypt
-    const isMd5 = user.password.length === 32;
-
-    if (isMd5) {
+    const dbHash = user.password;
+    
+    // 1. Verificar se é MD5 (32 caracteres hex)
+    if (dbHash.length === 32) {
+      console.log(`[AUTH] ℹ️ Verificando MD5 para: ${login}`);
       const passMd5 = crypto.createHash('md5').update(pass).digest('hex');
-      if (passMd5 === user.password) {
+      if (passMd5 === dbHash) {
         isMatch = true;
-        // Migrar para Bcrypt imediatamente
-        const hashedPass = await bcrypt.hash(pass, 10);
-        user.password = hashedPass;
+        console.log(`[AUTH] ✅ MD5 OK. Migrando para Bcrypt moderno...`);
+        user.password = await bcrypt.hash(pass, 10);
         await this.userRepository.save(user);
       }
-    } else {
-      isMatch = await bcrypt.compare(pass, user.password);
+    } 
+    // 2. Verificar se é Bcrypt (Padrão PHP/Adianti $2y$ ou Node $2a$/$2b$)
+    else if (dbHash.startsWith('$2')) {
+      console.log(`[AUTH] ℹ️ Verificando Bcrypt para: ${login}`);
+      // Normalizar prefixo $2y$ (PHP) para $2a$ (Node) se necessário
+      const compatibleHash = dbHash.replace(/^\$2y\$/, '$2a$');
+      try {
+        isMatch = await bcrypt.compare(pass, compatibleHash);
+      } catch (e) {
+        console.error(`[AUTH] ❌ Erro ao comparar Bcrypt: ${e.message}`);
+      }
     }
 
     if (isMatch) {
+      console.log(`[AUTH] ✅ Login autorizado: ${login}`);
       const { password, ...result } = user;
       return result as Partial<SystemUser>;
     }
 
+    console.warn(`[AUTH] ❌ Senha incorreta para o usuário: ${login}`);
     return null;
   }
 

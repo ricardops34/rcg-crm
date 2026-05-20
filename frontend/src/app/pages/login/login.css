@@ -15,8 +15,7 @@
   height: 48px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 40px;
+  justify-content: center;
 }
 
 .allia-top-bar-magenta img {
@@ -62,11 +61,26 @@
   transform: scale(1.04);
 }
 
-/* Reduz o padding superior gigante do container de formulário para aproximá-lo do logo */
+/* Melhorias visuais na parte esquerda (painel branco) */
+po-page-login {
+  display: block;
+  margin-top: 56px !important;
+  height: calc(100vh - 56px) !important;
+}
+
+.po-page-login-panel {
+  background: linear-gradient(135deg, #fdfdfd 0%, #f0f4f8 100%) !important;
+}
+
+/* Transforma o form em um "card" flutuante */
 .po-page-login-panel-content {
-  padding-top: 16px !important;
-  margin-top: 0 !important;
-  margin-bottom: 24px !important;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05) !important;
+  padding: 40px 32px 32px 32px !important;
+  margin: 0 auto !important;
+  max-width: 420px !important;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
 }
 
 /* Ajusta o espaçamento do formulário */
