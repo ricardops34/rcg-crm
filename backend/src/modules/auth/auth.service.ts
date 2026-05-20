@@ -42,50 +42,55 @@ export class AuthService {
     login: string,
     pass: string,
   ): Promise<Partial<SystemUser> | null> {
-    console.log(`[AUTH] 🔐 Tentativa de login: "${login}"`);
+    const normalizedLogin = login.toLowerCase().trim();
+    console.log(`[AUTH] 🔐 Tentativa de login: "${normalizedLogin}"`);
     
-    const user = await this.userRepository.findOne({
-      where: { login, active: 'Y' },
-    });
+    // Busca insensível a maiúsculas/minúsculas e aceita 'Y' ou null (se for o caso)
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('LOWER(user.login) = :login', { login: normalizedLogin })
+      .andWhere('user.active = :active', { active: 'Y' })
+      .getOne();
 
     if (!user) {
-      console.warn(`[AUTH] ❌ Usuário não encontrado ou inativo: "${login}"`);
+      console.warn(`[AUTH] ❌ Usuário não encontrado ou inativo no banco: "${normalizedLogin}"`);
+      // Log extra para depurar se o usuário existe mas está inativo
+      const anyUser = await this.userRepository.findOne({ where: { login: normalizedLogin } });
+      if (anyUser) console.log(`[AUTH] ℹ️ Usuário existe mas status é: "${anyUser.active}"`);
       return null;
     }
 
     let isMatch = false;
     const dbHash = user.password;
+    console.log(`[AUTH] ℹ️ Hash encontrado no banco: "${dbHash.substring(0, 10)}..."`);
     
-    // 1. Verificar se é MD5 (32 caracteres hex)
+    // 1. MD5
     if (dbHash.length === 32) {
-      console.log(`[AUTH] ℹ️ Verificando MD5 para: ${login}`);
       const passMd5 = crypto.createHash('md5').update(pass).digest('hex');
       if (passMd5 === dbHash) {
         isMatch = true;
-        console.log(`[AUTH] ✅ MD5 OK. Migrando para Bcrypt moderno...`);
+        console.log(`[AUTH] ✅ MD5 OK. Migrando...`);
         user.password = await bcrypt.hash(pass, 10);
         await this.userRepository.save(user);
       }
     } 
-    // 2. Verificar se é Bcrypt (Padrão PHP/Adianti $2y$ ou Node $2a$/$2b$)
+    // 2. Bcrypt ($2y$, $2a$, $2b$)
     else if (dbHash.startsWith('$2')) {
-      console.log(`[AUTH] ℹ️ Verificando Bcrypt para: ${login}`);
-      // Normalizar prefixo $2y$ (PHP) para $2a$ (Node) se necessário
       const compatibleHash = dbHash.replace(/^\$2y\$/, '$2a$');
       try {
         isMatch = await bcrypt.compare(pass, compatibleHash);
       } catch (e) {
-        console.error(`[AUTH] ❌ Erro ao comparar Bcrypt: ${e.message}`);
+        console.error(`[AUTH] ❌ Erro de comparação: ${e.message}`);
       }
     }
 
     if (isMatch) {
-      console.log(`[AUTH] ✅ Login autorizado: ${login}`);
+      console.log(`[AUTH] ✅ Login autorizado: ${user.login}`);
       const { password, ...result } = user;
       return result as Partial<SystemUser>;
     }
 
-    console.warn(`[AUTH] ❌ Senha incorreta para o usuário: ${login}`);
+    console.warn(`[AUTH] ❌ Senha não confere para: ${user.login}`);
     return null;
   }
 

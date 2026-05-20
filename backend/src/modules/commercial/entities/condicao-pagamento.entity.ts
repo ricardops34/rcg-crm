@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('condicao_pagamento')
 export class CondicaoPagamento {
@@ -17,6 +17,9 @@ export class CondicaoPagamento {
   @Column({ length: 1, nullable: true })
   status: string;
 
+  @Column({ length: 50, nullable: true })
+  forma: string;
+
   @Column({ type: 'date', nullable: true })
   dt_inicio: Date;
 
@@ -29,9 +32,9 @@ export class CondicaoPagamento {
   @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
   systemUnitId: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
+  @Column({ name: 'dt_inclusao', type: 'timestamp', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
+  @Column({ name: 'dt_alteracao', type: 'timestamp', nullable: true })
   dtAlteracao: Date;
 }
