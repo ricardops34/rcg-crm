@@ -1,9 +1,7 @@
 /* login.css */
 
 .allia-top-bar {
-  position: fixed !important;
-  top: 0;
-  left: 0;
+  position: relative !important;
   width: 100%;
   z-index: 9999;
   display: flex;
@@ -64,7 +62,6 @@
 /* Melhorias visuais na parte esquerda (painel branco) */
 po-page-login {
   display: block;
-  margin-top: 56px !important;
   height: calc(100vh - 56px) !important;
 }
 

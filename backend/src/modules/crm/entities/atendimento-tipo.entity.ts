@@ -26,6 +26,18 @@ export class AtendimentoTipo {
   @Column({ type: 'char', length: 1, nullable: true })
   excluir: string;
 
+  @Column({ type: 'char', length: 1, nullable: true })
+  atendimento: string;
+
+  @Column({ type: 'char', length: 1, nullable: true })
+  venda: string;
+
+  @Column({ type: 'char', length: 1, nullable: true })
+  cadastro: string;
+
+  @Column({ type: 'char', length: 1, nullable: true })
+  cobranca: string;
+
   @Column({ type: 'text', nullable: true })
   cor: string;
 
