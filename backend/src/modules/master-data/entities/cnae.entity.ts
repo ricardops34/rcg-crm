@@ -1,21 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('armazem')
-export class Armazem {
+@Entity('cnae')
+export class Cnae {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'cod_erp', length: 6 })
+  @Column({ name: 'cod_erp', length: 10, nullable: true })
   codErp: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 100, nullable: true })
   descricao: string;
-
-  @Column({ length: 1, nullable: true })
-  status: string;
-
-  @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
-  systemUnitId: number;
 
   @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;

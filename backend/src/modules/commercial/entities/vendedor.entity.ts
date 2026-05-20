@@ -1,12 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Filial } from '../../master-data/entities/filial.entity';
 
 @Entity('vendedor')
@@ -75,4 +67,3 @@ export class Vendedor {
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
-

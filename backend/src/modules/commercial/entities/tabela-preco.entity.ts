@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('tabela_preco')
 export class TabelaPreco {
@@ -17,22 +11,22 @@ export class TabelaPreco {
   @Column({ name: 'filial_id', type: 'integer', nullable: true })
   filialId: number;
 
-  @Column({ name: 'cod_erp', length: 3 })
+  @Column({ name: 'cod_erp', length: 3, nullable: true })
   codErp: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   descricao: string;
 
-  @Column({ type: 'char', length: 1, nullable: true })
+  @Column({ length: 1, nullable: true })
   status: string;
 
-  @Column({ name: 'dt_inicio', type: 'date', nullable: true })
-  dtInicio: Date;
+  @Column({ type: 'date', nullable: true })
+  dt_inicio: Date;
 
-  @Column({ name: 'dt_fim', type: 'date', nullable: true })
-  dtFim: Date;
+  @Column({ type: 'date', nullable: true })
+  dt_fim: Date;
 
-  @Column({ type: 'char', length: 1, nullable: true })
+  @Column({ length: 1, nullable: true })
   utiliza: string;
 
   @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
@@ -44,4 +38,3 @@ export class TabelaPreco {
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
-
