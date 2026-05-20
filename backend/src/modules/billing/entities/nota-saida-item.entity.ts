@@ -2,8 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
@@ -131,10 +129,10 @@ export class NotaSaidaItem {
   @Column({ type: 'char', length: 1, nullable: true })
   tipo: string;
 
-  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
+  @Column({ name: 'dt_inclusao', type: 'timestamp', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
+  @Column({ name: 'dt_alteracao', type: 'timestamp', nullable: true })
   dtAlteracao: Date;
 }
 

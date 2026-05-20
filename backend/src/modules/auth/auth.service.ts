@@ -156,8 +156,8 @@ export class AuthService {
     const programs = await this.permissionsService.getUserPrograms(userId);
     const userRoles = (await this.userRepository.query(
       `SELECT sg.role FROM system_group sg 
-       JOIN system_user_group sug ON sug.system_group_id = sg.id 
-       WHERE sug.system_user_id = $1`,
+       JOIN system_user_groups sug ON sug.system_group_id = sg.id 
+       WHERE sug.system_users_id = $1`,
       [userId],
     )).map((g: any) => g.role?.toUpperCase());
 

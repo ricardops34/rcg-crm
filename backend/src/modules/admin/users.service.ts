@@ -77,36 +77,36 @@ export class UsersService {
   private async updateRelations(userId: number, groups?: number[], units?: number[], programs?: number[]) {
     // Atualizar Grupos
     if (groups) {
-      await this.userGroupRepository.delete({ systemUserId: userId });
+      await this.userGroupRepository.delete({ systemUsersId: userId });
       const userGroups = groups.map(groupId => 
-        this.userGroupRepository.create({ systemUserId: userId, systemGroupId: groupId })
+        this.userGroupRepository.create({ systemUsersId: userId, systemGroupId: groupId })
       );
       await this.userGroupRepository.save(userGroups);
     }
 
     // Atualizar Unidades
     if (units) {
-      await this.userUnitRepository.delete({ systemUserId: userId });
+      await this.userUnitRepository.delete({ systemUsersId: userId });
       const userUnits = units.map(unitId => 
-        this.userUnitRepository.create({ systemUserId: userId, systemUnitId: unitId })
+        this.userUnitRepository.create({ systemUsersId: userId, systemUnitId: unitId })
       );
       await this.userUnitRepository.save(userUnits);
     }
 
     // Atualizar Programas Diretos
     if (programs) {
-      await this.userProgramRepository.delete({ systemUserId: userId });
+      await this.userProgramRepository.delete({ systemUsersId: userId });
       const userPrograms = programs.map(progId => 
-        this.userProgramRepository.create({ systemUserId: userId, systemProgramId: progId })
+        this.userProgramRepository.create({ systemUsersId: userId, systemProgramId: progId })
       );
       await this.userProgramRepository.save(userPrograms);
     }
   }
 
   async remove(id: number) {
-    await this.userGroupRepository.delete({ systemUserId: id });
-    await this.userUnitRepository.delete({ systemUserId: id });
-    await this.userProgramRepository.delete({ systemUserId: id });
+    await this.userGroupRepository.delete({ systemUsersId: id });
+    await this.userUnitRepository.delete({ systemUsersId: id });
+    await this.userProgramRepository.delete({ systemUsersId: id });
     return this.userRepository.delete(id);
   }
 }

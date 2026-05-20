@@ -21,7 +21,7 @@ export class PermissionsService {
 
   async hasPermission(userId: number, controller: string): Promise<boolean> {
     const userGroups = await this.userGroupRepository.find({
-      where: { systemUserId: userId },
+      where: { systemUsersId: userId },
       relations: ['systemGroup'],
     });
 
@@ -37,7 +37,7 @@ export class PermissionsService {
     // Verificar Permissões Diretas do Usuário
     const userPermission = await this.userProgramRepository.findOne({
       where: {
-        systemUserId: userId,
+        systemUsersId: userId,
         systemProgram: { controller: controller },
       },
       relations: ['systemProgram'],
@@ -61,7 +61,7 @@ export class PermissionsService {
 
   async getUserPrograms(userId: number) {
     const userGroups = await this.userGroupRepository.find({
-      where: { systemUserId: userId },
+      where: { systemUsersId: userId },
       relations: ['systemGroup'],
     });
 
@@ -91,7 +91,7 @@ export class PermissionsService {
 
     // Buscar Programas via Usuário Direto
     const userPrograms = await this.userProgramRepository.find({
-      where: { systemUserId: userId },
+      where: { systemUsersId: userId },
       relations: ['systemProgram'],
     });
 
@@ -121,7 +121,7 @@ export class PermissionsService {
 
   async getMenuStructure(userId: number) {
     const userGroups = await this.userGroupRepository.find({
-      where: { systemUserId: userId },
+      where: { systemUsersId: userId },
       relations: ['systemGroup'],
     });
 

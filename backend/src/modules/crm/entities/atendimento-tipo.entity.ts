@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('atendimento_tipo')
 export class AtendimentoTipo {
@@ -16,6 +10,12 @@ export class AtendimentoTipo {
 
   @Column({ length: 50, nullable: true })
   descricao: string;
+
+  @Column({ type: 'text', nullable: true })
+  cor: string;
+
+  @Column({ length: 100, nullable: true })
+  icone: string;
 
   @Column({ type: 'char', length: 1, nullable: true })
   retorno: string;
@@ -38,16 +38,9 @@ export class AtendimentoTipo {
   @Column({ type: 'char', length: 1, nullable: true })
   cobranca: string;
 
-  @Column({ type: 'text', nullable: true })
-  cor: string;
-
-  @Column({ length: 100, nullable: true })
-  icone: string;
-
   @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
-

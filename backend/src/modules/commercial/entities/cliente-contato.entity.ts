@@ -1,17 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Cliente } from './cliente.entity';
 import { TipoContato } from './tipo-contato.entity';
-import { Audited } from '../../admin/decorators/audited.decorator';
 
-@Audited()
 @Entity('cliente_contato')
 export class ClienteContato {
   @PrimaryGeneratedColumn()
@@ -34,14 +24,20 @@ export class ClienteContato {
   @Column({ length: 100, nullable: true })
   nome: string;
 
-  @Column({ type: 'char', length: 9, nullable: true })
+  @Column({ length: 50, nullable: true })
   telefone: string;
 
   @Column({ length: 100, nullable: true })
   email: string;
 
-  @Column({ type: 'char', length: 1, nullable: true })
-  situacao: string;
+  @Column({ length: 1, nullable: true })
+  status: string;
+
+  @Column({ length: 1, nullable: true })
+  sinc: string;
+
+  @Column({ name: 'obs', type: 'text', nullable: true })
+  obs: string;
 
   @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
@@ -49,4 +45,3 @@ export class ClienteContato {
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
-

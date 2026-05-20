@@ -2,16 +2,16 @@ import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { SystemUser } from './system-user.entity';
 import { SystemProgram } from './system-program.entity';
 
-@Entity('system_user_program')
+@Entity('system_user_programs')
 export class SystemUserProgram {
   @PrimaryColumn()
   id: number;
 
-  @Column({ name: 'system_user_id', type: 'integer' })
-  systemUserId: number;
+  @Column({ name: 'system_users_id', type: 'integer' })
+  systemUsersId: number;
 
   @ManyToOne(() => SystemUser)
-  @JoinColumn({ name: 'system_user_id' })
+  @JoinColumn({ name: 'system_users_id' })
   systemUser: SystemUser;
 
   @Column({ name: 'system_program_id', type: 'integer' })

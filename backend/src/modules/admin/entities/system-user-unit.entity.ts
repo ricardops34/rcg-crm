@@ -8,16 +8,16 @@ import {
 import { SystemUser } from './system-user.entity';
 import { SystemUnit } from './system-unit.entity';
 
-@Entity('system_user_unit')
+@Entity('system_user_units')
 export class SystemUserUnit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'system_user_id', type: 'integer' })
-  systemUserId: number;
+  @Column({ name: 'system_users_id', type: 'integer' })
+  systemUsersId: number;
 
   @ManyToOne(() => SystemUser, (user) => (user as any).userUnits)
-  @JoinColumn({ name: 'system_user_id' })
+  @JoinColumn({ name: 'system_users_id' })
   systemUser: SystemUser;
 
   @Column({ name: 'system_unit_id', type: 'integer' })

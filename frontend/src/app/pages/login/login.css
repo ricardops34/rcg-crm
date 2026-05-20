@@ -36,3 +36,7 @@
   background-color: #00AEA5;
   height: 8px;
 }
+/* Ajuste para a logo original não ficar escondida atrás da barra fixa da ALLIA */
+.po-page-background-main-logo {
+  margin-top: 56px !important;
+}
