@@ -32,6 +32,9 @@ export class NotaSaida {
   @JoinColumn({ name: 'cliente_id' })
   cliente: Cliente;
 
+  @Column({ name: 'fornecedor_id', type: 'integer', nullable: true })
+  fornecedorId: number;
+
   @Column({ name: 'nota_fiscal', length: 9, nullable: true })
   notaFiscal: string;
 

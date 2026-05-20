@@ -14,7 +14,12 @@ async function run() {
 
     try {
       console.log('\n🧹 Limpando dados de teste antes da migração...');
-      await securityDataSource.query('TRUNCATE system_user_group, system_group_program, system_users, system_group, system_program, system_unit CASCADE');
+      
+      // Limpar Security
+      await securityDataSource.query('TRUNCATE system_user_group, system_group_program, system_users, system_group, system_program, system_unit, system_preference, system_user_program, system_user_unit CASCADE');
+      
+      // Limpar CRM (Tabelas Principais)
+      await crmDataSource.query('TRUNCATE vendedor, filial, cliente, nota_saida, titulo_receber, atendimento, produto CASCADE');
       
       // 1. Migrar permissões e usuários (Banco Security)
       console.log('\n[1/2] Migrando Permissões e Usuários Reais (Security)...');

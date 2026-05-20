@@ -6,6 +6,7 @@ import { Estado } from './entities/estado.entity';
 import { TipoEntradaSaida } from './entities/tipo-entrada-saida.entity';
 import { Cep } from './entities/cep.entity';
 import { Empresa } from './entities/empresa.entity';
+import { Parametro } from './entities/parametro.entity';
 import { ErpTranslationService } from './services/erp-translation/erp-translation.service';
 import { SyncMasterDataService } from './services/sync-master-data/sync-master-data.service';
 import { SyncMasterDataController } from './controllers/sync-master-data/sync-master-data.controller';
@@ -27,6 +28,7 @@ import { Produto } from '../catalog/entities/produto.entity';
       TipoEntradaSaida,
       Cep,
       Empresa,
+      Parametro,
       Cliente,
       Vendedor,
       TabelaPreco,
