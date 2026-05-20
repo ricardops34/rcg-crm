@@ -1,4 +1,5 @@
 ﻿import { DataSource } from 'typeorm';
+import { SystemUnit } from './modules/admin/entities/system-unit.entity';
 import { SystemUser } from './modules/admin/entities/system-user.entity';
 import { SystemGroup } from './modules/admin/entities/system-group.entity';
 import { SystemProgram } from './modules/admin/entities/system-program.entity';
@@ -44,17 +45,28 @@ export async function seed(
       const groupRepo = securityDataSource.getRepository(SystemGroup);
       const programRepo = securityDataSource.getRepository(SystemProgram);
       const gpRepo = securityDataSource.getRepository(SystemGroupProgram);
+      const unitRepo = securityDataSource.getRepository(SystemUnit);
+
+      // Criar Unidade no Security (Necessário para a FK do usuário)
+      let securityUnit = await unitRepo.findOne({ where: { name: 'RCG Matriz' } });
+      if (!securityUnit) {
+        securityUnit = new SystemUnit();
+        securityUnit.name = 'RCG Matriz';
+        securityUnit = await unitRepo.save(securityUnit);
+        console.log('✅ Unidade criada no Security');
+      }
 
       const group = new SystemGroup();
       group.name = 'Admin';
+      group.role = 'ADMIN';
       const savedGroup = await groupRepo.save(group);
 
       const programs = [
-        { name: 'Usuários', controller: 'SystemUserList' },
-        { name: 'Vendedores', controller: 'VendedorList' },
-        { name: 'Clientes', controller: 'ClienteList' },
-        { name: 'Dashboard', controller: 'DashboardVendedor' },
-        { name: 'MCV', controller: 'MvcList' },
+        { name: 'Usuários', controller: 'SystemUserList', module: 'Admin' },
+        { name: 'Vendedores', controller: 'VendedorList', module: 'Vendedor' },
+        { name: 'Clientes', controller: 'ClienteList', module: 'Cadastros' },
+        { name: 'Dashboard', controller: 'DashboardVendedor', module: 'Vendedor' },
+        { name: 'MCV', controller: 'MvcList', module: 'Vendedor' },
       ];
 
       for (const pData of programs) {
@@ -66,6 +78,7 @@ export async function seed(
         const groupProgram = new SystemGroupProgram();
         groupProgram.systemGroupId = savedGroup.id;
         groupProgram.systemProgramId = savedProgram.id;
+        groupProgram.actions = JSON.stringify({ view: true, insert: true, update: true, delete: true });
         await gpRepo.save(groupProgram);
       }
       console.log('✅ Estrutura RBAC criada no Security');
@@ -77,13 +90,13 @@ export async function seed(
       user.password = await bcrypt.hash('admin', 10);
       user.email = 'ricardo@admin.com';
       user.active = 'Y';
-      user.systemUnitId = filial.id; // Vinculado ao ID da filial do CRM
+      user.systemUnit = securityUnit; // Usar o objeto da unidade criada no Security
       const savedUser = await userRepo.save(user);
 
       const userGroupRepo = securityDataSource.getRepository(SystemUserGroup);
       const userGroup = new SystemUserGroup();
-      userGroup.systemUserId = savedUser.id;
-      userGroup.systemGroupId = savedGroup.id;
+      userGroup.systemUser = savedUser; // Usar objeto
+      userGroup.systemGroup = savedGroup; // Usar objeto
       await userGroupRepo.save(userGroup);
       console.log('✅ Usuário Admin criado e vinculado ao grupo no Security');
     }

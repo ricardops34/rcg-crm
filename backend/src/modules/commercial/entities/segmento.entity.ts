@@ -17,9 +17,10 @@ export class Segmento {
   @Column({ name: 'reg_ativo', length: 1, nullable: true })
   regAtivo: string;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
+

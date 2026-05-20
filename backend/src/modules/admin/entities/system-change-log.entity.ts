@@ -10,7 +10,7 @@ export class SystemChangeLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn({ name: 'log_time' })
+  @CreateDateColumn({ name: 'log_time', nullable: true })
   logTime: Date;
 
   @Column({ length: 100, nullable: true })

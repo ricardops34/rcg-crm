@@ -63,9 +63,10 @@ export class Supervisor {
   @Column({ type: 'char', length: 1, nullable: true })
   desligado: string;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
+

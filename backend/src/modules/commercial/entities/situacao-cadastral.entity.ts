@@ -11,9 +11,10 @@ export class SituacaoCadastral {
   @Column({ name: 'motivo_bloqueio_id', type: 'integer', nullable: true })
   motivoBloqueioId: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 }
+

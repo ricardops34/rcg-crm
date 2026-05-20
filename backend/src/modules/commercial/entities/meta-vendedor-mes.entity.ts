@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -42,10 +42,10 @@ export class MetaVendedorMes {
   @Column({ name: 'novo_cliente', type: 'float', nullable: true })
   novoCliente: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 
   @DeleteDateColumn({ name: 'dt_delete' })
@@ -54,3 +54,4 @@ export class MetaVendedorMes {
   @OneToMany(() => MetaVendedorCategoria, (categoria) => categoria.metaMes)
   categorias: MetaVendedorCategoria[];
 }
+

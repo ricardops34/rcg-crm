@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -39,12 +39,13 @@ export class MetaVendedorCategoria {
   @Column({ type: 'float', nullable: true })
   valor: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 
   @DeleteDateColumn({ name: 'dt_delete' })
   dtDelete: Date;
 }
+

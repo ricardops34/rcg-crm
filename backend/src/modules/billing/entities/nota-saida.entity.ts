@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -148,12 +148,13 @@ export class NotaSaida {
   @Column({ name: 'date_danfe', type: 'timestamp', nullable: true })
   dateDanfe: Date;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 
   @OneToMany(() => NotaSaidaItem, (item) => item.notaSaida)
   itens: NotaSaidaItem[];
 }
+

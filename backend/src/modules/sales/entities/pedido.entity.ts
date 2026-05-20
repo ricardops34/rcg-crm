@@ -120,10 +120,10 @@ export class Pedido {
   @Column({ name: 'intermediador_id', type: 'integer', nullable: true })
   intermediadorId: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 
   @Column({ name: 'orcamento_id', type: 'integer', nullable: true })
@@ -138,3 +138,4 @@ export class Pedido {
   @OneToMany(() => PedidoItem, (item) => item.pedido)
   itens: PedidoItem[];
 }
+

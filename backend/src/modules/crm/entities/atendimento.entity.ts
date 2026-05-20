@@ -86,10 +86,10 @@ export class Atendimento {
   @Column({ name: 'nota_saida_id', type: 'integer', nullable: true })
   notaSaidaId: number;
 
-  @CreateDateColumn({ name: 'dt_inclusao' })
+  @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;
 
-  @UpdateDateColumn({ name: 'dt_alteracao' })
+  @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
 
   @DeleteDateColumn({ name: 'dt_delete' })
