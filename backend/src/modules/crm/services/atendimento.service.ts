@@ -1,8 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { Atendimento } from '../entities/atendimento.entity';
 import { AtendimentoTipo } from '../entities/atendimento-tipo.entity';
+
+export interface SaveAtendimentoInput {
+  id?: number;
+  atendimentoTipoId: number;
+  vendedorId?: number;
+  clienteId?: number;
+  codigoCliente?: string;
+  horarioInicial: string | Date;
+  horarioFinal: string | Date;
+  titulo: string;
+  cor?: string;
+  observacao?: string;
+  status?: string;
+  userIdCreate?: number;
+}
 
 @Injectable()
 export class AtendimentoService {
@@ -47,17 +62,17 @@ export class AtendimentoService {
   }
 
   async save(
-    data: Partial<Atendimento>,
+    data: SaveAtendimentoInput,
     userId: number,
     vendedorId: number,
   ): Promise<Atendimento> {
-    const atendimento = this.atendimentoRepository.create({
+    const atendimento: Atendimento = this.atendimentoRepository.create({
       ...data,
       vendedorId,
       status: data.status || 'A',
       userIdCreate: data.id ? data.userIdCreate : userId,
       userIdUpdate: userId,
-    });
+    } as DeepPartial<Atendimento>);
 
     return this.atendimentoRepository.save(atendimento);
   }

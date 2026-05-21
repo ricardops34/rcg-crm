@@ -1,11 +1,4 @@
-﻿import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { SyncBillingService } from '../../services/sync-billing/sync-billing.service';
-import { SyncBatchDto } from '../../../commercial/dto/sync-batch.dto';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
-import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
-
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { SyncBillingService } from '../../services/sync-billing/sync-billing.service';
 import { SyncBatchDto } from '../../../commercial/dto/sync-batch.dto';

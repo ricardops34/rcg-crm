@@ -10,11 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { TabelaPrecoService } from '../../services/tabela-preco/tabela-preco.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
+import { TabelaPrecoResponseDto, TabelaPrecoItemResponseDto } from '../../dto/tabela-preco.dto';
 
 @ApiTags('Commercial / Tabelas de Preços')
 @ApiBearerAuth()
@@ -25,6 +26,8 @@ export class TabelaPrecoController {
   constructor(private readonly tabelaPrecoService: TabelaPrecoService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Lista todas as tabelas de preço' })
+  @ApiResponse({ status: 200, type: [TabelaPrecoResponseDto] })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 100,
@@ -34,11 +37,15 @@ export class TabelaPrecoController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Busca uma tabela de preço pelo ID' })
+  @ApiResponse({ status: 200, type: TabelaPrecoResponseDto })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tabelaPrecoService.findOne(id);
   }
 
   @Get(':id/itens')
+  @ApiOperation({ summary: 'Lista os itens (preços) de uma tabela' })
+  @ApiResponse({ status: 200, type: [TabelaPrecoItemResponseDto] })
   findItems(@Param('id', ParseIntPipe) id: number) {
     return this.tabelaPrecoService.findItems(id);
   }

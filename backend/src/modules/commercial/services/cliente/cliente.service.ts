@@ -1,8 +1,12 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Cliente } from '../../entities/cliente.entity';
+
+export type CreateClienteInput = Omit<Partial<Cliente>, 'nascimento'> & {
+  nascimento?: string | Date;
+};
 
 @Injectable()
 export class ClienteService {
@@ -77,13 +81,13 @@ export class ClienteService {
     return cliente;
   }
 
-  async create(data: Partial<Cliente>): Promise<Cliente> {
-    const cliente = this.clienteRepository.create(data);
+  async create(data: CreateClienteInput): Promise<Cliente> {
+    const cliente = this.clienteRepository.create(data as DeepPartial<Cliente>);
     return this.clienteRepository.save(cliente);
   }
 
-  async update(id: number, data: Partial<Cliente>): Promise<Cliente | null> {
-    await this.clienteRepository.update(id, data);
+  async update(id: number, data: CreateClienteInput): Promise<Cliente | null> {
+    await this.clienteRepository.update(id, data as any);
     return this.findOne(id);
   }
 
