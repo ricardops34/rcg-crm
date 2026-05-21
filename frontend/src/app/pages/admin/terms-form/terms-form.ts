@@ -23,7 +23,7 @@ import { AuthService } from "../../../services/auth";
 
       <form #termsForm="ngForm">
         <div class="po-row">
-          <po-input class="po-md-2" name="version" [(ngModel)]="terms.version" p-label="Versão Atual" p-required></po-input>
+          <po-input class="po-md-2" name="version" [(ngModel)]="terms.version" p-label="Versão Atual" [p-required]="true"></po-input>
           <div class="po-md-10"></div>
         </div>
 
@@ -34,7 +34,7 @@ import { AuthService } from "../../../services/auth";
             [(ngModel)]="terms.text" 
             p-label="Texto dos Termos (HTML aceito)"
             p-help="Este texto será exibido no modal de login para todos os usuários."
-            p-required>
+            [p-required]="true">
           </po-rich-text>
         </div>
       </form>
