@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermission } from '../auth/decorators/permissions.decorator';
+import { SaveTermsDto, CreateUserDto, UpdateUserDto } from './dto/users.dto';
 
 @ApiTags('Admin / Users')
 @ApiBearerAuth()
@@ -36,7 +37,7 @@ export class UsersController {
 
   @Post('terms')
   @ApiOperation({ summary: 'Atualiza o texto e versão dos termos de uso' })
-  async saveTerms(@Body() data: { text: string, version: string }) {
+  async saveTerms(@Body() data: SaveTermsDto) {
     return this.usersService.saveTerms(data);
   }
 
@@ -48,13 +49,13 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo usuário' })
-  create(@Body() userData: any) {
+  create(@Body() userData: CreateUserDto) {
     return this.usersService.create(userData);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Atualiza dados de um usuário' })
-  update(@Param('id') id: string, @Body() userData: any) {
+  update(@Param('id') id: string, @Body() userData: UpdateUserDto) {
     return this.usersService.update(+id, userData);
   }
 

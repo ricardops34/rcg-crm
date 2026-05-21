@@ -9,18 +9,43 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiProperty, ApiBody } from '@nestjs/swagger';
 import { AuthService, AuthUser } from './auth.service';
 import { UsersService } from '../admin/users.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-interface LoginDto {
+class LoginDto {
+  @ApiProperty({
+    description: 'Nome de usuário, e-mail ou CPF de acesso',
+    example: 'admin',
+  })
   login: string;
+
+  @ApiProperty({
+    description: 'Senha de acesso',
+    example: 'senha123',
+    required: false,
+  })
   password?: string;
 }
 
-interface Verify2faDto {
+class Verify2faDto {
+  @ApiProperty({
+    description: 'Código de verificação de 2 fatores (2FA)',
+    example: '123456',
+  })
   code: string;
+}
+
+class LoginResponseDto {
+  @ApiProperty({ description: 'Próximo passo do fluxo', enum: ['2FA', 'TERMS', null], required: false })
+  nextStep?: string;
+
+  @ApiProperty({ description: 'Token JWT (pode ser temporário se houver nextStep)' })
+  accessToken: string;
+
+  @ApiProperty({ description: 'Dados resumidos do usuário', required: false })
+  user?: any;
 }
 
 interface AuthenticatedRequest extends Request {
@@ -48,7 +73,8 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Realiza o login básico (usuário/senha)' })
-  @ApiResponse({ status: 200, description: 'Login bem-sucedido ou redirecionamento para 2FA/Terms' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 200, type: LoginResponseDto, description: 'Login bem-sucedido ou redirecionamento para 2FA/Terms' })
   async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(
       body.login,
@@ -65,6 +91,8 @@ export class AuthController {
   @Post('verify-2fa')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Valida o código de segundo fator (2FA)' })
+  @ApiBody({ type: Verify2faDto })
+  @ApiResponse({ status: 200, type: LoginResponseDto })
   async verify2fa(
     @Request() req: AuthenticatedRequest,
     @Body() body: Verify2faDto,
@@ -91,6 +119,7 @@ export class AuthController {
   @Post('accept-terms')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Aceita os termos de uso e libera o acesso total' })
+  @ApiResponse({ status: 200, type: LoginResponseDto })
   async acceptTerms(@Request() req: AuthenticatedRequest) {
     if (req.user.scope !== 'TERMS') {
       throw new UnauthorizedException('Token inválido para esta operação');
