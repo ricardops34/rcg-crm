@@ -1,9 +1,10 @@
-﻿import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AnalyticsService } from '../../services/analytics/analytics.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
+import { DashboardStatsDto, MvcItemDto } from '../../dto/analytics.dto';
 
 @ApiTags('BI / Analytics')
 @ApiBearerAuth()
@@ -14,6 +15,8 @@ export class AnalyticsController {
 
   @Get('dashboard')
   @RequirePermission('DashboardVendedor')
+  @ApiOperation({ summary: 'Obtém estatísticas gerais de vendas e metas para o dashboard' })
+  @ApiResponse({ status: 200, type: DashboardStatsDto })
   async getDashboard(
     @Req() req: any,
     @Query('year') year: string,
@@ -35,6 +38,8 @@ export class AnalyticsController {
 
   @Get('mvc')
   @RequirePermission('MvcList')
+  @ApiOperation({ summary: 'Obtém os dados da Média de Venda do Cliente (MVC)' })
+  @ApiResponse({ status: 200, type: [MvcItemDto] })
   async getMvc(
     @Req() req: any,
     @Query('year') year: string,

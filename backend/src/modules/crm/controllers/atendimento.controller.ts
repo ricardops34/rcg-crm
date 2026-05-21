@@ -10,8 +10,9 @@ import {
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AtendimentoService } from '../services/atendimento.service';
+import { CreateAtendimentoDto, AtendimentoResponseDto, AtendimentoTipoResponseDto } from '../../crm/dto/atendimento.dto';
 
 @ApiTags('CRM / Atendimentos')
 @ApiBearerAuth()
@@ -22,11 +23,15 @@ export class AtendimentoController {
   constructor(private readonly atendimentoService: AtendimentoService) {}
 
   @Get('tipos')
+  @ApiOperation({ summary: 'Lista os tipos de atendimento disponíveis' })
+  @ApiResponse({ status: 200, type: [AtendimentoTipoResponseDto] })
   async getTipos() {
     return this.atendimentoService.getTipos();
   }
 
   @Get('atendimentos')
+  @ApiOperation({ summary: 'Lista atendimentos realizados ou agendados' })
+  @ApiResponse({ status: 200, type: [AtendimentoResponseDto] })
   async findAll(
     @Req() req: any,
     @Query('start') start?: string,
@@ -41,7 +46,10 @@ export class AtendimentoController {
   }
 
   @Post('atendimentos')
-  async save(@Req() req: any, @Body() data: any) {
+  @ApiOperation({ summary: 'Registra um novo atendimento ou agendamento' })
+  @ApiBody({ type: CreateAtendimentoDto })
+  @ApiResponse({ status: 201, type: AtendimentoResponseDto })
+  async save(@Req() req: any, @Body() data: CreateAtendimentoDto) {
     return this.atendimentoService.save(
       data,
       req.user.userId,

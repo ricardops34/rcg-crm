@@ -10,11 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { VendedorService } from '../../services/vendedor/vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
+import { CreateVendedorDto, UpdateVendedorDto, VendedorResponseDto } from '../../dto/vendedor.dto';
 
 @ApiTags('Commercial / Vendedores')
 @ApiBearerAuth()
@@ -25,6 +26,8 @@ export class VendedorController {
   constructor(private readonly vendedorService: VendedorService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Lista vendedores com paginação' })
+  @ApiResponse({ status: 200, description: 'Lista de vendedores retornada com sucesso' })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
@@ -34,17 +37,25 @@ export class VendedorController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Busca um vendedor pelo ID' })
+  @ApiResponse({ status: 200, type: VendedorResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.vendedorService.findOne(id);
   }
 
   @Post()
-  async create(@Body() data: any) {
+  @ApiOperation({ summary: 'Cadastra um novo vendedor' })
+  @ApiBody({ type: CreateVendedorDto })
+  @ApiResponse({ status: 201, type: VendedorResponseDto })
+  async create(@Body() data: CreateVendedorDto) {
     return this.vendedorService.save(data);
   }
 
   @Put(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+  @ApiOperation({ summary: 'Atualiza dados de um vendedor' })
+  @ApiBody({ type: UpdateVendedorDto })
+  @ApiResponse({ status: 200, type: VendedorResponseDto })
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateVendedorDto) {
     return this.vendedorService.save({ ...data, id });
   }
 

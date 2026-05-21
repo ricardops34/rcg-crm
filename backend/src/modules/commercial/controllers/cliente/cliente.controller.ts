@@ -10,12 +10,13 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ClienteService } from '../../services/cliente/cliente.service';
 import { ClienteDetailsService } from '../../services/cliente/cliente-details.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
+import { CreateClienteDto, UpdateClienteDto, ClienteResponseDto } from '../../dto/cliente.dto';
 
 @ApiTags('Commercial / Clientes')
 @ApiBearerAuth()
@@ -29,6 +30,8 @@ export class ClienteController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Lista clientes com paginação' })
+  @ApiResponse({ status: 200, description: 'Lista de clientes retornada com sucesso' })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
@@ -42,47 +45,25 @@ export class ClienteController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Busca um cliente pelo ID' })
+  @ApiResponse({ status: 200, type: ClienteResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);
   }
 
-  @Get(':id/comodato')
-  async getComodato(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getComodato(id);
-  }
-
-  @Get(':id/mix')
-  async getMix(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getMix(id);
-  }
-
-  @Get(':id/financeiro')
-  async getFinanceiro(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getFinanceiro(id);
-  }
-
-  @Get(':id/notas')
-  async getNotas(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getNotasFiscais(id);
-  }
-
-  @Get(':id/atendimentos')
-  async getAtendimentos(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getAtendimentos(id);
-  }
-
-  @Get(':id/sugestoes')
-  async getPurchaseSuggestion(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getPurchaseSuggestion(id);
-  }
-
   @Post()
-  async create(@Body() data: any) {
+  @ApiOperation({ summary: 'Cadastra um novo cliente' })
+  @ApiBody({ type: CreateClienteDto })
+  @ApiResponse({ status: 201, type: ClienteResponseDto })
+  async create(@Body() data: CreateClienteDto) {
     return this.clienteService.create(data);
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+  @ApiOperation({ summary: 'Atualiza dados de um cliente' })
+  @ApiBody({ type: UpdateClienteDto })
+  @ApiResponse({ status: 200, type: ClienteResponseDto })
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateClienteDto) {
     return this.clienteService.update(id, data);
   }
 
