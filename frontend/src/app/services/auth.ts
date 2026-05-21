@@ -104,7 +104,7 @@ export class AuthService {
   }
 
   getTerms(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/admin/users/terms`);
+    return this.http.get<any>(`${this.API_URL}/terms`);
   }
 
   saveTerms(data: any): Observable<any> {

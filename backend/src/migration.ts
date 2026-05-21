@@ -44,8 +44,8 @@ export class MigrationDataService {
       lineCount++;
       const trimmedLine = line.trim();
       
-      // Ignorar linhas vazias e comentários de linha única
-      if (trimmedLine === '' || trimmedLine.startsWith('--') || trimmedLine.startsWith('#') || (trimmedLine.startsWith('/*') && trimmedLine.endsWith('*/'))) {
+      // Ignorar linhas vazias e comentários simples
+      if (trimmedLine === '' || trimmedLine.startsWith('--') || trimmedLine.startsWith('#')) {
         continue;
       }
 
@@ -56,19 +56,18 @@ export class MigrationDataService {
         let pgQuery = queryBuffer.trim();
         queryBuffer = ''; 
 
-        // Limpar comentários do início do buffer para detectar o comando
-        const cleanQuery = pgQuery.replace(/^\/\*[\s\S]*?\*\/|^\s*--.*?\n|^\s*#.*?\n/gm, '').trim();
+        // Limpar comentários e espaços extras
+        const cleanDetect = pgQuery.replace(/^\/\*[\s\S]*?\*\/|^\s*--.*?\n|^\s*#.*?\n/gm, '').trim();
 
-        if (cleanQuery.toUpperCase().startsWith('INSERT INTO')) {
-          // 1. Nomes de tabelas e colunas
-          let convertedQuery = pgQuery.replace(/`/g, '"');
+        if (cleanDetect.toUpperCase().startsWith('INSERT INTO')) {
+          let convertedQuery = pgQuery
+            .replace(/`/g, '"') 
+            .replace(/\\'/g, "''") 
+            .replace(/\\"/g, '"') 
+            .replace(/\\r\\n/g, '\n')
+            .replace(/\\n/g, '\n');
 
-          // 2. Escapes de string
-          convertedQuery = convertedQuery.replace(/\\'/g, "''");
-          convertedQuery = convertedQuery.replace(/\\"/g, '"');
-
-          // 3. Corrigir números longos SEM ASPAS (CNPJ/CPF)
-          // Rodamos em loop até não haver mais mudanças para evitar problemas de overlap
+          // Corrigir números longos SEM ASPAS (CNPJ/CPF)
           let lastQuery;
           do {
             lastQuery = convertedQuery;
@@ -78,14 +77,14 @@ export class MigrationDataService {
           try {
             await ds.query(convertedQuery);
             insertCount++;
-            if (insertCount % 500 === 0) console.log(`${insertCount} registros...`);
+            if (insertCount % 500 === 0) console.log(`${insertCount} registros inseridos...`);
           } catch (err) {
             const msg = err.message.toLowerCase();
             if (msg.includes('does not exist') || msg.includes('duplicate key') || msg.includes('already exists')) {
                logStream.write(`Linha ${lineCount}: Ignorado - ${err.message}\n`);
             } else {
                logStream.write(`Linha ${lineCount}: ERRO REAL - ${err.message}\n`);
-               logStream.write(`Query (truncada): ${convertedQuery.substring(0, 1000)}\n`);
+               logStream.write(`Query problemática (truncada): ${convertedQuery.substring(0, 1000)}...\n`);
             }
           }
         }
@@ -97,7 +96,7 @@ export class MigrationDataService {
       console.log('🔒 Verificações reabilitadas.');
     } catch (e) {}
 
-    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} - Total Inserções: ${insertCount} ---\n`);
+    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} - Inserções: ${insertCount} ---\n`);
     logStream.end();
     console.log(`Finalizado: ${insertCount} registros inseridos.`);
     await this.fixSequences(ds);

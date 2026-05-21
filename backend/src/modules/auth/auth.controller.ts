@@ -1,5 +1,6 @@
-﻿import {
+import {
   Controller,
+  Get,
   Post,
   Body,
   UnauthorizedException,
@@ -9,6 +10,7 @@
   Request,
 } from '@nestjs/common';
 import { AuthService, AuthUser } from './auth.service';
+import { UsersService } from '../admin/users.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 interface LoginDto {
@@ -30,7 +32,15 @@ interface AuthenticatedRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  @Get('terms')
+  async getTerms() {
+    return this.usersService.getTerms();
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)

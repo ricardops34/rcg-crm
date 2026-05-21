@@ -8,7 +8,7 @@ export class SystemUserUnit {
   id: number;
 
   @Column({ name: 'system_user_id', type: 'integer' })
-  systemUsersId: number;
+  systemUserId: number;
 
   @ManyToOne(() => SystemUser, (user) => (user as any).userUnits)
   @JoinColumn({ name: 'system_user_id' })
