@@ -23,8 +23,11 @@ export class SyncCommercialService {
     const relations = {
       vendedor: 'vendedor',
       filial: 'filial',
-      condicao_pagamento: 'condicao_pagamento',
       tabela_preco: 'tabela_preco',
+      cond_pgto: 'condicao_pagamento',
+      seguimento: 'segmento',
+      regiao: 'regiao_cliente',
+      motivo_bloqueio: 'motivo_bloqueio',
     };
 
     for (const item of conteudo) {
@@ -33,25 +36,61 @@ export class SyncCommercialService {
       await queryRunner.startTransaction();
 
       try {
+        // 1. Resolução de Chaves Estrangeiras do Legado
         const resolvedData = await this.erpTranslation.resolveRelationIds(
           item,
           relations,
         );
-        resolvedData.sinc = 'S';
 
-        // Busca se já existe pelo cod_erp para fazer Upsert manual
+        // 2. Mapeamento de nomes de campos (Legado -> Moderno)
+        const mappedData: any = {
+          codErp: resolvedData.cod_erp,
+          razao: resolvedData.razao,
+          fantasia: resolvedData.fantasia,
+          cnpjCpf: resolvedData.cnpj_cpf,
+          status: resolvedData.status || 'A',
+          tipo: resolvedData.tipo || 'J',
+          email: resolvedData.email,
+          telefone1: resolvedData.telefone1,
+          celular: resolvedData.celular,
+          limite: resolvedData.limite,
+          risco: resolvedData.risco,
+          logInt: resolvedData.origem,
+          sinc: 'S',
+          // FKs resolvidas pelo erpTranslation
+          vendedorId: resolvedData.vendedor_id,
+          filialId: resolvedData.filial_id,
+          tabelaPrecoId: resolvedData.tabela_preco_id,
+          condicaoPagamentoId: resolvedData.cond_pgto_id,
+          segmentoId: resolvedData.seguimento_id,
+          regiaoClienteId: resolvedData.regiao_id,
+          motivoBloqueioId: resolvedData.motivo_bloqueio_id,
+        };
+
+        // 3. Tratamento de Situação Cadastral (Especial no legado)
+        if (resolvedData.situacao_cadastral) {
+          const situacao = await queryRunner.manager.query(
+            `SELECT id FROM situacao_cadastral WHERE descricao = $1 LIMIT 1`,
+            [resolvedData.situacao_cadastral],
+          );
+          if (situacao.length > 0) {
+            mappedData.situacaoCadastralId = situacao[0].id;
+          }
+        }
+
+        // 4. Upsert (Busca por cod_erp)
         const existing = await this.clienteRepository.findOne({
-          where: { codErp: resolvedData.cod_erp },
+          where: { codErp: mappedData.codErp },
         });
 
         let saved;
         if (existing) {
           saved = await queryRunner.manager.save(Cliente, {
             ...existing,
-            ...resolvedData,
+            ...mappedData,
           });
         } else {
-          saved = await queryRunner.manager.save(Cliente, resolvedData);
+          saved = await queryRunner.manager.save(Cliente, mappedData);
         }
 
         await queryRunner.commitTransaction();

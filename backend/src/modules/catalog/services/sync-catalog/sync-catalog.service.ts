@@ -63,16 +63,16 @@ export class SyncCatalogService {
   }
 
   async syncCategorias(conteudo: any[]) {
-    return this.syncBatch(Categoria, conteudo);
+    return this.syncBatch(Categoria, conteudo, { system_unit: 'system_unit' });
   }
   async syncSubCategorias(conteudo: any[]) {
     return this.syncBatch(SubCategoria, conteudo, { categoria: 'categoria' });
   }
   async syncFabricantes(conteudo: any[]) {
-    return this.syncBatch(Fabricante, conteudo);
+    return this.syncBatch(Fabricante, conteudo, { system_unit: 'system_unit' });
   }
   async syncArmazens(conteudo: any[]) {
-    return this.syncBatch(Armazem, conteudo);
+    return this.syncBatch(Armazem, conteudo, { system_unit: 'system_unit' });
   }
   async syncProdutos(conteudo: any[]) {
     return this.syncBatch(Produto, conteudo, {
@@ -80,6 +80,8 @@ export class SyncCatalogService {
       sub_categoria: 'sub_categoria',
       fabricante: 'fabricante',
       armazem: 'armazem',
+      system_unit: 'system_unit',
+      filial: 'filial',
     });
   }
 }

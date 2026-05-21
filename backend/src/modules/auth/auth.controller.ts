@@ -9,44 +9,11 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiProperty, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService, AuthUser } from './auth.service';
 import { UsersService } from '../admin/users.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
-class LoginDto {
-  @ApiProperty({
-    description: 'Nome de usuário, e-mail ou CPF de acesso',
-    example: 'admin',
-  })
-  login: string;
-
-  @ApiProperty({
-    description: 'Senha de acesso',
-    example: 'senha123',
-    required: false,
-  })
-  password?: string;
-}
-
-class Verify2faDto {
-  @ApiProperty({
-    description: 'Código de verificação de 2 fatores (2FA)',
-    example: '123456',
-  })
-  code: string;
-}
-
-class LoginResponseDto {
-  @ApiProperty({ description: 'Próximo passo do fluxo', enum: ['2FA', 'TERMS', null], required: false })
-  nextStep?: string;
-
-  @ApiProperty({ description: 'Token JWT (pode ser temporário se houver nextStep)' })
-  accessToken: string;
-
-  @ApiProperty({ description: 'Dados resumidos do usuário', required: false })
-  user?: any;
-}
+import { LoginDto, Verify2faDto, LoginResponseDto } from './dto/auth.dto';
 
 interface AuthenticatedRequest extends Request {
   user: {
