@@ -1,7 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PoModule, PoNotificationService, PoSelectOption, PoMultiselectOption } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoNotificationService, 
+  PoSelectOption, 
+  PoMultiselectOption,
+  PoBreadcrumb
+} from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { UserService } from "../../../services/user";
 import { UnitService } from "../../../services/unit";
@@ -14,6 +20,12 @@ import { GroupService } from "../../../services/group";
   templateUrl: "./user-form.html"
 })
 export class UserFormComponent implements OnInit {
+  private userService = inject(UserService);
+  private unitService = inject(UnitService);
+  private groupService = inject(GroupService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private poNotification = inject(PoNotificationService);
 
   user: any = { active: "Y", groups: [] };
   isEdit: boolean = false;
@@ -23,7 +35,7 @@ export class UserFormComponent implements OnInit {
   unitOptions: Array<PoSelectOption> = [];
   groupOptions: Array<PoMultiselectOption> = [];
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Usuários", link: "/admin/users" },
@@ -35,15 +47,6 @@ export class UserFormComponent implements OnInit {
     { label: "Sim", value: "Y" },
     { label: "Não", value: "N" }
   ];
-
-  constructor(
-    private userService: UserService,
-    private unitService: UnitService,
-    private groupService: GroupService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private poNotification: PoNotificationService
-  ) {}
 
   ngOnInit() {
     this.loadInitialData();
@@ -58,7 +61,7 @@ export class UserFormComponent implements OnInit {
 
   loadInitialData() {
     this.unitService.findAll().subscribe(res => {
-      this.unitOptions = res.map((u: any) => ({ label: u.nome, value: u.id }));
+      this.unitOptions = res.map((u: any) => ({ label: u.name, value: u.id }));
     });
     this.groupService.findAll().subscribe(res => {
       this.groupOptions = res.map((g: any) => ({ label: g.name, value: g.id }));

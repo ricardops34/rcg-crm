@@ -1,7 +1,11 @@
 import {
   Controller,
   Get,
+  Post,
+  Put,
+  Delete,
   Param,
+  Body,
   ParseIntPipe,
   Query,
   UseGuards,
@@ -27,5 +31,20 @@ export class ProdutoController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.produtoService.findOne(id);
+  }
+
+  @Post()
+  async create(@Body() data: any) {
+    return this.produtoService.save(data);
+  }
+
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+    return this.produtoService.save({ ...data, id });
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.produtoService.remove(id);
   }
 }

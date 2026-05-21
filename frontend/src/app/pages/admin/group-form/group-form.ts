@@ -6,7 +6,7 @@ import {
   PoNotificationService, 
   PoSelectOption, 
   PoTableColumn,
-  PoTableAction
+  PoBreadcrumb
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { GroupService } from "../../../services/group";
@@ -49,7 +49,7 @@ export class GroupFormComponent implements OnInit {
     { property: "delete", label: "Excluir", type: "boolean", width: "80px" }
   ];
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Perfis de Acesso", link: "/admin/groups" },

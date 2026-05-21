@@ -4,7 +4,7 @@ description: Diretrizes comportamentais e práticas para geração e revisão de
 license: MIT
 ---
 
-# Gemini / Antigravity Guidelines
+# Gemini / Antigravity pode fazer
 
 Estas diretrizes adaptam princípios de revisão e geração de código (inspirados em observações do Andrej Karpathy) para uso com modelos generativos modernos como Gemini (antigravity) e modelos estilo Codex.
 

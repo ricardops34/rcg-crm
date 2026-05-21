@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 import { TabelaPrecoService } from './tabela-preco.service';
 import { TabelaPreco } from '../../entities/tabela-preco.entity';
 import { TabelaPrecoItem } from '../../entities/tabela-preco-item.entity';
@@ -17,14 +17,23 @@ describe('TabelaPrecoService', () => {
         {
           provide: getRepositoryToken(TabelaPreco),
           useValue: {
-            find: jest.fn(),
+            findAndCount: jest.fn(),
             findOne: jest.fn(),
+            save: jest.fn(),
+            delete: jest.fn(),
           },
         },
         {
           provide: getRepositoryToken(TabelaPrecoItem),
           useValue: {
             findOne: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            query: jest.fn(),
           },
         },
       ],

@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { 
   PoModule, 
   PoNotificationService,
-  PoSelectOption 
+  PoSelectOption,
+  PoBreadcrumb
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ProgramService } from "../../../services/program";
@@ -65,7 +66,7 @@ export class ProgramFormComponent implements OnInit {
     { label: "Sistema", value: "Sistema" }
   ];
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Rotinas", link: "/admin/programs" },

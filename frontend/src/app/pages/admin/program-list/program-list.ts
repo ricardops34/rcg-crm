@@ -1,7 +1,15 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoPageFilter, PoNotificationService } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoPageAction, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoPageFilter, 
+  PoNotificationService,
+  PoBreadcrumb 
+} from "@po-ui/ng-components";
 import { ProgramService } from "../../../services/program";
 
 @Component({
@@ -11,6 +19,7 @@ import { ProgramService } from "../../../services/program";
   template: `
     <po-page-list 
       p-title="Rotinas do Sistema"
+      [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
       
@@ -34,6 +43,14 @@ export class ProgramListComponent implements OnInit {
 
   programs: Array<any> = [];
   isLoading: boolean = false;
+
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Rotinas" }
+    ]
+  };
 
   readonly filter: PoPageFilter = {
     action: this.loadPrograms.bind(this),

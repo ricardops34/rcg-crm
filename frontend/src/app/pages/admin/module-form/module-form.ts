@@ -3,7 +3,8 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { 
   PoModule, 
-  PoNotificationService 
+  PoNotificationService,
+  PoBreadcrumb 
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ModuleService } from "../../../services/module";
@@ -44,7 +45,7 @@ export class ModuleFormComponent implements OnInit {
   isLoading: boolean = false;
   title: string = "Novo Módulo";
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Módulos", link: "/admin/modules" },

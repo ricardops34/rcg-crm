@@ -1,7 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoPageFilter } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoPageAction, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoPageFilter, 
+  PoBreadcrumb 
+} from "@po-ui/ng-components";
 import { GroupService } from "../../../services/group";
 
 @Component({
@@ -11,6 +18,7 @@ import { GroupService } from "../../../services/group";
   template: `
     <po-page-list 
       p-title="Perfis de Acesso"
+      [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
       
@@ -31,6 +39,14 @@ export class GroupListComponent implements OnInit {
 
   groups: Array<any> = [];
   isLoading: boolean = false;
+
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Perfis de Acesso" }
+    ]
+  };
 
   readonly filter: PoPageFilter = {
     action: this.loadGroups.bind(this),

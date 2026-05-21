@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { TabelaPreco } from '../../entities/tabela-preco.entity';
 import { TabelaPrecoItem } from '../../entities/tabela-preco-item.entity';
 
@@ -11,10 +11,15 @@ export class TabelaPrecoService {
     private tabelaPrecoRepository: Repository<TabelaPreco>,
     @InjectRepository(TabelaPrecoItem)
     private tabelaPrecoItemRepository: Repository<TabelaPrecoItem>,
+    private dataSource: DataSource,
   ) {}
 
-  async findAll(): Promise<TabelaPreco[]> {
-    return this.tabelaPrecoRepository.find({ where: { status: 'A' } });
+  async findAll(page = 1, limit = 100): Promise<[TabelaPreco[], number]> {
+    return this.tabelaPrecoRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { descricao: 'ASC' },
+    });
   }
 
   async findOne(id: number): Promise<TabelaPreco> {
@@ -25,6 +30,26 @@ export class TabelaPrecoService {
       );
     }
     return table;
+  }
+
+  async findItems(tabelaPrecoId: number) {
+    await this.findOne(tabelaPrecoId);
+
+    return this.dataSource.query(
+      `SELECT
+        tpi.id,
+        tpi.item,
+        tpi.tabela_preco_id as "tabelaPrecoId",
+        tpi.produto_id as "produtoId",
+        p.descricao as produto_nome,
+        tpi.preco,
+        tpi.status
+       FROM tabela_preco_item tpi
+       LEFT JOIN produto p ON p.id = tpi.produto_id
+       WHERE tpi.tabela_preco_id = $1
+       ORDER BY tpi.item ASC, p.descricao ASC`,
+      [tabelaPrecoId],
+    );
   }
 
   async getProductPrice(
@@ -46,5 +71,15 @@ export class TabelaPrecoService {
     }
 
     return item.preco;
+  }
+
+  async save(data: Partial<TabelaPreco>): Promise<TabelaPreco> {
+    return this.tabelaPrecoRepository.save(data);
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.findOne(id);
+    await this.tabelaPrecoItemRepository.delete({ tabelaPrecoId: id });
+    await this.tabelaPrecoRepository.delete(id);
   }
 }

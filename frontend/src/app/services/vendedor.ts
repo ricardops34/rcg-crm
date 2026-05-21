@@ -25,6 +25,13 @@ export class VendedorService {
   }
 
   save(data: any): Observable<any> {
+    if (data.id) {
+      return this.http.put<any>(`${this.API_URL}/${data.id}`, data, { headers: this.getHeaders() });
+    }
     return this.http.post<any>(this.API_URL, data, { headers: this.getHeaders() });
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 }

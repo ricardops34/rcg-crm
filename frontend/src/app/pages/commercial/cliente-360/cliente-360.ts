@@ -1,24 +1,30 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { 
   PoModule, 
   PoTableColumn, 
   PoNotificationService,
-  PoPageAction
+  PoPageAction,
+  PoModalComponent
 } from "@po-ui/ng-components";
+import { FormsModule } from "@angular/forms";
 import { ClienteService } from "../../../services/cliente";
+import { NegociacaoService } from "../../../services/negociacao";
 
 @Component({
   selector: "app-cliente-360",
   standalone: true,
-  imports: [CommonModule, PoModule],
+  imports: [CommonModule, PoModule, FormsModule],
   templateUrl: "./cliente-360.html"
 })
 export class Cliente360Component implements OnInit {
+  @ViewChild("modalNegociacao", { static: true }) modalNegociacao!: PoModalComponent;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private clienteService = inject(ClienteService);
+  private negociacaoService = inject(NegociacaoService);
   private poNotification = inject(PoNotificationService);
 
   cliente: any = {};
@@ -28,8 +34,15 @@ export class Cliente360Component implements OnInit {
   notasItems: Array<any> = [];
   atendimentosItems: Array<any> = [];
   sugestoesItems: Array<any> = [];
+  overdueTitles: Array<any> = [];
+  selectedTitles: Array<any> = [];
   
   isLoading: boolean = true;
+  activeTab: string = "sugestao";
+
+  negociacao: any = {
+    observacao: ""
+  };
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Voltar", action: this.close.bind(this), icon: "po-icon-arrow-left" },
@@ -40,12 +53,20 @@ export class Cliente360Component implements OnInit {
     { property: "produto_nome", label: "Produto" },
     { property: "media_mensal", label: "Média (6m)", type: "number", format: "1.2-2" },
     { property: "qtd_atual", label: "Comprado (Mês)", type: "number" },
-    { property: "sugestao", label: "Sugestão", type: "subtitle", subtitles: [
+    { property: "sugestao_status", label: "Sugestão", type: "subtitle", subtitles: [
       { value: 0, color: "color-08", label: "Abastecido", content: "OK" },
       { value: 1, color: "color-10", label: "Oportunidade", content: "VENDA" }
     ]},
     { property: "sugestao", label: "Qtd. Sugerida", type: "number", format: "1.2-2" },
     { property: "data_ultima_compra", label: "Última Compra", type: "date" }
+  ];
+
+  readonly overdueColumns: Array<PoTableColumn> = [
+    { property: "numero", label: "Número" },
+    { property: "parcela", label: "Parc." },
+    { property: "venc_real", label: "Vencimento", type: "date" },
+    { property: "saldo", label: "Saldo", type: "currency", format: "BRL" },
+    { property: "valor", label: "Valor Original", type: "currency", format: "BRL" }
   ];
 
   readonly comodatoColumns: Array<PoTableColumn> = [
@@ -91,6 +112,10 @@ export class Cliente360Component implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.params["id"];
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) this.activeTab = params['tab'];
+    });
+
     if (id) {
       this.loadCliente(id);
     }
@@ -122,9 +147,52 @@ export class Cliente360Component implements OnInit {
         sugestao_status: s.sugestao > 0 ? 1 : 0
       }));
     });
-    this.clienteService.getAtendimentos(id).subscribe(res => {
-      this.atendimentosItems = res;
+    this.clienteService.getAtendimentos(id).subscribe(res => this.atendimentosItems = res);
+    
+    // Dados de Cobrança
+    this.negociacaoService.getOverdueTitles(id).subscribe(res => {
+      this.overdueTitles = res;
       this.isLoading = false;
+    });
+  }
+
+  openNegociacao() {
+    if (this.overdueTitles.length === 0) {
+      this.poNotification.warning("Cliente não possui títulos vencidos para negociação.");
+      return;
+    }
+    this.negociacao.observacao = "";
+    this.modalNegociacao.open();
+  }
+
+  confirmNegociacao() {
+    if (this.selectedTitles.length < this.overdueTitles.length) {
+      this.poNotification.error("É obrigatório selecionar TODOS os títulos vencidos para gerar a negociação.");
+      return;
+    }
+
+    if (!this.negociacao.observacao) {
+      this.poNotification.warning("Informe uma observação para a negociação.");
+      return;
+    }
+
+    this.isLoading = true;
+    const payload = {
+      clienteId: this.cliente.id,
+      observacao: this.negociacao.observacao,
+      tituloIds: this.selectedTitles.map(t => t.id)
+    };
+
+    this.negociacaoService.create(payload).subscribe({
+      next: () => {
+        this.poNotification.success("Negociação gerada com sucesso!");
+        this.modalNegociacao.close();
+        this.loadAllDetails(this.cliente.id);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.poNotification.error(err.error?.message || "Erro ao gerar negociação.");
+      }
     });
   }
 

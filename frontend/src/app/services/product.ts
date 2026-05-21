@@ -6,9 +6,9 @@ import { environment } from "../../environments/environment";
 @Injectable({
   providedIn: "root"
 })
-export class TabelaPrecoService {
+export class ProductService {
 
-  private readonly API_URL = `${environment.apiUrl}/commercial/tabelas-precos`;
+  private readonly API_URL = `${environment.apiUrl}/produtos`;
 
   constructor(private http: HttpClient) { }
 
@@ -17,16 +17,12 @@ export class TabelaPrecoService {
     return new HttpHeaders().set("Authorization", `Bearer ${token}`);
   }
 
-  findAll(page: number = 1, limit: number = 100): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}?page=${page}&limit=${limit}`, { headers: this.getHeaders() });
+  findAll(): Observable<any> {
+    return this.http.get<any>(this.API_URL, { headers: this.getHeaders() });
   }
 
   findOne(id: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
-  }
-
-  findItems(id: number): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/${id}/itens`, { headers: this.getHeaders() });
   }
 
   save(data: any): Observable<any> {
@@ -38,5 +34,9 @@ export class TabelaPrecoService {
 
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
+
+  getCategorias(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/categorias`, { headers: this.getHeaders() });
   }
 }

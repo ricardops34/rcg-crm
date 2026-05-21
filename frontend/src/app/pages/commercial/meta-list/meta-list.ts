@@ -77,7 +77,8 @@ export class MetaListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate(["/metas/edit", row.id]), icon: "po-icon-edit" }
+    { label: "Editar", action: (row: any) => this.router.navigate(["/metas/edit", row.id]), icon: "po-icon-edit" },
+    { label: "Excluir", action: (row: any) => this.remove(row), icon: "po-icon-delete" }
   ];
 
   ngOnInit(): void {
@@ -106,5 +107,23 @@ export class MetaListComponent implements OnInit {
 
   onFilter(filter: string) {
     this.loadData(filter);
+  }
+
+  remove(row: any) {
+    if (!confirm(`Excluir a meta de ${row.vendedor?.nome || "vendedor"} para ${row.mes}/${row.ano}?`)) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.metaService.delete(row.id).subscribe({
+      next: () => {
+        this.poNotification.success("Meta excluída com sucesso!");
+        this.loadData();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao excluir meta.");
+      }
+    });
   }
 }

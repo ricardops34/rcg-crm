@@ -7,6 +7,8 @@ import { DashboardComponent } from './pages/analytics/dashboard/dashboard';
 import { MvcListComponent } from './pages/commercial/mvc-list/mvc-list';
 import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor-list';
 import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor-form';
+import { ProductListComponent } from './pages/catalog/product-list/product-list';
+import { ProductFormComponent } from './pages/catalog/product-form/product-form';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
 import { TabelaPrecoListComponent } from './pages/commercial/tabela-preco-list/tabela-preco-list';
@@ -39,6 +41,9 @@ export const routes: Routes = [
       { path: 'vendedores', component: VendedorListComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/new', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/edit/:id', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
+      { path: 'produtos', component: ProductListComponent, data: { controller: 'ProdutoList' } },
+      { path: 'produtos/new', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
+      { path: 'produtos/edit/:id', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
       { path: 'metas', component: MetaListComponent, data: { controller: 'MetaList' } },
       { path: 'metas/new', component: MetaFormComponent, data: { controller: 'MetaList' } },
       { path: 'metas/edit/:id', component: MetaFormComponent, data: { controller: 'MetaList' } },

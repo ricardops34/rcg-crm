@@ -69,4 +69,9 @@ export class VendedorService {
   async save(data: any): Promise<Vendedor> {
     return this.vendedorRepository.save(data);
   }
+
+  async remove(id: number): Promise<void> {
+    await this.findOne(id);
+    await this.vendedorRepository.delete(id);
+  }
 }

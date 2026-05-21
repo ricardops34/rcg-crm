@@ -1,17 +1,23 @@
-﻿import {
-  Controller,
-  Get,
-  Post,
+import {
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
+  ParseIntPipe,
+  Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { MetaVendedorService } from '../../services/meta-vendedor/meta-vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
+import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
 
 @Controller('commercial/metas')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ControllerName('MetaList')
 export class MetaVendedorController {
   constructor(private readonly metaService: MetaVendedorService) {}
 
@@ -36,12 +42,23 @@ export class MetaVendedorController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.metaService.findOne(id);
   }
 
   @Post()
-  async save(@Body() data: any) {
+  async create(@Body() data: any) {
     return this.metaService.save(data);
+  }
+
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+    return this.metaService.save({ ...data, id });
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.metaService.remove(id);
+    return { success: true };
   }
 }

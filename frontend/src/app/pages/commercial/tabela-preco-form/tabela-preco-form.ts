@@ -61,8 +61,7 @@ export class TabelaPrecoFormComponent implements OnInit {
     this.tabelaService.findOne(id).subscribe({
       next: (res) => {
         this.tabela = res;
-        // Se houver itens na tabela, carregaríamos aqui
-        this.isLoading = false;
+        this.loadItems(id);
       },
       error: () => {
         this.isLoading = false;
@@ -71,10 +70,39 @@ export class TabelaPrecoFormComponent implements OnInit {
     });
   }
 
+  loadItems(id: number) {
+    this.tabelaService.findItems(id).subscribe({
+      next: (res) => {
+        this.items = res;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.items = [];
+        this.isLoading = false;
+        this.poNotification.warning("Itens da tabela não puderam ser carregados.");
+      }
+    });
+  }
+
   save() {
-    // Nota: O backend atual do TabelaPrecoService não tem o método 'save'.
-    // Vou precisar adicionar ou apenas exibir as informações por enquanto.
-    this.poNotification.warning("A alteração de tabelas de preços deve ser feita via sincronização com o ERP.");
+    this.isLoading = true;
+    this.tabelaService.save(this.tabela).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.poNotification.success("Tabela de preço salva com sucesso!");
+
+        if (this.tabela.id) {
+          this.router.navigate(["/tabelas-precos"]);
+          return;
+        }
+
+        this.router.navigate(["/tabelas-precos/edit", res.id]);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao salvar tabela.");
+      }
+    });
   }
 
   cancel() {

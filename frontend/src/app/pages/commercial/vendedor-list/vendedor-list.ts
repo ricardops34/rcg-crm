@@ -62,7 +62,8 @@ export class VendedorListComponent implements OnInit {
   ];
 
   readonly actions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate(["/vendedores/edit", row.id]), icon: "po-icon-edit" }
+    { label: "Editar", action: (row: any) => this.router.navigate(["/vendedores/edit", row.id]), icon: "po-icon-edit" },
+    { label: "Excluir", action: (row: any) => this.remove(row), icon: "po-icon-delete" }
   ];
 
   ngOnInit(): void {
@@ -96,5 +97,23 @@ export class VendedorListComponent implements OnInit {
 
   create() {
     this.router.navigate(["/vendedores/new"]);
+  }
+
+  remove(row: any) {
+    if (!confirm(`Excluir o vendedor "${row.nome}"?`)) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.vendedorService.delete(row.id).subscribe({
+      next: () => {
+        this.poNotification.success("Vendedor excluído com sucesso!");
+        this.loadData();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao excluir vendedor.");
+      }
+    });
   }
 }

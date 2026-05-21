@@ -31,6 +31,10 @@ export class MetaVendedorService {
     return this.metaRepository.save(data);
   }
 
+  async remove(id: number): Promise<void> {
+    await this.metaRepository.softDelete(id);
+  }
+
   async getSuggestion(
     vendedorId: number,
     month: string,

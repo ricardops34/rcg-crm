@@ -24,13 +24,38 @@
   </div>
 
   <po-tabs>
-    <po-tab p-label="Sugestão de Compra" [p-active]="true">
+    <po-tab p-label="Sugestão de Compra" [p-active]="activeTab === 'sugestao'">
       <div class="po-row po-mt-2">
         <div class="po-md-12">
           <p class="po-font-text-smaller po-mb-2 po-text-color-07">
             Produtos sugeridos com base na média de consumo dos últimos 6 meses vs compras deste mês.
           </p>
           <po-table [p-columns]="sugestaoColumns" [p-items]="sugestoesItems" p-container="shadow"></po-table>
+        </div>
+      </div>
+    </po-tab>
+
+    <po-tab p-label="Cobrança" [p-active]="activeTab === 'cobranca'">
+      <div class="po-row po-mt-2">
+        <div class="po-md-12">
+          <div class="po-row po-mb-2">
+            <po-info class="po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length"></po-info>
+            <div class="po-md-8 po-text-right">
+              <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" p-type="primary" (p-click)="openNegociacao()"></po-button>
+            </div>
+          </div>
+          
+          <po-table 
+            [p-columns]="overdueColumns" 
+            [p-items]="overdueTitles" 
+            p-container="shadow"
+            [p-selectable]="true"
+            [(p-selected-items)]="selectedTitles">
+          </po-table>
+          
+          <p class="po-font-text-smaller po-mt-2 po-text-color-07">
+            * Selecione todos os títulos para habilitar a geração da negociação.
+          </p>
         </div>
       </div>
     </po-tab>
@@ -66,7 +91,7 @@
       <po-table [p-columns]="mixColumns" [p-items]="mixItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="Financeiro (Aberto)">
+    <po-tab p-label="Financeiro (Geral)">
       <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems" p-container="shadow"></po-table>
     </po-tab>
 
@@ -84,3 +109,20 @@
   </po-tabs>
 
 </po-page-default>
+
+<!-- Modal de Negociação -->
+<po-modal #modalNegociacao p-title="Gerar Acordo de Negociação" [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
+  <div class="po-row">
+    <div class="po-md-12">
+      <p>Você está agrupando <strong>{{ selectedTitles.length }}</strong> título(s) para este acordo.</p>
+      <po-textarea 
+        name="obs" 
+        [(ngModel)]="negociacao.observacao" 
+        p-label="Relato da Negociação / Acordo" 
+        p-placeholder="Descreva o que foi acordado com o cliente..."
+        [p-required]="true"
+        [p-rows]="4">
+      </po-textarea>
+    </div>
+  </div>
+</po-modal>

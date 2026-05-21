@@ -1,9 +1,12 @@
-﻿import {
-  Controller,
-  Get,
-  Post,
+import {
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
+  ParseIntPipe,
+  Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -28,12 +31,23 @@ export class VendedorController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.vendedorService.findOne(id);
   }
 
   @Post()
-  async save(@Body() data: any) {
+  async create(@Body() data: any) {
     return this.vendedorService.save(data);
+  }
+
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+    return this.vendedorService.save({ ...data, id });
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.vendedorService.remove(id);
+    return { success: true };
   }
 }

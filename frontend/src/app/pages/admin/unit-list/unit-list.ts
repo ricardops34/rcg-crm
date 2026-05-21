@@ -1,7 +1,15 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoPageFilter, PoNotificationService } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoPageAction, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoPageFilter, 
+  PoNotificationService,
+  PoBreadcrumb 
+} from "@po-ui/ng-components";
 import { UnitService } from "../../../services/unit";
 
 @Component({
@@ -12,6 +20,7 @@ import { UnitService } from "../../../services/unit";
     <po-page-list 
       p-title="Unidades do Sistema"
       p-subtitle="Gestão de filiais e conexões"
+      [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
       
@@ -35,6 +44,14 @@ export class UnitListComponent implements OnInit {
 
   units: Array<any> = [];
   isLoading: boolean = false;
+
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Unidades" }
+    ]
+  };
 
   readonly filter: PoPageFilter = {
     action: this.loadUnits.bind(this),

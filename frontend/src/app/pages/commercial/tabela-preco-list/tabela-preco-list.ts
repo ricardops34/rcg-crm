@@ -57,7 +57,8 @@ export class TabelaPrecoListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate(["/tabelas-precos/edit", row.id]), icon: "po-icon-edit" }
+    { label: "Editar", action: (row: any) => this.router.navigate(["/tabelas-precos/edit", row.id]), icon: "po-icon-edit" },
+    { label: "Excluir", action: (row: any) => this.remove(row), icon: "po-icon-delete" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
@@ -78,14 +79,32 @@ export class TabelaPrecoListComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.tabelaService.findAll().subscribe({
+    this.tabelaService.findAll(1, 100).subscribe({
       next: (res) => {
-        this.items = res;
+        this.items = res.items;
         this.isLoading = false;
       },
       error: () => {
         this.isLoading = false;
         this.poNotification.error("Erro ao carregar tabelas de preços.");
+      }
+    });
+  }
+
+  remove(row: any) {
+    if (!confirm(`Excluir a tabela de preço "${row.descricao}"?`)) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.tabelaService.delete(row.id).subscribe({
+      next: () => {
+        this.poNotification.success("Tabela de preço excluída com sucesso!");
+        this.loadData();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao excluir tabela de preço.");
       }
     });
   }
