@@ -20,9 +20,17 @@
   </div>
 </po-modal>
 
-<po-modal #modalTerms p-title="Termos de Uso e LGPD" [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this) }">
+<po-modal #modalTerms p-title="Termos de Uso e LGPD" [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this), disabled: !termsAccepted }">
   <div class="po-row">
-    <p>Para continuar utilizando o RCG CRM, você deve ler e aceitar nossos novos Termos de Uso e Política de Privacidade (LGPD).</p>
-    <p style="font-size: 0.8rem; color: gray;">Última atualização: 19/05/2026</p>
+    <div class="po-md-12">
+      <p>Para continuar utilizando o RCG CRM, você deve ler e aceitar nossos novos Termos de Uso e Política de Privacidade (LGPD).</p>
+      
+      <div style="height: 250px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; font-size: 0.9rem; margin: 10px 0;" [innerHTML]="termsContent">
+      </div>
+
+      <po-checkbox name="termsAccepted" [(ngModel)]="termsAccepted" p-label="Eu li e concordo com os Termos de Uso e Política de Privacidade."></po-checkbox>
+      
+      <p style="font-size: 0.8rem; color: gray; margin-top: 5px;">Versão: {{ termsVersion }}</p>
+    </div>
   </div>
 </po-modal>

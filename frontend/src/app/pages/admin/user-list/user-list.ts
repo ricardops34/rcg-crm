@@ -38,7 +38,8 @@ export class UserListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo Usuário", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" }
+    { label: "Novo Usuário", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" },
+    { label: "Configurar Termos/LGPD", action: () => this.router.navigate(["/admin/users/terms"]), icon: "po-icon-document" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
@@ -52,7 +53,11 @@ export class UserListComponent implements OnInit {
     { property: "login", label: "Login" },
     { property: "systemUnit.name", label: "Unidade" },
     { property: "grupos", label: "Perfis" },
-    { property: "email", label: "E-mail" },
+    { property: "acceptedTermPolicy", label: "LGPD", type: "label", labels: [
+      { value: "Y", color: "color-10", label: "Aceitou" },
+      { value: "N", color: "color-07", label: "Pendente" }
+    ]},
+    { property: "acceptedTermPolicyAt", label: "Data Aceite", type: "date", format: "dd/MM/yyyy HH:mm" },
     { property: "active", label: "Ativo", type: "label", labels: [
       { value: "Y", color: "color-10", label: "Sim" },
       { value: "N", color: "color-07", label: "Não" }

@@ -102,4 +102,14 @@ export class AuthService {
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
     return this.http.get<any>(`${this.API_URL}/me/menu`, { headers });
   }
+
+  getTerms(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/admin/users/terms`);
+  }
+
+  saveTerms(data: any): Observable<any> {
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.post<any>(`${environment.apiUrl}/admin/users/terms`, data, { headers });
+  }
 }

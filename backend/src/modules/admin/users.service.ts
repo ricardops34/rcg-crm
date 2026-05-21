@@ -6,6 +6,7 @@ import { SystemUser } from './entities/system-user.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemUserUnit } from './entities/system-user-unit.entity';
 import { SystemUserProgram } from './entities/system-user-program.entity';
+import { SystemPreference } from './entities/system-preference.entity';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,26 @@ export class UsersService {
     private userUnitRepository: Repository<SystemUserUnit>,
     @InjectRepository(SystemUserProgram, 'security')
     private userProgramRepository: Repository<SystemUserProgram>,
+    @InjectRepository(SystemPreference, 'security')
+    private preferenceRepository: Repository<SystemPreference>,
   ) {}
+
+  async getTerms() {
+    const terms = await this.preferenceRepository.findOne({ where: { id: 'system_terms_text' } });
+    const version = await this.preferenceRepository.findOne({ where: { id: 'system_terms_version' } });
+    return {
+      text: terms?.preference || 'Texto padrão dos termos...',
+      version: version?.preference || '1.0'
+    };
+  }
+
+  async saveTerms(data: { text: string, version: string }) {
+    await this.preferenceRepository.save([
+      { id: 'system_terms_text', preference: data.text },
+      { id: 'system_terms_version', preference: data.version }
+    ]);
+    return { success: true };
+  }
 
   async findAll() {
     return this.userRepository.find({

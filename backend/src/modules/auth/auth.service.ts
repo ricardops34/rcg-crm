@@ -161,10 +161,10 @@ export class AuthService {
     const programs = await this.permissionsService.getUserPrograms(userId);
     const userRoles = (await this.userRepository.query(
       `SELECT sg.role FROM system_group sg 
-       JOIN system_user_groups sug ON sug.system_group_id = sg.id 
-       WHERE sug.system_users_id = $1`,
+       JOIN system_user_group sug ON sug.system_group_id = sg.id 
+       WHERE sug.system_user_id = $1`,
       [userId],
-    )).map((g: any) => g.role?.toUpperCase());
+    )).map((g: any) => (g.role || '').toUpperCase());
 
     const isGerente = userRoles.includes('GERENTE') || userRoles.includes('ADMIN');
 
@@ -190,5 +190,15 @@ export class AuthService {
 
   async getMenu(userId: number) {
     return this.permissionsService.getMenuStructure(userId);
+  }
+
+  async acceptTerms(userId: number) {
+    await this.userRepository.update(userId, {
+      acceptedTermPolicy: 'Y',
+      acceptedTermPolicyAt: new Date().toISOString(),
+    });
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    return this.login(user as any);
   }
 }

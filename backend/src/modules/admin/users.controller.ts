@@ -20,8 +20,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('terms')
+  async getTerms() {
+    return this.usersService.getTerms();
+  }
+
+  @Post('terms')
+  async saveTerms(@Body() data: { text: string, version: string }) {
+    return this.usersService.saveTerms(data);
   }
 
   @Get(':id')

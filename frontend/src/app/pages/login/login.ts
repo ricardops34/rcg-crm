@@ -23,7 +23,21 @@ export class LoginComponent {
   private poNotification = inject(PoNotificationService);
 
   twoFactorCode: string = "";
+  termsAccepted: boolean = false;
+  termsContent: string = "";
+  termsVersion: string = "";
   isLoading = signal<boolean>(false);
+
+  ngOnInit() {
+    this.loadTerms();
+  }
+
+  loadTerms() {
+    this.authService.getTerms().subscribe(res => {
+      this.termsContent = res.text;
+      this.termsVersion = res.version;
+    });
+  }
 
   loginSubmit(formData: PoPageLogin) {
     this.isLoading.set(true);

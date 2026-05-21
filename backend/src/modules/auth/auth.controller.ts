@@ -77,11 +77,6 @@ export class AuthController {
       throw new UnauthorizedException('Token inválido para esta operação');
     }
 
-    // TODO: Gravar aceite no banco
-    const user = await this.authService.getProfile(req.user.userId);
-    return this.authService.login({
-      ...user,
-      acceptedTermPolicy: 'Y',
-    });
+    return this.authService.acceptTerms(req.user.userId);
   }
 }
