@@ -45,10 +45,46 @@ export class ClienteController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca detalhes completos de um cliente pelo ID' })
+  @ApiOperation({ summary: 'Busca detalhes básicos de um cliente pelo ID' })
   @ApiResponse({ status: 200, type: ClienteResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);
+  }
+
+  @Get(':id/comodato')
+  @ApiOperation({ summary: 'Obtém lista de itens em comodato do cliente' })
+  async getComodato(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getComodato(id);
+  }
+
+  @Get(':id/mix')
+  @ApiOperation({ summary: 'Obtém o mix de produtos comprados pelo cliente' })
+  async getMix(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getMix(id);
+  }
+
+  @Get(':id/financeiro')
+  @ApiOperation({ summary: 'Obtém o resumo financeiro (títulos, limites, atrasos)' })
+  async getFinanceiro(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getFinanceiro(id);
+  }
+
+  @Get(':id/notas')
+  @ApiOperation({ summary: 'Lista as últimas Notas Fiscais emitidas para o cliente' })
+  async getNotas(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getNotasFiscais(id);
+  }
+
+  @Get(':id/atendimentos')
+  @ApiOperation({ summary: 'Lista o histórico de atendimentos CRM do cliente' })
+  async getAtendimentos(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getAtendimentos(id);
+  }
+
+  @Get(':id/sugestoes')
+  @ApiOperation({ summary: 'Obtém sugestões de compra baseadas no histórico' })
+  async getPurchaseSuggestion(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getPurchaseSuggestion(id);
   }
 
   @Post()
@@ -68,6 +104,8 @@ export class ClienteController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Remove um cliente (exclusão lógica)' })
+  @ApiResponse({ status: 200, description: 'Cliente removido com sucesso' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.remove(id);
   }

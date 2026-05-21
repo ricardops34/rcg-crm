@@ -14,6 +14,16 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nes
 import { AtendimentoService } from '../services/atendimento.service';
 import { CreateAtendimentoDto, AtendimentoResponseDto, AtendimentoTipoResponseDto } from '../../crm/dto/atendimento.dto';
 
+interface AuthenticatedRequest extends Request {
+  user: {
+    userId: number;
+    username: string;
+    vendedorId?: number;
+    isGerente: boolean;
+    managedVendedorIds: number[];
+  };
+}
+
 @ApiTags('CRM / Atendimentos')
 @ApiBearerAuth()
 @Controller('crm')
@@ -33,7 +43,7 @@ export class AtendimentoController {
   @ApiOperation({ summary: 'Lista atendimentos realizados ou agendados' })
   @ApiResponse({ status: 200, type: [AtendimentoResponseDto] })
   async findAll(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Query('start') start?: string,
     @Query('end') end?: string,
     @Query('vendedorId') vendedorId?: number,
@@ -49,7 +59,7 @@ export class AtendimentoController {
   @ApiOperation({ summary: 'Registra um novo atendimento ou agendamento' })
   @ApiBody({ type: CreateAtendimentoDto })
   @ApiResponse({ status: 201, type: AtendimentoResponseDto })
-  async save(@Req() req: any, @Body() data: CreateAtendimentoDto) {
+  async save(@Req() req: AuthenticatedRequest, @Body() data: CreateAtendimentoDto) {
     return this.atendimentoService.save(
       data,
       req.user.userId,
