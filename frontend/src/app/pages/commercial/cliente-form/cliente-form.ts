@@ -1,7 +1,14 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PoModule, PoNotificationService, PoTableColumn, PoTableAction, PoSelectOption } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoNotificationService, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoSelectOption,
+  PoBreadcrumb
+} from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ClienteService } from "../../../services/cliente";
 import { VendedorService } from "../../../services/vendedor";
@@ -21,15 +28,24 @@ export class ClienteFormComponent implements OnInit {
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
 
-  cliente: any = { contatos: [], status: "A" };
+  cliente: any = { 
+    contatos: [], 
+    status: "A", 
+    tipo: "J",
+    contribuinte: "S",
+    destacaIe: "N"
+  };
+  
   isLoading: boolean = false;
   title: string = "Novo Cliente";
 
   vendedores: Array<PoSelectOption> = [];
   estados: Array<PoSelectOption> = [];
   municipios: Array<PoSelectOption> = [];
+  condicoes: Array<PoSelectOption> = [];
+  tabelas: Array<PoSelectOption> = [];
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Clientes", link: "/clientes" },
@@ -38,7 +54,11 @@ export class ClienteFormComponent implements OnInit {
   };
 
   readonly contatoColumns: Array<PoTableColumn> = [
-    { property: "tipoContato.descricao", label: "Tipo" },
+    { property: "tipoContatoId", label: "Tipo", type: "label", labels: [
+      { value: 1, label: "Comercial" },
+      { value: 2, label: "Financeiro" },
+      { value: 3, label: "Outros" }
+    ]},
     { property: "nome", label: "Nome" },
     { property: "telefone", label: "Telefone" },
     { property: "email", label: "E-mail" }
@@ -59,12 +79,13 @@ export class ClienteFormComponent implements OnInit {
   }
 
   loadInitialData() {
-    this.vendedorService.findAll().subscribe(res => {
+    this.vendedorService.findAll(1, 100).subscribe(res => {
       this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
     });
     this.locationService.getEstados().subscribe(res => {
       this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
     });
+    // Adicionar carregamento de Condições e Tabelas se houver services para isso
   }
 
   onEstadoChange(estadoId: any) {
@@ -80,7 +101,14 @@ export class ClienteFormComponent implements OnInit {
     this.clienteService.findOne(id).subscribe({
       next: (res) => {
         this.cliente = res;
-        if (this.cliente.estadoId) this.onEstadoChange(this.cliente.estadoId);
+        if (this.cliente.municipioId) {
+          // Precisamos carregar os municípios do estado desse município
+          // Por simplicidade, se tivermos o UF, carregamos
+          if (this.cliente.uf) {
+             const estado = this.estados.find(e => e.label === this.cliente.uf);
+             if (estado) this.onEstadoChange(estado.value);
+          }
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -118,10 +146,10 @@ export class ClienteFormComponent implements OnInit {
       this.cliente.contatos = [];
     }
     this.cliente.contatos.push({
-      nome: "Novo Contato",
+      nome: "",
       telefone: "",
       email: "",
-      tipoContatoId: 1 // Default
+      tipoContatoId: 1
     });
   }
 

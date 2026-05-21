@@ -7,76 +7,71 @@
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <form #formCliente="ngForm">
-    <po-tabs>
-      <po-tab p-label="Identificação" [p-active]="true">
-        <div class="po-row po-mt-2">
-          <po-input class="po-md-6" name="razao" [(ngModel)]="cliente.razao" p-label="Razão Social" p-required="true" p-clean></po-input>
-          <po-input class="po-md-6" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia" p-clean></po-input>
-        </div>
-        <div class="po-row">
-          <po-input class="po-md-3" name="cnpjCpf" [(ngModel)]="cliente.cnpjCpf" p-label="CNPJ/CPF" p-clean></po-input>
-          <po-select class="po-md-3" name="status" [ngModel]="cliente.status" (p-change)="cliente.status = $event" p-label="Status"
-            [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
-          </po-select>
-          <po-select class="po-md-3" name="vendedorId" [ngModel]="cliente.vendedorId" (p-change)="cliente.vendedorId = $event" p-label="Vendedor"
-            [p-options]="vendedores" p-required="true">
-          </po-select>
-          <po-input class="po-md-3" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" p-clean></po-input>
-        </div>
-        <div class="po-row">
-          <po-input class="po-md-12" name="email" [(ngModel)]="cliente.email" p-label="E-mail" p-clean p-icon="po-icon-mail"></po-input>
-        </div>
-      </po-tab>
+    
+    <po-divider p-label="Identificação"></po-divider>
+    <div class="po-row">
+      <po-input class="po-md-2" name="codErp" [(ngModel)]="cliente.codErp" p-label="Cód. ERP" p-clean></po-input>
+      <po-input class="po-md-6" name="razao" [(ngModel)]="cliente.razao" p-label="Razão Social" p-required="true" p-clean></po-input>
+      <po-input class="po-md-4" name="fantasia" [(ngModel)]="cliente.fantasia" p-label="Nome Fantasia" p-clean></po-input>
+    </div>
 
-      <po-tab p-label="Endereço">
-        <div class="po-row po-mt-2">
-          <po-input class="po-md-12" name="endereco" [(ngModel)]="cliente.endereco" p-label="Logradouro / Endereço" p-clean></po-input>
-        </div>
-        <div class="po-row">
-          <po-input class="po-md-4" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro" p-clean></po-input>
-          <po-select class="po-md-2" name="estadoId" [ngModel]="cliente.estadoId" (p-change)="onEstadoChange($event)" p-label="Estado"
-            [p-options]="estados">
-          </po-select>
-          <po-select class="po-md-4" name="municipioId" [ngModel]="cliente.municipioId" (p-change)="cliente.municipioId = $event" p-label="Cidade"
-            [p-options]="municipios" [p-disabled]="!cliente.estadoId">
-          </po-select>
-          <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP" p-mask="99999-999" p-clean></po-input>
-        </div>
-        <div class="po-row">
-          <po-input class="po-md-12" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento" p-clean></po-input>
-        </div>
-        <div class="po-row">
-          <po-input class="po-md-6" name="telefone1" [(ngModel)]="cliente.telefone1" p-label="Telefone" p-mask="(99) 9999-9999" p-clean></po-input>
-          <po-input class="po-md-6" name="celular" [(ngModel)]="cliente.celular" p-label="Celular" p-mask="(99) 9999-9999" p-clean></po-input>
-        </div>
-      </po-tab>
+    <div class="po-row">
+      <po-input class="po-md-4" name="cnpjCpf" [(ngModel)]="cliente.cnpjCpf" p-label="CNPJ / CPF" p-mask="99.999.999/9999-99" p-clean></po-input>
+      <po-input class="po-md-3" name="ie" [(ngModel)]="cliente.ie" p-label="Inscrição Estadual" p-clean></po-input>
+      <po-select class="po-md-2" name="tipo" [(ngModel)]="cliente.tipo" p-label="Tipo" [p-options]="[{label:'Jurídica', value:'J'}, {label:'Física', value:'F'}]"></po-select>
+      <po-select class="po-md-3" name="status" [(ngModel)]="cliente.status" p-label="Status" [p-options]="[{label:'Ativo', value:'A'}, {label:'Bloqueado', value:'B'}]"></po-select>
+    </div>
 
-      <po-tab p-label="Financeiro">
-        <div class="po-row po-mt-2">
-          <po-number class="po-md-4" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-clean></po-number>
-          <po-datepicker class="po-md-4" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite" p-clean></po-datepicker>
-          <po-input class="po-md-4" name="risco" [(ngModel)]="cliente.risco" p-label="Risco" p-disabled="true"></po-input>
-        </div>
-        <div class="po-row">
-          <po-textarea class="po-md-12" name="obsBloqueio" [(ngModel)]="cliente.obsBloqueio" p-label="Observações de Bloqueio" p-clean></po-textarea>
-        </div>
-      </po-tab>
+    <po-divider p-label="Localização"></po-divider>
+    <div class="po-row">
+      <po-input class="po-md-2" name="cep" [(ngModel)]="cliente.cep" p-label="CEP" p-mask="99999-999" p-clean></po-input>
+      <po-input class="po-md-6" name="endereco" [(ngModel)]="cliente.endereco" p-label="Endereço" p-clean></po-input>
+      <po-input class="po-md-4" name="bairro" [(ngModel)]="cliente.bairro" p-label="Bairro" p-clean></po-input>
+    </div>
 
-      <po-tab p-label="Contatos">
-        <div class="po-row po-mt-2">
-          <div class="po-md-12">
-            <po-table
-              [p-items]="cliente.contatos"
-              [p-columns]="contatoColumns"
-              [p-actions]="contatoActions"
-              p-container="shadow">
-            </po-table>
-            <div class="po-row po-mt-1">
-              <po-button p-label="Adicionar Contato" (p-click)="addContato()" p-icon="po-icon-plus"></po-button>
-            </div>
-          </div>
-        </div>
-      </po-tab>
-    </po-tabs>
+    <div class="po-row">
+      <po-select class="po-md-2" name="estado" [ngModel]="cliente.uf" (p-change)="onEstadoChange($event)" p-label="UF" [p-options]="estados"></po-select>
+      <po-select class="po-md-4" name="municipioId" [(ngModel)]="cliente.municipioId" p-label="Cidade" [p-options]="municipios" [p-disabled]="!municipios.length"></po-select>
+      <po-input class="po-md-6" name="complemento" [(ngModel)]="cliente.complemento" p-label="Complemento" p-clean></po-input>
+    </div>
+
+    <po-divider p-label="Contato e Comercial"></po-divider>
+    <div class="po-row">
+      <po-input class="po-md-3" name="telefone1" [(ngModel)]="cliente.telefone1" p-label="Telefone 1" p-mask="(99) 9999-9999" p-clean></po-input>
+      <po-input class="po-md-3" name="celular" [(ngModel)]="cliente.celular" p-label="Celular" p-mask="(99) 99999-9999" p-clean></po-input>
+      <po-input class="po-md-6" name="email" [(ngModel)]="cliente.email" p-label="E-mail principal" p-icon="po-icon-mail" p-clean></po-input>
+    </div>
+
+    <div class="po-row">
+      <po-select class="po-md-4" name="vendedorId" [(ngModel)]="cliente.vendedorId" p-label="Vendedor Responsável" [p-options]="vendedores" p-required></po-select>
+      <po-number class="po-md-4" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-format="BRL"></po-number>
+      <po-datepicker class="po-md-4" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite"></po-datepicker>
+    </div>
+
+    <po-divider p-label="Pessoas de Contato"></po-divider>
+    <div class="po-row">
+      <div class="po-md-12">
+        <po-button p-label="Adicionar Contato" (p-click)="addContato()" p-icon="po-icon-plus" class="po-mb-1"></po-button>
+        <po-table 
+          [p-columns]="contatoColumns" 
+          [p-items]="cliente.contatos" 
+          [p-actions]="contatoActions"
+          p-container="shadow">
+          
+          <ng-template po-table-cell-template let-row let-column="column" let-index="index">
+            <po-input *ngIf="column.property === 'nome'" name="nome_{{index}}" [(ngModel)]="row.nome" p-clean></po-input>
+            <po-input *ngIf="column.property === 'telefone'" name="tel_{{index}}" [(ngModel)]="row.telefone" p-mask="(99) 99999-9999"></po-input>
+            <po-input *ngIf="column.property === 'email'" name="mail_{{index}}" [(ngModel)]="row.email" p-clean></po-input>
+          </ng-template>
+
+        </po-table>
+      </div>
+    </div>
+
+    <po-divider p-label="Observações Internas"></po-divider>
+    <div class="po-row">
+      <po-textarea class="po-md-12" name="obs" [(ngModel)]="cliente.obs" p-label="Notas do Cliente" p-rows="3"></po-textarea>
+    </div>
+
   </form>
 </po-page-edit>

@@ -1,50 +1,84 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoTableColumn, PoTableAction, PoPageAction, PoPageFilter } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoPageAction, 
+  PoPageFilter, 
+  PoNotificationService,
+  PoBreadcrumb
+} from "@po-ui/ng-components";
 import { MetaVendedorService } from "../../../services/meta-vendedor";
 
 @Component({
   selector: "app-meta-list",
   standalone: true,
   imports: [CommonModule, PoModule],
-  templateUrl: "./meta-list.html"
+  template: `
+    <po-page-list 
+      p-title="Objetivos e Metas"
+      p-subtitle="Gestão de metas mensais de vendas"
+      [p-breadcrumb]="breadcrumb"
+      [p-actions]="actions"
+      [p-filter]="filter">
+      
+      <po-table 
+        [p-columns]="columns"
+        [p-items]="items"
+        [p-actions]="tableActions"
+        [p-loading]="isLoading"
+        p-container="shadow"
+        [p-striped]="true"
+        [p-sort]="true">
+      </po-table>
+      
+    </po-page-list>
+  `
 })
 export class MetaListComponent implements OnInit {
+  private metaService = inject(MetaVendedorService);
+  private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
   items: Array<any> = [];
   isLoading: boolean = true;
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Vendas", link: "/metas" },
-      { label: "Objetivos e Metas" }
+      { label: "Metas de Venda" }
     ]
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Nova Meta", action: this.create.bind(this), icon: "po-icon-plus" }
+    { label: "Novo Objetivo", action: () => this.router.navigate(["/metas/new"]), icon: "po-icon-target" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
 
   readonly filter: PoPageFilter = {
-    action: this.loadData.bind(this),
-    placeholder: "Pesquisar por vendedor"
+    action: this.onFilter.bind(this),
+    placeholder: "Pesquisar por ano ou vendedor"
   };
 
   readonly columns: Array<PoTableColumn> = [
+    { property: "id", label: "ID", width: "80px" },
+    { property: "ano", label: "Ano", width: "80px" },
+    { property: "mes", label: "Mês", width: "80px" },
     { property: "vendedor.nome", label: "Vendedor" },
-    { property: "mes", label: "Mês", width: "100px" },
-    { property: "ano", label: "Ano", width: "100px" },
-    { property: "valor", label: "Meta Financeira", type: "currency", format: "BRL" },
-    { property: "numeroCliente", label: "Meta Positivação", type: "number" }
+    { property: "valor", label: "Valor Meta", type: "currency", format: "BRL" },
+    { property: "numeroCliente", label: "Positivação", type: "number" },
+    { property: "novoCliente", label: "Novos Clientes", type: "number" },
+    { property: "tipo", label: "Tipo", type: "label", labels: [
+      { value: "M", color: "color-10", label: "Mensal" },
+      { value: "S", color: "color-08", label: "Semanal" }
+    ]}
   ];
 
-  readonly actions: Array<PoTableAction> = [
-    { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" }
+  readonly tableActions: Array<PoTableAction> = [
+    { label: "Editar", action: (row: any) => this.router.navigate(["/metas/edit", row.id]), icon: "po-icon-edit" }
   ];
-
-  constructor(private metaService: MetaVendedorService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -57,6 +91,7 @@ export class MetaListComponent implements OnInit {
         this.items = res.items;
         if (filter) {
           this.items = this.items.filter(item => 
+            item.ano?.includes(filter) ||
             item.vendedor?.nome?.toLowerCase().includes(filter.toLowerCase())
           );
         }
@@ -64,16 +99,12 @@ export class MetaListComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
+        this.poNotification.error("Erro ao carregar metas.");
       }
     });
   }
 
-
-  edit(item: any) {
-    this.router.navigate(["/metas/edit", item.id]);
-  }
-
-  create() {
-    this.router.navigate(["/metas/new"]);
+  onFilter(filter: string) {
+    this.loadData(filter);
   }
 }

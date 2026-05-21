@@ -10,7 +10,6 @@ import {
   PoTableAction, 
   PoModalComponent, 
   PoBreadcrumb, 
-  PoMenuItem,
   PoNotificationService
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
@@ -18,6 +17,7 @@ import { AnalyticsService } from "../../../services/analytics";
 import { AuthService } from "../../../services/auth";
 import { VendedorService } from "../../../services/vendedor";
 import { LocationService } from "../../../services/location";
+import { CrmService } from "../../../services/crm";
 
 @Component({
   selector: "app-mvc-list",
@@ -26,10 +26,13 @@ import { LocationService } from "../../../services/location";
   templateUrl: "./mvc-list.html"
 })
 export class MvcListComponent implements OnInit {
+  @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
+
   private analyticsService = inject(AnalyticsService);
   private authService = inject(AuthService);
   private vendedorService = inject(VendedorService);
   private locationService = inject(LocationService);
+  private crmService = inject(CrmService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
 
@@ -55,7 +58,17 @@ export class MvcListComponent implements OnInit {
   vendedores: Array<PoSelectOption> = [];
   estados: Array<PoSelectOption> = [];
   municipios: Array<PoSelectOption> = [];
+  tiposAtendimento: Array<PoSelectOption> = [];
   
+  atendimento: any = {
+    atendimentoTipoId: undefined,
+    observacao: "",
+    horarioInicial: new Date(),
+    horarioFinal: new Date()
+  };
+
+  selectedCliente: any = {};
+
   situacoes: Array<PoSelectOption> = [
     { label: "Ativo", value: "A" },
     { label: "Bloqueado", value: "B" }
@@ -83,7 +96,7 @@ export class MvcListComponent implements OnInit {
   readonly tableActions: Array<PoTableAction> = [
     { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
     { label: "Editar Cliente", action: (item: any) => this.router.navigate(["/clientes/edit", item.cliente_id]), icon: "po-icon-edit" },
-    { label: "Novo Atendimento", action: (item: any) => this.poNotification.information("Função em desenvolvimento"), icon: "po-icon-chat" }
+    { label: "Novo Atendimento", action: this.openAtendimento.bind(this), icon: "po-icon-chat" }
   ];
 
   readonly quickFilters: Array<any> = [
@@ -123,12 +136,46 @@ export class MvcListComponent implements OnInit {
 
   loadInitialData() {
     if (this.isGerente) {
-      this.vendedorService.findAll().subscribe(res => {
+      this.vendedorService.findAll(1, 100).subscribe(res => {
         this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
       });
     }
     this.locationService.getEstados().subscribe(res => {
       this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
+    });
+    this.crmService.getTipos().subscribe(res => {
+      this.tiposAtendimento = res.map((t: any) => ({ label: t.descricao, value: t.id }));
+    });
+  }
+
+  openAtendimento(item: any) {
+    this.selectedCliente = item;
+    this.atendimento = {
+      clienteId: item.cliente_id,
+      atendimentoTipoId: undefined,
+      observacao: "",
+      horarioInicial: new Date(),
+      horarioFinal: new Date()
+    };
+    this.modalAtendimento.open();
+  }
+
+  saveAtendimento() {
+    if (!this.atendimento.atendimentoTipoId || !this.atendimento.observacao) {
+      this.poNotification.warning("Preencha o tipo e a observação.");
+      return;
+    }
+    this.isLoading = true;
+    this.crmService.save(this.atendimento).subscribe({
+      next: () => {
+        this.poNotification.success("Atendimento registrado com sucesso!");
+        this.modalAtendimento.close();
+        this.loadAllData();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao registrar atendimento.");
+      }
     });
   }
 

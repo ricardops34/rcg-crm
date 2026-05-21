@@ -9,6 +9,8 @@ import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor
 import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor-form';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
+import { TabelaPrecoListComponent } from './pages/commercial/tabela-preco-list/tabela-preco-list';
+import { TabelaPrecoFormComponent } from './pages/commercial/tabela-preco-form/tabela-preco-form';
 import { UserListComponent } from './pages/admin/user-list/user-list';
 import { UserFormComponent } from './pages/admin/user-form/user-form';
 import { TermsFormComponent } from './pages/admin/terms-form/terms-form';
@@ -40,6 +42,9 @@ export const routes: Routes = [
       { path: 'metas', component: MetaListComponent, data: { controller: 'MetaList' } },
       { path: 'metas/new', component: MetaFormComponent, data: { controller: 'MetaList' } },
       { path: 'metas/edit/:id', component: MetaFormComponent, data: { controller: 'MetaList' } },
+      { path: 'tabelas-precos', component: TabelaPrecoListComponent, data: { controller: 'TabelaPrecoList' } },
+      { path: 'tabelas-precos/new', component: TabelaPrecoFormComponent, data: { controller: 'TabelaPrecoList' } },
+      { path: 'tabelas-precos/edit/:id', component: TabelaPrecoFormComponent, data: { controller: 'TabelaPrecoList' } },
       { path: 'mvc', component: MvcListComponent, data: { controller: 'MvcList' } },
       { path: 'admin/users', component: UserListComponent, data: { controller: 'SystemUserList' } },
       { path: 'admin/users/new', component: UserFormComponent, data: { controller: 'SystemUserList' } },

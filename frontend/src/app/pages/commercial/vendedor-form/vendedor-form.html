@@ -7,18 +7,35 @@
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <form #formVendedor="ngForm">
+    
+    <po-divider p-label="Informações Básicas"></po-divider>
     <div class="po-row">
-      <po-input class="po-md-2" name="codErp" [(ngModel)]="vendedor.codErp" p-label="Cód. ERP" p-disabled="true"></po-input>
+      <po-input class="po-md-2" name="codErp" [(ngModel)]="vendedor.codErp" p-label="Cód. ERP" p-clean></po-input>
       <po-input class="po-md-6" name="nome" [(ngModel)]="vendedor.nome" p-label="Nome Completo" p-required="true" p-clean></po-input>
       <po-input class="po-md-4" name="nomeReduzido" [(ngModel)]="vendedor.nomeReduzido" p-label="Nome de Guerra" p-clean></po-input>
     </div>
+
     <div class="po-row">
       <po-input class="po-md-4" name="email" [(ngModel)]="vendedor.email" p-label="E-mail" p-icon="po-icon-mail" p-clean></po-input>
-      <po-input class="po-md-3" name="celular" [(ngModel)]="vendedor.celular" p-label="Celular" p-mask="(99) 99999-9999" p-clean></po-input>
-      <po-select class="po-md-2" name="status" [ngModel]="vendedor.status" (p-change)="vendedor.status = $event" p-label="Status"
-        [p-options]="[{label: 'Ativo', value: 'A'}, {label: 'Bloqueado', value: 'B'}]">
-      </po-select>      <po-switch class="po-md-3" name="desligado" [(ngModel)]="vendedor.desligado" p-label="Vendedor Desligado" p-label-off="Não" p-label-on="Sim"></po-switch>
+      <po-input class="po-md-2" name="ddd" [(ngModel)]="vendedor.ddd" p-label="DDD" p-mask="99" p-clean></po-input>
+      <po-input class="po-md-3" name="telefone" [(ngModel)]="vendedor.telefone" p-label="Telefone" p-mask="9999-9999" p-clean></po-input>
+      <po-input class="po-md-3" name="celular" [(ngModel)]="vendedor.celular" p-label="Celular" p-mask="99999-9999" p-clean></po-input>
     </div>
+
+    <po-divider p-label="Configuração e Hierarquia"></po-divider>
+    <div class="po-row">
+      <po-select class="po-md-3" name="systemUnitId" [(ngModel)]="vendedor.systemUnitId" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
+      <po-select class="po-md-3" name="status" [(ngModel)]="vendedor.status" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
+      <po-datepicker class="po-md-3" name="dtNascimento" [(ngModel)]="vendedor.dtNascimento" p-label="Data de Nascimento"></po-datepicker>
+      <po-input class="po-md-3" name="systemUsersId" [(ngModel)]="vendedor.systemUsersId" p-label="ID Usuário Relacionado" p-help="ID da tabela system_users" p-type="number"></po-input>
+    </div>
+
+    <div class="po-row">
+      <po-switch class="po-md-3" name="supervisor" [(ngModel)]="vendedor.supervisor" p-label="É Supervisor?" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
+      <po-select class="po-md-3" name="supervisorId" [(ngModel)]="vendedor.supervisorId" p-label="Supervisor Imediato" [p-options]="supervisors" [p-disabled]="vendedor.supervisor === 'S'"></po-select>
+      <po-switch class="po-md-3" name="dashboard" [(ngModel)]="vendedor.dashboard" p-label="Exibir Dashboard?" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
+      <po-switch class="po-md-3" name="desligado" [(ngModel)]="vendedor.desligado" p-label="Vendedor Desligado" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
+    </div>
+
   </form>
 </po-page-edit>
-

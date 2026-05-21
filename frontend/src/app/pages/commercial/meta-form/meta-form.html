@@ -7,19 +7,24 @@
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <form #formMeta="ngForm">
+    
+    <po-divider p-label="Período e Responsável"></po-divider>
     <div class="po-row">
-      <po-select class="po-md-6" name="vendedorId" [ngModel]="meta.vendedorId" (p-change)="meta.vendedorId = $event" p-label="Vendedor" [p-options]="vendedores" p-required="true"></po-select>
-      <po-input class="po-md-3" name="mes" [(ngModel)]="meta.mes" p-label="Mês" p-mask="99" p-required="true" p-clean></po-input>
-      <po-input class="po-md-3" name="ano" [(ngModel)]="meta.ano" p-label="Ano" p-mask="9999" p-required="true" p-clean></po-input>
+      <po-input class="po-md-2" name="ano" [(ngModel)]="meta.ano" p-label="Ano" p-mask="9999" p-required></po-input>
+      <po-select class="po-md-3" name="mes" [(ngModel)]="meta.mes" p-label="Mês" [p-options]="monthOptions" p-required></po-select>
+      <po-select class="po-md-5" name="vendedorId" [(ngModel)]="meta.vendedorId" p-label="Vendedor" [p-options]="vendedores" p-required p-show-required></po-select>
+      <po-select class="po-md-2" name="tipo" [(ngModel)]="meta.tipo" p-label="Tipo" [p-options]="[{label:'Mensal', value:'M'}, {label:'Semanal', value:'S'}]"></po-select>
     </div>
 
+    <po-divider p-label="Metas de Valor e Volume"></po-divider>
     <div class="po-row">
-      <po-number class="po-md-4" name="valor" [(ngModel)]="meta.valor" p-label="Meta Financeira (R$)" p-required="true" p-clean></po-number>
-      <po-button class="po-md-2 po-mt-4" p-label="Sugestão +10%" (p-click)="applySuggestion()" p-icon="po-icon-chart-line"></po-button>
-
-      <po-number class="po-md-3" name="numeroCliente" [(ngModel)]="meta.numeroCliente" p-label="Meta Positivação (Qtd)" p-clean></po-number>
-      <po-number class="po-md-3" name="novoCliente" [(ngModel)]="meta.novoCliente" p-label="Meta Novos Clientes" p-clean></po-number>
+      <po-number class="po-md-4" name="valor" [(ngModel)]="meta.valor" p-label="Valor do Objetivo (R$)" p-format="BRL" p-required></po-number>
+      <div class="po-md-2 po-mt-4">
+        <po-button p-label="Gerar Sugestão" (p-click)="suggestValue()" p-icon="po-icon-chart-line" p-help="Baseado no ano anterior + 10%"></po-button>
+      </div>
+      <po-number class="po-md-3" name="numeroCliente" [(ngModel)]="meta.numeroCliente" p-label="Meta de Positivação (Qtd Clientes)"></po-number>
+      <po-number class="po-md-3" name="novoCliente" [(ngModel)]="meta.novoCliente" p-label="Meta de Novos Clientes"></po-number>
     </div>
+
   </form>
 </po-page-edit>
-

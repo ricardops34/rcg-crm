@@ -1,7 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PoModule, PoNotificationService } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoNotificationService, 
+  PoSelectOption, 
+  PoBreadcrumb 
+} from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { MetaVendedorService } from "../../../services/meta-vendedor";
 import { VendedorService } from "../../../services/vendedor";
@@ -13,40 +18,52 @@ import { VendedorService } from "../../../services/vendedor";
   templateUrl: "./meta-form.html"
 })
 export class MetaFormComponent implements OnInit {
+  private metaService = inject(MetaVendedorService);
+  private vendedorService = inject(VendedorService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
-  meta: any = { mes: (new Date().getMonth() + 1).toString().padStart(2, "0"), ano: new Date().getFullYear().toString() };
-  vendedores: Array<any> = [];
+  meta: any = {
+    ano: new Date().getFullYear().toString(),
+    mes: (new Date().getMonth() + 1).toString().padStart(2, '0'),
+    tipo: "M",
+    valor: 0
+  };
+  
   isLoading: boolean = false;
-  title: string = "Nova Meta";
-
-  readonly breadcrumb: any = {
+  title: string = "Novo Objetivo";
+  
+  vendedores: Array<PoSelectOption> = [];
+  
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Vendas", link: "/metas" },
-      { label: "Objetivos e Metas" },
-      { label: "Cadastro" }
+      { label: "Metas", link: "/metas" },
+      { label: "Manutenção" }
     ]
   };
 
-  constructor(
-    private metaService: MetaVendedorService,
-    private vendedorService: VendedorService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private poNotification: PoNotificationService
-  ) { }
+  readonly monthOptions: Array<PoSelectOption> = [
+    { label: "Janeiro", value: "01" }, { label: "Fevereiro", value: "02" },
+    { label: "Março", value: "03" }, { label: "Abril", value: "04" },
+    { label: "Maio", value: "05" }, { label: "Junho", value: "06" },
+    { label: "Julho", value: "07" }, { label: "Agosto", value: "08" },
+    { label: "Setembro", value: "09" }, { label: "Outubro", value: "10" },
+    { label: "Novembro", value: "11" }, { label: "Dezembro", value: "12" }
+  ];
 
   ngOnInit(): void {
     this.loadVendedores();
     const id = this.activatedRoute.snapshot.params["id"];
     if (id) {
-      this.title = "Editar Meta";
+      this.title = "Editar Objetivo";
       this.loadMeta(id);
     }
   }
 
   loadVendedores() {
-    this.vendedorService.findAll().subscribe(res => {
+    this.vendedorService.findAll(1, 100).subscribe(res => {
       this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
     });
   }
@@ -60,20 +77,21 @@ export class MetaFormComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
-        this.poNotification.error("Erro ao carregar meta.");
+        this.poNotification.error("Erro ao carregar objetivo.");
       }
     });
   }
 
-  applySuggestion() {
+  suggestValue() {
     if (!this.meta.vendedorId || !this.meta.mes || !this.meta.ano) {
-      this.poNotification.warning("Selecione vendedor, mês e ano para obter a sugestão.");
+      this.poNotification.warning("Selecione vendedor, mês e ano para gerar sugestão.");
       return;
     }
-
+    this.isLoading = true;
     this.metaService.getSuggestion(this.meta.vendedorId, this.meta.mes, this.meta.ano).subscribe(res => {
       this.meta.valor = res.suggestion;
-      this.poNotification.information("Sugestão de +10% sobre o ano anterior aplicada.");
+      this.isLoading = false;
+      this.poNotification.information("Sugestão calculada com base no histórico (+10%).");
     });
   }
 
@@ -82,16 +100,15 @@ export class MetaFormComponent implements OnInit {
     this.metaService.save(this.meta).subscribe({
       next: () => {
         this.isLoading = false;
-        this.poNotification.success("Meta salva com sucesso!");
+        this.poNotification.success("Objetivo salvo com sucesso!");
         this.router.navigate(["/metas"]);
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
-        this.poNotification.error("Erro ao salvar meta.");
+        this.poNotification.error("Erro ao salvar objetivo.");
       }
     });
   }
-
 
   cancel() {
     this.router.navigate(["/metas"]);

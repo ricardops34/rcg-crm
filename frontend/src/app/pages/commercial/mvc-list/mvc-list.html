@@ -104,3 +104,22 @@
   </po-table>
 
 </po-page-list>
+
+<!-- Modal de Novo Atendimento CRM -->
+<po-modal #modalAtendimento p-title="Registrar Atendimento CRM" [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">
+  <div class="po-row">
+    <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedCliente.cliente_nome"></po-info>
+  </div>
+  
+  <div class="po-row">
+    <po-select class="po-md-12" name="tipo" [(ngModel)]="atendimento.atendimentoTipoId" p-label="Tipo de Contato" [p-options]="tiposAtendimento" p-required></po-select>
+  </div>
+
+  <div class="po-row">
+    <po-textarea class="po-md-12" name="obs" [(ngModel)]="atendimento.observacao" p-label="Relato do Atendimento" p-required p-rows="4"></po-textarea>
+  </div>
+
+  <div class="po-row">
+    <po-datepicker class="po-md-6" name="retorno" [(ngModel)]="atendimento.retorno" p-label="Agendar Retorno?"></po-datepicker>
+  </div>
+</po-modal>

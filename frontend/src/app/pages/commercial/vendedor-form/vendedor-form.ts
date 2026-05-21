@@ -1,9 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PoModule, PoNotificationService } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoNotificationService, 
+  PoSelectOption, 
+  PoBreadcrumb 
+} from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { VendedorService } from "../../../services/vendedor";
+import { UnitService } from "../../../services/unit";
 
 @Component({
   selector: "app-vendedor-form",
@@ -12,12 +18,26 @@ import { VendedorService } from "../../../services/vendedor";
   templateUrl: "./vendedor-form.html"
 })
 export class VendedorFormComponent implements OnInit {
+  private vendedorService = inject(VendedorService);
+  private unitService = inject(UnitService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
-  vendedor: any = {};
+  vendedor: any = {
+    status: "A",
+    vendedor: "S",
+    supervisor: "N",
+    desligado: "N"
+  };
+  
   isLoading: boolean = false;
   title: string = "Novo Vendedor";
+  
+  units: Array<PoSelectOption> = [];
+  supervisors: Array<PoSelectOption> = [];
 
-  readonly breadcrumb: any = {
+  readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
       { label: "Vendedores", link: "/vendedores" },
@@ -25,20 +45,30 @@ export class VendedorFormComponent implements OnInit {
     ]
   };
 
-  constructor(
-
-    private vendedorService: VendedorService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private poNotification: PoNotificationService
-  ) { }
+  readonly statusOptions: Array<PoSelectOption> = [
+    { label: "Ativo", value: "A" },
+    { label: "Bloqueado", value: "B" }
+  ];
 
   ngOnInit(): void {
+    this.loadDependencies();
     const id = this.activatedRoute.snapshot.params["id"];
     if (id) {
       this.title = "Editar Vendedor";
       this.loadVendedor(id);
     }
+  }
+
+  loadDependencies() {
+    this.unitService.findAll().subscribe(res => {
+      this.units = res.map((u: any) => ({ label: u.name, value: u.id }));
+    });
+
+    this.vendedorService.findAll(1, 100).subscribe(res => {
+      this.supervisors = res.items
+        .filter((v: any) => v.supervisor === "S")
+        .map((v: any) => ({ label: v.nome, value: v.id }));
+    });
   }
 
   loadVendedor(id: number) {
@@ -57,7 +87,10 @@ export class VendedorFormComponent implements OnInit {
 
   save() {
     this.isLoading = true;
-    this.vendedorService.save(this.vendedor).subscribe({
+    // Garantir conversão de booleanos para S/N se necessário (PO-UI Switch usa boolean)
+    const payload = { ...this.vendedor };
+    
+    this.vendedorService.save(payload).subscribe({
       next: () => {
         this.isLoading = false;
         this.poNotification.success("Vendedor salvo com sucesso!");
