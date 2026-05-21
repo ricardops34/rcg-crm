@@ -8,7 +8,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { GroupsService } from './groups.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
@@ -37,18 +37,23 @@ export class GroupsController {
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo grupo de permissão' })
+  @ApiBody({ type: CreateGroupDto })
+  @ApiResponse({ status: 201, description: 'Grupo criado com sucesso' })
   async create(@Body() groupData: CreateGroupDto) {
     return this.groupsService.create(groupData);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Atualiza dados de um grupo de permissão' })
+  @ApiBody({ type: UpdateGroupDto })
+  @ApiResponse({ status: 200, description: 'Grupo atualizado com sucesso' })
   async update(@Param('id') id: string, @Body() groupData: UpdateGroupDto) {
     return this.groupsService.update(+id, groupData);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove um grupo de permissão' })
+  @ApiResponse({ status: 200, description: 'Grupo removido com sucesso' })
   async remove(@Param('id') id: string) {
     return this.groupsService.remove(+id);
   }

@@ -211,6 +211,14 @@ export class AuthService {
     return this.permissionsService.getMenuStructure(userId);
   }
 
+  async getCurrentSessionId(userId: number): Promise<string | null> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['currentSessionId'],
+    });
+    return user?.currentSessionId || null;
+  }
+
   async acceptTerms(userId: number) {
     await this.userRepository.update(userId, {
       acceptedTermPolicy: 'Y',

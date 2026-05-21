@@ -1,6 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminModuleResponseDto } from './dto/admin-shared.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermission } from '../auth/decorators/permissions.decorator';
+import { ModulesService } from './modules.service';
+import { CreateModuleDto, UpdateModuleDto } from './dto/admin-forms.dto';
 
 @ApiTags('Admin / Modules')
 @ApiBearerAuth()
@@ -18,21 +23,30 @@ export class ModulesController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtém detalhes de um módulo' })
   async findOne(@Param('id') id: string) {
     return this.modulesService.findOne(+id);
   }
 
   @Post()
-  async create(@Body() data: any) {
+  @ApiOperation({ summary: 'Cadastra um novo módulo' })
+  @ApiBody({ type: CreateModuleDto })
+  @ApiResponse({ status: 201, description: 'Módulo criado com sucesso' })
+  async create(@Body() data: CreateModuleDto) {
     return this.modulesService.save(data);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() data: any) {
+  @ApiOperation({ summary: 'Atualiza dados de um módulo' })
+  @ApiBody({ type: UpdateModuleDto })
+  @ApiResponse({ status: 200, description: 'Módulo atualizado com sucesso' })
+  async update(@Param('id') id: string, @Body() data: UpdateModuleDto) {
     return this.modulesService.save({ ...data, id: +id });
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Remove um módulo' })
+  @ApiResponse({ status: 200, description: 'Módulo removido com sucesso' })
   async remove(@Param('id') id: string) {
     return this.modulesService.remove(+id);
   }

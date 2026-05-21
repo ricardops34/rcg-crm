@@ -8,7 +8,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
@@ -54,18 +54,23 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo usuário' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, type: UserResponseDto, description: 'Usuário criado com sucesso' })
   create(@Body() userData: CreateUserDto) {
     return this.usersService.create(userData);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Atualiza dados de um usuário' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, type: UserResponseDto, description: 'Usuário atualizado com sucesso' })
   update(@Param('id') id: string, @Body() userData: UpdateUserDto) {
     return this.usersService.update(+id, userData);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove um usuário' })
+  @ApiOperation({ summary: 'Remove um usuário do sistema' })
+  @ApiResponse({ status: 200, description: 'Usuário removido com sucesso' })
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }

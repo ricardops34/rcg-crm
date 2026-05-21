@@ -13,8 +13,8 @@ export class ProdutoService {
     private categoriaRepository: Repository<Categoria>,
   ) {}
 
-  async findAll(query?: any): Promise<Produto[]> {
-    return this.produtoRepository.find({
+  async findAll(query?: any): Promise<[Produto[], number]> {
+    return this.produtoRepository.findAndCount({
       relations: ['categoria', 'subCategoria', 'filial'],
       where: { status: 'A', ...query },
       take: 100,

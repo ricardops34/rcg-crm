@@ -40,10 +40,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         };
       }
 
-      // Validação de Sessão Única (Trava Redis)
-      const activeSessionId = await this.cacheManager.get(
+      // Validação de Sessão Única (Trava Redis com Fallback no Banco)
+      let activeSessionId = await this.cacheManager.get<string>(
         `session:${payload.sub}`,
       );
+
+      if (!activeSessionId) {
+        // Fallback resiliente: Busca do banco de dados (evita 401 caso o cache caia em réplicas isoladas do cluster)
+        activeSessionId = (await this.authService.getCurrentSessionId(payload.sub)) || undefined;
+        if (activeSessionId) {
+          // Grava de volta no cache local para acelerar as próximas requisições
+          await this.cacheManager.set(`session:${payload.sub}`, activeSessionId, 86400000);
+        }
+      }
 
       if (!activeSessionId || activeSessionId !== payload.sid) {
         console.warn(`[AUTH-GUARD] ❌ Sessão divergente/derrubada para usuário ${payload.sub}. SID no token: ${payload.sid}, SID ativo: ${activeSessionId}`);
