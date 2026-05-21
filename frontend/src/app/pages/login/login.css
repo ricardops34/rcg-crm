@@ -36,8 +36,4 @@
   background-color: #00AEA5;
   height: 8px;
 }
-/* Ajuste para a tela de login inteira começar abaixo da barra fixa da ALLIA */
-.po-page-login-container {
-  margin-top: 56px !important;
-  height: calc(100vh - 56px) !important;
-}
+
