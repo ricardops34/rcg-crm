@@ -2050,6 +2050,35 @@ join cliente on (cliente.reg_ativo = 'S' and cliente.id = titulo_receber.cliente
 join vendedor on (vendedor.id = cliente.vendedor_id)
 where titulo_receber.reg_ativo = 'S'; 
 
+CREATE VIEW view_venda_categoria AS SELECT 
+categoria.id as categoria_id
+,categoria.cod_erp as categoria_cod_erp
+,categoria.descricao as categoria_descricao
+,produto.id as produto_id
+,nota_saida.id as nota_saida_id 
+,nota_saida.nota_fiscal as nota_fiscal
+,nota_saida.especie_fiscal as especie_fiscal
+,nota_saida.ano as nota_saida_ano
+,nota_saida.mes as nota_saida_mes
+,nota_saida_item.vlr_bruto as nota_saida_item_vlr_total
+,(nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) as nota_saida_item_vlr_liquido
+,cliente.id as cliente_id
+,cliente.cod_erp as cliente_cod_erp
+,cliente.vendedor_id as cliente_vendedor_id
+,vendedor.id as vendedor_id 
+,vendedor.status as vendedor_status
+FROM nota_saida 
+join nota_saida_item on (nota_saida_item.nota_saida_id = nota_saida.id and nota_saida_item.reg_ativo = 'S')
+left join vendedor on(vendedor.id = nota_saida.vendedor1_id  )    
+left join produto on (nota_saida_item.produto_id = produto.id)
+left join categoria on (produto.categoria_id = categoria.id)
+left join cliente on (nota_saida.cliente_id = cliente.id)
+where nota_saida.numero_titulo <> '' 
+and nota_saida.tipo = 'N'
+and nota_saida.reg_ativo = 'S'  
+and nota_saida.especie_fiscal = 'SPED'
+      ; 
+
 CREATE VIEW view_total_catogoria_mes AS select distinct 
 categoria.id as id
 ,categoria.cod_erp as cod_erp
@@ -2060,8 +2089,8 @@ categoria.id as id
 ,meta_vendedor_categoria.valor as vlr_objetivo
 ,sum(view_venda_categoria.nota_saida_item_vlr_total) as vlr_total
 ,sum(view_venda_categoria.nota_saida_item_vlr_liquido) as vlr_liquido
-,round(sum(view_venda_categoria.nota_saida_item_vlr_total) * 100 /sum(meta_vendedor_categoria.valor),2) as perc_total
-,round(sum(view_venda_categoria.nota_saida_item_vlr_liquido) * 100/sum(meta_vendedor_categoria.valor),2) as perc_liquido
+,CASE WHEN sum(meta_vendedor_categoria.valor) > 0 THEN round(sum(view_venda_categoria.nota_saida_item_vlr_total) * 100 / sum(meta_vendedor_categoria.valor), 2) ELSE 0 END as perc_total
+,CASE WHEN sum(meta_vendedor_categoria.valor) > 0 THEN round(sum(view_venda_categoria.nota_saida_item_vlr_liquido) * 100 / sum(meta_vendedor_categoria.valor), 2) ELSE 0 END as perc_liquido
 from view_venda_categoria
 left join categoria on (
 	categoria.id = view_venda_categoria.categoria_id
@@ -2108,35 +2137,6 @@ CREATE VIEW view_ultimo_preco AS SELECT nota_saida_item.id as id
 FROM nota_saida_item join nota_saida on (nota_saida_item.nota_saida_id = nota_saida.id and nota_saida.reg_ativo = 'S') 
 WHERE nota_saida_item.reg_ativo = 'S' 
 group by produto_id,cliente_id; 
-
-CREATE VIEW view_venda_categoria AS SELECT 
-categoria.id as categoria_id
-,categoria.cod_erp as categoria_cod_erp
-,categoria.descricao as categoria_descricao
-,produto.id as produto_id
-,nota_saida.id as nota_saida_id 
-,nota_saida.nota_fiscal as nota_fiscal
-,nota_saida.especie_fiscal as especie_fiscal
-,nota_saida.ano as nota_saida_ano
-,nota_saida.mes as nota_saida_mes
-,nota_saida_item.vlr_bruto as nota_saida_item_vlr_total
-,(nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) as nota_saida_item_vlr_liquido
-,cliente.id as cliente_id
-,cliente.cod_erp as cliente_cod_erp
-,cliente.vendedor_id as cliente_vendedor_id
-,vendedor.id as vendedor_id 
-,vendedor.status as vendedor_status
-FROM nota_saida 
-join nota_saida_item on (nota_saida_item.nota_saida_id = nota_saida.id and nota_saida_item.reg_ativo = 'S')
-left join vendedor on(vendedor.id = nota_saida.vendedor1_id  )    
-left join produto on (nota_saida_item.produto_id = produto.id)
-left join categoria on (produto.categoria_id = categoria.id)
-left join cliente on (nota_saida.cliente_id = cliente.id)
-where nota_saida.numero_titulo <> '' 
-and nota_saida.tipo = 'N'
-and nota_saida.reg_ativo = 'S'  
-and nota_saida.especie_fiscal = 'SPED'
-      ; 
 
 CREATE VIEW view_venda_categoria_ano AS select 
 id as id

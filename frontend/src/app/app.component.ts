@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
+  private readonly themeService = inject(PoThemeService);
 
   user: any;
   logo: string = "assets/logo_rcg.png";
@@ -33,10 +34,11 @@ export class AppComponent implements OnInit {
   dynamicMenus: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
 
+  // Perfil conforme modelo menu superior.png
   readonly profile: PoToolbarProfile = {
-    avatar: "",
-    subtitle: "",
-    title: ""
+    avatar: "assets/default-avatar.png",
+    subtitle: "informatica@rcgdist.com.br",
+    title: "Administrator"
   };
 
   readonly profileActions: Array<PoToolbarAction> = [
@@ -45,31 +47,13 @@ export class AppComponent implements OnInit {
     { label: "Sair", action: () => this.logout(), icon: "po-icon-exit", type: "danger" }
   ];
 
+  // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
-    { 
-      label: "Configurações", 
-      icon: "po-icon-settings", 
-      action: () => this.poNotification.information("Configurações do sistema.") 
-    },
-    { 
-      label: "Apps", 
-      icon: "po-icon-grid", 
-      action: () => this.poNotification.information("Meus Aplicativos.") 
-    },
-    { 
-      label: "Mensagens", 
-      icon: "po-icon-chat", 
-      action: () => this.poNotification.information("Você possui 5 novas mensagens."),
-      type: "danger" // Representa o badge vermelho
-    },
-    { 
-      label: "Alterar Tema", 
-      icon: "po-icon-pallet", 
-      action: () => this.toggleTheme() 
-    }
+    { label: "Configurações", icon: "po-icon-settings", action: () => {} },
+    { label: "Apps", icon: "po-icon-grid", action: () => {} },
+    { label: "Mensagens", icon: "po-icon-chat", action: () => {}, type: "danger" },
+    { label: "Alterar Tema", icon: "po-icon-pallet", action: () => this.toggleTheme() }
   ];
-
-  private readonly themeService = inject(PoThemeService);
 
   ngOnInit() {
     this.checkRoute();
@@ -80,7 +64,6 @@ export class AppComponent implements OnInit {
       this.loadMenu();
     }
 
-    // Monitorar mudanças de rota para ocultar/exibir o shell
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -93,16 +76,12 @@ export class AppComponent implements OnInit {
   }
 
   checkRoute() {
-    let urlPath = this.router.url.split('?')[0].split('#')[0];
-    if (urlPath.endsWith('/') && urlPath.length > 1) {
-      urlPath = urlPath.slice(0, -1);
-    }
-    this.isLoginPage = urlPath === "/login" || urlPath === "/" || urlPath === "";
+    const url = this.router.url.split('?')[0];
+    this.isLoginPage = url === "/login" || url === "/" || url === "";
   }
 
   refreshUserInfo() {
     this.user = this.authService.getUser();
-    console.log("[APP] Usuário atual:", this.user);
     if (this.user) {
       this.profile.title = this.user.name;
       this.profile.subtitle = this.user.email;
@@ -115,17 +94,17 @@ export class AppComponent implements OnInit {
       next: (res) => {
         this.dynamicMenus = res.map((module: any) => ({
           label: module.label,
+          shortLabel: module.label.substring(0, 10),
           icon: module.icon || "po-icon-more",
           subItems: module.subItems.map((program: any) => ({
             label: program.label,
+            shortLabel: program.label.substring(0, 10),
             action: () => this.navigateTo(program.action),
             icon: program.icon || "po-icon-circle"
           }))
         }));
       },
-      error: () => {
-        console.warn("Falha ao carregar menu dinâmico.");
-      }
+      error: () => console.warn("Erro ao carregar menu dinâmico.")
     });
   }
 
@@ -143,28 +122,14 @@ export class AppComponent implements OnInit {
       "SystemProgramList": "/admin/programs",
       "SystemProfileForm": "/profile"
     };
-
     const path = routes[controller];
-    if (path) {
-      this.router.navigate([path]);
-    } else {
-      this.poNotification.warning(`Rota para o controlador ${controller} ainda não implementada.`);
-    }
+    if (path) this.router.navigate([path]);
   }
 
   toggleTheme() {
-    if (this.currentTheme === "rcg") {
-      this.currentTheme = "allia";
-    } else {
-      this.currentTheme = "rcg";
-    }
+    this.currentTheme = this.currentTheme === "rcg" ? "allia" : "rcg";
     localStorage.setItem("theme", this.currentTheme);
     this.applyTheme();
-    
-    const themeAction = this.toolbarActions.find(a => a.label.startsWith("Tema:") || a.label === "Alterar Tema");
-    if (themeAction) {
-      themeAction.label = `Tema: ${this.currentTheme.toUpperCase()}`;
-    }
   }
 
   loadTheme() {
@@ -182,33 +147,30 @@ export class AppComponent implements OnInit {
 
   get menus(): Array<PoMenuItem> {
     const items: Array<PoMenuItem> = [
-      { label: "Início", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-home", shortLabel: "Home" },
+      { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-home", shortLabel: "Home" },
     ];
 
     if (this.dynamicMenus.length > 0) {
       items.push(...this.dynamicMenus);
     }
 
-    const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin' || this.user?.isGerente;
-
+    const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin';
     if (isAdmin) {
       items.push({ 
-        label: "Segurança e Acesso", 
-        icon: "po-icon-security", 
+        label: "Administração", 
+        shortLabel: "Admin",
+        icon: "po-icon-settings", 
         subItems: [
-          { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
-          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "po-icon-user-add" },
-          { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "po-icon-users" },
-          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "po-icon-company" },
-          { label: "Módulos do Sistema", action: () => this.router.navigate(["/admin/modules"]), icon: "po-icon-vendas" },
-          { label: "Rotinas do Sistema", action: () => this.router.navigate(["/admin/programs"]), icon: "po-icon-xml" }
+          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "po-icon-user", shortLabel: "Users" },
+          { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "po-icon-users", shortLabel: "Perfis" },
+          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "po-icon-company", shortLabel: "Units" },
+          { label: "Módulos", action: () => this.router.navigate(["/admin/modules"]), icon: "po-icon-vendas", shortLabel: "Módulos" },
+          { label: "Rotinas", action: () => this.router.navigate(["/admin/programs"]), icon: "po-icon-xml", shortLabel: "Rotinas" }
         ]
       });
     }
 
-    // Botão de Logout no final (Igual ao Print)
-    items.push({ label: "Sair do Sistema", action: () => this.logout(), icon: "po-icon-exit", type: "danger" });
-
+    items.push({ label: "Sair", action: () => this.logout(), icon: "po-icon-exit", shortLabel: "Sair", type: "danger" });
     return items;
   }
 

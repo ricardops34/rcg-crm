@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Vendedor } from '../../../commercial/entities/vendedor.entity';
@@ -34,7 +34,7 @@ export class AnalyticsService {
           SUM(vlr_liquido) as realized,
           AVG(perc_liquido) as achievement
          FROM view_vendedor_venda_mes 
-         WHERE ano = $1::text AND mes = $2::text` + whereVendedor,
+         WHERE CAST(ano AS integer) = $1::integer AND CAST(mes AS integer) = $2::integer` + whereVendedor,
         params,
       );
 
@@ -43,7 +43,7 @@ export class AnalyticsService {
           descricao as label,
           SUM(vlr_liquido) as value
          FROM view_total_catogoria_mes
-         WHERE ano = $1::text AND mes = $2::text` +
+         WHERE CAST(ano AS integer) = $1::integer AND CAST(mes AS integer) = $2::integer` +
           whereVendedor +
           ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
         params,
