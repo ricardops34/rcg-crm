@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    networks:
+      - rcg_internal
+    ports:
+      - "6379:6379"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  rcg-api:
+    image: bjsoftware/rcg-backend:latest
+    networks:
+      - rcg_internal
+      - network_public
+      - network_db
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_SECURITY_DATABASE=${DB_SECURITY_DATABASE}
+      - DB_SYNC=${DB_SYNC}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - DB_SEED=${DB_SEED:-false}
+    volumes:
+      - rcg-backup:/app/backup
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.rcg-api.rule=Host(`crmapi.bjsoft.com.br`)"
+        - "traefik.http.routers.rcg-api.tls.certresolver=letsencryptresolver"
+  #       - "traefik.http.routers.rcg-api.middlewares=sslheader@swarm"
+        - "traefik.http.routers.rcg-api.entrypoints=websecure"
+        - "traefik.http.services.rcg-api.loadbalancer.server.port=3000"
+        - "traefik.docker.network=network_public"
+
+  rcg-web:
+    image: bjsoftware/rcg-frontend:latest
+    networks:
+      - network_public
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.rcg-web.rule=Host(`crm.bjsoft.com.br`) || HostRegexp(`{subdomain:[a-z0-9]+}.crm.bjsoft.com.br`)"
+        - "traefik.http.routers.rcg-web.entrypoints=websecure"
+        - "traefik.http.routers.rcg-web.tls.certresolver=letsencryptresolver"
+  #       - "traefik.http.routers.rcg-web.middlewares=sslheader@swarm"
+        - "traefik.http.services.rcg-web.loadbalancer.server.port=80"
+        - "traefik.docker.network=network_public"
+
+networks:
+  rcg_internal:
+    driver: overlay
+  network_public:
+    external: true
+  network_db:
+    external: true
+    name: network_db
+
+volumes:
+  rcg-backup:
+
+
