@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 
@@ -20,7 +20,16 @@ export class AnalyticsService {
   getDashboardData(year?: number, month?: number): Observable<any> {
     const y = year || new Date().getFullYear();
     const m = month || new Date().getMonth() + 1;
-    return this.http.get<any>(`${this.API_URL}/dashboard?year=${y}&month=${m}`, { headers: this.getHeaders() });
+    
+    // Usando HttpParams para garantir o '?' e os '&' corretos
+    const params = new HttpParams()
+      .set('year', y.toString())
+      .set('month', m.toString());
+
+    return this.http.get<any>(`${this.API_URL}/dashboard`, { 
+      headers: this.getHeaders(),
+      params: params
+    });
   }
 
   getMvcData(params: {
@@ -32,14 +41,17 @@ export class AnalyticsService {
     situacao?: string;
   } = {}): Observable<any> {
     const y = params.year || new Date().getFullYear();
-    let url = `${this.API_URL}/mvc?year=${y}`;
+    let httpParams = new HttpParams().set('year', y.toString());
     
-    if (params.vendedorId) url += `&vendedorId=${params.vendedorId}`;
-    if (params.estadoId) url += `&estadoId=${params.estadoId}`;
-    if (params.municipioId) url += `&municipioId=${params.municipioId}`;
-    if (params.dias) url += `&dias=${params.dias}`;
-    if (params.situacao) url += `&situacao=${params.situacao}`;
+    if (params.vendedorId) httpParams = httpParams.set('vendedorId', params.vendedorId.toString());
+    if (params.estadoId) httpParams = httpParams.set('estadoId', params.estadoId.toString());
+    if (params.municipioId) httpParams = httpParams.set('municipioId', params.municipioId.toString());
+    if (params.dias) httpParams = httpParams.set('dias', params.dias.toString());
+    if (params.situacao) httpParams = httpParams.set('situacao', params.situacao);
     
-    return this.http.get<any>(url, { headers: this.getHeaders() });
+    return this.http.get<any>(`${this.API_URL}/mvc`, { 
+      headers: this.getHeaders(),
+      params: httpParams
+    });
   }
 }

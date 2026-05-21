@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,7 +10,8 @@ import {
   PoSelectOption,
   PoTableColumn,
   PoTableAction,
-  PoModalComponent
+  PoModalComponent,
+  PoNotificationService
 } from '@po-ui/ng-components';
 import { AnalyticsService } from '../../../services/analytics';
 import { AuthService } from '../../../services/auth';
@@ -28,6 +29,7 @@ export class DashboardComponent implements OnInit {
   private analyticsService = inject(AnalyticsService);
   private authService = inject(AuthService);
   private vendedorService = inject(VendedorService);
+  private poNotification = inject(PoNotificationService);
   private router = inject(Router);
 
   summary: any = { goal: 0, realized: 0, achievement: 0 };
@@ -103,7 +105,7 @@ export class DashboardComponent implements OnInit {
         this.summary = res.summary;
         this.categorySeries = res.categories;
         
-        // Load MVC
+        // Load MVC (somente se os KPIs carregarem com sucesso)
         this.analyticsService.getMvcData({
           year: this.selectedYear,
           vendedorId: this.selectedVendedor
@@ -115,10 +117,17 @@ export class DashboardComponent implements OnInit {
             }));
             this.isLoading = false;
           },
-          error: () => this.isLoading = false
+          error: (err: any) => {
+            console.error("Erro ao carregar MVC:", err);
+            this.isLoading = false;
+          }
         });
       },
-      error: () => this.isLoading = false
+      error: (err: any) => {
+        console.error("Erro ao carregar KPIs:", err);
+        this.isLoading = false;
+        this.poNotification.error("Falha ao carregar indicadores do painel.");
+      }
     });
   }
 }
