@@ -40,12 +40,12 @@ export class AnalyticsService {
 
       const categories = await this.dataSource.query(
         `SELECT 
-          descricao as label,
+          categoria as label,
           SUM(vlr_liquido) as value
          FROM view_total_catogoria_mes
          WHERE CAST(ano AS integer) = $1::integer AND CAST(mes AS integer) = $2::integer` +
           whereVendedor +
-          ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
+          ` GROUP BY categoria ORDER BY value DESC LIMIT 5`,
         params,
       );
 
@@ -122,8 +122,8 @@ export class AnalyticsService {
           dias, municipio_descricao, estado_sigla, carteira,
           vendedor_reduzido,
           (SELECT CASE 
-              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.vencimento < CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'R'
-              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.vencimento >= CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'B'
+              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.venc_real < CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'R'
+              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.venc_real >= CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'B'
               ELSE NULL 
            END) as financeiro_status
          FROM mvc` + mvcWhere,

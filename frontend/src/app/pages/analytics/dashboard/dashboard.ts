@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
   summary: any = { goal: 0, realized: 0, achievement: 0 };
   categorySeries: Array<PoChartSerie> = [];
   chartType: PoChartType = PoChartType.Donut;
-  isLoading: boolean = true;
+  isLoading: boolean = false;
   isGerente: boolean = false;
 
   years: Array<PoSelectOption> = [
