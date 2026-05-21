@@ -41,14 +41,26 @@ export class AppComponent implements OnInit {
 
   readonly profileActions: Array<PoToolbarAction> = [
     { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
+    { label: "Configurações", action: () => this.router.navigate(["/admin/settings"]), icon: "po-icon-settings" },
     { label: "Sair", action: () => this.logout(), icon: "po-icon-exit", type: "danger" }
   ];
 
   readonly toolbarActions: Array<PoToolbarAction> = [
     { 
-      label: "Notificações", 
-      icon: "po-icon-notification", 
-      action: () => this.poNotification.information("Você não possui novas notificações.") 
+      label: "Configurações", 
+      icon: "po-icon-settings", 
+      action: () => this.poNotification.information("Configurações do sistema.") 
+    },
+    { 
+      label: "Apps", 
+      icon: "po-icon-grid", 
+      action: () => this.poNotification.information("Meus Aplicativos.") 
+    },
+    { 
+      label: "Mensagens", 
+      icon: "po-icon-chat", 
+      action: () => this.poNotification.information("Você possui 5 novas mensagens."),
+      type: "danger" // Representa o badge vermelho
     },
     { 
       label: "Alterar Tema", 
