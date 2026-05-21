@@ -1,8 +1,6 @@
 <div class="po-wrapper" *ngIf="authService.isAuthenticated() && !isLoginPage; else noAuth">
   <po-toolbar 
     p-title="RCG CRM"
-    [p-profile]="profile"
-    [p-profile-actions]="profileActions"
     [p-actions]="toolbarActions">
   </po-toolbar>
   
@@ -10,6 +8,13 @@
     [p-menus]="menus"
     [p-logo]="logo"
     [p-filter]="true">
+    
+    <div p-menu-header class="po-p-2 po-text-center po-mb-2">
+      <po-avatar [p-src]="profile.avatar || ''" p-size="xl"></po-avatar>
+      <div class="po-font-subtitle po-mt-1" style="color: white">{{ profile.title }}</div>
+      <div class="po-font-text-smaller" style="color: #ccc">{{ profile.subtitle }}</div>
+    </div>
+
   </po-menu>
 
   <router-outlet></router-outlet>

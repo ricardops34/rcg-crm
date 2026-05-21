@@ -194,6 +194,9 @@ export class AppComponent implements OnInit {
       });
     }
 
+    // Botão de Logout no final (Igual ao Print)
+    items.push({ label: "Sair do Sistema", action: () => this.logout(), icon: "po-icon-exit", type: "danger" });
+
     return items;
   }
 
