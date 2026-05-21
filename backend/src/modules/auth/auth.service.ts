@@ -114,7 +114,10 @@ export class AuthService {
 
     // Gerar ID de sessão única
     const sessionId = uuidv4();
-    await this.cacheManager.set(`session:${user.id}`, sessionId, 0);
+    console.log(`[AUTH] 🔑 Gerando nova sessão para ${user.id}: ${sessionId}`);
+    
+    // TTL de 24 horas para evitar expiração imediata em alguns stores
+    await this.cacheManager.set(`session:${user.id}`, sessionId, 86400000); 
 
     // Atualizar no banco para persistência
     await this.userRepository.update(user.id, { currentSessionId: sessionId });

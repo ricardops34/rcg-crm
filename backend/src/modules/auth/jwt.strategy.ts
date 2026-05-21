@@ -30,36 +30,48 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    // Se for um token temporário (2fa, terms), apenas validar se o payload está ok
-    if (payload.scope) {
+    try {
+      // Se for um token temporário (2fa, terms), apenas validar se o payload está ok
+      if (payload.scope) {
+        return {
+          userId: payload.sub,
+          username: payload.username,
+          scope: payload.scope,
+        };
+      }
+
+      // Validação de Sessão Única (Trava Redis)
+      const activeSessionId = await this.cacheManager.get(
+        `session:${payload.sub}`,
+      );
+
+      console.log(`[AUTH-GUARD] 🔐 Validando sessão do usuário ${payload.sub}`);
+      console.log(`[AUTH-GUARD] 🎫 SID no Token: ${payload.sid}`);
+      console.log(`[AUTH-GUARD] 🗄️ SID no Cache: ${activeSessionId}`);
+
+      if (!activeSessionId || activeSessionId !== payload.sid) {
+        console.warn(`[AUTH-GUARD] ❌ Sessão inválida ou duplicada detectada para usuário ${payload.sub}`);
+        throw new UnauthorizedException(
+          'Sessão expirada ou iniciada em outro dispositivo',
+        );
+      }
+
+      const profile = await this.authService.getProfile(payload.sub);
+
       return {
         userId: payload.sub,
         username: payload.username,
-        scope: payload.scope,
+        unitId: payload.unitId,
+        sid: payload.sid,
+        vendedorId: profile.vendedorId,
+        supervisorId: profile.supervisorId,
+        managedVendedorIds: profile.managedVendedorIds,
+        isGerente: profile.isGerente,
       };
+    } catch (error) {
+      console.error(`[AUTH-GUARD] 🔥 Erro fatal na validação do token:`, error.message);
+      if (error instanceof UnauthorizedException) throw error;
+      throw new UnauthorizedException('Falha técnica na validação da sessão');
     }
-
-    // Validação de Sessão Única (Trava Redis)
-    const activeSessionId = await this.cacheManager.get(
-      `session:${payload.sub}`,
-    );
-    if (!activeSessionId || activeSessionId !== payload.sid) {
-      throw new UnauthorizedException(
-        'Sessão expirada ou iniciada em outro dispositivo',
-      );
-    }
-
-    const profile = await this.authService.getProfile(payload.sub);
-
-    return {
-      userId: payload.sub,
-      username: payload.username,
-      unitId: payload.unitId,
-      sid: payload.sid,
-      vendedorId: profile.vendedorId,
-      supervisorId: profile.supervisorId,
-      managedVendedorIds: profile.managedVendedorIds,
-      isGerente: profile.isGerente,
-    };
   }
 }
