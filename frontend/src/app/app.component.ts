@@ -113,17 +113,27 @@ export class AppComponent implements OnInit {
       "DashboardVendedor": "/dashboard",
       "MvcList": "/mvc",
       "ClienteList": "/clientes",
+      "PosisaoClienteFormView": "/clientes/360",
       "MetaVendedorMesList": "/metas",
       "VendedorList": "/vendedores",
+      "ProdutoList": "/produtos",
+      "TabelaPrecoList": "/tabelas-precos",
       "SystemUserList": "/admin/users",
       "SystemGroupList": "/admin/groups",
       "SystemUnitList": "/admin/units",
       "SystemModuleList": "/admin/modules",
       "SystemProgramList": "/admin/programs",
-      "SystemProfileForm": "/profile"
+      "SystemProfileForm": "/profile",
+      "CategoriaList": "/categorias",
+      "PedidoEstadoList": "/pedidos/estados"
     };
+
     const path = routes[controller];
-    if (path) this.router.navigate([path]);
+    if (path) {
+      this.router.navigate([path]);
+    } else {
+      this.poNotification.warning(`A rota para ${controller} está sendo mapeada ou não foi implementada.`);
+    }
   }
 
   toggleTheme() {

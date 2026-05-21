@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoNotificationService } from "@po-ui/ng-components";
+import { PoModule, PoPageAction, PoTableColumn, PoTableAction, PoNotificationService, PoBreadcrumb } from "@po-ui/ng-components";
 import { UserService } from "../../../services/user";
 
 @Component({
@@ -11,6 +11,7 @@ import { UserService } from "../../../services/user";
   template: `
     <po-page-list 
       p-title="Usuários do Sistema"
+      [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
       
@@ -31,6 +32,14 @@ export class UserListComponent implements OnInit {
 
   users: Array<any> = [];
   isLoading: boolean = false;
+
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Usuários" }
+    ]
+  };
 
   readonly filter: any = {
     action: this.loadUsers.bind(this),

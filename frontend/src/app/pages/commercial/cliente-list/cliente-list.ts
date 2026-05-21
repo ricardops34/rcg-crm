@@ -1,7 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { PoModule, PoTableColumn, PoTableAction, PoPageAction, PoPageFilter, PoNotificationService } from "@po-ui/ng-components";
+import { 
+  PoModule, 
+  PoTableColumn, 
+  PoTableAction, 
+  PoPageAction, 
+  PoPageFilter, 
+  PoNotificationService,
+  PoBreadcrumb
+} from "@po-ui/ng-components";
 import { ClienteService } from "../../../services/cliente";
 
 @Component({
@@ -11,12 +19,23 @@ import { ClienteService } from "../../../services/cliente";
   templateUrl: "./cliente-list.html"
 })
 export class ClienteListComponent implements OnInit {
+  private clienteService = inject(ClienteService);
+  private router = inject(Router);
+  private poNotification = inject(PoNotificationService);
 
   items: Array<any> = [];
   isLoading: boolean = true;
 
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Clientes" }
+    ]
+  };
+
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Novo Cliente", action: this.create.bind(this), icon: "po-icon-user-add" }
+    { label: "Novo Cliente", action: this.create.bind(this), icon: "po-icon-user-add" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -36,32 +55,26 @@ export class ClienteListComponent implements OnInit {
     { property: "uf", label: "UF", width: "80px" }
   ];
 
-  readonly actions: Array<PoTableAction> = [
+  readonly tableActions: Array<PoTableAction> = [
     { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-eye" },
     { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" },
     { label: "Excluir", action: this.deleteCliente.bind(this), icon: "po-icon-delete", type: "danger" }
   ];
 
-  constructor(
-    private clienteService: ClienteService, 
-    private router: Router,
-    private poNotification: PoNotificationService
-  ) { }
-
   ngOnInit(): void {
     this.loadData();
   }
 
-  loadData(filter?: string) {
+  loadData(filterText?: string) {
     this.isLoading = true;
     this.clienteService.findAll(1, 200).subscribe({ 
       next: (res) => {
         this.items = res.items;
-        if (filter) {
+        if (filterText) {
           this.items = this.items.filter(item => 
-            item.razao?.toLowerCase().includes(filter.toLowerCase()) ||
-            item.cnpjCpf?.toLowerCase().includes(filter.toLowerCase()) ||
-            item.codErp?.toLowerCase().includes(filter.toLowerCase())
+            item.razao?.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.cnpjCpf?.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.codErp?.toLowerCase().includes(filterText.toLowerCase())
           );
         }
         this.isLoading = false;

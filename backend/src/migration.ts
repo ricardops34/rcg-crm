@@ -96,13 +96,78 @@ export class MigrationDataService {
       console.log('🔒 Verificações reabilitadas.');
     } catch (e) {}
 
-    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} - Inserções: ${insertCount} ---\n`);
+    logStream.write(`--- FIM DA MIGRAÇÃO: ${new Date().toISOString()} - Total Inserções: ${insertCount} ---\n`);
     logStream.end();
     console.log(`Finalizado: ${insertCount} registros inseridos.`);
-    await this.fixSequences(ds);
-  }
 
-  async fixSequences(targetDataSource?: DataSource) {
+    await this.fixSequences(ds);
+
+    // NOVO: Normalizar estrutura de menu após migração
+    if (ds.options.name === 'security' || filePath.includes('permissao')) {
+      await this.normalizeMenuStructure(ds);
+    }
+    }
+
+    async normalizeMenuStructure(ds: DataSource) {
+    console.log('📦 Normalizando estrutura de módulos e rotinas...');
+
+    // 1. Garantir que os módulos básicos existam com ícones oficiais PO-UI
+    const modules = [
+      { name: 'Vendas', icon: 'po-icon-finance', order: 1 },
+      { name: 'Cadastro', icon: 'po-icon-user-add', order: 2 },
+      { name: 'Gerência', icon: 'po-icon-chart-line', order: 3 },
+      { name: 'Administração', icon: 'po-icon-settings', order: 4 },
+      { name: 'Sistema', icon: 'po-icon-device-desktop', order: 5 },
+      { name: 'Desenvolvimento', icon: 'po-icon-xml', order: 6 }
+    ];
+
+    for (const mod of modules) {
+      await ds.query(`
+        INSERT INTO system_module (name, icon, "order")
+        SELECT $1, $2, $3
+        WHERE NOT EXISTS (SELECT 1 FROM system_module WHERE name = $1)
+      `);
+      // Garantir atualização do ícone se já existir
+      await ds.query(`UPDATE system_module SET icon = $2, "order" = $3 WHERE name = $1`, [mod.name, mod.icon, mod.order]);
+    }
+
+    // 2. Mapear rotinas para seus respectivos módulos
+    const mapping = [
+      { controller: 'DashboardVendedor', module: 'Vendas' },
+      { controller: 'MvcList', module: 'Vendas' },
+      { controller: 'AtendimentoCalendarFormView', module: 'Vendas' },
+      
+      { controller: 'ClienteList', module: 'Cadastro' },
+      { controller: 'VendedorList', module: 'Cadastro' },
+      { controller: 'MetaVendedorMesList', module: 'Cadastro' },
+      { controller: 'ProdutoList', module: 'Cadastro' },
+      { controller: 'CategoriaList', module: 'Cadastro' },
+      { controller: 'TabelaPrecoList', module: 'Cadastro' },
+      
+      { controller: 'DashboardGerencia', module: 'Gerência' },
+      { controller: 'DashboardRegiao', module: 'Gerência' },
+      
+      { controller: 'SystemUserList', module: 'Administração' },
+      { controller: 'SystemGroupList', module: 'Administração' },
+      { controller: 'SystemUnitList', module: 'Administração' },
+      { controller: 'SystemProgramList', module: 'Administração' },
+      
+      { controller: 'PedidoEstadoList', module: 'Sistema' },
+      { controller: 'ParametroList', module: 'Sistema' }
+    ];
+
+    for (const item of mapping) {
+      await ds.query(`
+        UPDATE system_program 
+        SET system_module_id = (SELECT id FROM system_module WHERE name = $1 LIMIT 1)
+        WHERE controller LIKE $2
+      `, [item.module, `%${item.controller}%`]);
+    }
+
+    console.log('✅ Estrutura de menu normalizada.');
+    }
+
+    async fixSequences(targetDataSource?: DataSource) {
     const ds = targetDataSource || this.dataSource;
     const tables = await ds.query(`
       SELECT table_name FROM information_schema.tables 

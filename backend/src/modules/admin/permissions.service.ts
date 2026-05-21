@@ -141,7 +141,7 @@ export class PermissionsService {
       });
 
       allImplemented.forEach((prog: any) => {
-        const mod = prog.systemModule || { id: 0, name: 'Outros', icon: 'po-icon-more', order: 99 };
+        const mod = prog.systemModule || { id: 0, name: 'Cadastro', icon: 'po-icon-user-add', order: 2 };
         if (!menuMap.has(mod.id)) {
           menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });
         }
@@ -166,7 +166,7 @@ export class PermissionsService {
           relations: ['systemModule'] 
         });
 
-        const mod = fullProg?.systemModule || { id: 0, name: 'Outros', icon: 'po-icon-more', order: 99 };
+        const mod = fullProg?.systemModule || { id: 0, name: 'Cadastro', icon: 'po-icon-user-add', order: 2 };
         
         if (!menuMap.has(mod.id)) {
           menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });
