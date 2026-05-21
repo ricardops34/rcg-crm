@@ -109,9 +109,9 @@ const alliaLightAAA = {
       '--title-color': '#323232'
     },
     'po-menu': {
-      '--background-color-menu-panel': '#662D91',
-      '--color-menu-panel': '#FFFFFF',
-      '--background-color-item-selected': '#F5E6F0',
+      '--background-color-menu-panel': '#FFFFFF',
+      '--color-menu-panel': '#6C6B75',
+      '--background-color-item-selected': '#F5F4FA',
       '--color-item-selected': '#9E1F63'
     },
     'po-tag': {

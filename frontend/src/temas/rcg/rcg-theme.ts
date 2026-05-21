@@ -104,10 +104,10 @@ const rcgLightAAA = {
       '--title-color': '#17242A'
     },
     'po-menu': {
-      '--background-color-menu-panel': '#076085',
-      '--color-menu-panel': '#FFFFFF',
-      '--background-color-item-selected': '#EAF5FB',
-      '--color-item-selected': '#076085'
+      '--background-color-menu-panel': '#FFFFFF',
+      '--color-menu-panel': '#4E6571',
+      '--background-color-item-selected': '#F7FAFC',
+      '--color-item-selected': '#4097CC'
     },
     'po-tag': {
       '--border-radius': '999px'

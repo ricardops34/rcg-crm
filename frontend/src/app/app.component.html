@@ -9,11 +9,14 @@
     [p-logo]="logo"
     [p-filter]="true">
     
-    <div p-menu-header class="po-p-2 po-text-center po-mb-2">
-      <po-avatar [p-src]="profile.avatar || ''" p-size="xl"></po-avatar>
-      <div class="po-font-subtitle po-mt-1" style="color: white">{{ profile.title }}</div>
-      <div class="po-font-text-smaller" style="color: #ccc">{{ profile.subtitle }}</div>
-    </div>
+    <ng-template p-menu-header-template>
+      <div class="po-p-3 po-mb-2">
+        <div style="color: #aeb2b5; font-size: 22px; font-weight: 300; font-family: sans-serif;">Welcome,</div>
+        <div style="color: #555; font-size: 26px; font-weight: 400; font-family: sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          {{ profile.title }}
+        </div>
+      </div>
+    </ng-template>
 
   </po-menu>
 
