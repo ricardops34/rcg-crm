@@ -152,6 +152,7 @@ export class Cliente360Component implements OnInit {
     // Dados de Cobrança
     this.negociacaoService.getOverdueTitles(id).subscribe(res => {
       this.overdueTitles = res;
+      this.selectedTitles = [...res];
       this.isLoading = false;
     });
   }
@@ -161,6 +162,7 @@ export class Cliente360Component implements OnInit {
       this.poNotification.warning("Cliente não possui títulos vencidos para negociação.");
       return;
     }
+    this.selectedTitles = [...this.overdueTitles];
     this.negociacao.observacao = "";
     this.modalNegociacao.open();
   }

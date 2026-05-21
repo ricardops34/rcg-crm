@@ -8,7 +8,7 @@ import { environment } from "../../environments/environment";
 })
 export class CrmService {
 
-  private readonly API_URL = `${environment.apiUrl}/crm/atendimentos`;
+  private readonly API_URL = `${environment.apiUrl}/crm`;
 
   constructor(private http: HttpClient) { }
 
@@ -17,15 +17,71 @@ export class CrmService {
     return new HttpHeaders().set("Authorization", `Bearer ${token}`);
   }
 
-  findAll(): Observable<any> {
-    return this.http.get<any>(this.API_URL, { headers: this.getHeaders() });
+  findAll(start?: string, end?: string, vendedorId?: number): Observable<any> {
+    const params = new URLSearchParams();
+    if (start) params.set("start", start);
+    if (end) params.set("end", end);
+    if (vendedorId) params.set("vendedorId", String(vendedorId));
+
+    const query = params.toString();
+    const url = query ? `${this.API_URL}/atendimentos?${query}` : `${this.API_URL}/atendimentos`;
+
+    return this.http.get<any>(url, { headers: this.getHeaders() });
   }
 
   getTipos(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/crm/tipos`, { headers: this.getHeaders() });
+    return this.http.get<any>(`${this.API_URL}/tipos`, { headers: this.getHeaders() });
+  }
+
+  getAgenda(
+    view: "month" | "week" | "day",
+    date: string,
+    vendedorId?: number,
+    atendimentoTipoId?: number,
+  ): Observable<any> {
+    const params = new URLSearchParams({
+      view,
+      date
+    });
+
+    if (vendedorId) {
+      params.set("vendedorId", String(vendedorId));
+    }
+
+    if (atendimentoTipoId) {
+      params.set("atendimentoTipoId", String(atendimentoTipoId));
+    }
+
+    return this.http.get<any>(`${this.API_URL}/agenda?${params.toString()}`, { headers: this.getHeaders() });
+  }
+
+  getAgendaRange(
+    start: string,
+    end: string,
+    view: "month" | "week" | "day",
+    date: string,
+    vendedorId?: number,
+    atendimentoTipoId?: number,
+  ): Observable<any> {
+    const params = new URLSearchParams({
+      start,
+      end,
+      view,
+      date
+    });
+
+    if (vendedorId) {
+      params.set("vendedorId", String(vendedorId));
+    }
+
+    if (atendimentoTipoId) {
+      params.set("atendimentoTipoId", String(atendimentoTipoId));
+    }
+
+    return this.http.get<any>(`${this.API_URL}/agenda?${params.toString()}`, { headers: this.getHeaders() });
   }
 
   save(data: any): Observable<any> {
-    return this.http.post<any>(this.API_URL, data, { headers: this.getHeaders() });
+    return this.http.post<any>(`${this.API_URL}/atendimentos`, data, { headers: this.getHeaders() });
   }
 }

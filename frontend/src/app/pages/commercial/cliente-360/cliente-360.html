@@ -39,22 +39,20 @@
       <div class="po-row po-mt-2">
         <div class="po-md-12">
           <div class="po-row po-mb-2">
-            <po-info class="po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length"></po-info>
+            <po-info class="po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length.toString()"></po-info>
             <div class="po-md-8 po-text-right">
-              <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" p-type="primary" (p-click)="openNegociacao()"></po-button>
+              <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" (p-click)="openNegociacao()"></po-button>
             </div>
           </div>
           
           <po-table 
             [p-columns]="overdueColumns" 
             [p-items]="overdueTitles" 
-            p-container="shadow"
-            [p-selectable]="true"
-            [(p-selected-items)]="selectedTitles">
+            p-container="shadow">
           </po-table>
           
           <p class="po-font-text-smaller po-mt-2 po-text-color-07">
-            * Selecione todos os títulos para habilitar a geração da negociação.
+            * A negociação será gerada com todos os títulos vencidos exibidos.
           </p>
         </div>
       </div>

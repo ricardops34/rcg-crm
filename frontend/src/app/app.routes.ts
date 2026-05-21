@@ -7,6 +7,7 @@ import { DashboardComponent } from './pages/analytics/dashboard/dashboard';
 import { MvcListComponent } from './pages/commercial/mvc-list/mvc-list';
 import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor-list';
 import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor-form';
+import { AgendaAtendimentoComponent } from './pages/commercial/agenda-atendimento/agenda-atendimento';
 import { ProductListComponent } from './pages/catalog/product-list/product-list';
 import { ProductFormComponent } from './pages/catalog/product-form/product-form';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'vendedores', component: VendedorListComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/new', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/edit/:id', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
+      { path: 'agenda-atendimento', component: AgendaAtendimentoComponent, data: { controller: 'MvcList' } },
       { path: 'produtos', component: ProductListComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/new', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/edit/:id', component: ProductFormComponent, data: { controller: 'ProdutoList' } },

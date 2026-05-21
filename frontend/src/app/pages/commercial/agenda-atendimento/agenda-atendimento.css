@@ -1,0 +1,95 @@
+.agenda-toolbar {
+  align-items: end;
+}
+
+.agenda-summary {
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.agenda-calendar-wrapper {
+  margin-top: 12px;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%);
+  border: 1px solid #dbe5f2;
+  border-radius: 18px;
+  padding: 16px;
+  min-height: 840px;
+}
+
+:host ::ng-deep .agenda-calendar-wrapper .sx__calendar {
+  height: 800px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+:host ::ng-deep .agenda-calendar-wrapper .sx__calendar-header {
+  padding: 18px 20px;
+  background: linear-gradient(90deg, #0f766e 0%, #1d4ed8 100%);
+  color: #ffffff;
+}
+
+:host ::ng-deep .agenda-calendar-wrapper .sx__calendar-header button,
+:host ::ng-deep .agenda-calendar-wrapper .sx__calendar-header select {
+  border-radius: 999px;
+}
+
+:host ::ng-deep .agenda-sx-chip,
+:host ::ng-deep .agenda-sx-row,
+:host ::ng-deep .agenda-sx-card {
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+:host ::ng-deep .agenda-sx-chip__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+:host ::ng-deep .agenda-sx-chip__title,
+:host ::ng-deep .agenda-sx-row strong,
+:host ::ng-deep .agenda-sx-card strong {
+  font-size: 0.78rem;
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+:host ::ng-deep .agenda-sx-row span,
+:host ::ng-deep .agenda-sx-card span {
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+:host ::ng-deep .agenda-sx-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  width: 100%;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 4px 8px;
+}
+
+@media (max-width: 900px) {
+  .agenda-calendar-wrapper {
+    padding: 8px;
+    min-height: 680px;
+  }
+
+  :host ::ng-deep .agenda-calendar-wrapper .sx__calendar {
+    height: 640px;
+  }
+}

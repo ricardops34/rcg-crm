@@ -114,6 +114,7 @@ export class AppComponent implements OnInit {
       "MvcList": "/mvc",
       "ClienteList": "/clientes",
       "PosisaoClienteFormView": "/clientes/360",
+      "AgendaAtendimentoList": "/agenda-atendimento",
       "MetaVendedorMesList": "/metas",
       "VendedorList": "/vendedores",
       "ProdutoList": "/produtos",
@@ -159,6 +160,15 @@ export class AppComponent implements OnInit {
     const items: Array<PoMenuItem> = [
       { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-home", shortLabel: "Home" },
     ];
+
+    if (this.authService.isAuthenticated() && this.authService.hasPermission('MvcList')) {
+      items.push({
+        label: "Agenda Comercial",
+        action: () => this.router.navigate(["/agenda-atendimento"]),
+        icon: "po-icon-calendar",
+        shortLabel: "Agenda"
+      });
+    }
 
     if (this.dynamicMenus.length > 0) {
       items.push(...this.dynamicMenus);

@@ -1,0 +1,102 @@
+<po-page-default
+  p-title="Agenda Comercial"
+  p-subtitle="Calendário de vendas e atendimentos do vendedor"
+  [p-breadcrumb]="breadcrumb"
+  [p-actions]="pageActions">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+
+  <div class="po-row agenda-toolbar">
+    <po-datepicker
+      class="po-md-3"
+      name="referenceDate"
+      p-label="Data base"
+      [ngModel]="selectedDate"
+      (ngModelChange)="selectedDate = $event"
+      (p-change)="goToDate()">
+    </po-datepicker>
+
+    <po-select
+      *ngIf="isGerente"
+      class="po-md-5"
+      name="vendedor"
+      p-label="Vendedor"
+      [p-options]="vendedores"
+      [ngModel]="selectedVendedor"
+      (p-change)="selectedVendedor = $event; onFilterChange()"
+      p-placeholder="Todos">
+    </po-select>
+
+    <po-select
+      class="po-md-4"
+      name="atendimentoTipoFiltro"
+      p-label="Tipo CRM"
+      [p-options]="filtroTiposAtendimento"
+      [ngModel]="selectedAtendimentoTipo"
+      (p-change)="selectedAtendimentoTipo = $event; onFilterChange()"
+      p-placeholder="Todos">
+    </po-select>
+  </div>
+
+  <div class="po-row po-mt-2">
+    <po-widget class="po-md-4 po-mb-2" p-title="Notas no Período">
+      <div class="agenda-summary">{{ agenda.summary.totalNotas || 0 }}</div>
+    </po-widget>
+    <po-widget class="po-md-4 po-mb-2" p-title="Valor Faturado">
+      <div class="agenda-summary">{{ agenda.summary.totalValor || 0 | currency:'BRL' }}</div>
+    </po-widget>
+    <po-widget class="po-md-4 po-mb-2" p-title="Atendimentos">
+      <div class="agenda-summary">{{ agenda.summary.totalAtendimentos || 0 }}</div>
+    </po-widget>
+  </div>
+
+  <div class="agenda-calendar-wrapper">
+    <sx-calendar *ngIf="calendar" [calendarApp]="calendar"></sx-calendar>
+  </div>
+</po-page-default>
+
+<po-modal
+  #modalDetalhe
+  p-title="Detalhe do Evento"
+  [p-primary-action]="{ label: 'Registrar Atendimento', action: openAtendimento.bind(this, selectedEvent) }">
+  <div *ngIf="selectedEvent">
+    <po-info p-label="Título" [p-value]="selectedEvent.titulo" [p-orientation]="infoOrientation"></po-info>
+    <po-info *ngIf="selectedEvent.atendimentoTipoDescricao" p-label="Tipo CRM" [p-value]="selectedEvent.atendimentoTipoDescricao" [p-orientation]="infoOrientation"></po-info>
+    <po-info p-label="Cliente" [p-value]="selectedEvent.clienteNome" [p-orientation]="infoOrientation"></po-info>
+    <po-info p-label="Vendedor" [p-value]="selectedEvent.vendedorNome" [p-orientation]="infoOrientation"></po-info>
+    <po-info p-label="Horário" [p-value]="getEventTime(selectedEvent)" [p-orientation]="infoOrientation"></po-info>
+    <po-info *ngIf="selectedEvent.notaFiscal" p-label="Nota Fiscal" [p-value]="selectedEvent.notaFiscal" [p-orientation]="infoOrientation"></po-info>
+    <po-info *ngIf="selectedEvent.valor" p-label="Valor" [p-value]="formatCurrency(selectedEvent.valor)" [p-orientation]="infoOrientation"></po-info>
+    <po-info *ngIf="selectedEvent.observacao" p-label="Observação" [p-value]="selectedEvent.observacao" [p-orientation]="infoOrientation"></po-info>
+  </div>
+</po-modal>
+
+<po-modal
+  #modalAtendimento
+  p-title="Novo Atendimento"
+  [p-primary-action]="{ label: 'Salvar Atendimento', action: saveAtendimento.bind(this) }">
+  <div class="po-row">
+    <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedEvent?.clienteNome || 'Atendimento sem cliente vinculado'"></po-info>
+  </div>
+
+  <div class="po-row">
+    <po-select class="po-md-12" name="tipoAgenda" [ngModel]="atendimento.atendimentoTipoId" (p-change)="onAtendimentoTipoChange($event)" p-label="Tipo de Atendimento" [p-options]="tiposAtendimento" [p-required]="true"></po-select>
+  </div>
+
+  <div class="po-row">
+    <po-input class="po-md-12" name="tituloAgenda" [(ngModel)]="atendimento.titulo" p-label="Título"></po-input>
+  </div>
+
+  <div class="po-row">
+    <po-date-time class="po-md-6" name="inicioAgenda" [(ngModel)]="atendimento.horarioInicial" p-label="Início"></po-date-time>
+    <po-date-time class="po-md-6" name="fimAgenda" [(ngModel)]="atendimento.horarioFinal" p-label="Fim"></po-date-time>
+  </div>
+
+  <div class="po-row">
+    <po-date-time class="po-md-6" name="retornoAgenda" [(ngModel)]="atendimento.retorno" p-label="Retorno"></po-date-time>
+  </div>
+
+  <div class="po-row">
+    <po-textarea class="po-md-12" name="obsAgenda" [(ngModel)]="atendimento.observacao" p-label="Observação" [p-rows]="4"></po-textarea>
+  </div>
+</po-modal>
