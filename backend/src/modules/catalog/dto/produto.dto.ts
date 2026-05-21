@@ -110,3 +110,14 @@ export class ProdutoResponseDto extends CreateProdutoDto {
   @ApiProperty({ example: 20, description: 'Ponto de pedido', readOnly: true })
   pontoPedido: number;
 }
+
+export class PaginatedProdutoResponseDto {
+  @ApiProperty({ type: [ProdutoResponseDto] })
+  items: ProdutoResponseDto[];
+
+  @ApiProperty({ example: 1200 })
+  total: number;
+
+  @ApiProperty({ example: true })
+  hasNext: boolean;
+}

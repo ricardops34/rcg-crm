@@ -175,6 +175,38 @@ export class ClienteResponseDto extends CreateClienteDto {
   @ApiProperty({ example: 15000.00, description: 'Limite de crédito (concedido)', readOnly: true })
   limite: number;
 
-  @ApiProperty({ example: '2026-05-21', description: 'Data da última compra', readOnly: true })
+  @ApiProperty({ example: '2026-05-21', description: 'Data da última compra', readOnly: true, nullable: true })
   ultimaCompra: string;
+
+  @ApiProperty({ example: -20.46, description: 'Latitude para geolocalização', nullable: true })
+  latitude?: number;
+
+  @ApiProperty({ example: -54.61, description: 'Longitude para geolocalização', nullable: true })
+  longitude?: number;
+
+  @ApiProperty({ example: '6733220000', description: 'Fax', nullable: true })
+  fax?: string;
+
+  @ApiProperty({ example: 'Vendedor João', description: 'Nome do vendedor vinculado (JOIN)', readOnly: true })
+  vendedorNome?: string;
+
+  @ApiProperty({ example: 'S', description: 'Registro Ativo (S/N)', default: 'S' })
+  regAtivo: string;
+
+  @ApiProperty({ example: '2026-05-21T15:00:00Z', description: 'Data de inclusão', readOnly: true })
+  dtInclusao: Date;
+
+  @ApiProperty({ example: '2026-05-21T15:00:00Z', description: 'Data da última alteração', readOnly: true })
+  dtAlteracao: Date;
+}
+
+export class PaginatedClienteResponseDto {
+  @ApiProperty({ type: [ClienteResponseDto] })
+  items: ClienteResponseDto[];
+
+  @ApiProperty({ example: 500 })
+  total: number;
+
+  @ApiProperty({ example: true })
+  hasNext: boolean;
 }

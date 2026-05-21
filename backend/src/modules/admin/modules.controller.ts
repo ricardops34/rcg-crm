@@ -1,9 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { ModulesService } from './modules.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../auth/guards/permissions.guard';
-import { RequirePermission } from '../auth/decorators/permissions.decorator';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { AdminModuleResponseDto } from './dto/admin-shared.dto';
 
 @ApiTags('Admin / Modules')
 @ApiBearerAuth()
@@ -14,6 +11,8 @@ export class ModulesController {
   constructor(private readonly modulesService: ModulesService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Lista todos os módulos do sistema' })
+  @ApiResponse({ status: 200, type: [AdminModuleResponseDto] })
   async findAll() {
     return this.modulesService.findAll();
   }

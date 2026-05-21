@@ -15,7 +15,7 @@ import { VendedorService } from '../../services/vendedor/vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
-import { CreateVendedorDto, UpdateVendedorDto, VendedorResponseDto } from '../../dto/vendedor.dto';
+import { CreateVendedorDto, UpdateVendedorDto, VendedorResponseDto, PaginatedVendedorResponseDto } from '../../dto/vendedor.dto';
 
 @ApiTags('Commercial / Vendedores')
 @ApiBearerAuth()
@@ -26,18 +26,18 @@ export class VendedorController {
   constructor(private readonly vendedorService: VendedorService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Lista vendedores com paginação' })
-  @ApiResponse({ status: 200, description: 'Lista de vendedores retornada com sucesso' })
+  @ApiOperation({ summary: 'Lista vendedores com paginação (padrão PO-UI)' })
+  @ApiResponse({ status: 200, type: PaginatedVendedorResponseDto })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
     const [items, total] = await this.vendedorService.findAll(page, limit);
-    return { items, total };
+    return { items, total, hasNext: total > page * limit };
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca um vendedor pelo ID' })
+  @ApiOperation({ summary: 'Busca detalhes de um vendedor pelo ID' })
   @ApiResponse({ status: 200, type: VendedorResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.vendedorService.findOne(id);

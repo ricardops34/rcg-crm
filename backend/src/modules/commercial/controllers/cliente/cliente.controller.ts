@@ -16,7 +16,7 @@ import { ClienteDetailsService } from '../../services/cliente/cliente-details.se
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
-import { CreateClienteDto, UpdateClienteDto, ClienteResponseDto } from '../../dto/cliente.dto';
+import { CreateClienteDto, UpdateClienteDto, ClienteResponseDto, PaginatedClienteResponseDto } from '../../dto/cliente.dto';
 
 @ApiTags('Commercial / Clientes')
 @ApiBearerAuth()
@@ -30,8 +30,8 @@ export class ClienteController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Lista clientes com paginação' })
-  @ApiResponse({ status: 200, description: 'Lista de clientes retornada com sucesso' })
+  @ApiOperation({ summary: 'Lista clientes com paginação (padrão PO-UI)' })
+  @ApiResponse({ status: 200, type: PaginatedClienteResponseDto })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
@@ -45,7 +45,7 @@ export class ClienteController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca um cliente pelo ID' })
+  @ApiOperation({ summary: 'Busca detalhes completos de um cliente pelo ID' })
   @ApiResponse({ status: 200, type: ClienteResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);

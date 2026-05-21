@@ -15,7 +15,7 @@ import { ProdutoService } from '../../services/produto/produto.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
-import { CreateProdutoDto, UpdateProdutoDto, ProdutoResponseDto } from '../../dto/produto.dto';
+import { CreateProdutoDto, UpdateProdutoDto, ProdutoResponseDto, PaginatedProdutoResponseDto } from '../../dto/produto.dto';
 
 @ApiTags('Catálogo / Produtos')
 @ApiBearerAuth()
@@ -26,10 +26,15 @@ export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Lista produtos com filtros' })
-  @ApiResponse({ status: 200, type: [ProdutoResponseDto] })
-  findAll(@Query() query: any) {
-    return this.produtoService.findAll(query);
+  @ApiOperation({ summary: 'Lista produtos com filtros e paginação (padrão PO-UI)' })
+  @ApiResponse({ status: 200, type: PaginatedProdutoResponseDto })
+  async findAll(@Query() query: any) {
+    const [items, total] = await this.produtoService.findAll(query);
+    return {
+      items,
+      total,
+      hasNext: total > (query.page || 1) * (query.limit || 10),
+    };
   }
 
   @Get('categorias')
@@ -39,9 +44,9 @@ export class ProdutoController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca um produto pelo ID' })
+  @ApiOperation({ summary: 'Busca detalhes de um produto pelo ID' })
   @ApiResponse({ status: 200, type: ProdutoResponseDto })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.produtoService.findOne(id);
   }
 
@@ -60,6 +65,7 @@ export class ProdutoController {
   async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateProdutoDto) {
     return this.produtoService.save({ ...data, id });
   }
+
 
 
   @Delete(':id')

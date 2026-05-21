@@ -48,4 +48,18 @@ export class UpdateVendedorDto extends PartialType(CreateVendedorDto) {}
 export class VendedorResponseDto extends CreateVendedorDto {
   @ApiProperty({ example: 12, description: 'ID interno do vendedor' })
   id: number;
+
+  @ApiProperty({ example: '2026-05-21T15:00:00Z', description: 'Data de inclusão', readOnly: true })
+  dtInclusao: Date;
+}
+
+export class PaginatedVendedorResponseDto {
+  @ApiProperty({ type: [VendedorResponseDto] })
+  items: VendedorResponseDto[];
+
+  @ApiProperty({ example: 50 })
+  total: number;
+
+  @ApiProperty({ example: false })
+  hasNext: boolean;
 }

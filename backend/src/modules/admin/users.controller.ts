@@ -15,6 +15,8 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermission } from '../auth/decorators/permissions.decorator';
 import { SaveTermsDto, CreateUserDto, UpdateUserDto } from './dto/users.dto';
 
+import { UserResponseDto } from './dto/user.dto';
+
 @ApiTags('Admin / Users')
 @ApiBearerAuth()
 @Controller('admin/users')
@@ -25,6 +27,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Lista todos os usuários' })
+  @ApiResponse({ status: 200, type: [UserResponseDto] })
   async findAll() {
     return this.usersService.findAll();
   }
@@ -37,15 +40,17 @@ export class UsersController {
 
   @Post('terms')
   @ApiOperation({ summary: 'Atualiza o texto e versão dos termos de uso' })
-  async saveTerms(@Body() data: SaveTermsDto) {
+  async saveTerms(@Body() data: { text: string, version: string }) {
     return this.usersService.saveTerms(data);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtém detalhes de um usuário específico' })
+  @ApiResponse({ status: 200, type: UserResponseDto })
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
+
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo usuário' })
