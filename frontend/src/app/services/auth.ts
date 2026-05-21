@@ -59,14 +59,21 @@ export class AuthService {
     if (!token) return false;
 
     try {
-      // Decodifica a carga útil (payload) do JWT para verificar a data de expiração (exp)
+      // Decodifica a carga útil (payload) do JWT
       const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      // Se tiver scope (2FA ou TERMS), o login ainda não foi concluído
+      if (payload.scope) {
+        return false;
+      }
+
+      // Verifica expiração
       if (payload.exp && Date.now() >= payload.exp * 1000) {
-        this.logout(); // Limpa o token expirado do localStorage
+        this.logout();
         return false;
       }
     } catch (e) {
-      this.logout(); // Limpa em caso de token corrompido
+      this.logout();
       return false;
     }
 

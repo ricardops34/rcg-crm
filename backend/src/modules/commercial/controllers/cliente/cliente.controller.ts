@@ -10,15 +10,18 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ClienteService } from '../../services/cliente/cliente.service';
 import { ClienteDetailsService } from '../../services/cliente/cliente-details.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
-import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
 
+@ApiTags('Commercial / Clientes')
+@ApiBearerAuth()
 @Controller('commercial/clientes')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('ClienteList')
+@RequirePermission('ClienteList')
 export class ClienteController {
   constructor(
     private readonly clienteService: ClienteService,

@@ -45,13 +45,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         `session:${payload.sub}`,
       );
 
-      console.log(`[AUTH-GUARD] 🔐 Validando sessão do usuário ${payload.sub}`);
-      console.log(`[AUTH-GUARD] 🎫 SID no Token: ${payload.sid}`);
-      console.log(`[AUTH-GUARD] 🗄️ SID no Cache: ${activeSessionId}`);
-
-      // BYPASS TEMPORÁRIO PARA DEBUG: Permitir acesso mesmo se o SID não bater
       if (!activeSessionId || activeSessionId !== payload.sid) {
-        console.warn(`[AUTH-GUARD] ⚠️ Sessão divergente para usuário ${payload.sub}. Ignorando trava para fins de migração.`);
+        console.warn(`[AUTH-GUARD] ❌ Sessão divergente/derrubada para usuário ${payload.sub}. SID no token: ${payload.sid}, SID ativo: ${activeSessionId}`);
+        throw new UnauthorizedException('Sessão expirada ou iniciada em outro dispositivo');
       }
 
       const profile = await this.authService.getProfile(payload.sub);

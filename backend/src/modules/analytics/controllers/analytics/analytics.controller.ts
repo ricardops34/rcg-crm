@@ -1,16 +1,19 @@
 ﻿import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AnalyticsService } from '../../services/analytics/analytics.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
-import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
 
+@ApiTags('BI / Analytics')
+@ApiBearerAuth()
 @Controller('analytics')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get('dashboard')
-  @ControllerName('DashboardVendedor')
+  @RequirePermission('DashboardVendedor')
   async getDashboard(
     @Req() req: any,
     @Query('year') year: string,
@@ -31,7 +34,7 @@ export class AnalyticsController {
   }
 
   @Get('mvc')
-  @ControllerName('MvcList')
+  @RequirePermission('MvcList')
   async getMvc(
     @Req() req: any,
     @Query('year') year: string,

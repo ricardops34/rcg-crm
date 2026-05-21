@@ -9,6 +9,7 @@ import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { SystemUser } from '../admin/entities/system-user.entity';
 import { PermissionsService } from '../admin/permissions.service';
+import { MailService } from '../admin/services/mail.service';
 import { Vendedor } from '../commercial/entities/vendedor.entity';
 import { Supervisor } from '../commercial/entities/supervisor.entity';
 import { SupervisorVendedor } from '../commercial/entities/supervisor-vendedor.entity';
@@ -16,6 +17,7 @@ import { SupervisorVendedor } from '../commercial/entities/supervisor-vendedor.e
 export interface AuthUser {
   id: number;
   login: string;
+  email?: string;
   twoFactorEnabled?: string;
   twoFactorVerified?: boolean;
   acceptedTermPolicy?: string;
@@ -35,6 +37,7 @@ export class AuthService {
     private supervisorVendedorRepository: Repository<SupervisorVendedor>,
     private jwtService: JwtService,
     private permissionsService: PermissionsService,
+    private mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -97,6 +100,19 @@ export class AuthService {
   async login(user: AuthUser) {
     // Verificar se precisa de 2FA ou Aceite de Termos antes do login final
     if (user.twoFactorEnabled === 'Y' && !user.twoFactorVerified) {
+      // Gerar código de 6 dígitos
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Salvar no cache por 10 minutos
+      await this.cacheManager.set(`2fa:${user.id}`, code, 600000);
+      
+      // Enviar e-mail (se o usuário tiver e-mail)
+      if (user.email) {
+        await this.mailService.send2FAToken(user.email, code);
+      } else {
+        console.warn(`[AUTH] ⚠️ Usuário ${user.id} sem e-mail cadastrado para 2FA.`);
+      }
+
       const payload = { sub: user.id, username: user.login, scope: '2fa' };
       return {
         nextStep: '2FA',

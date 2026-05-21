@@ -14,7 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // Deslogamos o usuário e o redirecionamos de volta para a tela de login.
       if (error instanceof HttpErrorResponse && error.status === 401) {
         authService.logout();
-        router.navigate(['/login']);
+        router.navigate(['/login'], { queryParams: { error: 'session' } });
       }
       return throwError(() => error);
     })

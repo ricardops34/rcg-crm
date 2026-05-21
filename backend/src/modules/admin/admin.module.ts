@@ -15,12 +15,13 @@ import { PermissionsService } from './permissions.service';
 import { GroupsService } from './groups.service';
 import { ProgramsService } from './programs.service';
 import { ModulesService } from './modules.service';
+import { UsersService } from './users.service';
+import { PermissionsService } from './permissions.service';
+import { GroupsService } from './groups.service';
+import { ProgramsService } from './programs.service';
+import { ModulesService } from './modules.service';
 import { UnitsService } from './units.service';
-import { UsersController } from './users.controller';
-import { GroupsController } from './groups.controller';
-import { ProgramsController } from './programs.controller';
-import { ModulesController } from './modules.controller';
-import { UnitsController } from './units.controller';
+import { MailService } from './services/mail.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UnitsController } from './units.controller';
     ProgramsService,
     ModulesService,
     UnitsService,
+    MailService,
   ],
   controllers: [
     UsersController,
@@ -63,6 +65,7 @@ import { UnitsController } from './units.controller';
     ProgramsService,
     ModulesService,
     UnitsService,
+    MailService,
   ],
 })
 export class AdminModule {}

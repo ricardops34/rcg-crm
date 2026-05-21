@@ -1,6 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Audited } from '../../admin/decorators/audited.decorator';
 import { Filial } from '../../master-data/entities/filial.entity';
 
+@Audited()
 @Entity('vendedor')
 export class Vendedor {
   @PrimaryGeneratedColumn()

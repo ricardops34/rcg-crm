@@ -8,14 +8,17 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GroupsService } from './groups.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from './guards/permissions.guard';
-import { ControllerName } from './decorators/controller-name.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermission } from '../auth/decorators/permissions.decorator';
 
+@ApiTags('Admin / Groups')
+@ApiBearerAuth()
 @Controller('admin/groups')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('SystemGroupList')
+@RequirePermission('SystemGroupList')
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 

@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AuthService, AuthUser } from './auth.service';
 import { UsersService } from '../admin/users.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -30,6 +31,7 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -38,12 +40,15 @@ export class AuthController {
   ) {}
 
   @Get('terms')
+  @ApiOperation({ summary: 'Obtém a versão atual dos termos de uso' })
   async getTerms() {
     return this.usersService.getTerms();
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Realiza o login básico (usuário/senha)' })
+  @ApiResponse({ status: 200, description: 'Login bem-sucedido ou redirecionamento para 2FA/Terms' })
   async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(
       body.login,
@@ -55,9 +60,11 @@ export class AuthController {
     return this.authService.login(user as AuthUser);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('verify-2fa')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Valida o código de segundo fator (2FA)' })
   async verify2fa(
     @Request() req: AuthenticatedRequest,
     @Body() body: Verify2faDto,
@@ -79,9 +86,11 @@ export class AuthController {
     });
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('accept-terms')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Aceita os termos de uso e libera o acesso total' })
   async acceptTerms(@Request() req: AuthenticatedRequest) {
     if (req.user.scope !== 'TERMS') {
       throw new UnauthorizedException('Token inválido para esta operação');

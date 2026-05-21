@@ -10,14 +10,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { MetaVendedorService } from '../../services/meta-vendedor/meta-vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
-import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
 
+@ApiTags('Commercial / Metas')
+@ApiBearerAuth()
 @Controller('commercial/metas')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('MetaList')
+@RequirePermission('MetaList')
 export class MetaVendedorController {
   constructor(private readonly metaService: MetaVendedorService) {}
 

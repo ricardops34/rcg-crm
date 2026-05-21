@@ -4,9 +4,12 @@ import { Repository } from 'typeorm';
 import { Estado } from '../entities/estado.entity';
 import { Municipio } from '../entities/municipio.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../auth/decorators/permissions.decorator';
 
 @Controller('master-data')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@RequirePermission('MunicipioList')
 export class LocationController {
   constructor(
     @InjectRepository(Estado)

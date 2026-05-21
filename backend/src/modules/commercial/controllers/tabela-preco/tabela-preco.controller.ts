@@ -10,14 +10,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { TabelaPrecoService } from '../../services/tabela-preco/tabela-preco.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
-import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
 
+@ApiTags('Commercial / Tabelas de Preços')
+@ApiBearerAuth()
 @Controller('commercial/tabelas-precos')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('TabelaPrecoList')
+@RequirePermission('TabelaPrecoList')
 export class TabelaPrecoController {
   constructor(private readonly tabelaPrecoService: TabelaPrecoService) {}
 

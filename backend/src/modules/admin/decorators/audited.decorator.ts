@@ -1,5 +1,5 @@
-export const Audited = () => {
-  return (constructor: Function) => {
-    constructor.prototype['isAudited'] = true;
+export function Audited() {
+  return function (constructor: Function) {
+    constructor.prototype.isAudited = true;
   };
-};
+}

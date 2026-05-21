@@ -1,12 +1,15 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UnitsService } from './units.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from './guards/permissions.guard';
-import { ControllerName } from './decorators/controller-name.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermission } from '../auth/decorators/permissions.decorator';
 
+@ApiTags('Admin / Units')
+@ApiBearerAuth()
 @Controller('admin/units')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('SystemUnitList')
+@RequirePermission('SystemUnitList')
 export class UnitsController {
   constructor(private readonly unitsService: UnitsService) {}
 

@@ -1,12 +1,15 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../admin/guards/permissions.guard';
-import { ControllerName } from '../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../auth/decorators/permissions.decorator';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AgendaComercialService } from '../services/agenda-comercial.service';
 
+@ApiTags('CRM / Agenda')
+@ApiBearerAuth()
 @Controller('crm/agenda')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('MvcList')
+@RequirePermission('MvcList')
 export class AgendaComercialController {
   constructor(private readonly agendaComercialService: AgendaComercialService) {}
 

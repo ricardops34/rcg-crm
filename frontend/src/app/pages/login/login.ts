@@ -1,5 +1,5 @@
-import { Component, ViewChild, inject, signal, ViewEncapsulation } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, ViewChild, inject, signal, ViewEncapsulation, OnInit } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { PoPageLogin, PoPageLoginModule } from "@po-ui/ng-templates";
@@ -14,12 +14,13 @@ import { AuthService } from "../../services/auth";
   styleUrl: "./login.css",
   encapsulation: ViewEncapsulation.None
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   @ViewChild("modal2fa", { static: true }) modal2fa!: PoModalComponent;
   @ViewChild("modalTerms", { static: true }) modalTerms!: PoModalComponent;
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private poNotification = inject(PoNotificationService);
 
   twoFactorCode: string = "";
@@ -30,6 +31,15 @@ export class LoginComponent {
 
   ngOnInit() {
     this.loadTerms();
+    this.checkSessionError();
+  }
+
+  checkSessionError() {
+    this.route.queryParams.subscribe(params => {
+      if (params['error'] === 'session') {
+        this.poNotification.warning("Sessão expirada ou iniciada em outro dispositivo.");
+      }
+    });
   }
 
   loadTerms() {

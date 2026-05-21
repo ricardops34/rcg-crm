@@ -7,10 +7,12 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Audited } from '../../admin/decorators/audited.decorator';
 import { Filial } from '../../master-data/entities/filial.entity';
 import { Categoria } from './categoria.entity';
 import { SubCategoria } from './sub-categoria.entity';
 
+@Audited()
 @Entity('produto')
 export class Produto {
   @PrimaryGeneratedColumn()

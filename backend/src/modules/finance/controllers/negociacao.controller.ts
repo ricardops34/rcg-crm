@@ -9,11 +9,17 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { NegociacaoService } from '../services/negociacao.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../auth/decorators/permissions.decorator';
 
+@ApiTags('Financeiro / Negociações')
+@ApiBearerAuth()
 @Controller('finance/negociacoes')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@RequirePermission('NegociacaoList')
 export class NegociacaoController {
   constructor(private readonly negociacaoService: NegociacaoService) {}
 

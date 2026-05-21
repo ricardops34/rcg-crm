@@ -10,14 +10,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { VendedorService } from '../../services/vendedor/vendedor.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../../admin/guards/permissions.guard';
-import { ControllerName } from '../../../admin/decorators/controller-name.decorator';
+import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
+import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
 
+@ApiTags('Commercial / Vendedores')
+@ApiBearerAuth()
 @Controller('commercial/vendedores')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@ControllerName('VendedorList')
+@RequirePermission('VendedorList')
 export class VendedorController {
   constructor(private readonly vendedorService: VendedorService) {}
 
