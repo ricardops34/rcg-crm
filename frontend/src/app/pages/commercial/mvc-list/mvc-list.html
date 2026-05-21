@@ -112,11 +112,11 @@
   </div>
   
   <div class="po-row">
-    <po-select class="po-md-12" name="tipo" [(ngModel)]="atendimento.atendimentoTipoId" p-label="Tipo de Contato" [p-options]="tiposAtendimento" p-required></po-select>
+    <po-select class="po-md-12" name="tipo" [ngModel]="atendimento.atendimentoTipoId" (p-change)="atendimento.atendimentoTipoId = $event" p-label="Tipo de Contato" [p-options]="tiposAtendimento" [p-required]="true"></po-select>
   </div>
 
   <div class="po-row">
-    <po-textarea class="po-md-12" name="obs" [(ngModel)]="atendimento.observacao" p-label="Relato do Atendimento" p-required p-rows="4"></po-textarea>
+    <po-textarea class="po-md-12" name="obs" [(ngModel)]="atendimento.observacao" p-label="Relato do Atendimento" [p-required]="true" [p-rows]="4"></po-textarea>
   </div>
 
   <div class="po-row">

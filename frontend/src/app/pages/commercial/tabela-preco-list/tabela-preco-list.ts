@@ -51,7 +51,7 @@ export class TabelaPrecoListComponent implements OnInit {
     ]
   };
 
-  readonly pageActions: Array<PoPageAction> = [
+  readonly actions: Array<PoPageAction> = [
     { label: "Nova Tabela", action: () => this.router.navigate(["/tabelas-precos/new"]), icon: "po-icon-plus" },
     { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];

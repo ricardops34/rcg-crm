@@ -24,15 +24,15 @@
 
     <po-divider p-label="Configuração e Hierarquia"></po-divider>
     <div class="po-row">
-      <po-select class="po-md-3" name="systemUnitId" [(ngModel)]="vendedor.systemUnitId" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
-      <po-select class="po-md-3" name="status" [(ngModel)]="vendedor.status" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
+      <po-select class="po-md-3" name="systemUnitId" [ngModel]="vendedor.systemUnitId" (p-change)="vendedor.systemUnitId = $event" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
+      <po-select class="po-md-3" name="status" [ngModel]="vendedor.status" (p-change)="vendedor.status = $event" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
       <po-datepicker class="po-md-3" name="dtNascimento" [(ngModel)]="vendedor.dtNascimento" p-label="Data de Nascimento"></po-datepicker>
       <po-input class="po-md-3" name="systemUsersId" [(ngModel)]="vendedor.systemUsersId" p-label="ID Usuário Relacionado" p-help="ID da tabela system_users" p-type="number"></po-input>
     </div>
 
     <div class="po-row">
       <po-switch class="po-md-3" name="supervisor" [(ngModel)]="vendedor.supervisor" p-label="É Supervisor?" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
-      <po-select class="po-md-3" name="supervisorId" [(ngModel)]="vendedor.supervisorId" p-label="Supervisor Imediato" [p-options]="supervisors" [p-disabled]="vendedor.supervisor === 'S'"></po-select>
+      <po-select class="po-md-3" name="supervisorId" [ngModel]="vendedor.supervisorId" (p-change)="vendedor.supervisorId = $event" p-label="Supervisor Imediato" [p-options]="supervisors" [p-disabled]="vendedor.supervisor === 'S'"></po-select>
       <po-switch class="po-md-3" name="dashboard" [(ngModel)]="vendedor.dashboard" p-label="Exibir Dashboard?" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
       <po-switch class="po-md-3" name="desligado" [(ngModel)]="vendedor.desligado" p-label="Vendedor Desligado" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
     </div>

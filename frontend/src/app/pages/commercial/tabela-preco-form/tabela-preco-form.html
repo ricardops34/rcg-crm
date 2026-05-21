@@ -13,7 +13,7 @@
     <div class="po-row">
       <po-input class="po-md-2" name="codErp" [(ngModel)]="tabela.codErp" p-label="Cód. ERP" p-readonly></po-input>
       <po-input class="po-md-6" name="descricao" [(ngModel)]="tabela.descricao" p-label="Descrição da Tabela" p-readonly></po-input>
-      <po-select class="po-md-2" name="status" [(ngModel)]="tabela.status" p-label="Status" [p-options]="[{label:'Ativa', value:'A'}, {label:'Inativa', value:'I'}]" p-readonly></po-select>
+      <po-select class="po-md-2" name="status" [ngModel]="tabela.status" (p-change)="tabela.status = $event" p-label="Status" [p-options]="[{label:'Ativa', value:'A'}, {label:'Inativa', value:'I'}]" p-readonly></po-select>
       <po-switch class="po-md-2" name="utiliza" [(ngModel)]="tabela.utiliza" p-label="Em Uso" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N" p-readonly></po-switch>
     </div>
 

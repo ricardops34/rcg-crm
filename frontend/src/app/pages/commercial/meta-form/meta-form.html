@@ -11,9 +11,9 @@
     <po-divider p-label="Período e Responsável"></po-divider>
     <div class="po-row">
       <po-input class="po-md-2" name="ano" [(ngModel)]="meta.ano" p-label="Ano" p-mask="9999" p-required></po-input>
-      <po-select class="po-md-3" name="mes" [(ngModel)]="meta.mes" p-label="Mês" [p-options]="monthOptions" p-required></po-select>
-      <po-select class="po-md-5" name="vendedorId" [(ngModel)]="meta.vendedorId" p-label="Vendedor" [p-options]="vendedores" p-required p-show-required></po-select>
-      <po-select class="po-md-2" name="tipo" [(ngModel)]="meta.tipo" p-label="Tipo" [p-options]="[{label:'Mensal', value:'M'}, {label:'Semanal', value:'S'}]"></po-select>
+      <po-select class="po-md-3" name="mes" [ngModel]="meta.mes" (p-change)="meta.mes = $event" p-label="Mês" [p-options]="monthOptions" p-required></po-select>
+      <po-select class="po-md-5" name="vendedorId" [ngModel]="meta.vendedorId" (p-change)="meta.vendedorId = $event" p-label="Vendedor" [p-options]="vendedores" p-required [p-show-required]="true"></po-select>
+      <po-select class="po-md-2" name="tipo" [ngModel]="meta.tipo" (p-change)="meta.tipo = $event" p-label="Tipo" [p-options]="[{label:'Mensal', value:'M'}, {label:'Semanal', value:'S'}]"></po-select>
     </div>
 
     <po-divider p-label="Metas de Valor e Volume"></po-divider>

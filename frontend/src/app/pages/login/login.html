@@ -1,35 +1,31 @@
-<div class="allia-top-bar">
-  <div class="allia-top-bar-magenta">
-    <img src="assets/logo_allia.png" alt="Allia">
-  </div>
-  <div class="allia-top-bar-teal"></div>
-</div>
-
-<po-page-login
-  p-title="RCG CRM"
-  p-background="assets/crm_login_bg.png"
-  p-logo="assets/logo_rcg.png"
-  [p-loading]="isLoading()"
-  (p-login-submit)="loginSubmit($event)">
+<po-page-login p-title="RCG CRM" p-background="assets/crm_login_bg.png" p-logo="assets/logo_rcg.png"
+  [p-loading]="isLoading()" (p-login-submit)="loginSubmit($event)">
 </po-page-login>
 
-<po-modal #modal2fa p-title="Autenticação de Dois Fatores" [p-primary-action]="{ label: 'Confirmar', action: confirm2fa.bind(this) }">
+<po-modal #modal2fa p-title="Autenticação de Dois Fatores"
+  [p-primary-action]="{ label: 'Confirmar', action: confirm2fa.bind(this) }">
   <div class="po-row">
-    <po-info p-label="Segurança" p-value="Informe o código de 6 dígitos enviado para seu e-mail ou gerado no app."></po-info>
+    <po-info p-label="Segurança"
+      p-value="Informe o código de 6 dígitos enviado para seu e-mail ou gerado no app."></po-info>
     <po-input class="po-md-12" name="2fa" [(ngModel)]="twoFactorCode" p-label="Código 2FA" p-mask="999999"></po-input>
   </div>
 </po-modal>
 
-<po-modal #modalTerms p-title="Termos de Uso e LGPD" [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this), disabled: !termsAccepted }">
+<po-modal #modalTerms p-title="Termos de Uso e LGPD"
+  [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this), disabled: !termsAccepted }">
   <div class="po-row">
     <div class="po-md-12">
-      <p>Para continuar utilizando o RCG CRM, você deve ler e aceitar nossos novos Termos de Uso e Política de Privacidade (LGPD).</p>
-      
-      <div style="height: 250px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; font-size: 0.9rem; margin: 10px 0;" [innerHTML]="termsContent">
+      <p>Para continuar utilizando o RCG CRM, você deve ler e aceitar nossos novos Termos de Uso e Política de
+        Privacidade (LGPD).</p>
+
+      <div
+        style="height: 250px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; font-size: 0.9rem; margin: 10px 0;"
+        [innerHTML]="termsContent">
       </div>
 
-      <po-checkbox name="termsAccepted" [(ngModel)]="termsAccepted" p-label="Eu li e concordo com os Termos de Uso e Política de Privacidade."></po-checkbox>
-      
+      <po-checkbox name="termsAccepted" [(ngModel)]="termsAccepted"
+        p-label="Eu li e concordo com os Termos de Uso e Política de Privacidade."></po-checkbox>
+
       <p style="font-size: 0.8rem; color: gray; margin-top: 5px;">Versão: {{ termsVersion }}</p>
     </div>
   </div>

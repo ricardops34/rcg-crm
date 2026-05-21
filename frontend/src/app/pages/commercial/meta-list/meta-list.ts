@@ -52,7 +52,7 @@ export class MetaListComponent implements OnInit {
     ]
   };
 
-  readonly pageActions: Array<PoPageAction> = [
+  readonly actions: Array<PoPageAction> = [
     { label: "Novo Objetivo", action: () => this.router.navigate(["/metas/new"]), icon: "po-icon-target" },
     { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
