@@ -1,20 +1,14 @@
 <div class="po-wrapper" *ngIf="authService.isAuthenticated() && !isLoginPage; else noAuth">
-  
-  <po-toolbar 
-    p-title="RCG CRM"
-    [p-profile]="profile"
-    [p-profile-actions]="profileActions"
-    [p-actions]="toolbarActions">
+
+  <po-toolbar p-title="RCG CRM" [p-profile]="profile" [p-profile-actions]="profileActions" [p-actions]="toolbarActions">
   </po-toolbar>
-  
-  <po-menu 
-    [p-menus]="menuItems"
-    [p-filter]="true">
-    
+
+  <po-menu [p-collapsed]="true" [p-menus]="menuItems" [p-filter]="true" [p-automatic-toggle]="true">
+
     <ng-template p-menu-header-template>
       <div class="po-p-3 po-pt-4 po-mb-3" style="background-color: white;">
-        <div style="color: #9da3a5; font-size: 24px; font-weight: 300; font-family: sans-serif; line-height: 1.1;">Welcome,</div>
-        <div style="color: #555ad1; font-size: 28px; font-weight: 400; font-family: sans-serif; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <div
+          style="color: #555ad1; font-size: 28px; font-weight: 400; font-family: sans-serif; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           {{ profile.title }}
         </div>
       </div>

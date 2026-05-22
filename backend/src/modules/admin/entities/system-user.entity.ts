@@ -1,12 +1,16 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { SystemProgram } from './system-program.entity';
 import { SystemUnit } from './system-unit.entity';
+import { SystemUserGroup } from './system-user-group.entity';
+import { SystemUserUnit } from './system-user-unit.entity';
+import { SystemUserProgram } from './system-user-program.entity';
 
 @Entity('system_users')
 export class SystemUser {
@@ -72,4 +76,13 @@ export class SystemUser {
 
   @Column({ type: 'text', nullable: true })
   avatar: string;
+
+  @OneToMany(() => SystemUserGroup, (ug) => ug.systemUser)
+  userGroups: SystemUserGroup[];
+
+  @OneToMany(() => SystemUserUnit, (uu) => uu.systemUser)
+  userUnits: SystemUserUnit[];
+
+  @OneToMany(() => SystemUserProgram, (up) => up.systemUser)
+  userPrograms: SystemUserProgram[];
 }

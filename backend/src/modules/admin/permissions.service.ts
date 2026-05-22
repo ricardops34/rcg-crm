@@ -30,7 +30,7 @@ export class PermissionsService {
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
+          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
     );
     if (isAdmin) return true;
 
@@ -69,7 +69,7 @@ export class PermissionsService {
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
+          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
     );
 
     if (isAdmin) {
@@ -131,7 +131,7 @@ export class PermissionsService {
     return userGroups
       .map((ug) => {
         const roleStr = (ug.systemGroup?.role || '').toUpperCase();
-        if (!roleStr && ug.systemGroup?.name?.toUpperCase() === 'ADMINISTRADORES') {
+        if (!roleStr && ug.systemGroup?.name?.toUpperCase().includes('ADMIN')) {
           return 'ADMIN';
         }
         return roleStr;
@@ -149,7 +149,7 @@ export class PermissionsService {
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase() === 'ADMINISTRADORES'),
+          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
     );
 
     const menuMap = new Map();

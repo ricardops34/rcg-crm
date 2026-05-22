@@ -44,7 +44,7 @@
 
     <div class="po-row">
       <po-select class="po-md-4" name="vendedorId" [ngModel]="cliente.vendedorId" (p-change)="cliente.vendedorId = $event" p-label="Vendedor Responsável" [p-options]="vendedores" p-required></po-select>
-      <po-number class="po-md-4" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito" p-format="BRL"></po-number>
+      <po-number class="po-md-4" name="limite" [(ngModel)]="cliente.limite" p-label="Limite de Crédito"></po-number>
       <po-datepicker class="po-md-4" name="vencimentoLimite" [(ngModel)]="cliente.vencimentoLimite" p-label="Vencimento do Limite"></po-datepicker>
     </div>
 
