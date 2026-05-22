@@ -109,24 +109,33 @@ export class AppComponent implements OnInit {
   }
 
   navigateTo(controller: string) {
-    const routes: any = {
-      "DashboardVendedor": "/dashboard",
-      "MvcList": "/mvc",
-      "ClienteList": "/clientes",
+    const routes: Record<string, string> = {
+      // CRM
+      "DashboardVendedor":      "/dashboard",
+      "MvcList":                "/mvc",
+      "ClienteList":            "/clientes",
       "PosisaoClienteFormView": "/clientes/360",
-      "AgendaAtendimentoList": "/agenda-atendimento",
-      "MetaVendedorMesList": "/metas",
-      "VendedorList": "/vendedores",
-      "ProdutoList": "/produtos",
-      "TabelaPrecoList": "/tabelas-precos",
-      "SystemUserList": "/admin/users",
-      "SystemGroupList": "/admin/groups",
-      "SystemUnitList": "/admin/units",
-      "SystemModuleList": "/admin/modules",
-      "SystemProgramList": "/admin/programs",
-      "SystemProfileForm": "/profile",
-      "CategoriaList": "/categorias",
-      "PedidoEstadoList": "/pedidos/estados"
+      "AgendaAtendimentoList":  "/agenda-atendimento",
+      "MetaVendedorMesList":    "/metas",
+      "NegociacaoList":         "/financeiro/negociacoes",
+      // Cadastros
+      "VendedorList":           "/vendedores",
+      "ProdutoList":            "/produtos",
+      "TabelaPrecoList":        "/tabelas-precos",
+      "CategoriaList":          "/categorias",
+      "PedidoEstadoList":       "/pedidos/estados",
+      // Financeiro
+      "TituloReceberList":      "/financeiro/titulos",
+      // Faturamento
+      "NotaFiscalList":         "/faturamento/notas",
+      "ComodatoList":           "/faturamento/comodatos",
+      // Administração
+      "SystemUserList":         "/admin/users",
+      "SystemGroupList":        "/admin/groups",
+      "SystemUnitList":         "/admin/units",
+      "SystemModuleList":       "/admin/modules",
+      "SystemProgramList":      "/admin/programs",
+      "SystemProfileForm":      "/profile",
     };
 
     const path = routes[controller];
