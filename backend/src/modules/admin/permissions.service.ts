@@ -173,7 +173,8 @@ export class PermissionsService {
           relations: ['systemModule'] 
         });
 
-        const mod = fullProg?.systemModule || { id: 0, name: 'Cadastro', icon: 'po-icon-user-add', order: 2 };
+        const mod = fullProg?.systemModule;
+        if (!mod) continue; // Ignora programas legados sem módulo no novo menu
         
         if (!menuMap.has(mod.id)) {
           menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });

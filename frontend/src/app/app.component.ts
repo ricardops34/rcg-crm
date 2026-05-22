@@ -32,13 +32,14 @@ export class AppComponent implements OnInit {
   logo: string = "assets/logo_rcg.png";
   currentTheme: string = "rcg";
   dynamicMenus: Array<PoMenuItem> = [];
+  menuItems: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
 
-  // Perfil conforme modelo menu superior.png
-  readonly profile: PoToolbarProfile = {
+  // Perfil do usuário logado
+  profile: PoToolbarProfile = {
     avatar: "assets/default-avatar.png",
-    subtitle: "informatica@rcgdist.com.br",
-    title: "Administrator"
+    subtitle: "",
+    title: "Carregando..."
   };
 
   readonly profileActions: Array<PoToolbarAction> = [
@@ -83,9 +84,11 @@ export class AppComponent implements OnInit {
   refreshUserInfo() {
     this.user = this.authService.getUser();
     if (this.user) {
-      this.profile.title = this.user.name;
-      this.profile.subtitle = this.user.email;
-      this.profile.avatar = this.user.avatar || "assets/default-avatar.png";
+      this.profile = {
+        title: this.user.name || this.user.login,
+        subtitle: this.user.email || "",
+        avatar: this.user.avatar || "assets/default-avatar.png"
+      };
     }
   }
 
@@ -101,8 +104,9 @@ export class AppComponent implements OnInit {
             shortLabel: program.label.substring(0, 10),
             action: () => this.navigateTo(program.action),
             icon: program.icon || "po-icon-circle"
-          }))
+          }));
         }));
+        this.updateMenu();
       },
       error: () => console.warn("Erro ao carregar menu dinâmico.")
     });
@@ -165,7 +169,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  get menus(): Array<PoMenuItem> {
+  updateMenu() {
     const items: Array<PoMenuItem> = [
       { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "an an-house", shortLabel: "Home" },
     ];
@@ -175,7 +179,7 @@ export class AppComponent implements OnInit {
     }
 
     items.push({ label: "Sair", action: () => this.logout(), icon: "an an-sign-out", shortLabel: "Sair", type: "danger" });
-    return items;
+    this.menuItems = items;
   }
 
   logout() {
