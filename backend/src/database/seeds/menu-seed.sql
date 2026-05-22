@@ -6,11 +6,11 @@
 -- 1. MÓDULOS
 -- ============================================================
 INSERT INTO system_module (name, icon, "order") VALUES
-  ('CRM',           'po-icon-users',     1),
-  ('Cadastros',     'po-icon-list',      2),
-  ('Financeiro',    'po-icon-finance',   3),
-  ('Faturamento',   'po-icon-document',  4),
-  ('Administração', 'po-icon-settings',  99);
+  ('CRM',           'an an-users',       1),
+  ('Cadastros',     'an an-list-dashes', 2),
+  ('Financeiro',    'an an-currency-dollar-simple', 3),
+  ('Faturamento',   'an an-file-text',   4),
+  ('Administração', 'an an-gear-six',    99);
 
 -- 2. PROGRAMAS: insere se não existir, associa ao módulo
 -- ============================================================
@@ -22,13 +22,13 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Dashboard',           'DashboardVendedor',      'po-icon-home',       1),
-    ('Agenda de Visitas',   'MvcList',                'po-icon-calendar',   2),
-    ('Clientes',            'ClienteList',            'po-icon-user',       3),
-    ('Visão 360° Cliente',  'PosisaoClienteFormView', 'po-icon-eye',        4),
-    ('Agenda Atendimento',  'AgendaAtendimentoList',  'po-icon-calendar',   5),
-    ('Metas',               'MetaList',               'po-icon-chart-bar',  6),
-    ('Negociações',         'NegociacaoList',         'po-icon-handshake',  7)
+    ('Dashboard',           'DashboardVendedor',      'an an-house',             1),
+    ('Agenda de Visitas',   'MvcList',                'an an-calendar-blank',    2),
+    ('Clientes',            'ClienteList',            'an an-user',              3),
+    ('Visão 360° Cliente',  'PosisaoClienteFormView', 'an an-eye',               4),
+    ('Agenda Atendimento',  'AgendaAtendimentoList',  'an an-calendar-dots',     5),
+    ('Metas',               'MetaList',               'an an-chart-bar',         6),
+    ('Negociações',         'NegociacaoList',         'an an-handshake',         7)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller
@@ -49,11 +49,11 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Vendedores',        'VendedorList',      'po-icon-user-add',  1),
-    ('Produtos',          'ProdutoList',       'po-icon-cart',      2),
-    ('Tabelas de Preço',  'TabelaPrecoList',   'po-icon-dollar',    3),
-    ('Categorias',        'CategoriaList',     'po-icon-list',      4),
-    ('Estados de Pedido', 'PedidoEstadoList',  'po-icon-info',      5)
+    ('Vendedores',        'VendedorList',      'an an-user-plus',         1),
+    ('Produtos',          'ProdutoList',       'an an-shopping-cart',     2),
+    ('Tabelas de Preço',  'TabelaPrecoList',   'an an-currency-dollar-simple', 3),
+    ('Categorias',        'CategoriaList',     'an an-tag',               4),
+    ('Estados de Pedido', 'PedidoEstadoList',  'an an-info',              5)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller
@@ -72,8 +72,8 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Títulos a Receber', 'TituloReceberList', 'po-icon-finance',   1),
-    ('Negociações',       'NegociacaoList',    'po-icon-handshake', 2)
+    ('Títulos a Receber', 'TituloReceberList', 'an an-receipt',           1),
+    ('Negociações',       'NegociacaoList',    'an an-handshake',         2)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller
@@ -90,8 +90,8 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Notas Fiscais', 'NotaSaidaList', 'po-icon-document', 1),
-    ('Comodatos',     'ComodatoList',  'po-icon-box',      2)
+    ('Notas Fiscais', 'NotaSaidaList', 'an an-file-text',         1),
+    ('Comodatos',     'ComodatoList',  'an an-package',           2)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller
@@ -108,12 +108,12 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Usuários',         'SystemUserList',    'po-icon-user',    1),
-    ('Perfis de Acesso', 'SystemGroupList',   'po-icon-users',   2),
-    ('Unidades',         'SystemUnitList',    'po-icon-company', 3),
-    ('Módulos',          'SystemModuleList',  'po-icon-vendas',  4),
-    ('Rotinas',          'SystemProgramList', 'po-icon-xml',     5),
-    ('Meu Perfil',       'SystemProfileForm', 'po-icon-user',    6)
+    ('Usuários',         'SystemUserList',    'an an-user',              1),
+    ('Perfis de Acesso', 'SystemGroupList',   'an an-users',             2),
+    ('Unidades',         'SystemUnitList',    'an an-buildings',         3),
+    ('Módulos',          'SystemModuleList',  'an an-sidebar-simple',    4),
+    ('Rotinas',          'SystemProgramList', 'an an-terminal-window',   5),
+    ('Meu Perfil',       'SystemProfileForm', 'an an-user-circle',       6)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller

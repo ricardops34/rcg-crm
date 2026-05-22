@@ -42,17 +42,17 @@ export class AppComponent implements OnInit {
   };
 
   readonly profileActions: Array<PoToolbarAction> = [
-    { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "po-icon-user" },
-    { label: "Configurações", action: () => this.router.navigate(["/admin/settings"]), icon: "po-icon-settings" },
-    { label: "Sair", action: () => this.logout(), icon: "po-icon-exit", type: "danger" }
+    { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "an an-user-circle" },
+    { label: "Configurações", action: () => this.router.navigate(["/admin/settings"]), icon: "an an-gear-six" },
+    { label: "Sair", action: () => this.logout(), icon: "an an-sign-out", type: "danger" }
   ];
 
   // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
-    { label: "Configurações", icon: "po-icon-settings", action: () => {} },
-    { label: "Apps", icon: "po-icon-grid", action: () => {} },
-    { label: "Mensagens", icon: "po-icon-chat", action: () => {}, type: "danger" },
-    { label: "Alterar Tema", icon: "po-icon-pallet", action: () => this.toggleTheme() }
+    { label: "Configurações", icon: "an an-gear-six", action: () => {} },
+    { label: "Apps", icon: "an an-grid-four", action: () => {} },
+    { label: "Mensagens", icon: "an an-chat-circle", action: () => {}, type: "danger" },
+    { label: "Alterar Tema", icon: "an an-paint-brush", action: () => this.toggleTheme() }
   ];
 
   ngOnInit() {
@@ -167,7 +167,7 @@ export class AppComponent implements OnInit {
 
   get menus(): Array<PoMenuItem> {
     const items: Array<PoMenuItem> = [
-      { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "po-icon-home", shortLabel: "Home" },
+      { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "an an-house", shortLabel: "Home" },
     ];
 
     if (this.authService.isAuthenticated() && this.authService.hasPermission('MvcList')) {
@@ -185,34 +185,34 @@ export class AppComponent implements OnInit {
 
     // Módulos Fiscais e Logísticos (Sempre visíveis se o menu dinâmico não trouxer)
     if (this.dynamicMenus.length === 0 || !this.dynamicMenus.some(m => m.label === 'Faturamento')) {
-      items.push({ 
-        label: "Faturamento", 
+      items.push({
+        label: "Faturamento",
         shortLabel: "Fiscal",
-        icon: "po-icon-finance", 
+        icon: "an an-file-text",
         subItems: [
-          { label: "Notas Fiscais", action: () => this.router.navigate(["/faturamento/notas"]), icon: "po-icon-document", shortLabel: "Notas" },
-          { label: "Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "po-icon-box", shortLabel: "Comod" }
+          { label: "Notas Fiscais", action: () => this.router.navigate(["/faturamento/notas"]), icon: "an an-file-text", shortLabel: "Notas" },
+          { label: "Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "an an-package", shortLabel: "Comod" }
         ]
       });
     }
 
     const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin';
     if (isAdmin) {
-      items.push({ 
-        label: "Administração", 
+      items.push({
+        label: "Administração",
         shortLabel: "Admin",
-        icon: "po-icon-settings", 
+        icon: "an an-gear-six",
         subItems: [
-          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "po-icon-user", shortLabel: "Users" },
-          { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "po-icon-users", shortLabel: "Perfis" },
-          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "po-icon-company", shortLabel: "Units" },
-          { label: "Módulos", action: () => this.router.navigate(["/admin/modules"]), icon: "po-icon-vendas", shortLabel: "Módulos" },
-          { label: "Rotinas", action: () => this.router.navigate(["/admin/programs"]), icon: "po-icon-xml", shortLabel: "Rotinas" }
+          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "an an-user", shortLabel: "Users" },
+          { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "an an-users", shortLabel: "Perfis" },
+          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "an an-buildings", shortLabel: "Units" },
+          { label: "Módulos", action: () => this.router.navigate(["/admin/modules"]), icon: "an an-sidebar-simple", shortLabel: "Módulos" },
+          { label: "Rotinas", action: () => this.router.navigate(["/admin/programs"]), icon: "an an-terminal-window", shortLabel: "Rotinas" }
         ]
       });
     }
 
-    items.push({ label: "Sair", action: () => this.logout(), icon: "po-icon-exit", shortLabel: "Sair", type: "danger" });
+    items.push({ label: "Sair", action: () => this.logout(), icon: "an an-sign-out", shortLabel: "Sair", type: "danger" });
     return items;
   }
 

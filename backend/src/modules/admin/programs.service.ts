@@ -12,12 +12,16 @@ export class ProgramsService {
 
   async findAll() {
     return this.programRepository.find({
-      order: { name: 'ASC' },
+      relations: ['systemModule'],
+      order: { systemModuleId: 'ASC', name: 'ASC' },
     });
   }
 
   async findOne(id: number) {
-    const program = await this.programRepository.findOne({ where: { id } });
+    const program = await this.programRepository.findOne({
+      where: { id },
+      relations: ['systemModule'],
+    });
     if (!program) throw new NotFoundException('Rotina não encontrada');
     return program;
   }

@@ -1,60 +1,82 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoPageAction, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageFilter, 
+import {
+  PoModule,
+  PoPageAction,
+  PoTableColumn,
+  PoTableAction,
   PoNotificationService,
-  PoBreadcrumb 
+  PoBreadcrumb,
+  PoDialogService,
+  PoSelectOption
 } from "@po-ui/ng-components";
 import { ProgramService } from "../../../services/program";
+import { ModuleService } from "../../../services/module";
 
 @Component({
   selector: "app-program-list",
   standalone: true,
   imports: [CommonModule, PoModule],
   template: `
-    <po-page-list 
+    <po-page-list
       p-title="Rotinas do Sistema"
       [p-breadcrumb]="breadcrumb"
-      [p-actions]="actions"
-      [p-filter]="filter">
-      
-      <po-table 
+      [p-actions]="actions">
+
+      <div class="po-row" style="margin-bottom: 16px;">
+        <po-select
+          class="po-md-4"
+          name="filterModule"
+          p-label="Filtrar por Módulo"
+          [p-options]="moduleFilterOptions"
+          [ngModel]="selectedModule"
+          (p-change)="onModuleFilter($event)"
+          p-clean>
+        </po-select>
+        <po-input
+          class="po-md-8"
+          name="filterText"
+          p-label="Pesquisar por nome ou controller"
+          [ngModel]="filterText"
+          (p-change-model)="onTextFilter($event)"
+          p-clean>
+        </po-input>
+      </div>
+
+      <po-table
         [p-columns]="columns"
-        [p-items]="programs"
+        [p-items]="filteredPrograms"
         [p-actions]="tableActions"
         [p-loading]="isLoading"
         p-container="shadow"
         [p-striped]="true"
         [p-sort]="true">
       </po-table>
-      
+
     </po-page-list>
   `
 })
 export class ProgramListComponent implements OnInit {
   private programService = inject(ProgramService);
+  private moduleService = inject(ModuleService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private poDialog = inject(PoDialogService);
 
   programs: Array<any> = [];
-  isLoading: boolean = false;
+  filteredPrograms: Array<any> = [];
+  moduleFilterOptions: Array<PoSelectOption> = [{ label: 'Todos os Módulos', value: '' }];
+  selectedModule: string = '';
+  filterText: string = '';
+  isLoading = false;
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Segurança", link: "/admin/users" },
+      { label: "Administração", link: "/admin/users" },
       { label: "Rotinas" }
     ]
-  };
-
-  readonly filter: PoPageFilter = {
-    action: this.loadPrograms.bind(this),
-    placeholder: "Pesquisar por nome ou controller"
   };
 
   readonly actions: Array<PoPageAction> = [
@@ -63,51 +85,91 @@ export class ProgramListComponent implements OnInit {
 
   readonly tableActions: Array<PoTableAction> = [
     { label: "Editar", action: (row: any) => this.router.navigate([`/admin/programs/edit/${row.id}`]), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.deleteProgram.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Excluir", action: this.confirmDelete.bind(this), icon: "po-icon-delete", type: "danger" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "id", label: "ID", width: "80px" },
+    { property: "id", label: "ID", width: "70px", type: "number" },
     { property: "name", label: "Nome da Rotina" },
-    { property: "controller", label: "Controller (PHP Class)" }
+    { property: "controller", label: "Controller" },
+    { property: "moduleName", label: "Módulo", width: "160px" },
+    { property: "icon", label: "Ícone", width: "120px" }
   ];
 
   ngOnInit() {
+    this.loadModules();
     this.loadPrograms();
   }
 
-  loadPrograms(filter?: string) {
-    this.isLoading = true;
-    this.programService.findAll().subscribe({
-      next: (res) => {
-        this.programs = res;
-        if (filter) {
-          this.programs = this.programs.filter(p => 
-            p.name?.toLowerCase().includes(filter.toLowerCase()) ||
-            p.controller?.toLowerCase().includes(filter.toLowerCase())
-          );
-        }
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
+  loadModules() {
+    this.moduleService.findAll().subscribe({
+      next: (modules: any[]) => {
+        const opts = modules.map(m => ({ label: m.name, value: String(m.id) }));
+        this.moduleFilterOptions = [{ label: 'Todos os Módulos', value: '' }, ...opts];
       }
     });
   }
 
-  deleteProgram(program: any) {
-    if (confirm(`Deseja realmente excluir a rotina ${program.name}?`)) {
-      this.isLoading = true;
-      this.programService.delete(program.id).subscribe({
-        next: () => {
-          this.poNotification.success("Rotina excluída com sucesso!");
-          this.loadPrograms();
-        },
-        error: () => {
-          this.isLoading = false;
-          this.poNotification.error("Erro ao excluir rotina.");
-        }
-      });
+  loadPrograms() {
+    this.isLoading = true;
+    this.programService.findAll().subscribe({
+      next: (res: any[]) => {
+        this.programs = res.map(p => ({
+          ...p,
+          moduleName: p.systemModule?.name ?? '— sem módulo —'
+        }));
+        this.applyFilter();
+        this.isLoading = false;
+      },
+      error: () => { this.isLoading = false; }
+    });
+  }
+
+  onModuleFilter(value: string) {
+    this.selectedModule = value;
+    this.applyFilter();
+  }
+
+  onTextFilter(value: string) {
+    this.filterText = value;
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    let result = [...this.programs];
+    if (this.selectedModule) {
+      result = result.filter(p => String(p.systemModuleId) === this.selectedModule);
     }
+    if (this.filterText?.trim()) {
+      const q = this.filterText.toLowerCase();
+      result = result.filter(p =>
+        p.name?.toLowerCase().includes(q) ||
+        p.controller?.toLowerCase().includes(q)
+      );
+    }
+    this.filteredPrograms = result;
+  }
+
+  confirmDelete(program: any) {
+    this.poDialog.confirm({
+      title: 'Excluir Rotina',
+      message: `Deseja realmente excluir a rotina <strong>${program.name}</strong>?<br>Esta ação não pode ser desfeita.`,
+      confirm: () => this.deleteProgram(program),
+      cancel: () => {}
+    });
+  }
+
+  deleteProgram(program: any) {
+    this.isLoading = true;
+    this.programService.delete(program.id).subscribe({
+      next: () => {
+        this.poNotification.success("Rotina excluída com sucesso!");
+        this.loadPrograms();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao excluir rotina.");
+      }
+    });
   }
 }
