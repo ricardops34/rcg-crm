@@ -122,6 +122,23 @@ export class PermissionsService {
     return Array.from(programsMap.values());
   }
 
+  async getUserRoles(userId: number): Promise<string[]> {
+    const userGroups = await this.userGroupRepository.find({
+      where: { systemUserId: userId },
+      relations: ['systemGroup'],
+    });
+
+    return userGroups
+      .map((ug) => {
+        const roleStr = (ug.systemGroup?.role || '').toUpperCase();
+        if (!roleStr && ug.systemGroup?.name?.toUpperCase() === 'ADMINISTRADORES') {
+          return 'ADMIN';
+        }
+        return roleStr;
+      })
+      .filter((r) => r);
+  }
+
   async getMenuStructure(userId: number) {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
