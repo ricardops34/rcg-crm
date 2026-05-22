@@ -27,7 +27,7 @@ BEGIN
     ('Clientes',            'ClienteList',            'po-icon-user',       3),
     ('Visão 360° Cliente',  'PosisaoClienteFormView', 'po-icon-eye',        4),
     ('Agenda Atendimento',  'AgendaAtendimentoList',  'po-icon-calendar',   5),
-    ('Metas',               'MetaVendedorMesList',    'po-icon-chart-bar',  6),
+    ('Metas',               'MetaList',               'po-icon-chart-bar',  6),
     ('Negociações',         'NegociacaoList',         'po-icon-handshake',  7)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
@@ -38,7 +38,7 @@ BEGIN
   UPDATE system_program SET system_module_id = mod_id
   WHERE controller IN (
     'DashboardVendedor','MvcList','ClienteList','PosisaoClienteFormView',
-    'AgendaAtendimentoList','MetaVendedorMesList','NegociacaoList'
+    'AgendaAtendimentoList','MetaList','NegociacaoList'
   );
 END $$;
 
@@ -90,15 +90,15 @@ BEGIN
   INSERT INTO system_program (name, controller, icon, "order", system_module_id)
   SELECT name, controller, icon, ord, mod_id
   FROM (VALUES
-    ('Notas Fiscais', 'NotaFiscalList', 'po-icon-document', 1),
-    ('Comodatos',     'ComodatoList',   'po-icon-box',      2)
+    ('Notas Fiscais', 'NotaSaidaList', 'po-icon-document', 1),
+    ('Comodatos',     'ComodatoList',  'po-icon-box',      2)
   ) AS t(name, controller, icon, ord)
   WHERE NOT EXISTS (
     SELECT 1 FROM system_program WHERE controller = t.controller
   );
 
   UPDATE system_program SET system_module_id = mod_id
-  WHERE controller IN ('NotaFiscalList','ComodatoList');
+  WHERE controller IN ('NotaSaidaList','ComodatoList');
 END $$;
 
 -- ► ADMINISTRAÇÃO

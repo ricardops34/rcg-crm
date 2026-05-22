@@ -116,7 +116,7 @@ export class AppComponent implements OnInit {
       "ClienteList":            "/clientes",
       "PosisaoClienteFormView": "/clientes/360",
       "AgendaAtendimentoList":  "/agenda-atendimento",
-      "MetaVendedorMesList":    "/metas",
+      "MetaList":               "/metas",
       "NegociacaoList":         "/financeiro/negociacoes",
       // Cadastros
       "VendedorList":           "/vendedores",

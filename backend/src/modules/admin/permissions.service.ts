@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Not, IsNull } from 'typeorm';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
 import { SystemProgram } from './entities/system-program.entity';
@@ -73,8 +73,11 @@ export class PermissionsService {
     );
 
     if (isAdmin) {
-      // ADMIN: Retorna APENAS o que está implementado (cadastrado em system_program)
-      const allImplemented = await this.programRepository.find();
+      // ADMIN: Retorna apenas programas vinculados a um módulo (exclui legados sem módulo)
+      const allImplemented = await this.programRepository.find({
+        where: { systemModuleId: Not(IsNull()) },
+        relations: ['systemModule'],
+      });
       return allImplemented.map(p => ({
           ...p,
           permissions: { view: true, insert: true, update: true, delete: true }
@@ -135,13 +138,17 @@ export class PermissionsService {
     const menuMap = new Map();
 
     if (isAdmin) {
-      // ADMIN: Acesso Total a todas as rotinas DESENVOLVIDAS (cadastradas no banco)
+      // ADMIN: Acesso Total apenas a rotinas vinculadas a um módulo (exclui legados sem módulo)
       const allImplemented = await this.programRepository.find({
+        where: { systemModuleId: Not(IsNull()) },
         relations: ['systemModule'],
       });
 
       allImplemented.forEach((prog: any) => {
-        const mod = prog.systemModule || { id: 0, name: 'Cadastro', icon: 'po-icon-user-add', order: 2 };
+        // Pula programas legados sem módulo atribuído (ex: rotinas do sistema antigo)
+        if (!prog.systemModule) return;
+
+        const mod = prog.systemModule;
         if (!menuMap.has(mod.id)) {
           menuMap.set(mod.id, { id: mod.id, label: mod.name, icon: mod.icon || 'po-icon-more', order: mod.order, subItems: [] });
         }
