@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { 
@@ -8,7 +8,8 @@ import {
   PoPageAction, 
   PoPageFilter, 
   PoNotificationService,
-  PoBreadcrumb
+  PoBreadcrumb,
+  PoTableComponent
 } from "@po-ui/ng-components";
 import { BillingService } from "../../../services/billing";
 
@@ -32,8 +33,7 @@ import { BillingService } from "../../../services/billing";
         p-container="shadow"
         [p-striped]="true"
         [p-sort]="true"
-        [p-selectable]="true"
-        [(p-selected-items)]="selectedItems">
+        [p-selectable]="true">
       </po-table>
       
     </po-page-list>
@@ -44,8 +44,9 @@ export class NotaListComponent implements OnInit {
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
 
+  @ViewChild(PoTableComponent, { static: false }) poTable!: PoTableComponent;
+
   items: Array<any> = [];
-  selectedItems: Array<any> = [];
   isLoading: boolean = true;
 
   readonly breadcrumb: PoBreadcrumb = {
@@ -104,13 +105,14 @@ export class NotaListComponent implements OnInit {
   }
 
   printSelectedLabels() {
-    if (this.selectedItems.length === 0) {
+    const selectedItems = this.poTable.getSelectedRows();
+    if (selectedItems.length === 0) {
       this.poNotification.warning("Selecione ao menos uma nota para gerar etiquetas.");
       return;
     }
-    this.poNotification.information(`Gerando ${this.selectedItems.length} etiquetas de despacho...`);
+    this.poNotification.information(`Gerando ${selectedItems.length} etiquetas de despacho...`);
     // Simulação de geração de etiquetas
-    this.selectedItems.forEach(item => {
+    selectedItems.forEach(item => {
       console.log(`Etiqueta gerada para Nota: ${item.notaFiscal}`);
     });
   }
