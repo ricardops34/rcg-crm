@@ -11,13 +11,14 @@ import {
   PoDialogService,
   PoSelectOption
 } from "@po-ui/ng-components";
+import { FormsModule } from "@angular/forms";
 import { ProgramService } from "../../../services/program";
 import { ModuleService } from "../../../services/module";
 
 @Component({
   selector: "app-program-list",
   standalone: true,
-  imports: [CommonModule, PoModule],
+  imports: [CommonModule, PoModule, FormsModule],
   template: `
     <po-page-list
       p-title="Rotinas do Sistema"

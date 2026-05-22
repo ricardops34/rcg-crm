@@ -60,7 +60,8 @@ interface ProgramForm {
           <po-select
             class="po-md-5"
             name="systemModuleId"
-            [(ngModel)]="program.systemModuleId"
+            [ngModel]="program.systemModuleId"
+            (ngModelChange)="program.systemModuleId = $event"
             p-label="Módulo (Grupo no Menu)"
             [p-options]="moduleOptions"
             p-required="true">
@@ -70,7 +71,7 @@ interface ProgramForm {
             name="order"
             [(ngModel)]="program.order"
             p-label="Ordem no Menu"
-            p-min="1">
+            [p-min]="1">
           </po-number>
           <po-input
             class="po-md-4"
