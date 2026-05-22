@@ -179,11 +179,17 @@ export class AuthService {
 
     const programs = await this.permissionsService.getUserPrograms(userId);
     const userRoles = (await this.userRepository.query(
-      `SELECT sg.role FROM system_group sg 
+      `SELECT sg.role, sg.name FROM system_group sg 
        JOIN system_user_group sug ON sug.system_group_id = sg.id 
        WHERE sug.system_user_id = $1`,
       [userId],
-    )).map((g: any) => (g.role || '').toUpperCase());
+    )).map((g: any) => {
+      const roleStr = (g.role || '').toUpperCase();
+      if (!roleStr && g.name?.toUpperCase() === 'ADMINISTRADORES') {
+        return 'ADMIN';
+      }
+      return roleStr;
+    }).filter(r => r);
 
     const isGerente = userRoles.includes('GERENTE') || userRoles.includes('ADMIN');
 
