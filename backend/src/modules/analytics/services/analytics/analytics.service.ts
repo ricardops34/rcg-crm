@@ -66,7 +66,11 @@ export class AnalyticsService {
       }
 
       return {
-        summary: kpis[0] || { goal: 0, realized: 0, achievement: 0 },
+        summary: {
+          goal: parseFloat(kpis[0]?.goal) || 0,
+          realized: parseFloat(kpis[0]?.realized) || 0,
+          achievement: parseFloat(kpis[0]?.achievement) || 0,
+        },
         categories: categories.map((c) => ({
           label: c.label,
           data: [parseFloat(c.value)],
@@ -93,7 +97,7 @@ export class AnalyticsService {
     },
   ) {
     try {
-      let where = ` WHERE ano = $1::text`;
+      let where = ` WHERE CAST(ano AS integer) = CAST($1 AS integer)`;
       const params: any[] = [year];
 
       if (vendedorId) {
@@ -153,7 +157,7 @@ export class AnalyticsService {
       // Merge dos dados
       return mvcData
         .map((item) => {
-          const detail = mvcDetails.find((d) => d.cliente_id === item.cliente_id);
+          const detail = mvcDetails.find((d) => String(d.cliente_id) === String(item.cliente_id));
           if (!detail) return null;
 
           // Cálculo de média dos últimos 3 meses

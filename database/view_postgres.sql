@@ -65,6 +65,7 @@ DROP VIEW IF EXISTS view_vendedor_venda CASCADE;
 -- ==========================================
 
 -- 2.1. cliente_atendido_mes
+DROP VIEW IF EXISTS cliente_atendido_mes CASCADE;
 CREATE VIEW cliente_atendido_mes AS
 SELECT DISTINCT
     nota_saida.cliente_id as cliente_id,
@@ -79,6 +80,7 @@ WHERE nota_saida.numero_titulo <> ''
   AND nota_saida.especie_fiscal = 'SPED';
 
 -- 2.2. cliente_indicadores
+DROP VIEW IF EXISTS cliente_indicadores CASCADE;
 CREATE VIEW cliente_indicadores AS
 SELECT DISTINCT 
     cliente.id as id,
@@ -100,6 +102,7 @@ JOIN municipio ON municipio.id = cliente.municipio_id
 JOIN estado ON estado.id = municipio.estado_id;
 
 -- 2.3. cliente_notafiscal
+DROP VIEW IF EXISTS cliente_notafiscal CASCADE;
 CREATE VIEW cliente_notafiscal AS
 SELECT 
     nota_saida.id as "id",
@@ -139,6 +142,7 @@ WHERE
 ORDER BY "dias", "ano", "mes" DESC;
 
 -- 2.4. cliente_positivado
+DROP VIEW IF EXISTS cliente_positivado CASCADE;
 CREATE VIEW cliente_positivado AS
 SELECT DISTINCT 
     1 as id,
@@ -161,6 +165,7 @@ WHERE nota_saida.tipo = 'N'
   AND nota_saida.reg_ativo = 'S';
 
 -- 2.5. clienteseekview
+DROP VIEW IF EXISTS clienteseekview CASCADE;
 CREATE VIEW clienteseekview AS
 SELECT 
     cod_erp as cod_erp,
@@ -182,6 +187,7 @@ FROM cliente
 WHERE status <> 'B' AND cod_erp <> '';
 
 -- 2.6. cliente_top10
+DROP VIEW IF EXISTS cliente_top10 CASCADE;
 CREATE VIEW cliente_top10 AS
 SELECT 
     1 AS id,
@@ -201,6 +207,7 @@ GROUP BY cliente_id, vendedor1_id, mes, ano
 ORDER BY vlr_total DESC;
 
 -- 2.7. mvc
+DROP VIEW IF EXISTS mvc CASCADE;
 CREATE VIEW mvc AS
 SELECT 
     cliente.id as id,
@@ -239,6 +246,7 @@ LEFT JOIN regiao_cliente ON (cliente.regiao_cliente_id = regiao_cliente.id )
 WHERE cliente.cod_erp not in('00000002','00000001') AND cliente.reg_ativo = 'S';
 
 -- 2.8. vendas_vendedor_mes
+DROP VIEW IF EXISTS vendas_vendedor_mes CASCADE;
 CREATE VIEW vendas_vendedor_mes AS
 SELECT 
     sum(vlr_mercadoria) as vlr_mercadoria,
@@ -260,6 +268,7 @@ WHERE nota_saida.numero_titulo <> ''
 GROUP BY ano, mes, vendedor1_id, especie_fiscal, vendedor1_id, vendedor.status, nota_saida.reg_ativo;
 
 -- 2.9. venda_vendedor_produto
+DROP VIEW IF EXISTS venda_vendedor_produto CASCADE;
 CREATE VIEW venda_vendedor_produto AS
 SELECT DISTINCT 
     nota_saida.id as id,
@@ -300,6 +309,7 @@ JOIN sub_categoria ON sub_categoria.id = produto.sub_categoria_id
 WHERE nota_saida.reg_ativo = 'S' AND nota_saida.numero_titulo <> '';
 
 -- 2.10. vendedor_nota_fiscal
+DROP VIEW IF EXISTS vendedor_nota_fiscal CASCADE;
 CREATE VIEW vendedor_nota_fiscal AS
 SELECT 
     vendedor.id as vendedor_id,
@@ -313,6 +323,7 @@ FROM vendedor
 JOIN nota_saida ON (nota_saida.vendedor1_id = vendedor.id and nota_saida.numero_titulo <> '' and nota_saida.reg_ativo = 'S');
 
 -- 2.11. view_ano_base
+DROP VIEW IF EXISTS view_ano_base CASCADE;
 CREATE VIEW view_ano_base AS
 SELECT DISTINCT 
     ano as ano,
@@ -331,6 +342,7 @@ SELECT DISTINCT
 FROM nota_saida_item;
 
 -- 2.12. view_base_venda
+DROP VIEW IF EXISTS view_base_venda CASCADE;
 CREATE VIEW view_base_venda AS
 SELECT 
     nota_saida.id as id,
@@ -357,6 +369,7 @@ WHERE nota_saida.tipo = 'N'
   AND nota_saida.especie_fiscal = 'SPED';
 
 -- 2.13. view_cliente_saldo_titulo
+DROP VIEW IF EXISTS view_cliente_saldo_titulo CASCADE;
 CREATE VIEW view_cliente_saldo_titulo AS
 SELECT 
     cliente.id as id,
@@ -415,6 +428,7 @@ WHERE cliente.reg_ativo = 'S'
 GROUP BY cliente.id, cliente.cod_erp, cliente.razao, cliente.fantasia, cliente.vendedor_id, cliente.tipo, cliente.status, cliente.situacao_cadastral_id;
 
 -- 2.14. view_cliente_vendedor
+DROP VIEW IF EXISTS view_cliente_vendedor CASCADE;
 CREATE VIEW view_cliente_vendedor AS
 SELECT 
     cliente.id as cliente_id,
@@ -434,6 +448,7 @@ JOIN vendedor ON (vendedor.id = vendedor_id)
 WHERE cliente.reg_ativo = 'S';
 
 -- 2.15. view_precos
+DROP VIEW IF EXISTS view_precos CASCADE;
 CREATE VIEW view_precos AS
 SELECT 
     tabela_preco_item.id as id,
@@ -447,6 +462,7 @@ FROM tabela_preco_item
 JOIN tabela_preco ON (tabela_preco.id = tabela_preco_item.tabela_preco_id and tabela_preco.status = 'S');
 
 -- 2.16. view_titulo_cliente
+DROP VIEW IF EXISTS view_titulo_cliente CASCADE;
 CREATE VIEW view_titulo_cliente AS
 SELECT 
     titulo_receber.id as id,
@@ -482,6 +498,7 @@ JOIN vendedor ON (vendedor.id = cliente.vendedor_id)
 WHERE titulo_receber.reg_ativo = 'S';
 
 -- 2.17. view_venda_categoria
+DROP VIEW IF EXISTS view_venda_categoria CASCADE;
 CREATE VIEW view_venda_categoria AS
 SELECT 
     categoria.id as categoria_id,
@@ -512,6 +529,7 @@ WHERE nota_saida.numero_titulo <> ''
   AND nota_saida.especie_fiscal = 'SPED';
 
 -- 2.18. view_ultimo_preco
+DROP VIEW IF EXISTS view_ultimo_preco CASCADE;
 CREATE VIEW view_ultimo_preco AS
 SELECT 
     nota_saida_item.id as id,
@@ -540,6 +558,7 @@ GROUP BY nota_saida_item.id, nota_saida_item.produto_id, nota_saida.cliente_id,
          nota_saida_item.estoque, nota_saida.vendedor1_id, nota_saida_item.tes;
 
 -- 2.19. view_venda_cliente
+DROP VIEW IF EXISTS view_venda_cliente CASCADE;
 CREATE VIEW view_venda_cliente AS
 SELECT 
     cliente.id as cliente_id,
@@ -563,6 +582,7 @@ LEFT JOIN produto ON (nota_saida_item.produto_id = produto.id)
 JOIN cliente ON (nota_saida.cliente_id = cliente.id);
 
 -- 2.20. view_venda_regiao
+DROP VIEW IF EXISTS view_venda_regiao CASCADE;
 CREATE VIEW view_venda_regiao AS
 SELECT 
     regiao_cliente.id as regiao_id,
@@ -590,6 +610,7 @@ LEFT JOIN nota_saida_item ON (
 LEFT JOIN cliente ON (nota_saida.cliente_id = cliente.id and regiao_cliente.id = cliente.regiao_cliente_id);
 
 -- 2.21. view_vendas
+DROP VIEW IF EXISTS view_vendas CASCADE;
 CREATE VIEW view_vendas AS
 SELECT DISTINCT 
     vendedor1_id as vendedor1_id,
@@ -603,6 +624,7 @@ WHERE nota_saida.numero_titulo <> ''
   AND nota_saida.especie_fiscal = 'SPED';
 
 -- 2.22. view_vendedor_cliente_status
+DROP VIEW IF EXISTS view_vendedor_cliente_status CASCADE;
 CREATE VIEW view_vendedor_cliente_status AS
 SELECT 
     vendedor.id as vendedor_id,
@@ -614,6 +636,7 @@ JOIN vendedor ON (vendedor.id = cliente.vendedor_id)
 GROUP BY cliente.status, vendedor.id, vendedor.desligado;
 
 -- 2.23. view_vendedor_venda
+DROP VIEW IF EXISTS view_vendedor_venda CASCADE;
 CREATE VIEW view_vendedor_venda AS
 SELECT 
     vendedor.id as vendedor_id,
@@ -657,6 +680,7 @@ LEFT JOIN categoria ON (produto.categoria_id = categoria.id);
 -- ==========================================
 
 -- 3.1. pivot_cliente_atendido_mes
+DROP VIEW IF EXISTS pivot_cliente_atendido_mes CASCADE;
 CREATE VIEW pivot_cliente_atendido_mes AS
 SELECT 
     cliente_atendido_mes.vendedor1 as vendedor1_id,
@@ -678,6 +702,7 @@ FROM cliente_atendido_mes
 GROUP BY vendedor1, vendedor2, ano;
 
 -- 3.2. vendas_ano_mes
+DROP VIEW IF EXISTS vendas_ano_mes CASCADE;
 CREATE VIEW vendas_ano_mes AS
 SELECT 
     vendedor_nota_fiscal.vendedor_id as vendedor_id,
@@ -694,6 +719,7 @@ JOIN cliente ON (nota_saida_cliente_id = cliente.id)
 GROUP BY vendedor_nota_fiscal.vendedor_id, vendedor_cod_erp, vendedor_nome, cliente.id, cliente.cod_erp, cliente.razao, ano, mes;
 
 -- 3.3. view_ano_base_cliente
+DROP VIEW IF EXISTS view_ano_base_cliente CASCADE;
 CREATE VIEW view_ano_base_cliente AS
 SELECT 
     cliente.id as cliente_id,
@@ -713,6 +739,7 @@ SELECT
 FROM view_ano_base, cliente;
 
 -- 3.4. view_base_cliente
+DROP VIEW IF EXISTS view_base_cliente CASCADE;
 CREATE VIEW view_base_cliente AS
 SELECT DISTINCT 
     cliente_id as cliente_id,
@@ -723,6 +750,7 @@ SELECT DISTINCT
 FROM view_base_venda;
 
 -- 3.5. view_base_venda_categoria
+DROP VIEW IF EXISTS view_base_venda_categoria CASCADE;
 CREATE VIEW view_base_venda_categoria AS
 SELECT 
     cliente_id as cliente_id,
@@ -744,6 +772,7 @@ SELECT
 FROM view_base_venda;
 
 -- 3.6. view_base_venda_cliente
+DROP VIEW IF EXISTS view_base_venda_cliente CASCADE;
 CREATE VIEW view_base_venda_cliente AS
 SELECT 
     cliente_id as cliente_id,
@@ -764,6 +793,7 @@ SELECT
 FROM view_base_venda;
 
 -- 3.7. view_base_venda_produto
+DROP VIEW IF EXISTS view_base_venda_produto CASCADE;
 CREATE VIEW view_base_venda_produto AS
 SELECT 
     cliente_id as cliente_id,
@@ -785,6 +815,7 @@ SELECT
 FROM view_base_venda;
 
 -- 3.8. view_produto_estoque_preco
+DROP VIEW IF EXISTS view_produto_estoque_preco CASCADE;
 CREATE VIEW view_produto_estoque_preco AS
 SELECT 
     produto.id as produto_id,
@@ -803,6 +834,7 @@ LEFT JOIN armazem ON (armazem.id = estoque.armazem_id)
 LEFT JOIN view_precos ON (view_precos.produto_id = produto.id);
 
 -- 3.9. view_produto_orcamento
+DROP VIEW IF EXISTS view_produto_orcamento CASCADE;
 CREATE VIEW view_produto_orcamento AS
 SELECT 
     produto.cod_erp as produto_cod_erp,
@@ -824,6 +856,7 @@ LEFT JOIN armazem ON (armazem.id = estoque.armazem_id)
 LEFT JOIN view_precos ON (view_precos.produto_id = produto.id);
 
 -- 3.10. view_total_catogoria_mes
+DROP VIEW IF EXISTS view_total_catogoria_mes CASCADE;
 CREATE VIEW view_total_catogoria_mes AS
 SELECT DISTINCT 
     categoria.id as id,
@@ -862,6 +895,7 @@ GROUP BY categoria.id, categoria.cod_erp, categoria.descricao, vendedor.id,
          meta_vendedor_categoria.valor;
 
 -- 3.11. view_venda_categoria_mes
+DROP VIEW IF EXISTS view_venda_categoria_mes CASCADE;
 CREATE VIEW view_venda_categoria_mes AS
 SELECT 
     categoria_id as id,
@@ -884,6 +918,7 @@ SELECT
 FROM view_venda_categoria;
 
 -- 3.12. view_venda_cliente_mes
+DROP VIEW IF EXISTS view_venda_cliente_mes CASCADE;
 CREATE VIEW view_venda_cliente_mes AS
 SELECT 
     cliente_id as cliente_id,
@@ -897,6 +932,7 @@ FROM view_venda_cliente
 GROUP BY cliente_id, nota_vendedor_id, cliente_vendedor_id, nota_saida_item_ano, nota_saida_item_mes, nota_saida_dt_emissao, nota_saida_item_vlr_total;
 
 -- 3.13. view_venda_mes
+DROP VIEW IF EXISTS view_venda_mes CASCADE;
 CREATE VIEW view_venda_mes AS
 SELECT 
     vendedor1_id as vendedor1_id,
@@ -907,6 +943,7 @@ FROM view_vendas
 GROUP BY vendedor1_id, ano, mes;
 
 -- 3.14. view_venda_regiao_mes
+DROP VIEW IF EXISTS view_venda_regiao_mes CASCADE;
 CREATE VIEW view_venda_regiao_mes AS
 SELECT 
     view_venda_regiao.regiao_id as regiao_id,
@@ -919,6 +956,7 @@ FROM view_venda_regiao
 GROUP BY view_venda_regiao.regiao_id, view_venda_regiao.regiao_descricao, view_venda_regiao.mes, view_venda_regiao.ano;
 
 -- 3.15. view_vendedor_venda_mes
+DROP VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
 CREATE VIEW view_vendedor_venda_mes AS
 SELECT DISTINCT 
     view_vendedor_venda.vendedor_id as vendedor_id,
@@ -955,6 +993,7 @@ GROUP BY view_vendedor_venda.vendedor_id, vendedor.nome, vendedor.nome_reduzido,
 -- ==========================================
 
 -- 4.1. pivot_venda_mes_cliente
+DROP VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
 CREATE VIEW pivot_venda_mes_cliente AS
 SELECT 
     cliente.id as cliente_id,
@@ -989,6 +1028,7 @@ JOIN vendedor ON (nota_saida.vendedor1_id = vendedor.id)
 GROUP BY cliente.id, cliente.vendedor_id, nota_saida.vendedor1_id, cliente.razao, venda_ano.ano;
 
 -- 4.2. pivot_vendas
+DROP VIEW IF EXISTS pivot_vendas CASCADE;
 CREATE VIEW pivot_vendas AS
 SELECT 
     vendedor.id as vendedor_id,
@@ -1017,6 +1057,7 @@ LEFT JOIN vendas_ano_mes venda_mes ON (venda_mes.cliente_id = venda_ano.cliente_
 GROUP BY vendedor.id, vendedor.cod_erp, vendedor.nome, venda_ano.cliente_id, cliente.cod_erp, cliente.razao, venda_ano.ano;
 
 -- 4.3. view_base_cliente_mes
+DROP VIEW IF EXISTS view_base_cliente_mes CASCADE;
 CREATE VIEW view_base_cliente_mes AS
 SELECT DISTINCT 
     cliente_id as cliente_id,
@@ -1028,6 +1069,7 @@ FROM view_base_cliente
 GROUP BY cliente_id, vendedor_id, ano, mes;
 
 -- 4.4. view_base_venda_categoria_ano
+DROP VIEW IF EXISTS view_base_venda_categoria_ano CASCADE;
 CREATE VIEW view_base_venda_categoria_ano AS
 SELECT
     cliente_id as cliente_id,
@@ -1050,6 +1092,7 @@ FROM view_base_venda_categoria
 GROUP BY cliente_id, categoria_id, vendedor_id, ano;
 
 -- 4.5. view_base_venda_cliente_ano
+DROP VIEW IF EXISTS view_base_venda_cliente_ano CASCADE;
 CREATE VIEW view_base_venda_cliente_ano AS
 SELECT
     cliente_id as cliente_id,
@@ -1071,6 +1114,7 @@ FROM view_base_venda_cliente
 GROUP BY cliente_id, vendedor_id, ano;
 
 -- 4.6. view_base_venda_produto_ano
+DROP VIEW IF EXISTS view_base_venda_produto_ano CASCADE;
 CREATE VIEW view_base_venda_produto_ano AS
 SELECT
     cliente_id as cliente_id,
@@ -1093,6 +1137,7 @@ FROM view_base_venda_produto
 GROUP BY cliente_id, produto_id, vendedor_id, ano;
 
 -- 4.7. view_venda_categoria_ano
+DROP VIEW IF EXISTS view_venda_categoria_ano CASCADE;
 CREATE VIEW view_venda_categoria_ano AS
 SELECT 
     id as id,
@@ -1116,6 +1161,7 @@ FROM view_venda_categoria_mes
 GROUP BY view_venda_categoria_mes.id, vendedor_id, ano, categoria_cod_erp, categoria_descricao;
 
 -- 4.8. view_venda_mes_vendedor
+DROP VIEW IF EXISTS view_venda_mes_vendedor CASCADE;
 CREATE VIEW view_venda_mes_vendedor AS
 SELECT 
     vendedor1_id as vendedor1_id,
@@ -1140,6 +1186,7 @@ FROM view_venda_mes;
 -- ==========================================
 
 -- 5.1. view_qtd_venda_mes_vendedor
+DROP VIEW IF EXISTS view_qtd_venda_mes_vendedor CASCADE;
 CREATE VIEW view_qtd_venda_mes_vendedor AS
 SELECT 
     vendedor1_id as vendedor1_id,
@@ -1158,3 +1205,4 @@ SELECT
     sum(dezembro) as dezembro
 FROM view_venda_mes_vendedor
 GROUP BY vendedor1_id, ano;
+

@@ -27,7 +27,9 @@ export class AnalyticsController {
     const m = parseInt(month) || new Date().getMonth() + 1;
     let vId = vendedorId ? parseInt(vendedorId) : undefined;
 
-    if (!vId && req.user) {
+    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+
+    if (!vId && req.user && !isGerente) {
       vId =
         (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
         undefined;
@@ -52,7 +54,9 @@ export class AnalyticsController {
     const y = parseInt(year) || new Date().getFullYear();
     let vId = vendedorId ? parseInt(vendedorId) : undefined;
 
-    if (!vId && req.user) {
+    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+
+    if (!vId && req.user && !isGerente) {
       vId =
         (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
         undefined;
