@@ -43,7 +43,9 @@ export class NegociacaoController {
   @ApiResponse({ status: 201, type: NegociacaoResponseDto })
   async create(@Body() data: CreateNegociacaoDto, @Req() req: any) {
     return this.negociacaoService.createNegotiation({
-      ...data,
+      clienteId: data.clienteId,
+      tituloIds: data.titulos,
+      observacao: data.observacao || '',
       vendedorId: req.user.vendedorId || data.vendedorId,
     });
   }

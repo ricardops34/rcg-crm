@@ -174,6 +174,19 @@ export class AppComponent implements OnInit {
       items.push(...this.dynamicMenus);
     }
 
+    // Módulos Fiscais e Logísticos (Sempre visíveis se o menu dinâmico não trouxer)
+    if (this.dynamicMenus.length === 0 || !this.dynamicMenus.some(m => m.label === 'Faturamento')) {
+      items.push({ 
+        label: "Faturamento", 
+        shortLabel: "Fiscal",
+        icon: "po-icon-finance", 
+        subItems: [
+          { label: "Notas Fiscais", action: () => this.router.navigate(["/faturamento/notas"]), icon: "po-icon-document", shortLabel: "Notas" },
+          { label: "Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "po-icon-box", shortLabel: "Comod" }
+        ]
+      });
+    }
+
     const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin';
     if (isAdmin) {
       items.push({ 

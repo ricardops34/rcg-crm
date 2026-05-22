@@ -20,7 +20,7 @@ export class AnalyticsService {
 
   async getDashboardStats(year: number, month: number, vendedorId?: number) {
     let whereVendedor = '';
-    const params = [year, month];
+    const params: any[] = [year, month];
 
     if (vendedorId) {
       whereVendedor = ' AND vendedor_id = $3';
@@ -28,26 +28,42 @@ export class AnalyticsService {
     }
 
     try {
+      // 1. KPIs Gerais
       const kpis = await this.dataSource.query(
         `SELECT 
           SUM(vlr_objetivo) as goal,
           SUM(vlr_liquido) as realized,
           AVG(perc_liquido) as achievement
          FROM view_vendedor_venda_mes 
-         WHERE CAST(ano AS integer) = $1::integer AND CAST(mes AS integer) = $2::integer` + whereVendedor,
+         WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` + whereVendedor,
         params,
       );
 
+      // 2. Vendas por Categoria (Rosca)
       const categories = await this.dataSource.query(
         `SELECT 
-          categoria as label,
+          descricao as label,
           SUM(vlr_liquido) as value
          FROM view_total_catogoria_mes
-         WHERE CAST(ano AS integer) = $1::integer AND CAST(mes AS integer) = $2::integer` +
+         WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` +
           whereVendedor +
-          ` GROUP BY categoria ORDER BY value DESC LIMIT 5`,
+          ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
         params,
       );
+
+      // 3. Vendas por Vendedor (Barras) - Apenas se não for filtro de vendedor único
+      let sellers: any[] = [];
+      if (!vendedorId) {
+        sellers = await this.dataSource.query(
+          `SELECT 
+            nome as label,
+            SUM(vlr_liquido) as value
+           FROM view_vendedor_venda_mes
+           WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2
+           GROUP BY nome ORDER BY value DESC LIMIT 5`,
+          params,
+        );
+      }
 
       return {
         summary: kpis[0] || { goal: 0, realized: 0, achievement: 0 },
@@ -55,9 +71,13 @@ export class AnalyticsService {
           label: c.label,
           data: [parseFloat(c.value)],
         })),
+        sellers: sellers.map((s) => ({
+          label: s.label,
+          data: [parseFloat(s.value)],
+        })),
       };
     } catch (err) {
-      console.error('[ANALYTICS] ❌ Erro ao buscar dados do dashboard:', err.message);
+      console.error('[ANALYTICS] ❌ Erro ao buscar estatísticas do dashboard:', err.message);
       throw err;
     }
   }

@@ -10,6 +10,9 @@ import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor
 import { AgendaAtendimentoComponent } from './pages/commercial/agenda-atendimento/agenda-atendimento';
 import { ProductListComponent } from './pages/catalog/product-list/product-list';
 import { ProductFormComponent } from './pages/catalog/product-form/product-form';
+import { NotaListComponent } from './pages/billing/nota-list/nota-list';
+import { NotaDetailComponent } from './pages/billing/nota-detail/nota-detail';
+import { ComodatoListComponent } from './pages/billing/comodato-list/comodato-list';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
 import { TabelaPrecoListComponent } from './pages/commercial/tabela-preco-list/tabela-preco-list';
@@ -46,6 +49,9 @@ export const routes: Routes = [
       { path: 'produtos', component: ProductListComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/new', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/edit/:id', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
+      { path: 'faturamento/notas', component: NotaListComponent, data: { controller: 'NotaSaidaList' } },
+      { path: 'faturamento/notas/:id', component: NotaDetailComponent, data: { controller: 'NotaSaidaList' } },
+      { path: 'faturamento/comodatos', component: ComodatoListComponent, data: { controller: 'NotaSaidaList' } },
       { path: 'metas', component: MetaListComponent, data: { controller: 'MetaList' } },
       { path: 'metas/new', component: MetaFormComponent, data: { controller: 'MetaList' } },
       { path: 'metas/edit/:id', component: MetaFormComponent, data: { controller: 'MetaList' } },

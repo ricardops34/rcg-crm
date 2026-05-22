@@ -34,8 +34,12 @@ export class DashboardComponent implements OnInit {
 
   summary: any = { goal: 0, realized: 0, achievement: 0 };
   categorySeries: Array<PoChartSerie> = [];
+  sellerSeries: Array<PoChartSerie> = [];
+  
   chartType: PoChartType = PoChartType.Donut;
-  isLoading: boolean = false;
+  barChartType: PoChartType = PoChartType.Bar;
+  
+  isLoading: boolean = true;
   isGerente: boolean = false;
 
   years: Array<PoSelectOption> = [
@@ -99,11 +103,12 @@ export class DashboardComponent implements OnInit {
   loadAllData() {
     this.isLoading = true;
     
-    // Load KPIs
+    // Load KPIs & Charts
     this.analyticsService.getDashboardData(this.selectedYear, this.selectedMonth).subscribe({
       next: (res) => {
         this.summary = res.summary;
         this.categorySeries = res.categories;
+        this.sellerSeries = res.sellers || [];
         
         // Load MVC (somente se os KPIs carregarem com sucesso)
         this.analyticsService.getMvcData({

@@ -62,10 +62,18 @@
 
   <!-- Gráficos -->
   <div class="po-row">
-    <po-widget class="po-md-12 po-mt-2 po-mb-2" p-title="Vendas por Categoria">
+    <po-widget class="po-md-6 po-mt-2 po-mb-2" p-title="Vendas por Categoria">
       <po-chart 
         [p-series]="categorySeries" 
         [p-type]="chartType"
+        [p-height]="350">
+      </po-chart>
+    </po-widget>
+
+    <po-widget class="po-md-6 po-mt-2 po-mb-2" p-title="Top 5 Vendedores">
+      <po-chart 
+        [p-series]="sellerSeries" 
+        [p-type]="barChartType"
         [p-height]="350">
       </po-chart>
     </po-widget>
