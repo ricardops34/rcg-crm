@@ -44,7 +44,7 @@ export class AnalyticsService {
         `SELECT 
           descricao as label,
           SUM(vlr_liquido) as value
-         FROM view_total_catogoria_mes
+         FROM view_total_categoria_mes
          WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` +
           whereVendedor +
           ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,

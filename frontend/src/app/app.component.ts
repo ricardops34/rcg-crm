@@ -170,46 +170,8 @@ export class AppComponent implements OnInit {
       { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "an an-house", shortLabel: "Home" },
     ];
 
-    if (this.authService.isAuthenticated() && this.authService.hasPermission('MvcList')) {
-      items.push({
-        label: "Agenda Comercial",
-        action: () => this.router.navigate(["/agenda-atendimento"]),
-        icon: "po-icon-calendar",
-        shortLabel: "Agenda"
-      });
-    }
-
     if (this.dynamicMenus.length > 0) {
       items.push(...this.dynamicMenus);
-    }
-
-    // Módulos Fiscais e Logísticos (Sempre visíveis se o menu dinâmico não trouxer)
-    if (this.dynamicMenus.length === 0 || !this.dynamicMenus.some(m => m.label === 'Faturamento')) {
-      items.push({
-        label: "Faturamento",
-        shortLabel: "Fiscal",
-        icon: "an an-file-text",
-        subItems: [
-          { label: "Notas Fiscais", action: () => this.router.navigate(["/faturamento/notas"]), icon: "an an-file-text", shortLabel: "Notas" },
-          { label: "Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "an an-package", shortLabel: "Comod" }
-        ]
-      });
-    }
-
-    const isAdmin = this.user?.roles?.includes('ADMIN') || this.user?.login === 'admin';
-    if (isAdmin) {
-      items.push({
-        label: "Administração",
-        shortLabel: "Admin",
-        icon: "an an-gear-six",
-        subItems: [
-          { label: "Usuários", action: () => this.router.navigate(["/admin/users"]), icon: "an an-user", shortLabel: "Users" },
-          { label: "Perfis de Acesso", action: () => this.router.navigate(["/admin/groups"]), icon: "an an-users", shortLabel: "Perfis" },
-          { label: "Unidades", action: () => this.router.navigate(["/admin/units"]), icon: "an an-buildings", shortLabel: "Units" },
-          { label: "Módulos", action: () => this.router.navigate(["/admin/modules"]), icon: "an an-sidebar-simple", shortLabel: "Módulos" },
-          { label: "Rotinas", action: () => this.router.navigate(["/admin/programs"]), icon: "an an-terminal-window", shortLabel: "Rotinas" }
-        ]
-      });
     }
 
     items.push({ label: "Sair", action: () => this.logout(), icon: "an an-sign-out", shortLabel: "Sair", type: "danger" });
