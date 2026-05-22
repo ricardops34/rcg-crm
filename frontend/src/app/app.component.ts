@@ -104,7 +104,7 @@ export class AppComponent implements OnInit {
             shortLabel: program.label.substring(0, 10),
             action: () => this.navigateTo(program.action),
             icon: program.icon || "po-icon-circle"
-          }));
+          }))
         }));
         this.updateMenu();
       },
