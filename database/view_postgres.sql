@@ -11,7 +11,16 @@
 
 DROP VIEW IF EXISTS view_qtd_venda_mes_vendedor CASCADE;
 
-DROP MATERIALIZED VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
+-- Safely drop pivot_venda_mes_cliente (could be standard or materialized view in target database)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'pivot_venda_mes_cliente' AND relkind = 'm') THEN
+        DROP MATERIALIZED VIEW pivot_venda_mes_cliente CASCADE;
+    ELSIF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'pivot_venda_mes_cliente' AND relkind = 'v') THEN
+        DROP VIEW pivot_venda_mes_cliente CASCADE;
+    END IF;
+END $$;
+
 DROP VIEW IF EXISTS pivot_vendas CASCADE;
 DROP VIEW IF EXISTS view_base_cliente_mes CASCADE;
 DROP VIEW IF EXISTS view_base_venda_categoria_ano CASCADE;
@@ -29,12 +38,31 @@ DROP VIEW IF EXISTS view_base_venda_cliente CASCADE;
 DROP VIEW IF EXISTS view_base_venda_produto CASCADE;
 DROP VIEW IF EXISTS view_produto_estoque_preco CASCADE;
 DROP VIEW IF EXISTS view_produto_orcamento CASCADE;
-DROP MATERIALIZED VIEW IF EXISTS view_total_catogoria_mes CASCADE;
+
+-- Safely drop view_total_catogoria_mes
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'view_total_catogoria_mes' AND relkind = 'm') THEN
+        DROP MATERIALIZED VIEW view_total_catogoria_mes CASCADE;
+    ELSIF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'view_total_catogoria_mes' AND relkind = 'v') THEN
+        DROP VIEW view_total_catogoria_mes CASCADE;
+    END IF;
+END $$;
+
 DROP VIEW IF EXISTS view_venda_categoria_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_cliente_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_regiao_mes CASCADE;
-DROP MATERIALIZED VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
+
+-- Safely drop view_vendedor_venda_mes
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'view_vendedor_venda_mes' AND relkind = 'm') THEN
+        DROP MATERIALIZED VIEW view_vendedor_venda_mes CASCADE;
+    ELSIF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'view_vendedor_venda_mes' AND relkind = 'v') THEN
+        DROP VIEW view_vendedor_venda_mes CASCADE;
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS cliente_atendido_mes CASCADE;
 DROP VIEW IF EXISTS cliente_indicadores CASCADE;
@@ -42,7 +70,16 @@ DROP VIEW IF EXISTS cliente_notafiscal CASCADE;
 DROP VIEW IF EXISTS cliente_positivado CASCADE;
 DROP VIEW IF EXISTS clienteseekview CASCADE;
 DROP VIEW IF EXISTS cliente_top10 CASCADE;
-DROP MATERIALIZED VIEW IF EXISTS mvc CASCADE;
+
+-- Safely drop mvc
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'mvc' AND relkind = 'm') THEN
+        DROP MATERIALIZED VIEW mvc CASCADE;
+    ELSIF EXISTS (SELECT 1 FROM pg_class WHERE relname = 'mvc' AND relkind = 'v') THEN
+        DROP VIEW mvc CASCADE;
+    END IF;
+END $$;
 DROP VIEW IF EXISTS vendas_vendedor_mes CASCADE;
 DROP VIEW IF EXISTS venda_vendedor_produto CASCADE;
 DROP VIEW IF EXISTS vendedor_nota_fiscal CASCADE;
@@ -207,7 +244,7 @@ GROUP BY cliente_id, vendedor1_id, mes, ano
 ORDER BY vlr_total DESC;
 
 -- 2.7. mvc
-DROP MATERIALIZED VIEW IF EXISTS mvc CASCADE;
+-- Já removido no topo de forma segura (normal ou materialized)
 CREATE MATERIALIZED VIEW mvc AS
 SELECT 
     cliente.id as id,
@@ -861,7 +898,7 @@ LEFT JOIN armazem ON (armazem.id = estoque.armazem_id)
 LEFT JOIN view_precos ON (view_precos.produto_id = produto.id);
 
 -- 3.10. view_total_catogoria_mes
-DROP MATERIALIZED VIEW IF EXISTS view_total_catogoria_mes CASCADE;
+-- Já removido no topo de forma segura (normal ou materialized)
 CREATE MATERIALIZED VIEW view_total_catogoria_mes AS
 SELECT DISTINCT 
     categoria.id as id,
@@ -963,7 +1000,7 @@ FROM view_venda_regiao
 GROUP BY view_venda_regiao.regiao_id, view_venda_regiao.regiao_descricao, view_venda_regiao.mes, view_venda_regiao.ano;
 
 -- 3.15. view_vendedor_venda_mes
-DROP MATERIALIZED VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
+-- Já removido no topo de forma segura (normal ou materialized)
 CREATE MATERIALIZED VIEW view_vendedor_venda_mes AS
 SELECT DISTINCT 
     view_vendedor_venda.vendedor_id as vendedor_id,
@@ -1002,7 +1039,7 @@ CREATE UNIQUE INDEX idx_vendedor_venda_mes ON view_vendedor_venda_mes (vendedor_
 -- ==========================================
 
 -- 4.1. pivot_venda_mes_cliente
-DROP MATERIALIZED VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
+-- Já removido no topo de forma segura (normal ou materialized)
 CREATE MATERIALIZED VIEW pivot_venda_mes_cliente AS
 SELECT 
     cliente.id as cliente_id,

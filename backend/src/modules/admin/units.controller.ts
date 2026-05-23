@@ -10,7 +10,6 @@ import { CreateUnitDto, UpdateUnitDto } from './dto/admin-forms.dto';
 @ApiBearerAuth()
 @Controller('admin/units')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-@RequirePermission('SystemUnitList')
 export class UnitsController {
   constructor(private readonly unitsService: UnitsService) {}
 
@@ -27,6 +26,7 @@ export class UnitsController {
   }
 
   @Post()
+  @RequirePermission('SystemUnitList')
   @ApiOperation({ summary: 'Cadastra uma nova unidade' })
   @ApiBody({ type: CreateUnitDto })
   @ApiResponse({ status: 201, description: 'Unidade criada com sucesso' })
@@ -35,6 +35,7 @@ export class UnitsController {
   }
 
   @Put(':id')
+  @RequirePermission('SystemUnitList')
   @ApiOperation({ summary: 'Atualiza dados de uma unidade' })
   @ApiBody({ type: UpdateUnitDto })
   @ApiResponse({ status: 200, description: 'Unidade atualizada com sucesso' })
@@ -43,6 +44,7 @@ export class UnitsController {
   }
 
   @Delete(':id')
+  @RequirePermission('SystemUnitList')
   @ApiOperation({ summary: 'Remove uma unidade' })
   @ApiResponse({ status: 200, description: 'Unidade removida com sucesso' })
   async remove(@Param('id') id: string) {

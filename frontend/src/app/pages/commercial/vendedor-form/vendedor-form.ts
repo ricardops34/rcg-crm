@@ -60,14 +60,28 @@ export class VendedorFormComponent implements OnInit {
   }
 
   loadDependencies() {
-    this.unitService.findAll().subscribe(res => {
-      this.units = res.map((u: any) => ({ label: u.name, value: u.id }));
+    this.unitService.findAll().subscribe({
+      next: (res) => {
+        if (Array.isArray(res)) {
+          this.units = res.map((u: any) => ({ label: u.name, value: u.id }));
+        }
+      },
+      error: (err) => {
+        this.poNotification.error("Erro ao carregar unidades de negócio.");
+      }
     });
 
-    this.vendedorService.findAll(1, 100, { status: "A" }).subscribe(res => {
-      this.supervisors = res.items
-        .filter((v: any) => v.supervisor === "S")
-        .map((v: any) => ({ label: v.nome, value: v.id }));
+    this.vendedorService.findAll(1, 100, { status: "A" }).subscribe({
+      next: (res) => {
+        if (res && Array.isArray(res.items)) {
+          this.supervisors = res.items
+            .filter((v: any) => v.supervisor === "S")
+            .map((v: any) => ({ label: v.nome, value: v.id }));
+        }
+      },
+      error: (err) => {
+        this.poNotification.error("Erro ao carregar supervisores.");
+      }
     });
   }
 
