@@ -70,6 +70,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         supervisorId: profile.supervisorId,
         managedVendedorIds: profile.managedVendedorIds,
         isGerente: profile.isGerente,
+        roles: profile.roles,
       };
     } catch (error) {
       console.error(`[AUTH-GUARD] 🔥 Erro fatal na validação do token:`, error.message);
