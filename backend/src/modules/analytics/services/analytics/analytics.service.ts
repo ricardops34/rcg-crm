@@ -42,12 +42,12 @@ export class AnalyticsService {
       // 2. Vendas por Categoria (Rosca)
       const categories = await this.dataSource.query(
         `SELECT 
-          descricao as label,
+          categoria as label,
           SUM(vlr_liquido) as value
-         FROM view_total_categoria_mes
+         FROM view_total_catogoria_mes
          WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` +
           whereVendedor +
-          ` GROUP BY descricao ORDER BY value DESC LIMIT 5`,
+          ` GROUP BY categoria ORDER BY value DESC LIMIT 5`,
         params,
       );
 
