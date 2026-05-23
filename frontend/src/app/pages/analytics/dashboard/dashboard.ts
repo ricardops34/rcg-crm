@@ -95,7 +95,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadVendedores() {
-    this.vendedorService.findAll().subscribe(res => {
+    this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe(res => {
       this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
     });
   }

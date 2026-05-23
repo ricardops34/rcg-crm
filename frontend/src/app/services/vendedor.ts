@@ -16,8 +16,14 @@ export class VendedorService {
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
-  findAll(page: number = 1, limit: number = 10): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}?page=${page}&limit=${limit}`, { headers: this.getHeaders() });
+  findAll(page: number = 1, limit: number = 10, extraParams: any = {}): Observable<any> {
+    let url = `${this.API_URL}?page=${page}&limit=${limit}`;
+    Object.keys(extraParams).forEach(key => {
+      if (extraParams[key] !== undefined && extraParams[key] !== null) {
+        url += `&${key}=${extraParams[key]}`;
+      }
+    });
+    return this.http.get<any>(url, { headers: this.getHeaders() });
   }
 
   findOne(id: number): Observable<any> {

@@ -50,6 +50,7 @@ export class AnalyticsController {
     @Query('municipioId') municipioId?: string,
     @Query('dias') dias?: string,
     @Query('situacao') situacao?: string,
+    @Query('search') search?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
     let vId = vendedorId ? parseInt(vendedorId) : undefined;
@@ -67,6 +68,47 @@ export class AnalyticsController {
       municipioId: municipioId ? parseInt(municipioId) : undefined,
       dias: dias ? parseInt(dias) : undefined,
       situacao,
+      search,
     });
+  }
+
+  @Get('mvc/table')
+  @RequirePermission('MvcList')
+  @ApiOperation({ summary: 'Obtém os dados da Média de Venda do Cliente (MVC) no formato de tabela do PO-UI' })
+  async getMvcTable(
+    @Req() req: any,
+    @Query('year') year: string,
+    @Query('vendedorId') vendedorId?: string,
+    @Query('estadoId') estadoId?: string,
+    @Query('municipioId') municipioId?: string,
+    @Query('dias') dias?: string,
+    @Query('situacao') situacao?: string,
+    @Query('search') search?: string,
+  ) {
+    const y = parseInt(year) || new Date().getFullYear();
+    let vId = vendedorId ? parseInt(vendedorId) : undefined;
+
+    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+
+    if (!vId && req.user && !isGerente) {
+      vId =
+        (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
+        undefined;
+    }
+
+    const items = await this.analyticsService.getMvcData(y, vId, {
+      estadoId: estadoId ? parseInt(estadoId) : undefined,
+      municipioId: municipioId ? parseInt(municipioId) : undefined,
+      dias: dias ? parseInt(dias) : undefined,
+      situacao,
+      search,
+    });
+
+    const mappedItems = items.map((item: any) => ({
+      ...item,
+      $rowColor: item.difference < 0 ? '#FFF9A7' : undefined,
+    }));
+
+    return { items: mappedItems, hasNext: false };
   }
 }

@@ -49,7 +49,7 @@ export class VendedorListComponent implements OnInit {
     { property: "codErp", label: "Cód. ERP", width: "100px" },
     { property: "nome", label: "Nome Completo" },
     { property: "email", label: "E-mail" },
-    { property: "filial.razao", label: "Filial Principal" },
+    { property: "filialRazao", label: "Filial Principal" },
     { property: "status", label: "Status", type: "label", width: "120px", labels: [
       { value: "A", color: "color-10", label: "Ativo" },
       { value: "B", color: "color-07", label: "Bloqueado" }
@@ -74,7 +74,10 @@ export class VendedorListComponent implements OnInit {
     this.isLoading = true;
     this.vendedorService.findAll(1, 100).subscribe({
       next: (res) => {
-        this.items = res.items;
+        this.items = res.items.map((item: any) => ({
+          ...item,
+          filialRazao: item.filial ? item.filial.razao : "Não vinculada"
+        }));
         this.total = res.total;
         if (filter) {
           this.items = this.items.filter(item => 

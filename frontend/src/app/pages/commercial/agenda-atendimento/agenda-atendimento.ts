@@ -106,7 +106,7 @@ export class AgendaAtendimentoComponent implements OnInit {
     this.isGerente = !!user?.isGerente || !!user?.supervisorId;
 
     if (this.isGerente) {
-      this.vendedorService.findAll(1, 100).subscribe(res => {
+      this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe(res => {
         this.vendedores = res.items.map((item: any) => ({
           label: item.nome,
           value: item.id

@@ -12,9 +12,20 @@ export class VendedorService {
     private readonly cls: ClsService,
   ) {}
 
-  async findAll(page = 1, limit = 10): Promise<[Vendedor[], number]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    filters?: { status?: string; dashboard?: string },
+  ): Promise<[Vendedor[], number]> {
     const user = this.cls.get('user');
     const where: any = {};
+
+    if (filters?.status) {
+      where.status = filters.status;
+    }
+    if (filters?.dashboard) {
+      where.dashboard = filters.dashboard;
+    }
 
     // Hierarquia de Acesso Baseada em Perfis (Role-Based)
     const roles = user?.roles || [];

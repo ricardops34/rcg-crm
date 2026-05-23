@@ -79,7 +79,7 @@ export class ClienteFormComponent implements OnInit {
   }
 
   loadInitialData() {
-    this.vendedorService.findAll(1, 100).subscribe(res => {
+    this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe(res => {
       this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
     });
     this.locationService.getEstados().subscribe(res => {

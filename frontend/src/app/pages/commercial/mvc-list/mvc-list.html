@@ -1,109 +1,40 @@
-<po-page-list 
+<!-- Widgets de Performance no Topo -->
+<div class="po-row po-mb-2 po-mt-2">
+  <po-widget class="po-md-4 po-mb-1" p-title="Meta do Mês">
+    <div class="po-font-subtitle po-text-center po-py-1">
+      <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
+      {{ summary?.goal | currency:'BRL' }}
+    </div>
+  </po-widget>
+
+  <po-widget class="po-md-4 po-mb-1" p-title="Realizado">
+    <div class="po-font-subtitle po-text-center po-py-1">
+      <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
+      {{ summary?.realized | currency:'BRL' }}
+    </div>
+  </po-widget>
+
+  <po-widget class="po-md-4 po-mb-1" p-title="Atingimento (%)" [p-primary]="true">
+    <div class="po-font-subtitle po-text-center po-py-1" [ngClass]="{'po-text-color-07': (summary?.achievement || 0) < 80, 'po-text-color-10': (summary?.achievement || 0) >= 100}">
+      <po-icon [p-icon]="(summary?.achievement || 0) >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
+      {{ summary?.achievement | number:'1.1-2' }}%
+    </div>
+  </po-widget>
+</div>
+
+<!-- Tabela Dinâmica do PO-UI com Busca Avançada Colapsável -->
+<po-page-dynamic-table
+  #dynamicTable
   p-title="Cockpit de Vendas (MCV)"
   p-subtitle="Gestão proativa da carteira de clientes"
   [p-breadcrumb]="breadcrumb"
-  [p-filter]="filter"
-  [p-actions]="actions">
-
-  <!-- Widgets de Performance -->
-  <div class="po-row">
-    <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
-      <div class="po-font-subtitle po-text-center po-py-1">
-        <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
-        {{ summary?.goal | currency:'BRL' }}
-      </div>
-    </po-widget>
-
-    <po-widget class="po-md-4 po-mb-2" p-title="Realizado">
-      <div class="po-font-subtitle po-text-center po-py-1">
-        <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
-        {{ summary?.realized | currency:'BRL' }}
-      </div>
-    </po-widget>
-
-    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
-      <div class="po-font-subtitle po-text-center po-py-1" [ngClass]="{'po-text-color-07': (summary?.achievement || 0) < 80, 'po-text-color-10': (summary?.achievement || 0) >= 100}">
-        <po-icon [p-icon]="(summary?.achievement || 0) >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
-        {{ summary?.achievement | number:'1.1-2' }}%
-      </div>
-    </po-widget>
-  </div>
-
-  <po-divider p-label="Filtros de Visão"></po-divider>
-
-  <!-- Filtros Avançados -->
-  <div class="po-row">
-    <po-select 
-      class="po-md-1" 
-      name="year" 
-      p-label="Ano" 
-      [p-options]="years" 
-      [ngModel]="selectedYear" 
-      (p-change)="selectedYear = $event; loadAllData()">
-    </po-select>
-
-    <po-select 
-      class="po-md-1" 
-      name="month" 
-      p-label="Mês" 
-      [p-options]="months" 
-      [ngModel]="selectedMonth" 
-      (p-change)="selectedMonth = $event; loadAllData()">
-    </po-select>
-
-    <po-select 
-      *ngIf="isGerente"
-      class="po-md-3" 
-      name="vendedor" 
-      p-label="Vendedor" 
-      [p-options]="vendedores" 
-      [ngModel]="selectedVendedor" 
-      (p-change)="selectedVendedor = $event; loadAllData()"
-      p-placeholder="Minha Equipe">
-    </po-select>
-
-    <po-select 
-      class="po-md-1" 
-      name="estado" 
-      p-label="UF" 
-      [p-options]="estados" 
-      [ngModel]="selectedEstado" 
-      (p-change)="onEstadoChange($event)"
-      p-placeholder="Todos">
-    </po-select>
-
-    <po-select 
-      class="po-md-3" 
-      name="municipio" 
-      p-label="Cidade" 
-      [p-options]="municipios" 
-      [ngModel]="selectedMunicipio" 
-      (p-change)="selectedMunicipio = $event; loadAllData()"
-      [p-disabled]="!selectedEstado"
-      p-placeholder="Todas">
-    </po-select>
-
-    <div class="po-md-3 po-mt-4 po-text-right">
-      <po-dropdown 
-        p-label="Filtros Rápidos" 
-        [p-actions]="quickFilters">
-      </po-dropdown>
-    </div>
-  </div>
-
-  <po-divider></po-divider>
-
-  <po-table
-    [p-loading]="isLoading"
-    [p-columns]="columns"
-    [p-items]="items"
-    [p-actions]="tableActions"
-    p-container="shadow"
-    [p-striped]="true"
-    [p-sort]="true">
-  </po-table>
-
-</po-page-list>
+  [p-fields]="fields"
+  [p-service-api]="serviceApi"
+  [p-table-custom-actions]="tableCustomActions"
+  [p-page-custom-actions]="pageCustomActions"
+  [p-concat-filters]="true"
+  p-quick-search-param="search">
+</po-page-dynamic-table>
 
 <!-- Modal de Novo Atendimento CRM -->
 <po-modal #modalAtendimento p-title="Registrar Atendimento CRM" [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">

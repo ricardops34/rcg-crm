@@ -94,6 +94,7 @@ export class AnalyticsService {
       municipioId?: number;
       dias?: number;
       situacao?: string;
+      search?: string;
     },
   ) {
     try {
@@ -103,6 +104,11 @@ export class AnalyticsService {
       if (vendedorId) {
         params.push(vendedorId);
         where += ` AND nota_saida_vendedor_id = $${params.length}`;
+      }
+
+      if (filters?.search) {
+        params.push(`%${filters.search}%`);
+        where += ` AND cliente_nome ILIKE $${params.length}`;
       }
 
       // Busca dados pivoteados de vendas 12 meses
@@ -138,6 +144,11 @@ export class AnalyticsService {
       if (filters?.situacao) {
         mvcParams.push(filters.situacao);
         mvcWhere += ` AND situacao = $${mvcParams.length}`;
+      }
+
+      if (filters?.search) {
+        mvcParams.push(`%${filters.search}%`);
+        mvcWhere += ` AND razao ILIKE $${mvcParams.length}`;
       }
 
       const mvcDetails = await this.dataSource.query(

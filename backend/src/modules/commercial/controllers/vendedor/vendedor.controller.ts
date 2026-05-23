@@ -31,8 +31,13 @@ export class VendedorController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query('status') status?: string,
+    @Query('dashboard') dashboard?: string,
   ) {
-    const [items, total] = await this.vendedorService.findAll(page, limit);
+    const [items, total] = await this.vendedorService.findAll(page, limit, {
+      status,
+      dashboard,
+    });
     return { items, total, hasNext: total > page * limit };
   }
 

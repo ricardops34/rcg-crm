@@ -64,7 +64,7 @@ export class VendedorFormComponent implements OnInit {
       this.units = res.map((u: any) => ({ label: u.name, value: u.id }));
     });
 
-    this.vendedorService.findAll(1, 100).subscribe(res => {
+    this.vendedorService.findAll(1, 100, { status: "A" }).subscribe(res => {
       this.supervisors = res.items
         .filter((v: any) => v.supervisor === "S")
         .map((v: any) => ({ label: v.nome, value: v.id }));
