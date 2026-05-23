@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Cliente } from '../../entities/cliente.entity';
 import { Vendedor } from '../../entities/vendedor.entity';
 import { ErpTranslationService } from '../../../master-data/services/erp-translation/erp-translation.service';
+import { AnalyticsRefreshService } from '../../../analytics/services/analytics-refresh.service';
 
 @Injectable()
 export class SyncCommercialService {
@@ -12,6 +13,7 @@ export class SyncCommercialService {
   constructor(
     private dataSource: DataSource,
     private erpTranslation: ErpTranslationService,
+    private analyticsRefresh: AnalyticsRefreshService,
     @InjectRepository(Cliente)
     private clienteRepository: Repository<Cliente>,
     @InjectRepository(Vendedor)
@@ -109,6 +111,9 @@ export class SyncCommercialService {
         await queryRunner.release();
       }
     }
+
+    // Refresh materialized views in the background
+    await this.analyticsRefresh.refreshViews();
 
     return results;
   }

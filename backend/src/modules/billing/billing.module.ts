@@ -9,12 +9,14 @@ import { SyncBillingService } from './services/sync-billing/sync-billing.service
 import { SyncBillingController } from './controllers/sync-billing/sync-billing.controller';
 import { MasterDataModule } from '../master-data/master-data.module';
 import { AdminModule } from '../admin/admin.module';
+import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([NotaSaida, NotaSaidaItem, NotaSaidaXml]),
     MasterDataModule,
     AdminModule,
+    AnalyticsModule,
   ],
   exports: [TypeOrmModule, BillingService],
   providers: [SyncBillingService, BillingService],

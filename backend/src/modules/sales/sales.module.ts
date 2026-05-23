@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PedidoEstado } from './entities/pedido-estado.entity';
 import { Pedido } from './entities/pedido.entity';
@@ -7,12 +7,14 @@ import { SyncSalesService } from './services/sync-sales/sync-sales.service';
 import { SyncSalesController } from './controllers/sync-sales/sync-sales.controller';
 import { MasterDataModule } from '../master-data/master-data.module';
 import { AdminModule } from '../admin/admin.module';
+import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PedidoEstado, Pedido, PedidoItem]),
     MasterDataModule,
     AdminModule,
+    AnalyticsModule,
   ],
   exports: [TypeOrmModule],
   providers: [SyncSalesService],

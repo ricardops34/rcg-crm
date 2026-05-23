@@ -11,7 +11,7 @@
 
 DROP VIEW IF EXISTS view_qtd_venda_mes_vendedor CASCADE;
 
-DROP VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
 DROP VIEW IF EXISTS pivot_vendas CASCADE;
 DROP VIEW IF EXISTS view_base_cliente_mes CASCADE;
 DROP VIEW IF EXISTS view_base_venda_categoria_ano CASCADE;
@@ -29,12 +29,12 @@ DROP VIEW IF EXISTS view_base_venda_cliente CASCADE;
 DROP VIEW IF EXISTS view_base_venda_produto CASCADE;
 DROP VIEW IF EXISTS view_produto_estoque_preco CASCADE;
 DROP VIEW IF EXISTS view_produto_orcamento CASCADE;
-DROP VIEW IF EXISTS view_total_catogoria_mes CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS view_total_catogoria_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_categoria_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_cliente_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_mes CASCADE;
 DROP VIEW IF EXISTS view_venda_regiao_mes CASCADE;
-DROP VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
 
 DROP VIEW IF EXISTS cliente_atendido_mes CASCADE;
 DROP VIEW IF EXISTS cliente_indicadores CASCADE;
@@ -42,7 +42,7 @@ DROP VIEW IF EXISTS cliente_notafiscal CASCADE;
 DROP VIEW IF EXISTS cliente_positivado CASCADE;
 DROP VIEW IF EXISTS clienteseekview CASCADE;
 DROP VIEW IF EXISTS cliente_top10 CASCADE;
-DROP VIEW IF EXISTS mvc CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS mvc CASCADE;
 DROP VIEW IF EXISTS vendas_vendedor_mes CASCADE;
 DROP VIEW IF EXISTS venda_vendedor_produto CASCADE;
 DROP VIEW IF EXISTS vendedor_nota_fiscal CASCADE;
@@ -207,8 +207,8 @@ GROUP BY cliente_id, vendedor1_id, mes, ano
 ORDER BY vlr_total DESC;
 
 -- 2.7. mvc
-DROP VIEW IF EXISTS mvc CASCADE;
-CREATE VIEW mvc AS
+DROP MATERIALIZED VIEW IF EXISTS mvc CASCADE;
+CREATE MATERIALIZED VIEW mvc AS
 SELECT 
     cliente.id as id,
     cliente.filial_id as filial,
@@ -244,6 +244,11 @@ JOIN estado ON (municipio.estado_id = estado.id)
 LEFT JOIN vendedor ON (cliente.vendedor_id = vendedor.id)
 LEFT JOIN regiao_cliente ON (cliente.regiao_cliente_id = regiao_cliente.id )
 WHERE cliente.cod_erp not in('00000002','00000001') AND cliente.reg_ativo = 'S';
+
+CREATE UNIQUE INDEX idx_mvc_id ON mvc (id);
+CREATE INDEX idx_mvc_vendedor ON mvc (vendedor_id);
+CREATE INDEX idx_mvc_estado ON mvc (estado_id);
+CREATE INDEX idx_mvc_municipio ON mvc (municipio_id);
 
 -- 2.8. vendas_vendedor_mes
 DROP VIEW IF EXISTS vendas_vendedor_mes CASCADE;
@@ -856,8 +861,8 @@ LEFT JOIN armazem ON (armazem.id = estoque.armazem_id)
 LEFT JOIN view_precos ON (view_precos.produto_id = produto.id);
 
 -- 3.10. view_total_catogoria_mes
-DROP VIEW IF EXISTS view_total_catogoria_mes CASCADE;
-CREATE VIEW view_total_catogoria_mes AS
+DROP MATERIALIZED VIEW IF EXISTS view_total_catogoria_mes CASCADE;
+CREATE MATERIALIZED VIEW view_total_catogoria_mes AS
 SELECT DISTINCT 
     categoria.id as id,
     categoria.cod_erp as cod_erp,
@@ -893,6 +898,8 @@ LEFT JOIN meta_vendedor_categoria ON (
 GROUP BY categoria.id, categoria.cod_erp, categoria.descricao, vendedor.id, 
          view_venda_categoria.nota_saida_mes, view_venda_categoria.nota_saida_ano, 
          meta_vendedor_categoria.valor;
+
+CREATE UNIQUE INDEX idx_total_categoria_mes ON view_total_catogoria_mes (id, COALESCE(vendedor_id, 0), ano, mes);
 
 -- 3.11. view_venda_categoria_mes
 DROP VIEW IF EXISTS view_venda_categoria_mes CASCADE;
@@ -956,8 +963,8 @@ FROM view_venda_regiao
 GROUP BY view_venda_regiao.regiao_id, view_venda_regiao.regiao_descricao, view_venda_regiao.mes, view_venda_regiao.ano;
 
 -- 3.15. view_vendedor_venda_mes
-DROP VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
-CREATE VIEW view_vendedor_venda_mes AS
+DROP MATERIALIZED VIEW IF EXISTS view_vendedor_venda_mes CASCADE;
+CREATE MATERIALIZED VIEW view_vendedor_venda_mes AS
 SELECT DISTINCT 
     view_vendedor_venda.vendedor_id as vendedor_id,
     vendedor.nome as nome,
@@ -987,18 +994,20 @@ LEFT JOIN meta_vendedor_mes ON (
 GROUP BY view_vendedor_venda.vendedor_id, vendedor.nome, vendedor.nome_reduzido, 
          view_vendedor_venda.mes, view_vendedor_venda.ano, meta_vendedor_mes.valor;
 
+CREATE UNIQUE INDEX idx_vendedor_venda_mes ON view_vendedor_venda_mes (vendedor_id, ano, mes);
+
 
 -- ==========================================
 -- 4. CRIAÇÃO DAS VIEWS (ORDEM DIRETA DE DEPENDÊNCIAS - LAYER 2)
 -- ==========================================
 
 -- 4.1. pivot_venda_mes_cliente
-DROP VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
-CREATE VIEW pivot_venda_mes_cliente AS
+DROP MATERIALIZED VIEW IF EXISTS pivot_venda_mes_cliente CASCADE;
+CREATE MATERIALIZED VIEW pivot_venda_mes_cliente AS
 SELECT 
     cliente.id as cliente_id,
     cliente.vendedor_id as cliente_vendedor_id,
-    nota_saida.vendedor1_id as nota_saida_vendedor_id,
+    COALESCE(nota_saida.vendedor1_id, 0) as nota_saida_vendedor_id,
     cliente.razao as cliente_nome,
     venda_ano.ano as ano,
     SUM(CASE WHEN nota_saida.mes = '01' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS janeiro,
@@ -1025,7 +1034,9 @@ LEFT JOIN nota_saida ON (
 LEFT JOIN nota_saida_item ON (nota_saida_item.nota_saida_id = nota_saida.id AND nota_saida_item.reg_ativo = 'S')
 JOIN cliente ON (cliente.id = nota_saida.cliente_id)
 JOIN vendedor ON (nota_saida.vendedor1_id = vendedor.id)
-GROUP BY cliente.id, cliente.vendedor_id, nota_saida.vendedor1_id, cliente.razao, venda_ano.ano;
+GROUP BY cliente.id, cliente.vendedor_id, COALESCE(nota_saida.vendedor1_id, 0), cliente.razao, venda_ano.ano;
+
+CREATE UNIQUE INDEX idx_pivot_venda_mes_cliente ON pivot_venda_mes_cliente (cliente_id, ano, nota_saida_vendedor_id);
 
 -- 4.2. pivot_vendas
 DROP VIEW IF EXISTS pivot_vendas CASCADE;

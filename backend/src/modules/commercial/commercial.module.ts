@@ -26,6 +26,7 @@ import { ClienteController } from './controllers/cliente/cliente.controller';
 import { SyncCommercialService } from './services/sync-commercial/sync-commercial.service';
 import { SyncCommercialController } from './controllers/sync-commercial/sync-commercial.controller';
 import { MasterDataModule } from '../master-data/master-data.module';
+import { AnalyticsModule } from '../analytics/analytics.module';
 import { VendedorService } from './services/vendedor/vendedor.service';
 import { VendedorController } from './controllers/vendedor/vendedor.controller';
 import { MetaVendedorService } from './services/meta-vendedor/meta-vendedor.service';
@@ -60,6 +61,7 @@ import { AdminModule } from '../admin/admin.module';
     ]),
     MasterDataModule,
     AdminModule,
+    AnalyticsModule,
   ],
   exports: [
     TypeOrmModule,

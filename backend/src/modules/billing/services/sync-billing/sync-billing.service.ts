@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { ErpTranslationService } from '../../../master-data/services/erp-translation/erp-translation.service';
 import { NotaSaida } from '../../entities/nota-saida.entity';
+import { AnalyticsRefreshService } from '../../../analytics/services/analytics-refresh.service';
 
 @Injectable()
 export class SyncBillingService {
@@ -10,6 +11,7 @@ export class SyncBillingService {
   constructor(
     private dataSource: DataSource,
     private erpTranslation: ErpTranslationService,
+    private analyticsRefresh: AnalyticsRefreshService,
   ) {}
 
   async syncNotasSaida(conteudo: any[]) {
@@ -69,6 +71,10 @@ export class SyncBillingService {
         await queryRunner.release();
       }
     }
+
+    // Refresh materialized views in the background
+    await this.analyticsRefresh.refreshViews();
+
     return results;
   }
 }

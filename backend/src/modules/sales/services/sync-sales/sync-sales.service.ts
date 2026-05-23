@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { ErpTranslationService } from '../../../master-data/services/erp-translation/erp-translation.service';
 import { Pedido } from '../../entities/pedido.entity';
 import { PedidoItem } from '../../entities/pedido-item.entity';
+import { AnalyticsRefreshService } from '../../../analytics/services/analytics-refresh.service';
 
 @Injectable()
 export class SyncSalesService {
@@ -11,6 +12,7 @@ export class SyncSalesService {
   constructor(
     private dataSource: DataSource,
     private erpTranslation: ErpTranslationService,
+    private analyticsRefresh: AnalyticsRefreshService,
   ) {}
 
   async syncPedidos(conteudo: any[]) {
@@ -64,6 +66,10 @@ export class SyncSalesService {
         await queryRunner.release();
       }
     }
+
+    // Refresh materialized views in the background
+    await this.analyticsRefresh.refreshViews();
+
     return results;
   }
 }
