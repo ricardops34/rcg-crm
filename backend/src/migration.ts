@@ -126,7 +126,7 @@ export class MigrationDataService {
         INSERT INTO system_module (name, icon, "order")
         SELECT $1, $2, $3
         WHERE NOT EXISTS (SELECT 1 FROM system_module WHERE name = $1)
-      `);
+      `, [mod.name, mod.icon, mod.order]);
       // Garantir atualização do ícone se já existir
       await ds.query(`UPDATE system_module SET icon = $2, "order" = $3 WHERE name = $1`, [mod.name, mod.icon, mod.order]);
     }
