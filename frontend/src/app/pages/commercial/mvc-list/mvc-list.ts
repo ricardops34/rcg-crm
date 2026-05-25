@@ -59,7 +59,7 @@ export class MvcListComponent implements OnInit {
     ]
   };
 
-  readonly serviceApi = `${environment.apiUrl}/analytics/mvc/table`;
+  serviceApi = `${environment.apiUrl}/analytics/mvc/table`;
 
   readonly fields: Array<any> = [
     {
@@ -75,8 +75,8 @@ export class MvcListComponent implements OnInit {
       ]
     },
     { property: "codigo", label: "Código", width: "110px" },
-    { property: "cliente_nome", label: "Razão Social" },
-    { property: "fantasia", label: "Nome Fantasia" },
+    { property: "cliente_nome", label: "Razão Social", filter: true },
+    { property: "fantasia", label: "Nome Fantasia", filter: true },
     { property: "municipio_descricao", label: "Cidade", width: "160px" },
     { property: "estado_sigla", label: "Estado (UF)", width: "100px" },
     { property: "vendedor_reduzido", label: "Vendedor", width: "150px" },
@@ -98,8 +98,39 @@ export class MvcListComponent implements OnInit {
   ];
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
-    { label: "Atualizar", action: () => this.refreshTable(), icon: "po-icon-refresh" }
+    { label: "Atualizar", action: () => this.refreshTable(), icon: "po-icon-refresh" },
+    { label: "15 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
+    { label: "30 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
+    { label: "60 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
+    { label: "90 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
+    { label: "120 Dias", action: () => this.aplicarFiltroRapido(121, undefined) },
+    { label: "Todos os Dias", action: () => this.aplicarFiltroRapido(undefined, undefined), icon: "po-icon-clear-content" }
   ];
+
+  aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
+    let url = `${environment.apiUrl}/analytics/mvc/table`;
+    const params: string[] = [];
+    if (diasDe !== undefined) {
+      params.push(`diasDe=${diasDe}`);
+    }
+    if (diasAte !== undefined) {
+      params.push(`diasAte=${diasAte}`);
+    }
+    if (params.length > 0) {
+      url += `?${params.join("&")}`;
+    }
+    this.serviceApi = url;
+
+    if (diasDe !== undefined && diasAte !== undefined) {
+      this.poNotification.information(`Filtrando inatividade entre ${diasDe} e ${diasAte} dias.`);
+    } else if (diasDe !== undefined) {
+      this.poNotification.information(`Filtrando inatividade acima de ${diasDe} dias.`);
+    } else {
+      this.poNotification.information("Exibindo todos os clientes (filtro rápido limpo).");
+    }
+
+    this.refreshTable();
+  }
 
   ngOnInit(): void {
     const user = this.authService.getUser();

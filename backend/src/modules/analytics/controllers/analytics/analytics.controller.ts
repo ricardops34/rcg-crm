@@ -83,29 +83,35 @@ export class AnalyticsController {
     @Query('vendedorId') vendedorId?: string,
     @Query('vendedor_id') vendedor_id?: string,
     @Query('dias') dias?: string,
+    @Query('diasDe') diasDe?: string,
+    @Query('diasAte') diasAte?: string,
     @Query('situacao') situacao?: string,
     @Query('search') search?: string,
+    @Query('cliente_nome') cliente_nome?: string,
+    @Query('fantasia') fantasia?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
     const vQuery = vendedor_id || vendedorId;
     let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    // Regra estrita: Admin, Supervisor e Gerente
-    const isGerente = 
-      req.user?.roles?.includes('ADMIN') || 
-      req.user?.roles?.includes('SUPERVISOR') || 
-      req.user?.roles?.includes('GERENTE');
+    // Regra de segurança: Usuários do grupo ADMIN listam sempre todos os clientes.
+    // Demais usuários são restritos à sua carteira (vendedor associado), e este filtro é obrigatório se nenhum vendedor for especificado.
+    const isAdmin = req.user?.roles?.includes('ADMIN');
 
-    if (!vId && req.user && !isGerente) {
+    if (!vId && req.user && !isAdmin) {
       vId =
         (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
-        undefined;
+        -999; // ID seguro inexistente para evitar vazamento caso o usuário não tenha vendedor associado
     }
 
     const items = await this.analyticsService.getMvcData(y, vId, {
       dias: dias ? parseInt(dias) : undefined,
+      diasDe: diasDe ? parseInt(diasDe) : undefined,
+      diasAte: diasAte ? parseInt(diasAte) : undefined,
       situacao,
       search,
+      cliente_nome,
+      fantasia,
     });
 
     const mappedItems = items.map((item: any) => ({

@@ -91,8 +91,12 @@ export class AnalyticsService {
     vendedorId?: number,
     filters?: {
       dias?: number;
+      diasDe?: number;
+      diasAte?: number;
       situacao?: string;
       search?: string;
+      cliente_nome?: string;
+      fantasia?: string;
     },
   ) {
     try {
@@ -109,9 +113,29 @@ export class AnalyticsService {
         where += ` AND mvc.dias >= $${params.length}`;
       }
 
+      if (filters?.diasDe) {
+        params.push(filters.diasDe);
+        where += ` AND mvc.dias >= $${params.length}`;
+      }
+
+      if (filters?.diasAte) {
+        params.push(filters.diasAte);
+        where += ` AND mvc.dias <= $${params.length}`;
+      }
+
       if (filters?.situacao) {
         params.push(filters.situacao);
         where += ` AND mvc.situacao = $${params.length}`;
+      }
+
+      if (filters?.cliente_nome) {
+        params.push(`%${filters.cliente_nome}%`);
+        where += ` AND mvc.razao ILIKE $${params.length}`;
+      }
+
+      if (filters?.fantasia) {
+        params.push(`%${filters.fantasia}%`);
+        where += ` AND mvc.fantasia ILIKE $${params.length}`;
       }
 
       if (filters?.search) {
