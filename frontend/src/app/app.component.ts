@@ -138,6 +138,7 @@ export class AppComponent implements OnInit {
       "SystemGroupList":        "/admin/groups",
       "SystemUnitList":         "/admin/units",
       "SystemModuleList":       "/admin/modules",
+      "SystemMenuEditor":       "/admin/menu-editor",
       "SystemProgramList":      "/admin/programs",
       "SystemProfileForm":      "/profile",
     };

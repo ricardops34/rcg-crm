@@ -84,6 +84,12 @@ export class GroupFormComponent implements OnInit {
     this.isLoading = true;
     this.groupService.findOne(id).subscribe({
       next: (res) => {
+        if (!res) {
+          this.isLoading = false;
+          this.poNotification.error("Perfil não encontrado.");
+          this.router.navigate(["/admin/groups"]);
+          return;
+        }
         this.group = res;
         this.syncProgramsWithPermissions();
         this.isLoading = false;
@@ -91,6 +97,7 @@ export class GroupFormComponent implements OnInit {
       error: () => {
         this.isLoading = false;
         this.poNotification.error("Erro ao carregar perfil.");
+        this.router.navigate(["/admin/groups"]);
       }
     });
   }

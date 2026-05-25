@@ -32,8 +32,6 @@ interface ProgramForm {
       (p-cancel)="cancel()"
       [p-disable-submit]="isLoading">
 
-      <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
-
       <form #programForm="ngForm">
         <po-divider p-label="Definição da Rotina"></po-divider>
         <div class="po-row">

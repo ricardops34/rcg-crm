@@ -72,16 +72,20 @@ export class UserFormComponent implements OnInit {
     this.isLoading = true;
     this.userService.findOne(id).subscribe({
       next: (res) => {
-        this.user = res;
-        this.user.password = ""; 
-        if (this.user.userGroups) {
-          this.user.groups = this.user.userGroups.map((ug: any) => ug.systemGroupId);
+        if (!res) {
+          this.isLoading = false;
+          this.poNotification.error("Usuário não encontrado.");
+          this.router.navigate(["/admin/users"]);
+          return;
         }
+        this.user = { ...res, password: '' };
+        this.user.groups = res.userGroups?.map((ug: any) => ug.systemGroupId) ?? [];
         this.isLoading = false;
       },
       error: () => {
         this.isLoading = false;
         this.poNotification.error("Erro ao carregar usuário.");
+        this.router.navigate(["/admin/users"]);
       }
     });
   }

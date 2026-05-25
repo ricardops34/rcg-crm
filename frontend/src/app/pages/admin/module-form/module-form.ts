@@ -18,9 +18,8 @@ import { ModuleService } from "../../../services/module";
       [p-title]="title"
       [p-breadcrumb]="breadcrumb"
       (p-save)="save()"
-      (p-cancel)="cancel()">
-      
-      <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+      (p-cancel)="cancel()"
+      [p-disable-submit]="isLoading">
 
       <form #moduleForm="ngForm">
         <po-divider p-label="Configuração do Módulo"></po-divider>
