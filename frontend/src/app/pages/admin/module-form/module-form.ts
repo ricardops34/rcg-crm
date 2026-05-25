@@ -29,10 +29,11 @@ import { ModuleService } from "../../../services/module";
           <po-combo
             class="po-md-3"
             name="icon"
-            [(ngModel)]="module.icon"
+            [ngModel]="module.icon"
+            (p-change)="module.icon = $event"
             p-label="Ícone (PO-UI)"
             [p-options]="iconOptions"
-            p-filter-mode="contains"
+            [p-filter-mode]="'contains'"
             p-clean>
             <ng-template p-combo-option-template let-option>
               <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0;">

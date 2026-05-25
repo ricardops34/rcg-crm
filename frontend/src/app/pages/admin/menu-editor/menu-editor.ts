@@ -151,10 +151,11 @@ interface ModuleGroup {
             <po-combo
               class="po-md-4"
               name="editIcon"
-              [(ngModel)]="editingProgram.icon"
+              [ngModel]="editingProgram.icon"
+              (p-change)="editingProgram.icon = $event"
               p-label="Ícone (PO-UI / Animalia)"
               [p-options]="iconOptions"
-              p-filter-mode="contains"
+              [p-filter-mode]="'contains'"
               p-clean>
               <ng-template p-combo-option-template let-option>
                 <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0;">

@@ -75,10 +75,11 @@ interface ProgramForm {
           <po-combo
             class="po-md-4"
             name="icon"
-            [(ngModel)]="program.icon"
+            [ngModel]="program.icon"
+            (p-change)="program.icon = $event"
             p-label="Ícone (PO-UI / Animalia)"
             [p-options]="iconOptions"
-            p-filter-mode="contains"
+            [p-filter-mode]="'contains'"
             p-clean>
             <ng-template p-combo-option-template let-option>
               <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0;">
