@@ -10,7 +10,8 @@ import {
   PoBreadcrumb,
   PoModalComponent,
   PoDialogService,
-  PoComboOption
+  PoComboOption,
+  PoComboFilterMode
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ProgramService } from "../../../services/program";
@@ -155,7 +156,7 @@ interface ModuleGroup {
               (p-change)="editingProgram.icon = $event"
               p-label="Ícone (PO-UI / Animalia)"
               [p-options]="iconOptions"
-              [p-filter-mode]="'contains'"
+              [p-filter-mode]="filterModeContains"
               p-clean>
               <ng-template p-combo-option-template let-option>
                 <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0;">
@@ -183,6 +184,8 @@ interface ModuleGroup {
 })
 export class MenuEditorComponent implements OnInit {
   @ViewChild("editModal") editModal!: PoModalComponent;
+
+  readonly filterModeContains = PoComboFilterMode.contains;
 
   private programService = inject(ProgramService);
   private moduleService = inject(ModuleService);
