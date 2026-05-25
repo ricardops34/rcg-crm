@@ -67,7 +67,7 @@ interface ModuleGroup {
 
       <po-accordion>
         @for (mod of filteredModules; track mod.id) {
-          <po-accordion-item [p-label]="mod.name + ' (' + mod.programs.length + ' rotinas)'" [p-icon]="mod.icon || 'po-icon-more'">
+          <po-accordion-item [p-label]="mod.name + ' (' + mod.programs.length + ' rotinas)'">
             <po-table
               [p-columns]="columns"
               [p-items]="mod.programs"
@@ -80,8 +80,7 @@ interface ModuleGroup {
         }
         @if (orphanPrograms.length > 0) {
           <po-accordion-item
-            p-label="— Sem módulo ({{ orphanPrograms.length }} rotinas sem menu) —"
-            p-icon="po-icon-warning">
+            p-label="— Sem módulo ({{ orphanPrograms.length }} rotinas sem menu) —">
             <po-table
               [p-columns]="columns"
               [p-items]="orphanPrograms"
