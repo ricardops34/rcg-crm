@@ -88,7 +88,7 @@ export class MvcListComponent implements OnInit {
     { property: "dias", label: "Dias", type: "number", width: "110px", filter: true },
     
     // Campo de Filtro Avançado (Restrito: Admin, Supervisor e Gerente)
-    { property: "vendedor_id", label: "Vendedor", filter: true, visible: false, options: [] }
+    { property: "vendedor_id", label: "Vendedor", filter: true, options: [] }
   ];
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
@@ -136,6 +136,7 @@ export class MvcListComponent implements OnInit {
     const user = this.authService.getUser();
     // Exigência estrita: Admin, Supervisor ou Gerente
     this.isGerente = 
+      user?.login === 'admin' ||
       !!user?.roles?.includes('ADMIN') || 
       !!user?.roles?.includes('SUPERVISOR') || 
       !!user?.roles?.includes('GERENTE');

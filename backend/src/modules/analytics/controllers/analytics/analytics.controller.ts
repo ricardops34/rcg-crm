@@ -94,9 +94,9 @@ export class AnalyticsController {
     const vQuery = vendedor_id || vendedorId;
     let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    // Regra de segurança: Usuários do grupo ADMIN listam sempre todos os clientes.
+    // Regra de segurança: Usuários do grupo ADMIN e o usuário 'admin' raiz listam sempre todos os clientes.
     // Demais usuários são restritos à sua carteira (vendedor associado), e este filtro é obrigatório se nenhum vendedor for especificado.
-    const isAdmin = req.user?.roles?.includes('ADMIN');
+    const isAdmin = req.user?.roles?.includes('ADMIN') || req.user?.username === 'admin';
 
     if (!vId && req.user && !isAdmin) {
       vId =
