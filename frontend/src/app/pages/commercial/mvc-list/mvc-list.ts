@@ -72,36 +72,23 @@ export class MvcListComponent implements OnInit {
       property: "situacao", label: "Situação", type: "label", width: "100px", labels: [
         { value: "A", color: "color-10", label: "Ativo" },
         { value: "B", color: "color-07", label: "Bloqueado" }
-      ], filter: true, options: [
-        { label: "Ativo", value: "A" },
-        { label: "Bloqueado", value: "B" }
       ]
     },
-    { property: "codigo", label: "Código", width: "110px", filter: true },
-    { property: "cliente_nome", label: "Razão Social", filter: true },
+    { property: "codigo", label: "Código", width: "110px" },
+    { property: "cliente_nome", label: "Razão Social" },
+    { property: "fantasia", label: "Nome Fantasia" },
     { property: "municipio_descricao", label: "Cidade", width: "160px" },
+    { property: "estado_sigla", label: "Estado (UF)", width: "100px" },
+    { property: "vendedor_reduzido", label: "Vendedor", width: "150px" },
     { property: "difference", label: "Dif. Média", type: "currency", format: "BRL", width: "140px" },
     { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "130px" },
     { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "130px" },
-    { property: "dias", label: "Dias Inativo", type: "number", width: "110px", filter: true },
     
-    // Filtros de busca avançada ocultados na tabela
-    {
-      property: "year", label: "Ano Base", type: "number", filter: true, visible: false, options: [
-        { label: "2026", value: 2026 },
-        { label: "2025", value: 2025 },
-        { label: "2024", value: 2024 }
-      ]
-    },
-    {
-      property: "month", label: "Mês Base", type: "number", filter: true, visible: false, options: Array.from({ length: 12 }, (_, i) => ({
-        label: `Mês ${i + 1}`,
-        value: i + 1
-      }))
-    },
-    { property: "vendedorId", label: "Vendedor", filter: true, visible: false, options: [] },
-    { property: "estadoId", label: "Estado (UF)", filter: true, visible: false, options: [] },
-    { property: "municipioId", label: "Cidade (Filtro)", filter: true, visible: false, options: [] }
+    // Campo principal de Filtro Rápido (Dias da Última Compra)
+    { property: "dias", label: "Dias", type: "number", width: "110px", filter: true },
+    
+    // Campo de Filtro Avançado (Restrito: Admin, Supervisor e Gerente)
+    { property: "vendedor_id", label: "Vendedor", filter: true, visible: false, options: [] }
   ];
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
@@ -116,7 +103,11 @@ export class MvcListComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    this.isGerente = user?.roles?.includes('ADMIN') || !!user?.supervisorId;
+    // Exigência estrita: Admin, Supervisor ou Gerente
+    this.isGerente = 
+      !!user?.roles?.includes('ADMIN') || 
+      !!user?.roles?.includes('SUPERVISOR') || 
+      !!user?.roles?.includes('GERENTE');
 
     this.loadInitialData();
     this.loadKpis();
@@ -126,20 +117,14 @@ export class MvcListComponent implements OnInit {
     if (this.isGerente) {
       this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe(res => {
         this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
-        const field = this.fields.find(f => f.property === 'vendedorId');
+        const field = this.fields.find(f => f.property === 'vendedor_id');
         if (field) field.options = this.vendedores;
       });
     } else {
-      // Se não for gerente, remove o filtro de vendedor
-      const idx = this.fields.findIndex(f => f.property === 'vendedorId');
+      // Se não for gestor, remove totalmente o filtro de vendedor
+      const idx = this.fields.findIndex(f => f.property === 'vendedor_id');
       if (idx > -1) this.fields.splice(idx, 1);
     }
-
-    this.locationService.getEstados().subscribe(res => {
-      this.estados = res.map((e: any) => ({ label: e.sigla, value: e.id }));
-      const field = this.fields.find(f => f.property === 'estadoId');
-      if (field) field.options = this.estados;
-    });
 
     this.crmService.getTipos().subscribe(res => {
       this.tiposAtendimento = res.map((t: any) => ({ label: t.descricao, value: t.id }));

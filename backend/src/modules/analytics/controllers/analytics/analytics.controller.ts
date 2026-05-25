@@ -46,16 +46,20 @@ export class AnalyticsController {
     @Req() req: any,
     @Query('year') year: string,
     @Query('vendedorId') vendedorId?: string,
-    @Query('estadoId') estadoId?: string,
-    @Query('municipioId') municipioId?: string,
+    @Query('vendedor_id') vendedor_id?: string,
     @Query('dias') dias?: string,
     @Query('situacao') situacao?: string,
     @Query('search') search?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
-    let vId = vendedorId ? parseInt(vendedorId) : undefined;
+    const vQuery = vendedor_id || vendedorId;
+    let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+    // Regra estrita: Admin, Supervisor e Gerente
+    const isGerente = 
+      req.user?.roles?.includes('ADMIN') || 
+      req.user?.roles?.includes('SUPERVISOR') || 
+      req.user?.roles?.includes('GERENTE');
 
     if (!vId && req.user && !isGerente) {
       vId =
@@ -64,8 +68,6 @@ export class AnalyticsController {
     }
 
     return this.analyticsService.getMvcData(y, vId, {
-      estadoId: estadoId ? parseInt(estadoId) : undefined,
-      municipioId: municipioId ? parseInt(municipioId) : undefined,
       dias: dias ? parseInt(dias) : undefined,
       situacao,
       search,
@@ -79,16 +81,20 @@ export class AnalyticsController {
     @Req() req: any,
     @Query('year') year: string,
     @Query('vendedorId') vendedorId?: string,
-    @Query('estadoId') estadoId?: string,
-    @Query('municipioId') municipioId?: string,
+    @Query('vendedor_id') vendedor_id?: string,
     @Query('dias') dias?: string,
     @Query('situacao') situacao?: string,
     @Query('search') search?: string,
   ) {
     const y = parseInt(year) || new Date().getFullYear();
-    let vId = vendedorId ? parseInt(vendedorId) : undefined;
+    const vQuery = vendedor_id || vendedorId;
+    let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+    // Regra estrita: Admin, Supervisor e Gerente
+    const isGerente = 
+      req.user?.roles?.includes('ADMIN') || 
+      req.user?.roles?.includes('SUPERVISOR') || 
+      req.user?.roles?.includes('GERENTE');
 
     if (!vId && req.user && !isGerente) {
       vId =
@@ -97,8 +103,6 @@ export class AnalyticsController {
     }
 
     const items = await this.analyticsService.getMvcData(y, vId, {
-      estadoId: estadoId ? parseInt(estadoId) : undefined,
-      municipioId: municipioId ? parseInt(municipioId) : undefined,
       dias: dias ? parseInt(dias) : undefined,
       situacao,
       search,

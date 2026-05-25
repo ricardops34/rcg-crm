@@ -274,7 +274,17 @@ SELECT
     to_char(CURRENT_DATE, 'MM') as mes,
     to_char(CURRENT_DATE, 'YYYY') as ano,
     (CURRENT_DATE - INTERVAL '3 months')::date as tres,
-    (CURRENT_DATE - cliente.ultima_compra::date) as dias
+    COALESCE(
+        (CURRENT_DATE - cliente.ultima_compra::date),
+        (CURRENT_DATE - cliente.data_cadastro::date),
+        9999
+    ) as dias,
+    -- Pre-calculated financeiro_status inside the materialized view
+    (SELECT CASE 
+        WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = cliente.id AND tr.saldo > 0 AND tr.venc_real < CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'R'
+        WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = cliente.id AND tr.saldo > 0 AND tr.venc_real >= CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'B'
+        ELSE NULL 
+     END) as financeiro_status
 FROM cliente
 JOIN municipio ON (cliente.municipio_id = municipio.id)
 JOIN estado ON (municipio.estado_id = estado.id)

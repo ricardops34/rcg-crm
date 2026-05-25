@@ -20,7 +20,7 @@ export class AnalyticsService {
 
   async getDashboardStats(year: number, month: number, vendedorId?: number) {
     let whereVendedor = '';
-    const params: any[] = [year, month];
+    const params: any[] = [year.toString(), month.toString().padStart(2, '0')];
 
     if (vendedorId) {
       whereVendedor = ' AND vendedor_id = $3';
@@ -35,7 +35,7 @@ export class AnalyticsService {
           SUM(vlr_liquido) as realized,
           AVG(perc_liquido) as achievement
          FROM view_vendedor_venda_mes 
-         WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` + whereVendedor,
+         WHERE ano = $1 AND mes = $2` + whereVendedor,
         params,
       );
 
@@ -45,7 +45,7 @@ export class AnalyticsService {
           categoria as label,
           SUM(vlr_liquido) as value
          FROM view_total_catogoria_mes
-         WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2` +
+         WHERE ano = $1 AND mes = $2` +
           whereVendedor +
           ` GROUP BY categoria ORDER BY value DESC LIMIT 5`,
         params,
@@ -59,7 +59,7 @@ export class AnalyticsService {
             nome as label,
             SUM(vlr_liquido) as value
            FROM view_vendedor_venda_mes
-           WHERE CAST(ano AS integer) = $1 AND CAST(mes AS integer) = $2
+           WHERE ano = $1 AND mes = $2
            GROUP BY nome ORDER BY value DESC LIMIT 5`,
           params,
         );
@@ -90,124 +90,109 @@ export class AnalyticsService {
     year: number,
     vendedorId?: number,
     filters?: {
-      estadoId?: number;
-      municipioId?: number;
       dias?: number;
       situacao?: string;
       search?: string;
     },
   ) {
     try {
-      let where = ` WHERE CAST(ano AS integer) = CAST($1 AS integer)`;
-      const params: any[] = [year];
+      let where = ` WHERE 1=1`;
+      const params: any[] = [year.toString()]; // Pass year as string to leverage unique composite B-tree index
 
       if (vendedorId) {
         params.push(vendedorId);
-        where += ` AND nota_saida_vendedor_id = $${params.length}`;
+        where += ` AND mvc.vendedor_id = $${params.length}`;
+      }
+
+      if (filters?.dias) {
+        params.push(filters.dias);
+        where += ` AND mvc.dias >= $${params.length}`;
+      }
+
+      if (filters?.situacao) {
+        params.push(filters.situacao);
+        where += ` AND mvc.situacao = $${params.length}`;
       }
 
       if (filters?.search) {
         params.push(`%${filters.search}%`);
-        where += ` AND cliente_nome ILIKE $${params.length}`;
+        where += ` AND (mvc.razao ILIKE $${params.length} OR mvc.fantasia ILIKE $${params.length} OR mvc.codigo ILIKE $${params.length})`;
       }
 
-      // Busca dados pivoteados de vendas 12 meses
-      const mvcData = await this.dataSource.query(
-        `SELECT * FROM pivot_venda_mes_cliente` + where,
-        params,
-      );
+      const queryStr = `
+        SELECT 
+          mvc.id as cliente_id,
+          mvc.codigo,
+          mvc.situacao,
+          mvc.razao as cliente_nome,
+          mvc.fantasia,
+          mvc.primeira_compra,
+          mvc.ultima_compra,
+          mvc.dias,
+          mvc.municipio_descricao,
+          mvc.estado_sigla,
+          mvc.carteira,
+          mvc.vendedor_reduzido,
+          mvc.vendedor_id,
+          mvc.estado_id,
+          mvc.municipio_id,
+          mvc.financeiro_status,
+          COALESCE(p.ano, $1) as ano,
+          COALESCE(p.janeiro, 0) as janeiro,
+          COALESCE(p.fevereiro, 0) as fevereiro,
+          COALESCE(p.marco, 0) as marco,
+          COALESCE(p.abril, 0) as abril,
+          COALESCE(p.maio, 0) as maio,
+          COALESCE(p.junho, 0) as junho,
+          COALESCE(p.julho, 0) as julho,
+          COALESCE(p.agosto, 0) as agosto,
+          COALESCE(p.setembro, 0) as setembro,
+          COALESCE(p.outubro, 0) as outubro,
+          COALESCE(p.novembro, 0) as novembro,
+          COALESCE(p.dezembro, 0) as dezembro
+        FROM mvc
+        LEFT JOIN pivot_venda_mes_cliente p ON p.cliente_id = mvc.id AND p.ano = $1
+        ${where}
+      `;
 
-      // Complementa com dados da view mvc (detalhes geográficos, carteira e ícone financeiro)
-      let mvcWhere = ` WHERE 1=1`;
-      const mvcParams: any[] = [];
+      const result = await this.dataSource.query(queryStr, params);
 
-      if (vendedorId) {
-        mvcParams.push(vendedorId);
-        mvcWhere += ` AND vendedor_id = $${mvcParams.length}`;
-      }
+      // Cálculo de média dos últimos 3 meses em memória
+      const currentMonth = new Date().getMonth() + 1;
+      const monthNames = [
+        'janeiro',
+        'fevereiro',
+        'marco',
+        'abril',
+        'maio',
+        'junho',
+        'julho',
+        'agosto',
+        'setembro',
+        'outubro',
+        'novembro',
+        'dezembro',
+      ];
 
-      if (filters?.estadoId) {
-        mvcParams.push(filters.estadoId);
-        mvcWhere += ` AND estado_id = $${mvcParams.length}`;
-      }
+      return result.map((item: any) => {
+        let sumLast3 = 0;
+        let count = 0;
+        for (let i = 1; i <= 3; i++) {
+          const targetMonthIdx = (currentMonth - i - 1 + 12) % 12;
+          sumLast3 += parseFloat(item[monthNames[targetMonthIdx]] || 0);
+          count++;
+        }
+        const average3Months = sumLast3 / count;
+        const currentMonthSales = parseFloat(
+          item[monthNames[currentMonth - 1]] || 0,
+        );
 
-      if (filters?.municipioId) {
-        mvcParams.push(filters.municipioId);
-        mvcWhere += ` AND municipio_id = $${mvcParams.length}`;
-      }
-
-      if (filters?.dias) {
-        mvcParams.push(filters.dias);
-        mvcWhere += ` AND dias >= $${mvcParams.length}`;
-      }
-
-      if (filters?.situacao) {
-        mvcParams.push(filters.situacao);
-        mvcWhere += ` AND situacao = $${mvcParams.length}`;
-      }
-
-      if (filters?.search) {
-        mvcParams.push(`%${filters.search}%`);
-        mvcWhere += ` AND razao ILIKE $${mvcParams.length}`;
-      }
-
-      const mvcDetails = await this.dataSource.query(
-        `SELECT 
-          id as cliente_id, situacao, ultima_compra, primeira_compra, 
-          dias, municipio_descricao, estado_sigla, carteira,
-          vendedor_reduzido,
-          (SELECT CASE 
-              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.venc_real < CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'R'
-              WHEN EXISTS (SELECT 1 FROM titulo_receber tr WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.venc_real >= CURRENT_DATE AND tr.reg_ativo = 'S') THEN 'B'
-              ELSE NULL 
-           END) as financeiro_status
-         FROM mvc` + mvcWhere,
-        mvcParams,
-      );
-
-      // Merge dos dados
-      return mvcData
-        .map((item) => {
-          const detail = mvcDetails.find((d) => String(d.cliente_id) === String(item.cliente_id));
-          if (!detail) return null;
-
-          // Cálculo de média dos últimos 3 meses
-          const currentMonth = new Date().getMonth() + 1;
-          const monthNames = [
-            'janeiro',
-            'fevereiro',
-            'marco',
-            'abril',
-            'maio',
-            'junho',
-            'julho',
-            'agosto',
-            'setembro',
-            'outubro',
-            'novembro',
-            'dezembro',
-          ];
-
-          let sumLast3 = 0;
-          let count = 0;
-          for (let i = 1; i <= 3; i++) {
-            const targetMonthIdx = (currentMonth - i - 1 + 12) % 12;
-            sumLast3 += parseFloat(item[monthNames[targetMonthIdx]] || 0);
-            count++;
-          }
-          const average3Months = sumLast3 / count;
-          const currentMonthSales = parseFloat(
-            item[monthNames[currentMonth - 1]] || 0,
-          );
-
-          return {
-            ...item,
-            ...detail,
-            average3Months,
-            difference: currentMonthSales - average3Months,
-          };
-        })
-        .filter((i) => i !== null);
+        return {
+          ...item,
+          average3Months,
+          difference: currentMonthSales - average3Months,
+        };
+      });
     } catch (err) {
       console.error('[ANALYTICS] ❌ Erro ao buscar dados do MCV:', err.message);
       throw err;
