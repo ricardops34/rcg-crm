@@ -30,6 +30,16 @@ export class CreateModuleDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({ example: 'po-icon-chat', description: 'Ícone do módulo', required: false })
+  @IsString()
+  @IsOptional()
+  icon?: string;
+
+  @ApiProperty({ example: 1, description: 'Ordem de exibição do módulo', required: false })
+  @IsNumber()
+  @IsOptional()
+  order?: number;
 }
 
 export class UpdateModuleDto extends PartialType(CreateModuleDto) {}
@@ -44,6 +54,27 @@ export class CreateProgramDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({ example: 'po-icon-user', description: 'Ícone da rotina', required: false })
+  @IsString()
+  @IsOptional()
+  icon?: string;
+
+  @ApiProperty({ example: 1, description: 'Ordem de exibição da rotina', required: false })
+  @IsNumber()
+  @IsOptional()
+  order?: number;
+
+  @ApiProperty({ example: 1, description: 'ID do módulo associado', required: false })
+  @IsNumber()
+  @IsOptional()
+  systemModuleId?: number;
+
+  @ApiProperty({ example: '{"view":true}', description: 'Ações/permissões padrão', required: false })
+  @IsString()
+  @IsOptional()
+  actions?: string;
 }
 
 export class UpdateProgramDto extends PartialType(CreateProgramDto) {}
+

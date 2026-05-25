@@ -9,7 +9,8 @@ import {
   PoSelectOption,
   PoBreadcrumb,
   PoModalComponent,
-  PoDialogService
+  PoDialogService,
+  PoComboOption
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { ProgramService } from "../../../services/program";
@@ -147,13 +148,21 @@ interface ModuleGroup {
               p-label="Ordem"
               [p-min]="1">
             </po-number>
-            <po-input
+            <po-combo
               class="po-md-4"
               name="editIcon"
               [(ngModel)]="editingProgram.icon"
-              p-label="Ícone (ex: an-chart-bar)"
-              p-icon="po-icon-star">
-            </po-input>
+              p-label="Ícone (PO-UI / Animalia)"
+              [p-options]="iconOptions"
+              p-filter-mode="contains"
+              p-clean>
+              <ng-template p-combo-option-template let-option>
+                <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0;">
+                  <span [class]="option.value" style="font-size: 20px; width: 24px; text-align: center; color: var(--color-primary, #0056b3);"></span>
+                  <span style="font-size: 14px;">{{ option.label }}</span>
+                </div>
+              </ng-template>
+            </po-combo>
           </div>
 
           @if (!editingProgram.systemModuleId) {
@@ -189,6 +198,29 @@ export class MenuEditorComponent implements OnInit {
   moduleFilterOptions: Array<PoSelectOption> = [];
   selectedModuleId: string = "";
   filterText: string = "";
+
+  readonly iconOptions: Array<PoComboOption> = [
+    { label: 'Casa / Home (an-house)', value: 'an an-house' },
+    { label: 'Usuário / User (an-user)', value: 'an an-user' },
+    { label: 'Adicionar Usuário (an-user-plus)', value: 'an an-user-plus' },
+    { label: 'Engrenagem / Configurações (an-gear-six)', value: 'an an-gear-six' },
+    { label: 'Gráfico / Estatísticas (an-chart-line)', value: 'an an-chart-line' },
+    { label: 'Área de Gráfico (an-chart-area)', value: 'an an-chart-area' },
+    { label: 'Lista / MCV (an-list)', value: 'an an-list' },
+    { label: 'Alvo / Objetivos (an-target)', value: 'an an-target' },
+    { label: 'Cadeado / Permissões (an-lock)', value: 'an an-lock' },
+    { label: 'Menu Lateral (an-sidebar-simple)', value: 'an an-sidebar-simple' },
+    { label: 'Sinal de Mais / Novo (an-plus)', value: 'an an-plus' },
+    { label: 'Lixeira / Excluir (an-trash)', value: 'an an-trash' },
+    { label: 'Prédio / Unidades (an-buildings)', value: 'an an-buildings' },
+    { label: 'Camadas / Módulos (an-layers)', value: 'an an-layers' },
+    { label: 'Grid / Aplicativos (an-grid-four)', value: 'an an-grid-four' },
+    { label: 'Calendário (an-calendar)', value: 'an an-calendar' },
+    { label: 'Telefone (an-phone)', value: 'an an-phone' },
+    { label: 'Envelope / E-mail (an-envelope)', value: 'an an-envelope' },
+    { label: 'Mesa / Dashboard Vendedor (an-desktop)', value: 'an an-desktop' },
+    { label: 'Estrela / Destaque (an-star)', value: 'an an-star' }
+  ];
 
   isLoading = false;
   isSaving = false;
