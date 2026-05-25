@@ -131,6 +131,13 @@ export class MigrationDataService {
       await ds.query(`UPDATE system_module SET icon = $2, "order" = $3 WHERE name = $1`, [mod.name, mod.icon, mod.order]);
     }
 
+    // 1.1 Garantir que a rotina SystemModuleList (Cadastro de Módulos / Menu) exista na tabela system_program
+    await ds.query(`
+      INSERT INTO system_program (name, controller, icon, "order")
+      SELECT 'Módulos', 'SystemModuleList', 'an an-sidebar-simple', 4
+      WHERE NOT EXISTS (SELECT 1 FROM system_program WHERE controller = 'SystemModuleList')
+    `);
+
     // 2. Mapear rotinas para seus respectivos módulos
     const mapping = [
       { controller: 'DashboardVendedor', module: 'Vendas' },
@@ -151,6 +158,7 @@ export class MigrationDataService {
       { controller: 'SystemGroupList', module: 'Administração' },
       { controller: 'SystemUnitList', module: 'Administração' },
       { controller: 'SystemProgramList', module: 'Administração' },
+      { controller: 'SystemModuleList', module: 'Administração' },
       
       { controller: 'PedidoEstadoList', module: 'Sistema' },
       { controller: 'ParametroList', module: 'Sistema' }
