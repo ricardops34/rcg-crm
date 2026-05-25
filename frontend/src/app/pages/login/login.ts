@@ -82,10 +82,10 @@ export class LoginComponent implements OnInit {
           "ClienteList": "/clientes",
           "SystemUserList": "/admin/users"
         };
-        const target = routes[frontpage] || "/dashboard";
+        const target = routes[frontpage] || "/home";
         this.router.navigate([target]);
       } else {
-        this.router.navigate(["/dashboard"]);
+        this.router.navigate(["/home"]);
       }
     }
   }

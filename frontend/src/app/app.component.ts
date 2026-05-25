@@ -170,8 +170,17 @@ export class AppComponent implements OnInit {
   }
 
   updateMenu() {
+    const frontpage = this.user?.frontpage?.controller;
+    const routes: any = {
+      "DashboardVendedor": "/dashboard",
+      "MvcList": "/mvc",
+      "ClienteList": "/clientes",
+      "SystemUserList": "/admin/users"
+    };
+    const homeTarget = frontpage && routes[frontpage] ? routes[frontpage] : "/home";
+
     const items: Array<PoMenuItem> = [
-      { label: "Home", action: () => this.router.navigate(["/dashboard"]), icon: "an an-house", shortLabel: "Home" },
+      { label: "Home", action: () => this.router.navigate([homeTarget]), icon: "an an-house", shortLabel: "Home" },
     ];
 
     if (this.dynamicMenus.length > 0) {

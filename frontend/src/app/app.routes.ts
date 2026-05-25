@@ -30,6 +30,7 @@ import { UnitFormComponent } from './pages/admin/unit-form/unit-form';
 import { ModuleListComponent } from './pages/admin/module-list/module-list';
 import { ModuleFormComponent } from './pages/admin/module-form/module-form';
 import { authGuard } from './guards/auth-guard';
+import { HomeComponent } from './pages/home/home';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -37,6 +38,7 @@ export const routes: Routes = [
     path: '', 
     canActivate: [authGuard], 
     children: [
+      { path: 'home', component: HomeComponent },
       { path: 'dashboard', component: DashboardComponent, data: { controller: 'DashboardVendedor' } },
       { path: 'clientes', component: ClienteListComponent, data: { controller: 'ClienteList' } },
       { path: 'clientes/360/:id', component: Cliente360Component, data: { controller: 'PosisaoClienteFormView' } },
@@ -76,7 +78,7 @@ export const routes: Routes = [
       { path: 'admin/programs/new', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
       { path: 'admin/programs/edit/:id', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
       { path: 'profile', component: ProfileComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
     ] 
   },
   { path: '**', redirectTo: '' }
