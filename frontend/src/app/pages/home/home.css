@@ -139,6 +139,39 @@
   flex-grow: 1;
 }
 
+/* Scroll interno exclusivo do card Agenda do Dia */
+.card-agenda {
+  height: 420px;
+  max-height: 420px;
+}
+
+.card-agenda .card-body-custom {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding-right: 12px; /* compensa a barra de rolagem */
+}
+
+/* Barra de rolagem estilizada (Webkit) */
+.card-agenda .card-body-custom::-webkit-scrollbar {
+  width: 5px;
+}
+
+.card-agenda .card-body-custom::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.card-agenda .card-body-custom::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.card-agenda .card-body-custom::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 /* Agenda do Dia */
 .agenda-item {
   padding: 12px 14px;

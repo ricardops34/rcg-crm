@@ -38,4 +38,4 @@ Para que um módulo seja considerado "Migrado com Sucesso", ele deve atingir os 
 | **Auth** | Integration (Identity Bridge) | Jest + Supertest |
 | **Cadastros** | E2E (Form Parity) | Cypress / Playwright |
 | **Cobrança** | Unit (Math Parity) | Jest (Deep equality on cents) |
-| **Analytics** | Contract (Data Fidelity) | Pact.io / Custom JSON Compare |
+| **Analytics** | Contract (Data Fidelity) | Pact.io / Custom JSON Compare |Vamos pensar e planejar. Com base na documentação do po-ui podemos criar uma tela de edição\manuteção de telas  estilo arasta e solta que gere um xml que  possa se interpretado pelo menu como tela\listagem e permita manutenção?

@@ -75,9 +75,19 @@ export class AgendaComercialService {
         'venda' as tipo,
         ns.id as "notaSaidaId",
         ns.nota_fiscal as "notaFiscal",
-        ns.dt_emissao as inicio,
-        ns.dt_emissao as fim,
-        ns.dt_emissao as data,
+        COALESCE(
+          CASE WHEN ns.dt_nfe IS NOT NULL
+            THEN (ns.dt_nfe::text || ' ' || COALESCE(ns.hr_nfe, '00:00') || ':00')::timestamp
+          END,
+          ns.dt_emissao::timestamp
+        ) as inicio,
+        COALESCE(
+          CASE WHEN ns.dt_nfe IS NOT NULL
+            THEN (ns.dt_nfe::text || ' ' || COALESCE(ns.hr_nfe, '00:00') || ':00')::timestamp
+          END,
+          ns.dt_emissao::timestamp
+        ) as fim,
+        COALESCE(ns.dt_nfe, ns.dt_emissao) as data,
         COALESCE(ns.vlr_bruto, ns.vlr_mercadoria, 0) as valor,
         CONCAT('NF ', COALESCE(ns.nota_fiscal, ns.id::text), ' - ', COALESCE(c.razao, 'Cliente sem nome')) as titulo,
         c.id as "clienteId",
@@ -85,15 +95,19 @@ export class AgendaComercialService {
         COALESCE(v.nome, v2.nome, 'Sem vendedor') as "vendedorNome",
         COALESCE(ns.vendedor1_id, ns.vendedor2_id) as "vendedorId",
         '#0f766e' as cor,
-        CONCAT('Nota fiscal emitida em ', TO_CHAR(ns.dt_emissao, 'DD/MM/YYYY')) as observacao
+        CONCAT(
+          'NF-e transmitida em ',
+          TO_CHAR(COALESCE(ns.dt_nfe, ns.dt_emissao), 'DD/MM/YYYY'),
+          CASE WHEN ns.hr_nfe IS NOT NULL THEN CONCAT(' às ', ns.hr_nfe) ELSE '' END
+        ) as observacao
        FROM nota_saida ns
        LEFT JOIN cliente c ON c.id = ns.cliente_id
        LEFT JOIN vendedor v ON v.id = ns.vendedor1_id
        LEFT JOIN vendedor v2 ON v2.id = ns.vendedor2_id
        WHERE ns.reg_ativo = 'S'
-         AND ns.dt_emissao BETWEEN $1::date AND $2::date
+         AND COALESCE(ns.dt_nfe, ns.dt_emissao) BETWEEN $1::date AND $2::date
          ${vendorFilter}
-       ORDER BY ns.dt_emissao ASC, ns.nota_fiscal ASC`,
+       ORDER BY inicio ASC, ns.nota_fiscal ASC`,
       params,
     );
   }

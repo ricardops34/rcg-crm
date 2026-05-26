@@ -100,12 +100,12 @@ export class AnalyticsController {
 
     // Regra de segurança blindada: Usuários superadministradores (ID 1), login 'admin' ou com perfil ADMIN listam todos os clientes.
     // Demais usuários são restritos à sua carteira (vendedor associado), e este filtro é obrigatório se nenhum vendedor for especificado.
-    const isAdmin = 
+    const isGerente = 
       req.user?.userId === 1 || 
       req.user?.username?.toLowerCase() === 'admin' || 
-      req.user?.roles?.some((r: string) => ['ADMIN', 'ADMINISTRADOR'].includes(r.toUpperCase()));
+      req.user?.roles?.some((r: string) => ['ADMIN', 'GERENTE', 'SUPERVISOR', 'ADMINISTRADOR'].includes(r.toUpperCase()));
 
-    if (!vId && req.user && !isAdmin) {
+    if (!vId && req.user && !isGerente) {
       vId =
         (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
         -999; // ID seguro inexistente para evitar vazamento caso o usuário não tenha vendedor associado

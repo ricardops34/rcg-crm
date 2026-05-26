@@ -1,68 +1,168 @@
 <po-page-default p-title="Configurador">
-  <div class="configurator-shell">
-    <section class="hero-panel po-mb-4">
-      <div class="po-row">
-        <div class="po-md-8">
-          <span class="eyebrow">Modulo de configuracao visual</span>
-          <h1 class="hero-title">Construtor visual de telas e interfaces</h1>
-          <p class="hero-copy">
-            Este modulo concentra o desenvolvimento do builder drag and drop, da
-            estrutura XML e da renderizacao dinamica das telas no sistema.
-          </p>
+  <div class="builder-shell">
+    <header class="builder-toolbar">
+      <div class="screen-meta">
+        <label>
+          <span>Tela</span>
+          <input type="text" [(ngModel)]="screenTitle" />
+        </label>
+        <label>
+          <span>ID</span>
+          <input type="text" [(ngModel)]="screenId" />
+        </label>
+      </div>
+      <div class="toolbar-status">
+        <span>{{ fields.length }} campos</span>
+        <span>XML em memoria</span>
+      </div>
+    </header>
+
+    <main class="builder-layout">
+      <aside class="palette-panel">
+        <div class="panel-title">
+          <span>Componentes</span>
         </div>
-        <div class="po-md-4">
-          <div class="hero-badge">
-            <span class="hero-badge-label">Status atual</span>
-            <strong>Planejamento e base estrutural</strong>
+
+        <div
+          cdkDropList
+          id="palette"
+          class="palette-list"
+          [cdkDropListData]="palette"
+          [cdkDropListConnectedTo]="['canvas']">
+          <button
+            type="button"
+            class="palette-item"
+            *ngFor="let item of palette"
+            cdkDrag>
+            <i [className]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="canvas-panel">
+        <div class="panel-title">
+          <span>Canvas</span>
+          <small>Arraste campos para montar o formulario</small>
+        </div>
+
+        <div
+          cdkDropList
+          id="canvas"
+          class="canvas-list"
+          [cdkDropListData]="fields"
+          [cdkDropListConnectedTo]="['palette']"
+          (cdkDropListDropped)="dropField($event)">
+          <button
+            type="button"
+            class="canvas-field"
+            *ngFor="let field of fields"
+            cdkDrag
+            [class.selected]="field.id === selectedFieldId"
+            [style.grid-column]="'span ' + field.gridMd"
+            (click)="selectField(field)">
+            <span class="field-label">{{ field.label }}</span>
+            <span class="field-meta">{{ field.property }} · {{ field.type }}</span>
+            <span class="field-required" *ngIf="field.required">Obrigatorio</span>
+          </button>
+
+          <div class="empty-canvas" *ngIf="fields.length === 0">
+            Arraste componentes para iniciar a tela.
+          </div>
+        </div>
+      </section>
+
+      <aside class="properties-panel">
+        <div class="panel-title">
+          <span>Propriedades</span>
+        </div>
+
+        <ng-container *ngIf="selectedField as field; else noSelection">
+          <label class="property-control">
+            <span>Label</span>
+            <input type="text" [(ngModel)]="field.label" />
+          </label>
+
+          <label class="property-control">
+            <span>Propriedade</span>
+            <input type="text" [(ngModel)]="field.property" />
+          </label>
+
+          <label class="property-control">
+            <span>Tipo</span>
+            <select [ngModel]="field.type" (ngModelChange)="updateType($event)">
+              <option *ngFor="let type of fieldTypes" [ngValue]="type.value">{{ type.label }}</option>
+            </select>
+          </label>
+
+          <label class="property-control">
+            <span>Colunas MD</span>
+            <select [ngModel]="field.gridMd" (ngModelChange)="updateGrid($event)">
+              <option *ngFor="let option of gridOptions" [ngValue]="option">{{ option }}</option>
+            </select>
+          </label>
+
+          <label class="property-control">
+            <span>Mascara</span>
+            <input type="text" [(ngModel)]="field.mask" placeholder="Ex: 99.999.999/9999-99" />
+          </label>
+
+          <label class="property-control">
+            <span>Placeholder</span>
+            <input type="text" [(ngModel)]="field.placeholder" />
+          </label>
+
+          <label class="check-control">
+            <input type="checkbox" [(ngModel)]="field.required" />
+            <span>Campo obrigatorio</span>
+          </label>
+
+          <div class="property-actions">
+            <button type="button" class="secondary-action" (click)="duplicateSelectedField()">
+              Duplicar
+            </button>
+            <button type="button" class="danger-action" (click)="removeSelectedField()">
+              Remover
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-template #noSelection>
+          <p class="empty-properties">Selecione um campo no canvas.</p>
+        </ng-template>
+      </aside>
+    </main>
+
+    <section class="output-layout">
+      <div class="preview-panel">
+        <div class="panel-title">
+          <span>Preview PO UI</span>
+        </div>
+
+        <div class="preview-form">
+          <div
+            class="preview-field"
+            *ngFor="let field of fields"
+            [style.grid-column]="'span ' + field.gridMd">
+            <label>
+              {{ field.label }}
+              <strong *ngIf="field.required">*</strong>
+            </label>
+            <textarea *ngIf="field.type === 'textarea'" [placeholder]="field.placeholder"></textarea>
+            <select *ngIf="field.type === 'select'">
+              <option>Opcao exemplo</option>
+            </select>
+            <input *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'boolean'" [type]="field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text'" [placeholder]="field.placeholder" />
+            <input *ngIf="field.type === 'boolean'" type="checkbox" />
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="po-row po-mb-4">
-      <div class="po-md-4 po-mb-4" *ngFor="let shortcut of shortcuts">
-        <button
-          type="button"
-          class="shortcut-card"
-          [ngClass]="shortcut.tone"
-          (click)="navigateTo(shortcut.route)">
-          <span class="shortcut-icon"><i [className]="shortcut.icon"></i></span>
-          <span class="shortcut-title">{{ shortcut.title }}</span>
-          <span class="shortcut-description">{{ shortcut.description }}</span>
-        </button>
-      </div>
-    </section>
-
-    <section class="po-row po-mb-4">
-      <div class="po-md-4 po-mb-4" *ngFor="let pillar of pillars">
-        <article class="content-card">
-          <header class="content-card-header">
-            <h2>{{ pillar.title }}</h2>
-            <p>{{ pillar.description }}</p>
-          </header>
-          <ul class="content-list">
-            <li *ngFor="let point of pillar.points">{{ point }}</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section class="content-card roadmap-card">
-      <header class="content-card-header">
-        <h2>MVP inicial dentro do Configurador</h2>
-        <p>
-          O primeiro corte precisa ser pequeno o suficiente para validar a
-          arquitetura e robusto o bastante para suportar evolucao futura.
-        </p>
-      </header>
-
-      <div class="po-row">
-        <div class="po-md-6 po-mb-3" *ngFor="let milestone of milestones">
-          <div class="milestone-item">
-            <span class="milestone-dot"></span>
-            <span>{{ milestone }}</span>
-          </div>
+      <div class="xml-panel">
+        <div class="panel-title">
+          <span>XML gerado</span>
         </div>
+        <pre>{{ generatedXml }}</pre>
       </div>
     </section>
   </div>

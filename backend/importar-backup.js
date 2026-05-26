@@ -58,9 +58,15 @@ async function executeSqlFile(filePath, dbName) {
   const fileStream = fs.createReadStream(absolutePath);
   const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
 
+  const logPath = path.join(path.dirname(absolutePath), 'migration_errors.log');
+  const logStream = fs.createWriteStream(logPath, { flags: 'a' });
+  logStream.write(`\n\n--- INÍCIO DA MIGRAÇÃO NO BANCO [${dbName}]: ${new Date().toISOString()} ---\n`);
+  logStream.write(`Arquivo de backup original: ${filePath}\n\n`);
+
   let queryBuffer = '';
   let lineCount = 0;
   let insertCount = 0;
+  let errorCount = 0;
 
   for await (const line of rl) {
     lineCount++;
@@ -83,11 +89,11 @@ async function executeSqlFile(filePath, dbName) {
           .replace(/\\r\\n/g, '\n')
           .replace(/\\n/g, '\n');
 
-        let lastQuery;
-        do {
-          lastQuery = convertedQuery;
-          convertedQuery = convertedQuery.replace(/([,\(\s])(\d{11,})([,\)\s])/g, "$1'$2'$3");
-        } while (convertedQuery !== lastQuery);
+        // 1. Converter números longos sem aspas (CNPJs de 14 dígitos ou CPFs de 11 dígitos)
+        convertedQuery = convertedQuery.replace(/(?<=^|[,\(\s\n\r])(\d{11,})(?=$|[,\)\s\n\r])/g, "'$1'");
+
+        // 2. Converter valores de status isolados com aspas duplas em aspas simples (ex: "S", "N", "A", "B", "1")
+        convertedQuery = convertedQuery.replace(/(?<=^|[,\(\s\n\r])"([a-zA-Z0-9])"(?=$|[,\)\s\n\r])/g, "'$1'");
 
         try {
           await client.query(convertedQuery);
@@ -98,7 +104,12 @@ async function executeSqlFile(filePath, dbName) {
         } catch (err) {
           const msg = err.message.toLowerCase();
           if (!msg.includes('does not exist') && !msg.includes('duplicate key') && !msg.includes('already exists')) {
-            console.error(`   ❌ Erro na linha ${lineCount}: ${err.message}`);
+            errorCount++;
+            logStream.write(`Linha ${lineCount}: ERRO REAL - ${err.message}\n`);
+            logStream.write(`Query convertida problemática (truncada): ${convertedQuery.substring(0, 1500)}...\n\n`);
+          } else {
+            // Gravar avisos de chaves duplicadas no log de forma limpa
+            logStream.write(`Linha ${lineCount}: Aviso (Pulado) - ${err.message}\n`);
           }
         }
       }
@@ -109,7 +120,16 @@ async function executeSqlFile(filePath, dbName) {
     await client.query("SET session_replication_role = 'origin'");
   } catch (e) {}
 
-  console.log(`✅ Concluído: ${insertCount} registros inseridos.`);
+  logStream.write(`\n--- FIM DA MIGRAÇÃO NO BANCO [${dbName}]: ${new Date().toISOString()} - Sucessos: ${insertCount} - Erros Reais: ${errorCount} ---\n`);
+  logStream.end();
+
+  console.log(`✅ Concluído: ${insertCount} registros inseridos no banco [${dbName}].`);
+  if (errorCount > 0) {
+    console.log(`⚠️ Foram detectados ${errorCount} erros reais na conversão sintática.`);
+    console.log(`📂 Todos os erros foram gravados detalhadamente no log: migration_errors.log`);
+  } else {
+    console.log(`🎉 Migração de dados concluída sem erros sintáticos de banco!`);
+  }
   
   // Ajustar sequências de IDs
   console.log('⚙️ Ajustando sequências de auto-incremento (Sequences)...');

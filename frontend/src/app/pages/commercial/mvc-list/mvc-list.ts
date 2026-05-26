@@ -8,7 +8,12 @@ import {
   PoNotificationService,
   PoSelectOption
 } from "@po-ui/ng-components";
-import { PoPageDynamicTableModule, PoPageDynamicTableCustomTableAction, PoPageDynamicTableCustomAction, PoPageDynamicTableField } from "@po-ui/ng-templates";
+import {
+  PoPageDynamicTableModule,
+  PoPageDynamicTableCustomTableAction,
+  PoPageDynamicTableCustomAction,
+  PoPageDynamicTableField
+} from "@po-ui/ng-templates";
 import { FormsModule } from "@angular/forms";
 import { AnalyticsService } from "../../../services/analytics";
 import { AuthService } from "../../../services/auth";
@@ -37,11 +42,12 @@ export class MvcListComponent implements OnInit {
 
   summary: any = { goal: 0, realized: 0, achievement: 0 };
   isGerente: boolean = false;
-  
+
   vendedores: Array<PoSelectOption> = [];
   estados: Array<PoSelectOption> = [];
   municipios: Array<PoSelectOption> = [];
   tiposAtendimento: Array<PoSelectOption> = [];
+  fields: Array<PoPageDynamicTableField> = [];
 
   atendimento: any = {
     atendimentoTipoId: undefined,
@@ -61,38 +67,8 @@ export class MvcListComponent implements OnInit {
 
   serviceApi = `${environment.apiUrl}/analytics/mvc/table`;
 
-  readonly fields: Array<any> = [
-    {
-      property: "financeiro_status", label: "$", type: "label", width: "80px", labels: [
-        { value: "R", color: "color-07", label: "Atrasado" },
-        { value: "B", color: "color-10", label: "Em dia" }
-      ]
-    },
-    {
-      property: "situacao", label: "Situação", type: "label", width: "100px", labels: [
-        { value: "A", color: "color-10", label: "Ativo" },
-        { value: "B", color: "color-07", label: "Bloqueado" }
-      ]
-    },
-    { property: "codigo", label: "Código", width: "110px" },
-    { property: "cliente_nome", label: "Razão Social", filter: true },
-    { property: "fantasia", label: "Nome Fantasia", filter: true },
-    { property: "municipio_descricao", label: "Cidade", width: "160px" },
-    { property: "estado_sigla", label: "Estado (UF)", width: "100px" },
-    { property: "vendedor_reduzido", label: "Vendedor", width: "150px" },
-    { property: "difference", label: "Dif. Média", type: "currency", format: "BRL", width: "140px" },
-    { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "130px" },
-    { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "130px" },
-    
-    // Campo principal de Filtro Rápido (Dias da Última Compra)
-    { property: "dias", label: "Dias", type: "number", width: "110px", filter: true },
-    
-    // Campo de Filtro Avançado (Restrito: Admin, Supervisor e Gerente)
-    { property: "vendedor_id", label: "Vendedor", filter: true, options: [] }
-  ];
-
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
-    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
+    { label: "VisÃ£o 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
     { label: "Editar Cliente", action: (item: any) => this.router.navigate(["/clientes/edit", item.cliente_id]), icon: "po-icon-edit" },
     { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "po-icon-chat" }
   ];
@@ -126,7 +102,7 @@ export class MvcListComponent implements OnInit {
     } else if (diasDe !== undefined) {
       this.poNotification.information(`Filtrando inatividade acima de ${diasDe} dias.`);
     } else {
-      this.poNotification.information("Exibindo todos os clientes (filtro rápido limpo).");
+      this.poNotification.information("Exibindo todos os clientes (filtro rÃ¡pido limpo).");
     }
 
     this.refreshTable();
@@ -134,13 +110,14 @@ export class MvcListComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    // Exigência estrita: Admin, Supervisor ou Gerente
-    this.isGerente = 
-      user?.login === 'admin' ||
-      !!user?.roles?.includes('ADMIN') || 
-      !!user?.roles?.includes('SUPERVISOR') || 
-      !!user?.roles?.includes('GERENTE');
 
+    this.isGerente =
+      user?.login === "admin" ||
+      !!user?.roles?.includes("ADMIN") ||
+      !!user?.roles?.includes("SUPERVISOR") ||
+      !!user?.roles?.includes("GERENTE");
+
+    this.rebuildFields();
     this.loadInitialData();
     this.loadKpis();
   }
@@ -149,18 +126,54 @@ export class MvcListComponent implements OnInit {
     if (this.isGerente) {
       this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe(res => {
         this.vendedores = res.items.map((v: any) => ({ label: v.nome, value: v.id }));
-        const field = this.fields.find(f => f.property === 'vendedor_id');
-        if (field) field.options = this.vendedores;
+        this.rebuildFields();
       });
-    } else {
-      // Se não for gestor, remove totalmente o filtro de vendedor
-      const idx = this.fields.findIndex(f => f.property === 'vendedor_id');
-      if (idx > -1) this.fields.splice(idx, 1);
     }
 
     this.crmService.getTipos().subscribe(res => {
       this.tiposAtendimento = res.map((t: any) => ({ label: t.descricao, value: t.id }));
     });
+  }
+
+  private rebuildFields() {
+    const fields: Array<PoPageDynamicTableField> = [
+      {
+        property: "financeiro_status", label: "$", type: "label", width: "80px", labels: [
+          { value: "R", color: "color-07", label: "Atrasado" },
+          { value: "B", color: "color-10", label: "Em dia" }
+        ]
+      },
+      {
+        property: "situacao", label: "SituaÃ§Ã£o", type: "label", width: "100px", labels: [
+          { value: "A", color: "color-10", label: "Ativo" },
+          { value: "B", color: "color-07", label: "Bloqueado" }
+        ]
+      },
+      { property: "codigo", label: "CÃ³digo", width: "110px" },
+      { property: "cliente_nome", label: "RazÃ£o Social", filter: true },
+      { property: "fantasia", label: "Nome Fantasia", filter: true },
+      { property: "difference", label: "Dif. MÃ©dia", type: "currency", format: "BRL", width: "140px" },
+      { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "130px" },
+      { property: "average3Months", label: "MÃ©dia 90d", type: "currency", format: "BRL", width: "130px" },
+      { property: "dias", label: "Dias", type: "number", width: "110px", filter: true }
+    ];
+
+    if (this.isGerente) {
+      fields.push({
+        property: "vendedor_reduzido",
+        label: "Vendedor",
+        width: "150px"
+      });
+
+      fields.push({
+        property: "vendedor_id",
+        label: "Vendedor",
+        filter: true,
+        options: [...this.vendedores]
+      });
+    }
+
+    this.fields = fields;
   }
 
   loadKpis(year?: number, month?: number) {
@@ -192,7 +205,7 @@ export class MvcListComponent implements OnInit {
 
   saveAtendimento() {
     if (!this.atendimento.atendimentoTipoId || !this.atendimento.observacao) {
-      this.poNotification.warning("Preencha o tipo e a observação.");
+      this.poNotification.warning("Preencha o tipo e a observaÃ§Ã£o.");
       return;
     }
     this.crmService.save(this.atendimento).subscribe({
