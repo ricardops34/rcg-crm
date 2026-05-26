@@ -155,28 +155,32 @@ export class AnalyticsController {
       fantasia,
     });
 
+    const currentPage = parseInt(page || '1') || 1;
+    const currentPageSize = parseInt(pageSize || '10') || 10;
+    const paginated = this.analyticsService.paginateMvcItems(items, currentPage, currentPageSize);
+
     console.log('[MVC-DEBUG][BACK][CONTROLLER] getMvcTable retorno service', {
       total: items.length,
       primeiroItem: items[0],
-      page: parseInt(page || '1') || 1,
-      pageSize: parseInt(pageSize || '10') || 10,
-      pageItems: items.length,
-      hasNext: false,
+      page: currentPage,
+      pageSize: currentPageSize,
+      pageItems: paginated.items.length,
+      hasNext: paginated.hasNext,
     });
 
     const legacyNegativeDiffRowColor = '#FFF7A8';
 
-    const mappedItems = items.map((item: any) => ({
+    const mappedItems = paginated.items.map((item: any) => ({
       ...item,
       $rowColor: item.difference < 0 ? legacyNegativeDiffRowColor : undefined,
     }));
 
     return {
       items: mappedItems,
-      hasNext: false,
-      total: mappedItems.length,
-      page: 1,
-      pageSize: mappedItems.length,
+      hasNext: paginated.hasNext,
+      total: paginated.total,
+      page: paginated.page,
+      pageSize: paginated.pageSize,
     };
   }
 }
