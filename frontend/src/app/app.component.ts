@@ -15,6 +15,7 @@ import { filter } from "rxjs/operators";
 import { AuthService } from "./services/auth";
 import { rcgPoUiTheme } from "../temas/rcg/rcg-theme";
 import { alliaPoUiTheme } from "../temas/allia/allia-theme";
+import { RoutesRegistryService } from "./services/routes-registry.service";
 
 @Component({
   selector: "app-root",
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
   private readonly themeService = inject(PoThemeService);
+  private routesRegistry = inject(RoutesRegistryService);
 
   user: any;
   logo: string = "assets/logo_rcg.png";
@@ -113,39 +115,11 @@ export class AppComponent implements OnInit {
   }
 
   navigateTo(controller: string) {
-    const routes: Record<string, string> = {
-      // CRM
-      "DashboardVendedor":      "/dashboard",
-      "MvcList":                "/mvc",
-      "ClienteList":            "/clientes",
-      "PosisaoClienteFormView": "/clientes/360",
-      "AgendaAtendimentoList":  "/agenda-atendimento",
-      "MetaList":               "/metas",
-      "NegociacaoList":         "/financeiro/negociacoes",
-      // Cadastros
-      "VendedorList":           "/vendedores",
-      "ProdutoList":            "/produtos",
-      "TabelaPrecoList":        "/tabelas-precos",
-      "CategoriaList":          "/categorias",
-      "PedidoEstadoList":       "/pedidos/estados",
-      // Financeiro
-      "TituloReceberList":      "/financeiro/titulos",
-      // Faturamento
-      "NotaFiscalList":         "/faturamento/notas",
-      "ComodatoList":           "/faturamento/comodatos",
-      // Administração
-      "SystemUserList":         "/admin/users",
-      "SystemGroupList":        "/admin/groups",
-      "SystemUnitList":         "/admin/units",
-      "SystemModuleList":       "/admin/modules",
-      "SystemMenuEditor":       "/admin/menu-editor",
-      "SystemProgramList":      "/admin/programs",
-      "SystemProfileForm":      "/profile",
-    };
-
-    const path = routes[controller];
+    const path = this.routesRegistry.getPathByController(controller);
     if (path) {
       this.router.navigate([path]);
+    } else if (controller && (controller.startsWith('/') || controller.includes('/'))) {
+      this.router.navigate([controller]);
     } else {
       this.poNotification.warning(`A rota para ${controller} está sendo mapeada ou não foi implementada.`);
     }

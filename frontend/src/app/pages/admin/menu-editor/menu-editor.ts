@@ -16,6 +16,8 @@ import {
 import { FormsModule } from "@angular/forms";
 import { ProgramService } from "../../../services/program";
 import { ModuleService } from "../../../services/module";
+import { RoutesLookupService } from "../../../services/routes-lookup.service";
+import { RoutesRegistryService } from "../../../services/routes-registry.service";
 
 interface ProgramEdit {
   id: number;
@@ -122,14 +124,18 @@ interface ModuleGroup {
               p-required
               p-clean>
             </po-input>
-            <po-input
+            <po-lookup
               class="po-md-6"
               name="editController"
-              [(ngModel)]="editingProgram.controller"
-              p-label="Controller"
-              p-required
+              [p-filter-service]="routesLookupService"
+              p-label="Rotina do Sistema (Controller)"
+              p-field-label="label"
+              p-field-value="value"
+              [ngModel]="editingProgram.controller"
+              (p-change)="onRouteSelected($event)"
+              [p-required]="true"
               p-clean>
-            </po-input>
+            </po-lookup>
           </div>
 
           <po-divider p-label="Posição no Menu"></po-divider>
@@ -192,6 +198,8 @@ export class MenuEditorComponent implements OnInit {
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
   private poDialog = inject(PoDialogService);
+  public routesLookupService = inject(RoutesLookupService);
+  private routesRegistry = inject(RoutesRegistryService);
 
   allModules: ModuleGroup[] = [];
   filteredModules: ModuleGroup[] = [];
@@ -382,5 +390,18 @@ export class MenuEditorComponent implements OnInit {
         this.poNotification.error("Erro ao salvar rotina.");
       }
     });
+  }
+
+  onRouteSelected(value: string) {
+    if (this.editingProgram) {
+      this.editingProgram.controller = value;
+      if (value) {
+        const route = this.routesRegistry.getRouteByController(value);
+        if (route) {
+          this.editingProgram.name = route.label;
+          this.editingProgram.icon = route.icon;
+        }
+      }
+    }
   }
 }
