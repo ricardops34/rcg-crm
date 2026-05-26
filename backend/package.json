@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "migrate": "ts-node run-migration.ts",
+    "importar-backup": "node importar-backup.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

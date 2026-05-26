@@ -32,6 +32,7 @@ import { ModuleFormComponent } from './pages/admin/module-form/module-form';
 import { MenuEditorComponent } from './pages/admin/menu-editor/menu-editor';
 import { authGuard } from './guards/auth-guard';
 import { HomeComponent } from './pages/home/home';
+import { ConfiguratorWorkbenchComponent } from './pages/configurator/configurator-workbench/configurator-workbench';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -76,6 +77,7 @@ export const routes: Routes = [
       { path: 'admin/modules/new', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },
       { path: 'admin/modules/edit/:id', component: ModuleFormComponent, data: { controller: 'SystemModuleList' } },
       { path: 'admin/menu-editor', component: MenuEditorComponent, data: { controller: 'SystemMenuEditor' } },
+      { path: 'admin/configurador', component: ConfiguratorWorkbenchComponent, data: { controller: 'SystemScreenConfigurator' } },
       { path: 'admin/programs', component: ProgramListComponent, data: { controller: 'SystemProgramList' } },
       { path: 'admin/programs/new', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
       { path: 'admin/programs/edit/:id', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },

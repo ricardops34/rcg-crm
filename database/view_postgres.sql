@@ -260,9 +260,7 @@ SELECT
     cliente.dt_bloqueio as dt_bloqueio,
     cliente.motivo_bloqueio as motivo_bloqueio,
     cliente.carteira as carteira,
-    municipio.id as municipio_id,
     municipio.descricao as municipio_descricao,
-    estado.id as estado_id,
     estado.sigla as estado_sigla,
     vendedor.id as vendedor_id,
     vendedor.nome as vendedor_nome,
@@ -286,16 +284,14 @@ SELECT
         ELSE NULL 
      END) as financeiro_status
 FROM cliente
-JOIN municipio ON (cliente.municipio_id = municipio.id)
-JOIN estado ON (municipio.estado_id = estado.id)
+LEFT JOIN municipio ON (cliente.municipio_id = municipio.id)
+LEFT JOIN estado ON (municipio.estado_id = estado.id)
 LEFT JOIN vendedor ON (cliente.vendedor_id = vendedor.id)
 LEFT JOIN regiao_cliente ON (cliente.regiao_cliente_id = regiao_cliente.id )
 WHERE cliente.cod_erp not in('00000002','00000001') AND cliente.reg_ativo = 'S';
 
 CREATE UNIQUE INDEX idx_mvc_id ON mvc (id);
 CREATE INDEX idx_mvc_vendedor ON mvc (vendedor_id);
-CREATE INDEX idx_mvc_estado ON mvc (estado_id);
-CREATE INDEX idx_mvc_municipio ON mvc (municipio_id);
 
 -- 2.8. vendas_vendedor_mes
 DROP VIEW IF EXISTS vendas_vendedor_mes CASCADE;

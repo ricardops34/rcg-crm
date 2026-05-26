@@ -1,0 +1,69 @@
+<po-page-default p-title="Configurador">
+  <div class="configurator-shell">
+    <section class="hero-panel po-mb-4">
+      <div class="po-row">
+        <div class="po-md-8">
+          <span class="eyebrow">Modulo de configuracao visual</span>
+          <h1 class="hero-title">Construtor visual de telas e interfaces</h1>
+          <p class="hero-copy">
+            Este modulo concentra o desenvolvimento do builder drag and drop, da
+            estrutura XML e da renderizacao dinamica das telas no sistema.
+          </p>
+        </div>
+        <div class="po-md-4">
+          <div class="hero-badge">
+            <span class="hero-badge-label">Status atual</span>
+            <strong>Planejamento e base estrutural</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="po-row po-mb-4">
+      <div class="po-md-4 po-mb-4" *ngFor="let shortcut of shortcuts">
+        <button
+          type="button"
+          class="shortcut-card"
+          [ngClass]="shortcut.tone"
+          (click)="navigateTo(shortcut.route)">
+          <span class="shortcut-icon"><i [className]="shortcut.icon"></i></span>
+          <span class="shortcut-title">{{ shortcut.title }}</span>
+          <span class="shortcut-description">{{ shortcut.description }}</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="po-row po-mb-4">
+      <div class="po-md-4 po-mb-4" *ngFor="let pillar of pillars">
+        <article class="content-card">
+          <header class="content-card-header">
+            <h2>{{ pillar.title }}</h2>
+            <p>{{ pillar.description }}</p>
+          </header>
+          <ul class="content-list">
+            <li *ngFor="let point of pillar.points">{{ point }}</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-card roadmap-card">
+      <header class="content-card-header">
+        <h2>MVP inicial dentro do Configurador</h2>
+        <p>
+          O primeiro corte precisa ser pequeno o suficiente para validar a
+          arquitetura e robusto o bastante para suportar evolucao futura.
+        </p>
+      </header>
+
+      <div class="po-row">
+        <div class="po-md-6 po-mb-3" *ngFor="let milestone of milestones">
+          <div class="milestone-item">
+            <span class="milestone-dot"></span>
+            <span>{{ milestone }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</po-page-default>

@@ -158,8 +158,6 @@ export class AnalyticsService {
           mvc.carteira,
           mvc.vendedor_reduzido,
           mvc.vendedor_id,
-          mvc.estado_id,
-          mvc.municipio_id,
           mvc.financeiro_status,
           COALESCE(p.ano, $1) as ano,
           COALESCE(p.janeiro, 0) as janeiro,
