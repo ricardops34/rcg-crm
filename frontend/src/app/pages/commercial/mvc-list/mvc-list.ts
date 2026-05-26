@@ -77,6 +77,7 @@ export class MvcListComponent implements OnInit {
   ];
 
   filtroDropdownActions: Array<any> = [
+    { label: "até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
     { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
     { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
     { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
