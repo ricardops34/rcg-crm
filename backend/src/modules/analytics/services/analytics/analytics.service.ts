@@ -189,11 +189,21 @@ export class AnalyticsService {
         ${where}
       `;
 
+      console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData SQL final', {
+        queryStr,
+        params,
+        where,
+      });
+
       const result = await this.dataSource.query(queryStr, params);
 
       console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData resultado bruto', {
         total: result.length,
         primeiroItem: result[0],
+        // Diagnóstico de encoding: verificar se os bytes chegam corretos do banco
+        razaoRaw: result[0]?.razao ?? result[0]?.cliente_nome ?? '(vazio)',
+        codigoRaw: result[0]?.codigo ?? '(vazio)',
+        diasRaw: result[0]?.dias ?? '(vazio)',
       });
 
       // Cálculo de média dos últimos 3 meses em memória
@@ -237,6 +247,13 @@ export class AnalyticsService {
       console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData resultado processado', {
         total: items.length,
         primeiroItem: items[0],
+        // Diagnóstico de cálculo: mês atual e valores usados
+        diagnostico: items[0] ? {
+          currentMonth: new Date().getMonth() + 1,
+          venda_mes: items[0].venda_mes,
+          average3Months: items[0].average3Months,
+          difference: items[0].difference,
+        } : null,
       });
 
       return items;

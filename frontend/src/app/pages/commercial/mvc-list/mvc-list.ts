@@ -94,7 +94,13 @@ export class MvcListComponent implements OnInit {
 
     console.log("[MVC-DEBUG][FRONT] ngOnInit", {
       user,
-      isGerente: this.isGerente
+      isGerente: this.isGerente,
+      serviceApiBase: this.serviceApiBase,
+      serviceApi: this.serviceApi,
+      quickFilterParams: this.quickFilterParams,
+      // DIAGNÓSTICO: o PO-UI chama o serviceApi sem parâmetros extras na carga inicial.
+      // Se aparecer dados errados, o problema está na query do backend sem filtros.
+      // Se aparecer encoding errado, o problema está no banco/conexão.
     });
 
     this.rebuildFields();
@@ -259,12 +265,20 @@ export class MvcListComponent implements OnInit {
         ...this.quickFilterParams
       };
 
+      // Montar a URL completa que será chamada para diagnóstico
+      const urlParams = new URLSearchParams();
+      Object.entries(filtrosCompletos).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) urlParams.set(k, String(v));
+      });
+      const urlDiag = `${this.serviceApi}?${urlParams.toString()}`;
+
       (this.dynamicTable as any).params = { ...filtrosCompletos };
       console.log("[MVC-DEBUG][FRONT] refreshTable", {
         filtrosAtuais,
         quickFilterParams: this.quickFilterParams,
         filtrosCompletos,
-        serviceApi: this.serviceApi
+        serviceApi: this.serviceApi,
+        urlDiagnostico: urlDiag,
       });
       this.dynamicTable.updateDataTable(filtrosCompletos);
     } else {
