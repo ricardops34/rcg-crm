@@ -198,8 +198,8 @@ export class MvcListComponent implements OnInit {
         type: "label",
         width: "80px",
         labels: [
-          { value: "R", color: "color-07", label: "Atrasado" },
-          { value: "B", color: "color-10", label: "Em dia" }
+          { value: "R", color: "color-07", label: "$" },
+          { value: "B", color: "color-10", label: " " }
         ]
       },
       {
@@ -226,13 +226,6 @@ export class MvcListComponent implements OnInit {
         property: "vendedor_reduzido",
         label: "Vendedor",
         width: "150px"
-      });
-
-      fields.push({
-        property: "vendedor_id",
-        label: "Vendedor",
-        filter: true,
-        options: [...this.vendedores]
       });
     }
 
