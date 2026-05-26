@@ -1,19 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
-import { MetaList } from './meta-list';
+import { MetaListComponent } from './meta-list';
 
-describe('MetaList', () => {
-  let component: MetaList;
-  let fixture: ComponentFixture<MetaList>;
+describe('MetaListComponent', () => {
+  let component: MetaListComponent;
+  let fixture: ComponentFixture<MetaListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MetaList],
+      imports: [MetaListComponent],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MetaList);
+    fixture = TestBed.createComponent(MetaListComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {

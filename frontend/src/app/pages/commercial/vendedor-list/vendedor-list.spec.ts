@@ -1,19 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
-import { VendedorList } from './vendedor-list';
+import { VendedorListComponent } from './vendedor-list';
 
-describe('VendedorList', () => {
-  let component: VendedorList;
-  let fixture: ComponentFixture<VendedorList>;
+describe('VendedorListComponent', () => {
+  let component: VendedorListComponent;
+  let fixture: ComponentFixture<VendedorListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VendedorList],
+      imports: [VendedorListComponent],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VendedorList);
+    fixture = TestBed.createComponent(VendedorListComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {

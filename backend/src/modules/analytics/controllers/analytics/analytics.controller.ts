@@ -27,7 +27,11 @@ export class AnalyticsController {
     const m = parseInt(month) || new Date().getMonth() + 1;
     let vId = vendedorId ? parseInt(vendedorId) : undefined;
 
-    const isGerente = req.user?.roles?.includes('ADMIN') || req.user?.roles?.includes('GERENTE');
+    // Verificação de Gestão blindada (Admin, Gerente, Supervisor ou superusuário ID 1)
+    const isGerente = 
+      req.user?.userId === 1 ||
+      req.user?.username?.toLowerCase() === 'admin' ||
+      req.user?.roles?.some((r: string) => ['ADMIN', 'GERENTE', 'SUPERVISOR', 'ADMINISTRADOR'].includes(r.toUpperCase()));
 
     if (!vId && req.user && !isGerente) {
       vId =
@@ -55,11 +59,11 @@ export class AnalyticsController {
     const vQuery = vendedor_id || vendedorId;
     let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    // Regra estrita: Admin, Supervisor e Gerente
+    // Regra estrita de Gestão blindada (Admin, Supervisor, Gerente ou superusuário ID 1)
     const isGerente = 
-      req.user?.roles?.includes('ADMIN') || 
-      req.user?.roles?.includes('SUPERVISOR') || 
-      req.user?.roles?.includes('GERENTE');
+      req.user?.userId === 1 ||
+      req.user?.username?.toLowerCase() === 'admin' ||
+      req.user?.roles?.some((r: string) => ['ADMIN', 'GERENTE', 'SUPERVISOR', 'ADMINISTRADOR'].includes(r.toUpperCase()));
 
     if (!vId && req.user && !isGerente) {
       vId =
@@ -94,9 +98,12 @@ export class AnalyticsController {
     const vQuery = vendedor_id || vendedorId;
     let vId = vQuery ? parseInt(vQuery) : undefined;
 
-    // Regra de segurança: Usuários do grupo ADMIN e o usuário 'admin' raiz listam sempre todos os clientes.
+    // Regra de segurança blindada: Usuários superadministradores (ID 1), login 'admin' ou com perfil ADMIN listam todos os clientes.
     // Demais usuários são restritos à sua carteira (vendedor associado), e este filtro é obrigatório se nenhum vendedor for especificado.
-    const isAdmin = req.user?.roles?.includes('ADMIN') || req.user?.username === 'admin';
+    const isAdmin = 
+      req.user?.userId === 1 || 
+      req.user?.username?.toLowerCase() === 'admin' || 
+      req.user?.roles?.some((r: string) => ['ADMIN', 'ADMINISTRADOR'].includes(r.toUpperCase()));
 
     if (!vId && req.user && !isAdmin) {
       vId =

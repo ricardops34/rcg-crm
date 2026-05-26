@@ -1,19 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
-import { MvcList } from './mvc-list';
+import { MvcListComponent } from './mvc-list';
 
-describe('MvcList', () => {
-  let component: MvcList;
-  let fixture: ComponentFixture<MvcList>;
+describe('MvcListComponent', () => {
+  let component: MvcListComponent;
+  let fixture: ComponentFixture<MvcListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MvcList],
+      imports: [MvcListComponent],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MvcList);
+    fixture = TestBed.createComponent(MvcListComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {

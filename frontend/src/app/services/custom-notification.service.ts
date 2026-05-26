@@ -5,6 +5,14 @@ import { PoNotificationService, PoNotification } from '@po-ui/ng-components';
   providedIn: 'root'
 })
 export class CustomNotificationService extends PoNotificationService {
+  // Inicialização nativa da duração padrão global para 5 segundos (5000ms)
+  // Isso afeta success e information automaticamente, enquanto error e warning
+  // permanecem em tela até o fechamento manual conforme padrão do PO-UI.
+  private _initDuration = (() => {
+    this.setDefaultDuration(5000);
+    return true;
+  })();
+
   private translateTechnicalMessage(msg: string): string {
     if (!msg) return '';
 
@@ -33,22 +41,6 @@ export class CustomNotificationService extends PoNotificationService {
     translated = translated.replace(/Cannot\s+DELETE/gi, "Não foi possível excluir o registro na rota solicitada");
 
     return translated;
-  }
-
-  override success(notification: string | PoNotification): void {
-    if (typeof notification === 'string') {
-      super.success({ message: notification, duration: 5000 });
-    } else {
-      super.success({ duration: 5000, ...notification });
-    }
-  }
-
-  override information(notification: string | PoNotification): void {
-    if (typeof notification === 'string') {
-      super.information({ message: notification, duration: 5000 });
-    } else {
-      super.information({ duration: 5000, ...notification });
-    }
   }
 
   override error(notification: string | PoNotification): void {

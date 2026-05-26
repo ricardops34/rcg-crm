@@ -6,6 +6,7 @@ import { PoModule, PoNotificationService } from '@po-ui/ng-components';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { errorInterceptor } from './interceptors/error.interceptor';
 import { CustomNotificationService } from './services/custom-notification.service';
 
 export const appConfig: ApplicationConfig = {
@@ -13,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withInterceptorsFromDi(),
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor, errorInterceptor])
     ),
     importProvidersFrom(BrowserAnimationsModule, PoModule),
     { provide: PoNotificationService, useClass: CustomNotificationService }

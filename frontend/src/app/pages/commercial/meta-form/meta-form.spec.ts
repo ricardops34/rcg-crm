@@ -1,19 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
-import { MetaForm } from './meta-form';
+import { MetaFormComponent } from './meta-form';
 
-describe('MetaForm', () => {
-  let component: MetaForm;
-  let fixture: ComponentFixture<MetaForm>;
+describe('MetaFormComponent', () => {
+  let component: MetaFormComponent;
+  let fixture: ComponentFixture<MetaFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MetaForm],
+      imports: [MetaFormComponent],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MetaForm);
+    fixture = TestBed.createComponent(MetaFormComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
