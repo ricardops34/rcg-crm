@@ -1,14 +1,14 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoPageAction, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageFilter, 
+import {
+  PoModule,
+  PoPageAction,
+  PoTableColumn,
+  PoTableAction,
+  PoPageFilter,
   PoNotificationService,
-  PoBreadcrumb 
+  PoBreadcrumb
 } from "@po-ui/ng-components";
 import { UnitService } from "../../../services/unit";
 
@@ -17,23 +17,26 @@ import { UnitService } from "../../../services/unit";
   standalone: true,
   imports: [CommonModule, PoModule],
   template: `
-    <po-page-list 
+    <po-page-list
       p-title="Unidades do Sistema"
-      p-subtitle="Gestão de filiais e conexões"
+      p-subtitle="GestÃ£o de filiais e conexÃµes"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
-      
-      <po-table 
+
+      <po-table
         [p-columns]="columns"
         [p-items]="units"
         [p-actions]="tableActions"
         [p-loading]="isLoading"
+        [p-loading-show-more]="loadingShowMore"
+        [p-show-more-disabled]="!hasNext"
+        (p-show-more)="showMore()"
         p-container="shadow"
         [p-striped]="true"
         [p-sort]="true">
       </po-table>
-      
+
     </po-page-list>
   `
 })
@@ -41,14 +44,20 @@ export class UnitListComponent implements OnInit {
   private unitService = inject(UnitService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private readonly itensPorPagina = 20;
+  private paginaAtual = 1;
+  private filtroAtual = "";
+  private allUnits: Array<any> = [];
 
   units: Array<any> = [];
   isLoading: boolean = false;
+  loadingShowMore: boolean = false;
+  hasNext: boolean = false;
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Segurança", link: "/admin/users" },
+      { label: "SeguranÃ§a", link: "/admin/users" },
       { label: "Unidades" }
     ]
   };
@@ -70,23 +79,21 @@ export class UnitListComponent implements OnInit {
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
     { property: "name", label: "Nome da Unidade" },
-    { property: "connectionName", label: "Conexão (ERP)" }
+    { property: "connectionName", label: "ConexÃ£o (ERP)" }
   ];
 
   ngOnInit() {
     this.loadUnits();
   }
 
-  loadUnits(filter?: string) {
+  loadUnits(filter: string = "") {
+    this.filtroAtual = filter;
+    this.paginaAtual = 1;
     this.isLoading = true;
     this.unitService.findAll().subscribe({
       next: (res) => {
-        this.units = res;
-        if (filter) {
-          this.units = this.units.filter(u => 
-            u.name?.toLowerCase().includes(filter.toLowerCase())
-          );
-        }
+        this.allUnits = this.aplicarFiltroLocal(res || [], filter);
+        this.atualizarPaginaVisivel();
         this.isLoading = false;
       },
       error: () => {
@@ -95,13 +102,24 @@ export class UnitListComponent implements OnInit {
     });
   }
 
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.loadingShowMore = true;
+    this.paginaAtual += 1;
+    this.atualizarPaginaVisivel();
+    this.loadingShowMore = false;
+  }
+
   deleteUnit(unit: any) {
     if (confirm(`Deseja realmente excluir a unidade ${unit.name}?`)) {
       this.isLoading = true;
       this.unitService.delete(unit.id).subscribe({
         next: () => {
-          this.poNotification.success("Unidade excluída com sucesso!");
-          this.loadUnits();
+          this.poNotification.success("Unidade excluÃ­da com sucesso!");
+          this.loadUnits(this.filtroAtual);
         },
         error: () => {
           this.isLoading = false;
@@ -109,5 +127,20 @@ export class UnitListComponent implements OnInit {
         }
       });
     }
+  }
+
+  private atualizarPaginaVisivel() {
+    const limite = this.paginaAtual * this.itensPorPagina;
+    this.units = this.allUnits.slice(0, limite);
+    this.hasNext = this.allUnits.length > limite;
+  }
+
+  private aplicarFiltroLocal(units: Array<any>, filter: string): Array<any> {
+    if (!filter) {
+      return units;
+    }
+
+    const filtroNormalizado = filter.toLowerCase();
+    return units.filter(u => u.name?.toLowerCase().includes(filtroNormalizado));
   }
 }

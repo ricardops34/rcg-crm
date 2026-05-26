@@ -1,13 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoPageAction, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageFilter, 
-  PoBreadcrumb 
+import {
+  PoModule,
+  PoPageAction,
+  PoTableColumn,
+  PoTableAction,
+  PoPageFilter,
+  PoBreadcrumb
 } from "@po-ui/ng-components";
 import { GroupService } from "../../../services/group";
 
@@ -16,34 +16,43 @@ import { GroupService } from "../../../services/group";
   standalone: true,
   imports: [CommonModule, PoModule],
   template: `
-    <po-page-list 
+    <po-page-list
       p-title="Perfis de Acesso"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
-      
-      <po-table 
+
+      <po-table
         [p-columns]="columns"
         [p-items]="groups"
         [p-actions]="tableActions"
         [p-loading]="isLoading"
+        [p-loading-show-more]="loadingShowMore"
+        [p-show-more-disabled]="!hasNext"
+        (p-show-more)="showMore()"
         p-container="shadow"
         [p-striped]="true"
         [p-sort]="true">
       </po-table>
-      
+
     </po-page-list>
   `
 })
 export class GroupListComponent implements OnInit {
+  private readonly itensPorPagina = 20;
+  private paginaAtual = 1;
+  private filtroAtual = "";
+  private allGroups: Array<any> = [];
 
   groups: Array<any> = [];
   isLoading: boolean = false;
+  loadingShowMore: boolean = false;
+  hasNext: boolean = false;
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Segurança", link: "/admin/users" },
+      { label: "SeguranÃ§a", link: "/admin/users" },
       { label: "Perfis de Acesso" }
     ]
   };
@@ -83,16 +92,14 @@ export class GroupListComponent implements OnInit {
     this.loadGroups();
   }
 
-  loadGroups(filter?: string) {
+  loadGroups(filter: string = "") {
+    this.filtroAtual = filter;
+    this.paginaAtual = 1;
     this.isLoading = true;
     this.groupService.findAll().subscribe({
       next: (res) => {
-        this.groups = res;
-        if (filter) {
-          this.groups = this.groups.filter(g => 
-            g.name?.toLowerCase().includes(filter.toLowerCase())
-          );
-        }
+        this.allGroups = this.aplicarFiltroLocal(res || [], filter);
+        this.atualizarPaginaVisivel();
         this.isLoading = false;
       },
       error: () => {
@@ -101,11 +108,37 @@ export class GroupListComponent implements OnInit {
     });
   }
 
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.loadingShowMore = true;
+    this.paginaAtual += 1;
+    this.atualizarPaginaVisivel();
+    this.loadingShowMore = false;
+  }
+
   deleteGroup(group: any) {
     if (confirm(`Deseja realmente excluir o grupo ${group.name}?`)) {
       this.groupService.delete(group.id).subscribe(() => {
-        this.loadGroups();
+        this.loadGroups(this.filtroAtual);
       });
     }
+  }
+
+  private atualizarPaginaVisivel() {
+    const limite = this.paginaAtual * this.itensPorPagina;
+    this.groups = this.allGroups.slice(0, limite);
+    this.hasNext = this.allGroups.length > limite;
+  }
+
+  private aplicarFiltroLocal(groups: Array<any>, filter: string): Array<any> {
+    if (!filter) {
+      return groups;
+    }
+
+    const filtroNormalizado = filter.toLowerCase();
+    return groups.filter(g => g.name?.toLowerCase().includes(filtroNormalizado));
   }
 }

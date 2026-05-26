@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageAction, 
-  PoPageFilter, 
+import {
+  PoModule,
+  PoTableColumn,
+  PoTableAction,
+  PoPageAction,
+  PoPageFilter,
   PoNotificationService,
   PoBreadcrumb,
   PoTableComponent
@@ -18,24 +18,27 @@ import { BillingService } from "../../../services/billing";
   standalone: true,
   imports: [CommonModule, PoModule],
   template: `
-    <po-page-list 
-      p-title="Notas Fiscais de Saída"
+    <po-page-list
+      p-title="Notas Fiscais de SaÃ­da"
       p-subtitle="Consulta de faturamento e documentos fiscais"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="pageActions"
       [p-filter]="filter">
-      
-      <po-table 
+
+      <po-table
         [p-columns]="columns"
         [p-items]="items"
         [p-actions]="tableActions"
         [p-loading]="isLoading"
+        [p-loading-show-more]="loadingShowMore"
+        [p-show-more-disabled]="!hasNext"
+        (p-show-more)="showMore()"
         p-container="shadow"
         [p-striped]="true"
         [p-sort]="true"
         [p-selectable]="true">
       </po-table>
-      
+
     </po-page-list>
   `
 })
@@ -43,11 +46,17 @@ export class NotaListComponent implements OnInit {
   private billingService = inject(BillingService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private readonly itensPorPagina = 20;
+  private paginaAtual = 1;
+  private filtroAtual = "";
+  private allItems: Array<any> = [];
 
   @ViewChild(PoTableComponent, { static: false }) poTable!: PoTableComponent;
 
   items: Array<any> = [];
   isLoading: boolean = true;
+  loadingShowMore: boolean = false;
+  hasNext: boolean = false;
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
@@ -64,15 +73,15 @@ export class NotaListComponent implements OnInit {
 
   readonly filter: PoPageFilter = {
     action: this.onFilter.bind(this),
-    placeholder: "Número da nota"
+    placeholder: "NÃºmero da nota"
   };
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "notaFiscal", label: "Número", width: "120px" },
-    { property: "serieFiscal", label: "Série", width: "80px" },
-    { property: "dtEmissao", label: "Emissão", type: "date", width: "120px" },
+    { property: "notaFiscal", label: "NÃºmero", width: "120px" },
+    { property: "serieFiscal", label: "SÃ©rie", width: "80px" },
+    { property: "dtEmissao", label: "EmissÃ£o", type: "date", width: "120px" },
     { property: "cliente.razao", label: "Cliente" },
-    { property: "vlr_liquido", label: "Vlr Líquido", type: "currency", format: "BRL", width: "150px" },
+    { property: "vlr_liquido", label: "Vlr LÃ­quido", type: "currency", format: "BRL", width: "150px" },
     { property: "chaveNfe", label: "Chave de Acesso", width: "250px" }
   ];
 
@@ -86,11 +95,15 @@ export class NotaListComponent implements OnInit {
     this.loadData();
   }
 
-  loadData(nota?: string) {
+  loadData(nota: string = "") {
+    this.filtroAtual = nota;
+    this.paginaAtual = 1;
     this.isLoading = true;
+
     this.billingService.findAll({ nota }).subscribe({
       next: (res) => {
-        this.items = res.items;
+        this.allItems = res.items || [];
+        this.atualizarPaginaVisivel();
         this.isLoading = false;
       },
       error: () => {
@@ -104,6 +117,17 @@ export class NotaListComponent implements OnInit {
     this.loadData(filter);
   }
 
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.loadingShowMore = true;
+    this.paginaAtual += 1;
+    this.atualizarPaginaVisivel();
+    this.loadingShowMore = false;
+  }
+
   printSelectedLabels() {
     const selectedItems = this.poTable.getSelectedRows();
     if (selectedItems.length === 0) {
@@ -111,9 +135,14 @@ export class NotaListComponent implements OnInit {
       return;
     }
     this.poNotification.information(`Gerando ${selectedItems.length} etiquetas de despacho...`);
-    // Simulação de geração de etiquetas
     selectedItems.forEach(item => {
       console.log(`Etiqueta gerada para Nota: ${item.notaFiscal}`);
     });
+  }
+
+  private atualizarPaginaVisivel() {
+    const limite = this.paginaAtual * this.itensPorPagina;
+    this.items = this.allItems.slice(0, limite);
+    this.hasNext = this.allItems.length > limite;
   }
 }

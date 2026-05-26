@@ -15,6 +15,10 @@ export class AnalyticsService {
     const vendedor = await this.vendedorRepository.findOne({
       where: { systemUsersId: systemUserId },
     });
+    console.log('[MVC-DEBUG][BACK][SERVICE] getVendedorIdByUser', {
+      systemUserId,
+      vendedorId: vendedor ? vendedor.id : null,
+    });
     return vendedor ? vendedor.id : null;
   }
 
@@ -143,6 +147,14 @@ export class AnalyticsService {
         where += ` AND (mvc.razao ILIKE $${params.length} OR mvc.fantasia ILIKE $${params.length} OR mvc.codigo ILIKE $${params.length})`;
       }
 
+      console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData filtros', {
+        year,
+        vendedorId,
+        filters,
+        where,
+        params,
+      });
+
       const queryStr = `
         SELECT 
           mvc.id as cliente_id,
@@ -179,6 +191,11 @@ export class AnalyticsService {
 
       const result = await this.dataSource.query(queryStr, params);
 
+      console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData resultado bruto', {
+        total: result.length,
+        primeiroItem: result[0],
+      });
+
       // Cálculo de média dos últimos 3 meses em memória
       const currentMonth = new Date().getMonth() + 1;
       const monthNames = [
@@ -196,7 +213,7 @@ export class AnalyticsService {
         'dezembro',
       ];
 
-      return result.map((item: any) => {
+      const items = result.map((item: any) => {
         let sumLast3 = 0;
         let count = 0;
         for (let i = 1; i <= 3; i++) {
@@ -216,9 +233,30 @@ export class AnalyticsService {
           difference: currentMonthSales - average3Months,
         };
       });
+
+      console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData resultado processado', {
+        total: items.length,
+        primeiroItem: items[0],
+      });
+
+      return items;
     } catch (err) {
       console.error('[ANALYTICS] ❌ Erro ao buscar dados do MCV:', err.message);
       throw err;
     }
+  }
+  paginateMvcItems(items: Array<any>, page: number, pageSize: number) {
+    const safePage = Math.max(1, Number(page) || 1);
+    const safePageSize = Math.max(1, Number(pageSize) || 10);
+    const start = (safePage - 1) * safePageSize;
+    const end = start + safePageSize;
+
+    return {
+      items: items.slice(start, end),
+      total: items.length,
+      page: safePage,
+      pageSize: safePageSize,
+      hasNext: items.length > end,
+    };
   }
 }

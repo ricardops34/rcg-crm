@@ -1,12 +1,12 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageAction, 
-  PoPageFilter, 
+import {
+  PoModule,
+  PoTableColumn,
+  PoTableAction,
+  PoPageAction,
+  PoPageFilter,
   PoNotificationService,
   PoBreadcrumb
 } from "@po-ui/ng-components";
@@ -22,9 +22,14 @@ export class VendedorListComponent implements OnInit {
   private vendedorService = inject(VendedorService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private paginaAtual = 1;
+  private readonly itensPorPagina = 20;
+  private filtroAtual = "";
 
   items: Array<any> = [];
   isLoading: boolean = true;
+  loadingShowMore: boolean = false;
+  hasNext: boolean = false;
   total: number = 0;
 
   readonly breadcrumb: PoBreadcrumb = {
@@ -46,7 +51,7 @@ export class VendedorListComponent implements OnInit {
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
-    { property: "codErp", label: "Cód. ERP", width: "100px" },
+    { property: "codErp", label: "CÃ³d. ERP", width: "100px" },
     { property: "nome", label: "Nome Completo" },
     { property: "email", label: "E-mail" },
     { property: "filialRazao", label: "Filial Principal" },
@@ -57,7 +62,7 @@ export class VendedorListComponent implements OnInit {
     { property: "celular", label: "Celular", width: "150px" },
     { property: "supervisor", label: "Supervisor?", type: "label", width: "120px", labels: [
       { value: "S", color: "color-11", label: "Sim" },
-      { value: "N", color: "color-08", label: "Não" }
+      { value: "N", color: "color-08", label: "NÃ£o" }
     ]}
   ];
 
@@ -70,25 +75,34 @@ export class VendedorListComponent implements OnInit {
     this.loadData();
   }
 
-  loadData(filter?: string) {
-    this.isLoading = true;
-    this.vendedorService.findAll(1, 100).subscribe({
+  loadData(filter: string = "", append: boolean = false) {
+    this.filtroAtual = filter;
+
+    if (append) {
+      this.loadingShowMore = true;
+    } else {
+      this.paginaAtual = 1;
+      this.items = [];
+      this.isLoading = true;
+    }
+
+    this.vendedorService.findAll(this.paginaAtual, this.itensPorPagina).subscribe({
       next: (res) => {
-        this.items = res.items.map((item: any) => ({
+        const novosItems = (res.items || []).map((item: any) => ({
           ...item,
-          filialRazao: item.filial ? item.filial.razao : "Não vinculada"
+          filialRazao: item.filial ? item.filial.razao : "NÃ£o vinculada"
         }));
+        const itemsFiltrados = this.aplicarFiltroLocal(novosItems, filter);
+
+        this.items = append ? [...this.items, ...itemsFiltrados] : itemsFiltrados;
         this.total = res.total;
-        if (filter) {
-          this.items = this.items.filter(item => 
-            item.nome?.toLowerCase().includes(filter.toLowerCase()) ||
-            item.email?.toLowerCase().includes(filter.toLowerCase())
-          );
-        }
+        this.hasNext = Boolean((res as any)?.hasNext);
         this.isLoading = false;
+        this.loadingShowMore = false;
       },
       error: () => {
         this.isLoading = false;
+        this.loadingShowMore = false;
         this.poNotification.error("Erro ao carregar lista de vendedores.");
       }
     });
@@ -96,6 +110,15 @@ export class VendedorListComponent implements OnInit {
 
   onFilter(filter: string) {
     this.loadData(filter);
+  }
+
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.paginaAtual += 1;
+    this.loadData(this.filtroAtual, true);
   }
 
   create() {
@@ -110,13 +133,26 @@ export class VendedorListComponent implements OnInit {
     this.isLoading = true;
     this.vendedorService.delete(row.id).subscribe({
       next: () => {
-        this.poNotification.success("Vendedor excluído com sucesso!");
-        this.loadData();
+        this.poNotification.success("Vendedor excluÃ­do com sucesso!");
+        this.loadData(this.filtroAtual);
       },
       error: () => {
         this.isLoading = false;
         this.poNotification.error("Erro ao excluir vendedor.");
       }
     });
+  }
+
+  private aplicarFiltroLocal(items: Array<any>, filter: string): Array<any> {
+    if (!filter) {
+      return items;
+    }
+
+    const filtroNormalizado = filter.toLowerCase();
+
+    return items.filter(item =>
+      item.nome?.toLowerCase().includes(filtroNormalizado) ||
+      item.email?.toLowerCase().includes(filtroNormalizado)
+    );
   }
 }

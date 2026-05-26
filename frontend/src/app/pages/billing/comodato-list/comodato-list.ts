@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoTableColumn, 
-  PoTableAction, 
-  PoPageAction, 
+import {
+  PoModule,
+  PoTableColumn,
+  PoTableAction,
+  PoPageAction,
   PoNotificationService,
   PoBreadcrumb
 } from "@po-ui/ng-components";
@@ -16,21 +16,24 @@ import { BillingService } from "../../../services/billing";
   standalone: true,
   imports: [CommonModule, PoModule],
   template: `
-    <po-page-list 
+    <po-page-list
       p-title="Ativos em Comodato"
-      p-subtitle="Gestão de equipamentos sob custódia de clientes"
+      p-subtitle="GestÃ£o de equipamentos sob custÃ³dia de clientes"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="pageActions">
-      
-      <po-table 
+
+      <po-table
         [p-columns]="columns"
         [p-items]="items"
         [p-actions]="tableActions"
         [p-loading]="isLoading"
+        [p-loading-show-more]="loadingShowMore"
+        [p-show-more-disabled]="!hasNext"
+        (p-show-more)="showMore()"
         p-container="shadow"
         [p-striped]="true">
       </po-table>
-      
+
     </po-page-list>
   `
 })
@@ -38,9 +41,14 @@ export class ComodatoListComponent implements OnInit {
   private billingService = inject(BillingService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private readonly itensPorPagina = 20;
+  private paginaAtual = 1;
+  private allItems: Array<any> = [];
 
   items: Array<any> = [];
   isLoading: boolean = true;
+  loadingShowMore: boolean = false;
+  hasNext: boolean = false;
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
@@ -71,10 +79,12 @@ export class ComodatoListComponent implements OnInit {
   }
 
   loadData() {
+    this.paginaAtual = 1;
     this.isLoading = true;
     this.billingService.getComodatos().subscribe({
       next: (res) => {
-        this.items = res;
+        this.allItems = res || [];
+        this.atualizarPaginaVisivel();
         this.isLoading = false;
       },
       error: () => {
@@ -82,5 +92,22 @@ export class ComodatoListComponent implements OnInit {
         this.poNotification.error("Erro ao carregar ativos em comodato.");
       }
     });
+  }
+
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.loadingShowMore = true;
+    this.paginaAtual += 1;
+    this.atualizarPaginaVisivel();
+    this.loadingShowMore = false;
+  }
+
+  private atualizarPaginaVisivel() {
+    const limite = this.paginaAtual * this.itensPorPagina;
+    this.items = this.allItems.slice(0, limite);
+    this.hasNext = this.allItems.length > limite;
   }
 }

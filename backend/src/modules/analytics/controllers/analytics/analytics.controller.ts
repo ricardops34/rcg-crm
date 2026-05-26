@@ -84,6 +84,8 @@ export class AnalyticsController {
   async getMvcTable(
     @Req() req: any,
     @Query('year') year: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
     @Query('vendedorId') vendedorId?: string,
     @Query('vendedor_id') vendedor_id?: string,
     @Query('dias') dias?: string,
@@ -105,11 +107,43 @@ export class AnalyticsController {
       req.user?.username?.toLowerCase() === 'admin' || 
       req.user?.roles?.some((r: string) => ['ADMIN', 'GERENTE', 'SUPERVISOR', 'ADMINISTRADOR'].includes(r.toUpperCase()));
 
+    console.log('[MVC-DEBUG][BACK][CONTROLLER] getMvcTable entrada', {
+      user: {
+        userId: req.user?.userId,
+        username: req.user?.username,
+        vendedorId: req.user?.vendedorId,
+        managedVendedorIds: req.user?.managedVendedorIds,
+        roles: req.user?.roles,
+      },
+      query: {
+        year,
+        page,
+        pageSize,
+        vendedorId,
+        vendedor_id,
+        dias,
+        diasDe,
+        diasAte,
+        situacao,
+        search,
+        cliente_nome,
+        fantasia,
+      },
+      isGerente,
+      vIdInicial: vId,
+    });
+
     if (!vId && req.user && !isGerente) {
       vId =
         (await this.analyticsService.getVendedorIdByUser(req.user.userId)) ||
         -999; // ID seguro inexistente para evitar vazamento caso o usuário não tenha vendedor associado
     }
+
+    console.log('[MVC-DEBUG][BACK][CONTROLLER] getMvcTable filtro resolvido', {
+      year: y,
+      vendedorIdFinal: vId,
+      isGerente,
+    });
 
     const items = await this.analyticsService.getMvcData(y, vId, {
       dias: dias ? parseInt(dias) : undefined,
@@ -121,11 +155,30 @@ export class AnalyticsController {
       fantasia,
     });
 
-    const mappedItems = items.map((item: any) => ({
+    const currentPage = parseInt(page || '1') || 1;
+    const currentPageSize = parseInt(pageSize || '10') || 10;
+    const paginated = this.analyticsService.paginateMvcItems(items, currentPage, currentPageSize);
+
+    console.log('[MVC-DEBUG][BACK][CONTROLLER] getMvcTable retorno service', {
+      total: items.length,
+      primeiroItem: items[0],
+      page: currentPage,
+      pageSize: currentPageSize,
+      pageItems: paginated.items.length,
+      hasNext: paginated.hasNext,
+    });
+
+    const mappedItems = paginated.items.map((item: any) => ({
       ...item,
       $rowColor: item.difference < 0 ? '#FFF9A7' : undefined,
     }));
 
-    return { items: mappedItems, hasNext: false };
+    return {
+      items: mappedItems,
+      hasNext: paginated.hasNext,
+      total: paginated.total,
+      page: paginated.page,
+      pageSize: paginated.pageSize,
+    };
   }
 }
