@@ -1,3 +1,9 @@
+<div class="po-row po-mb-1">
+  <div class="po-md-12" style="display: flex; justify-content: flex-end;">
+    <po-dropdown p-label="Filtros de Inatividade" [p-actions]="filtroDropdownActions"></po-dropdown>
+  </div>
+</div>
+
 <div class="po-row" *ngIf="quickFilterDisclaimers.length">
   <div class="po-md-12">
     <po-disclaimer-group [p-title]="'Apresentando resultados filtrados por:'" [p-disclaimers]="quickFilterDisclaimers"
