@@ -1,13 +1,13 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { 
-  PoModule, 
-  PoNotificationService, 
-  PoPageAction 
+import {
+  PoModule,
+  PoNotificationService,
+  PoPageAction
 } from "@po-ui/ng-components";
 import { AuthService } from "../../../services/auth";
-import { ClienteService } from "../../../services/cliente"; // Reaproveitando para exemplo se necessário
+import { AuthUser } from "../../../services/models/auth.model";
 
 @Component({
   selector: "app-profile",
@@ -19,9 +19,9 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
 
-  user: any = {};
+  user: Partial<AuthUser> = {};
   isLoading: boolean = true;
-  passwordData: any = {
+  passwordData: { current: string; new: string; confirm: string } = {
     current: "",
     new: "",
     confirm: ""
@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const updateData: any = {
+    const updateData: Partial<AuthUser> & { password?: string } = {
       name: this.user.name,
       email: this.user.email,
       avatar: this.user.avatar
@@ -62,15 +62,9 @@ export class ProfileComponent implements OnInit {
     }
 
     this.authService.updateProfile(updateData).subscribe({
-      next: () => {
+      next: (updatedUser) => {
         this.poNotification.success("Perfil atualizado com sucesso!");
-        // Atualizar localStorage para o menu superior refletir a mudança
-        const currentUser = this.authService.getUser();
-        this.authService.handleAuthResponse({ 
-          accessToken: localStorage.getItem("token"), 
-          user: { ...currentUser, ...updateData } 
-        });
-        
+        this.user = { ...updatedUser };
         this.passwordData = { current: "", new: "", confirm: "" };
         this.isLoading = false;
       },
@@ -81,11 +75,15 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onUpload(event: any) {
-    const file = event.file;
+  onUpload(event: Event | { file: Blob }) {
+    const file = "file" in event ? event.file : null;
+    if (!file) {
+      return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.user.avatar = e.target.result;
+    reader.onload = (loadEvent: ProgressEvent<FileReader>) => {
+      this.user.avatar = loadEvent.target?.result as string;
     };
     reader.readAsDataURL(file);
   }

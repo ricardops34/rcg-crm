@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { AnalyticsMvcFilters, AnalyticsMvcItem, DashboardData } from "./models/analytics.model";
 
 @Injectable({
   providedIn: "root"
@@ -12,12 +13,12 @@ export class AnalyticsService {
 
   constructor(private http: HttpClient) { }
 
-  private getHeaders() {
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem("token");
     return new HttpHeaders().set("Authorization", `Bearer ${token}`);
   }
 
-  getDashboardData(year?: number, month?: number): Observable<any> {
+  getDashboardData(year?: number, month?: number): Observable<DashboardData> {
     const y = year || new Date().getFullYear();
     const m = month || new Date().getMonth() + 1;
     
@@ -26,20 +27,13 @@ export class AnalyticsService {
       .set('year', y.toString())
       .set('month', m.toString());
 
-    return this.http.get<any>(`${this.API_URL}/dashboard`, { 
+    return this.http.get<DashboardData>(`${this.API_URL}/dashboard`, {
       headers: this.getHeaders(),
       params: params
     });
   }
 
-  getMvcData(params: {
-    year?: number;
-    vendedorId?: number;
-    estadoId?: number;
-    municipioId?: number;
-    dias?: number;
-    situacao?: string;
-  } = {}): Observable<any> {
+  getMvcData(params: AnalyticsMvcFilters = {}): Observable<AnalyticsMvcItem[]> {
     const y = params.year || new Date().getFullYear();
     let httpParams = new HttpParams().set('year', y.toString());
     
@@ -49,7 +43,7 @@ export class AnalyticsService {
     if (params.dias) httpParams = httpParams.set('dias', params.dias.toString());
     if (params.situacao) httpParams = httpParams.set('situacao', params.situacao);
     
-    return this.http.get<any>(`${this.API_URL}/mvc`, { 
+    return this.http.get<AnalyticsMvcItem[]>(`${this.API_URL}/mvc`, {
       headers: this.getHeaders(),
       params: httpParams
     });

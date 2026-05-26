@@ -1,7 +1,14 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import {
+  AgendaView,
+  CrmAgendaResponse,
+  CrmAtendimento,
+  CrmAtendimentoListItem,
+  CrmTipoAtendimento
+} from "./models/crm.model";
 
 @Injectable({
   providedIn: "root"
@@ -12,76 +19,74 @@ export class CrmService {
 
   constructor(private http: HttpClient) { }
 
-  private getHeaders() {
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem("token");
     return new HttpHeaders().set("Authorization", `Bearer ${token}`);
   }
 
-  findAll(start?: string, end?: string, vendedorId?: number): Observable<any> {
-    const params = new URLSearchParams();
-    if (start) params.set("start", start);
-    if (end) params.set("end", end);
-    if (vendedorId) params.set("vendedorId", String(vendedorId));
+  findAll(start?: string, end?: string, vendedorId?: number): Observable<CrmAtendimentoListItem[]> {
+    let params = new HttpParams();
+    if (start) params = params.set("start", start);
+    if (end) params = params.set("end", end);
+    if (vendedorId) params = params.set("vendedorId", String(vendedorId));
 
-    const query = params.toString();
-    const url = query ? `${this.API_URL}/atendimentos?${query}` : `${this.API_URL}/atendimentos`;
-
-    return this.http.get<any>(url, { headers: this.getHeaders() });
+    return this.http.get<CrmAtendimentoListItem[]>(`${this.API_URL}/atendimentos`, {
+      headers: this.getHeaders(),
+      params
+    });
   }
 
-  getTipos(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/tipos`, { headers: this.getHeaders() });
+  getTipos(): Observable<CrmTipoAtendimento[]> {
+    return this.http.get<CrmTipoAtendimento[]>(`${this.API_URL}/tipos`, { headers: this.getHeaders() });
   }
 
   getAgenda(
-    view: "month" | "week" | "day",
+    view: AgendaView,
     date: string,
     vendedorId?: number,
     atendimentoTipoId?: number,
-  ): Observable<any> {
-    const params = new URLSearchParams({
-      view,
-      date
-    });
+  ): Observable<CrmAgendaResponse> {
+    let params = new HttpParams()
+      .set("view", view)
+      .set("date", date);
 
     if (vendedorId) {
-      params.set("vendedorId", String(vendedorId));
+      params = params.set("vendedorId", String(vendedorId));
     }
 
     if (atendimentoTipoId) {
-      params.set("atendimentoTipoId", String(atendimentoTipoId));
+      params = params.set("atendimentoTipoId", String(atendimentoTipoId));
     }
 
-    return this.http.get<any>(`${this.API_URL}/agenda?${params.toString()}`, { headers: this.getHeaders() });
+    return this.http.get<CrmAgendaResponse>(`${this.API_URL}/agenda`, { headers: this.getHeaders(), params });
   }
 
   getAgendaRange(
     start: string,
     end: string,
-    view: "month" | "week" | "day",
+    view: AgendaView,
     date: string,
     vendedorId?: number,
     atendimentoTipoId?: number,
-  ): Observable<any> {
-    const params = new URLSearchParams({
-      start,
-      end,
-      view,
-      date
-    });
+  ): Observable<CrmAgendaResponse> {
+    let params = new HttpParams()
+      .set("start", start)
+      .set("end", end)
+      .set("view", view)
+      .set("date", date);
 
     if (vendedorId) {
-      params.set("vendedorId", String(vendedorId));
+      params = params.set("vendedorId", String(vendedorId));
     }
 
     if (atendimentoTipoId) {
-      params.set("atendimentoTipoId", String(atendimentoTipoId));
+      params = params.set("atendimentoTipoId", String(atendimentoTipoId));
     }
 
-    return this.http.get<any>(`${this.API_URL}/agenda?${params.toString()}`, { headers: this.getHeaders() });
+    return this.http.get<CrmAgendaResponse>(`${this.API_URL}/agenda`, { headers: this.getHeaders(), params });
   }
 
-  save(data: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/atendimentos`, data, { headers: this.getHeaders() });
+  save(data: CrmAtendimento): Observable<CrmAtendimento> {
+    return this.http.post<CrmAtendimento>(`${this.API_URL}/atendimentos`, data, { headers: this.getHeaders() });
   }
 }

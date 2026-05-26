@@ -2,6 +2,15 @@ import { Injectable, signal } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, tap } from "rxjs";
 import { environment } from "../../environments/environment";
+import {
+  AuthModuleMenu,
+  AuthResponse,
+  AuthTerms,
+  AuthUser,
+  JwtPayload,
+  LoginPayload,
+  SaveTermsPayload
+} from "./models/auth.model";
 
 @Injectable({
   providedIn: "root"
@@ -10,38 +19,38 @@ export class AuthService {
 
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
-  currentUser = signal<any>(this.getUser());
+  currentUser = signal<AuthUser | null>(this.getUser());
 
   constructor(private http: HttpClient) { }
 
-  login(loginData: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/login`, loginData).pipe(
+  login(loginData: LoginPayload): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, loginData).pipe(
       tap(res => this.handleAuthResponse(res))
     );
   }
 
-  verify2fa(code: string): Observable<any> {
+  verify2fa(code: string): Observable<AuthResponse> {
     const token = localStorage.getItem("token");
-    return this.http.post<any>(`${this.API_URL}/verify-2fa`, { code }, {
+    return this.http.post<AuthResponse>(`${this.API_URL}/verify-2fa`, { code }, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
       tap(res => this.handleAuthResponse(res))
     );
   }
 
-  acceptTerms(): Observable<any> {
+  acceptTerms(): Observable<AuthResponse> {
     const token = localStorage.getItem("token");
-    return this.http.post<any>(`${this.API_URL}/accept-terms`, {}, {
+    return this.http.post<AuthResponse>(`${this.API_URL}/accept-terms`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
       tap(res => this.handleAuthResponse(res))
     );
   }
 
-  handleAuthResponse(res: any) {
+  handleAuthResponse(res: AuthResponse): void {
     if (res.accessToken) {
       localStorage.setItem("token", res.accessToken);
-      if (!res.nextStep) {
+      if (!res.nextStep && res.user) {
         localStorage.setItem("user", JSON.stringify(res.user));
         this.currentUser.set(res.user);
       }
@@ -60,7 +69,7 @@ export class AuthService {
 
     try {
       // Decodifica a carga útil (payload) do JWT
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
       
       // Se tiver scope (2FA ou TERMS), o login ainda não foi concluído
       if (payload.scope) {
@@ -80,9 +89,9 @@ export class AuthService {
     return true;
   }
 
-  getUser(): any {
+  getUser(): AuthUser | null {
     const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
+    return user ? JSON.parse(user) as AuthUser : null;
   }
 
   hasPermission(controller: string): boolean {
@@ -90,13 +99,13 @@ export class AuthService {
     if (!user) return false;
     if (user.login === 'admin' || user.roles?.includes('ADMIN')) return true;
     if (!user.programs) return false;
-    return user.programs.some((p: any) => p.controller === controller);
+    return user.programs.some((p) => p.controller === controller);
   }
 
-  updateProfile(data: any): Observable<any> {
+  updateProfile(data: Partial<AuthUser>): Observable<AuthUser> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-    return this.http.patch<any>(`${this.API_URL}/me`, data, { headers }).pipe(
+    return this.http.patch<AuthUser>(`${this.API_URL}/me`, data, { headers }).pipe(
       tap(updatedUser => {
         localStorage.setItem("user", JSON.stringify(updatedUser));
         this.currentUser.set(updatedUser);
@@ -104,19 +113,19 @@ export class AuthService {
     );
   }
 
-  getMenu(): Observable<any> {
+  getMenu(): Observable<AuthModuleMenu[]> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-    return this.http.get<any>(`${this.API_URL}/me/menu`, { headers });
+    return this.http.get<AuthModuleMenu[]>(`${this.API_URL}/me/menu`, { headers });
   }
 
-  getTerms(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/terms`);
+  getTerms(): Observable<AuthTerms> {
+    return this.http.get<AuthTerms>(`${this.API_URL}/terms`);
   }
 
-  saveTerms(data: any): Observable<any> {
+  saveTerms(data: SaveTermsPayload): Observable<AuthTerms> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-    return this.http.post<any>(`${environment.apiUrl}/admin/users/terms`, data, { headers });
+    return this.http.post<AuthTerms>(`${environment.apiUrl}/admin/users/terms`, data, { headers });
   }
 }

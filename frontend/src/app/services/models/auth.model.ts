@@ -28,6 +28,10 @@ export interface AuthUser {
   name?: string;
   email?: string;
   avatar?: string;
+  unit?: {
+    id?: number;
+    name?: string;
+  };
   roles?: string[];
   isGerente?: boolean;
   supervisorId?: number;
