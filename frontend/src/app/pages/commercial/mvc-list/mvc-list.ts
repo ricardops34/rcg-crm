@@ -68,8 +68,8 @@ export class MvcListComponent implements OnInit {
   serviceApi = this.serviceApiBase;
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
-    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
-    { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "po-icon-chat" }
+    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "an an-eye" },
+    { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "an an-chat" }
   ];
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
@@ -196,30 +196,8 @@ export class MvcListComponent implements OnInit {
     const fields: Array<PoPageDynamicTableField> = [
       { property: "cliente_id", key: true, visible: false },
       {
-        property: "financeiro_status",
-        label: "Fin.",
-        type: "label",
-        width: "60px",
-        labels: [
-          {
-            value: "R",
-            color: "color-07",
-            label: " ",
-            icon: "an an-warning-circle",
-            tooltip: "Possui títulos VENCIDOS"
-          },
-          {
-            value: "B",
-            color: "color-10",
-            label: " ",
-            icon: "an an-check-circle",
-            tooltip: "Títulos em dia"
-          }
-        ]
-      },
-      {
         property: "situacao",
-        label: "Sit.",
+        label: "Situação",
         type: "label",
         width: "60px",
         labels: [
@@ -240,8 +218,30 @@ export class MvcListComponent implements OnInit {
         ]
       },
       {
+        property: "financeiro_status",
+        label: "Duplicadas",
+        type: "label",
+        width: "60px",
+        labels: [
+          {
+            value: "R",
+            color: "color-07",
+            label: " ",
+            icon: "an an-warning-circle",
+            tooltip: "Possui títulos VENCIDOS"
+          },
+          {
+            value: "B",
+            color: "color-10",
+            label: " ",
+            icon: "an an-check-circle",
+            tooltip: "Títulos em dia"
+          }
+        ]
+      },
+      {
         property: "tem_comodato",
-        label: "Com.",
+        label: "Comodato",
         type: "label",
         width: "60px",
         labels: [
