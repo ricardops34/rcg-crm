@@ -48,6 +48,77 @@ Sempre escreva código Angular seguindo os padrões mais modernos:
 - Use o `PoNotificationService` para feedbacks rápidos (sucesso, erro, alerta, informação).
 - Use o `PoDialogService` para confirmações críticas que exijam resposta expressa do usuário antes de realizar mutações no banco de dados.
 
+### 5. Preferência Absoluta por Componentes Oficiais do PO-UI
+*   **Regra de Ouro**: Sempre que existir um componente padrão/oficial disponível no ecossistema do PO-UI (ex: `po-input`, `po-combo`, `po-select`, `po-button`, `po-table`, etc.), ele **deve** ser utilizado obrigatoriamente para qualquer elemento visual da tela. Evite a utilização de elementos HTML puros crus, componentes de outras bibliotecas visuais de terceiros e **evite ao máximo a personalização/estilização manual via CSS customizado ad-hoc**.
+*   **Motivo**: A consistência visual, a responsividade automática dos grids, os padrões de acessibilidade (A11y) homologados e a uniformidade de temas (RCG e Allia) dependem da utilização estrita dos componentes do design system do PO-UI. Sobrescrever cores, margens, fontes ou paddings através de classes de CSS customizadas quebra a harmonia das telas, viola as regras de contraste dos temas oficiais e dificulta futuras manutenções e atualizações. Use sempre as ferramentas nativas de layout do PO-UI (como `po-row`, as classes de grid responsivo `po-md-*` e componentes de layout como `po-container` e `po-widget`).
+
+---
+
+## 🔄 Padronização de CRUDs e Comunicação com a API
+
+Para garantir a estabilidade e a conformidade técnica em todos os desenvolvimentos do ecossistema RCG CRM, siga estritamente estas diretrizes ao criar ou manter telas de CRUD e serviços de API:
+
+### 1. Higienização de Payloads de Atualização (PUT)
+*   **Regra de Ouro**: O identificador primário do registro (`id`) deve ser enviado **somente na URL** da rota e **nunca** no corpo (body) das requisições de atualização (`PUT` / `PATCH`).
+*   **Motivo**: O backend utiliza o validador estrito do NestJS (`forbidNonWhitelisted: true`). O envio da propriedade `id` no corpo dispara o erro de validação `"property id should not exist"` (HTTP 400 Bad Request).
+*   **Como fazer no Frontend**: Nos métodos de serviço do Angular, utilize sempre a desestruturação para isolar o ID e enviar apenas o restante das propriedades no corpo:
+    ```typescript
+    save(data: any): Observable<any> {
+      if (data.id) {
+        const { id, ...payload } = data;
+        return this.http.put<any>(`${this.API_URL}/${id}`, payload, { headers: this.getHeaders() });
+      }
+      return this.http.post<any>(this.API_URL, data, { headers: this.getHeaders() });
+    }
+    ```
+
+### 2. Tratamento de Two-Way Binding no `po-combo`
+*   **Regra de Ouro**: Nunca use a sintaxe simplificada `[(ngModel)]` em componentes `<po-combo>`.
+*   **Motivo**: O `po-combo` possui um Output homônimo (`ngModelChange`) que gera conflito sintático no compilador estrito do Angular em modo de produção (erro `NG8007`).
+*   **Como fazer**: Separe explicitamente a escrita e a leitura de eventos usando `[ngModel]` e o Output oficial `(p-change)` do PO-UI:
+    ```html
+    <po-combo
+      name="icon"
+      [ngModel]="program.icon"
+      (p-change)="program.icon = $event"
+      [p-options]="iconOptions">
+    </po-combo>
+    ```
+
+### 3. Associação de Enums Estritos no HTML (`TS2322`)
+*   **Regra de Ouro**: Nunca passe strings literais cruas (ex: `[p-filter-mode]="'contains'"`) para atributos de componentes do PO-UI que esperam Enums estritos no TypeScript.
+*   **Motivo**: O compilador estrito do Angular rejeita strings literais para enums customizados (erro `TS2322`).
+*   **Como fazer**: Importe o enum no arquivo TypeScript do componente, declare-o como propriedade de classe e associe-a por bind de propriedade no HTML:
+    *   *No arquivo TypeScript:*
+        ```typescript
+        import { PoComboFilterMode } from "@po-ui/ng-components";
+        
+        export class ProgramFormComponent {
+          readonly filterModeContains = PoComboFilterMode.contains;
+        }
+        ```
+    *   *No template HTML:*
+        ```html
+        [p-filter-mode]="filterModeContains"
+        ```
+
+### 4. Uso do Componente de Lookup (`po-lookup`) para Tabelas Acessórias Volumosas
+*   **Regra de Ouro**: Sempre utilize o componente `<po-lookup>` em vez do `<po-combo>` ou `<po-select>` ao selecionar dados provenientes de tabelas acessórias ou de grande volume (ex: Municípios, Clientes, Fornecedores, Produtos, etc.).
+*   **Motivo**: O `<po-combo>` e o `<po-select>` exigem carregar todas as opções de dados na memória do navegador de uma única vez, o que degrada consideravelmente a performance em bases de dados volumosas. O `<po-lookup>` soluciona isso realizando chamadas de filtragem assíncronas e paginação sob demanda diretamente no backend através de um `PoLookupFilter`, além de dispor de uma janela modal nativa com busca de múltiplos termos e visualização detalhada em grid.
+*   **Como Fazer no Frontend**:
+    1. Forneça ou injete uma classe de serviço Angular que implemente a interface `PoLookupFilter` para consultar o backend.
+    2. Adicione o componente `<po-lookup>` no template HTML vinculando-o à classe injetada:
+       ```html
+       <po-lookup
+         name="municipio"
+         [p-filter-service]="municipioService"
+         p-label="Município"
+         p-field-label="name"
+         p-field-value="id"
+         [(ngModel)]="cliente.municipioId">
+       </po-lookup>
+       ```
+
 ---
 
 ## 📝 Padrão de Codificação e Resposta

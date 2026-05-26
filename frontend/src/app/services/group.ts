@@ -27,7 +27,8 @@ export class GroupService {
 
   save(group: any): Observable<any> {
     if (group.id) {
-      return this.http.put<any>(`${this.API_URL}/${group.id}`, group, { headers: this.getHeaders() });
+      const { id, ...rest } = group;
+      return this.http.put<any>(`${this.API_URL}/${id}`, rest, { headers: this.getHeaders() });
     } else {
       return this.http.post<any>(this.API_URL, group, { headers: this.getHeaders() });
     }

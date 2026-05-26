@@ -3,6 +3,15 @@
 
 A partir da versão 19.X.X, o PO-UI oferece um serviço completo para criação e gestão de temas personalizados, permitindo controle total sobre cores, tipografia, acessibilidade e comportamentos específicos de componente.
 
+### Versões e ícones
+
+- `@po-ui/ng-components`: 21.17.0
+- `@po-ui/style`: 21.17.0
+- `Angular`: 21.2.4
+- `Node.js`: 20.11.x ou superior
+
+Os exemplos de ícones deste guia usam o componente `po-icon` com o padrão de nomes `an an-*` adotado pelo PO UI. Essa convenção é usada para renderizar ícones PO UI consistentes nos temas e nos componentes.
+
 Principais Recursos:
 
 <div class="po-row" style="margin: 20px 0;">

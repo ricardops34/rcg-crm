@@ -27,7 +27,8 @@ export class ProgramService {
 
   save(data: any): Observable<any> {
     if (data.id) {
-      return this.http.put<any>(`${this.API_URL}/${data.id}`, data, { headers: this.getHeaders() });
+      const { id, ...rest } = data;
+      return this.http.put<any>(`${this.API_URL}/${id}`, rest, { headers: this.getHeaders() });
     }
     return this.http.post<any>(this.API_URL, data, { headers: this.getHeaders() });
   }

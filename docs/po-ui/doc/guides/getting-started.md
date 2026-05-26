@@ -3,7 +3,7 @@
 
 ### Pré-requisitos
 
-Para começar a utilizar o **PO UI** é pré-requisito ter o `Node.js` instalado (versão 20.11.x ou acima) e o seu gerenciador de pacote favorito na versão mais atual. Caso você ainda não tenha instalado o pacote `@angular/cli`, instale-o via `npm` ou `yarn`.
+Para começar a utilizar o **PO UI** é pré-requisito ter o `Node.js` instalado (versão 20.11.x ou acima) e o seu gerenciador de pacotes favorito na versão mais atual. Caso você ainda não tenha instalado o pacote `@angular/cli`, instale-o via `npm` ou `yarn`.
 
 Instalando com npm:
 ```
@@ -14,6 +14,19 @@ Caso prefira instalar com o yarn:
 ```
 yarn global add @angular/cli@21
 ```
+
+### Versões recomendadas
+
+- `Node.js`: 20.11.x ou superior
+- `Angular CLI`: 21.x (recomendado 21.2.4)
+- `Angular`: 21.2.4
+- `TypeScript`: 5.9.3
+- `rxjs`: 7.8.1
+- `zone.js`: 0.15.0
+- `@po-ui/ng-components`: 21.17.0
+- `@po-ui/style`: 21.17.0
+
+> As versões acima seguem o upstream oficial do PO UI, que utiliza `@po-ui/ng-components` 21.17.0 e `@po-ui/style` 21.17.0 como referência para instalação e compatibilidade.
 
 ### Passo 1 - Crie o seu primeiro projeto
 

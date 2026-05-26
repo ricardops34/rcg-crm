@@ -13,3 +13,9 @@ Todas as telas mapeadas a partir de screenshots e sua vinculação aos módulos 
 ## Estatísticas de UI
 - **Total de Telas Documentadas:** 5
 - **Módulos Cobertos:** Gerência, Vendedor.
+
+## Componentes Visuais Documentados
+- **Gráficos:** Ver [charts.md](./charts.md) para documentação completa de componentes de visualização de dados (PO-UI, Chart.js, Adianti BI)
+- **Arquitetura Frontend:** Ver [frontend-architecture.md](./frontend-architecture.md) para padrões Angular, serviços, interceptadores, guards, diretivas e modelos de dados
+
+

@@ -27,7 +27,8 @@ export class UserService {
 
   save(user: any): Observable<any> {
     if (user.id) {
-      return this.http.put<any>(`${this.API_URL}/${user.id}`, user, { headers: this.getHeaders() });
+      const { id, ...rest } = user;
+      return this.http.put<any>(`${this.API_URL}/${id}`, rest, { headers: this.getHeaders() });
     } else {
       return this.http.post<any>(this.API_URL, user, { headers: this.getHeaders() });
     }
