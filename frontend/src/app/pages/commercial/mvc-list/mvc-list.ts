@@ -201,36 +201,53 @@ export class MvcListComponent implements OnInit {
             value: "R",
             color: "color-07",
             label: " ",
-            icon: "po-icon-warning",
+            icon: "an an-warning-circle",
             tooltip: "Possui títulos VENCIDOS"
           },
           {
             value: "B",
             color: "color-10",
             label: " ",
-            icon: "po-icon-ok",
+            icon: "an an-check-circle",
             tooltip: "Títulos em dia"
           }
         ]
       },
       {
         property: "situacao",
-        label: "Situação",
+        label: "Sit.",
         type: "label",
-        width: "100px",
+        width: "60px",
         labels: [
-          { value: "A", color: "color-10", label: "Ativo" },
-          { value: "B", color: "color-07", label: "Bloqueado" }
+          {
+            value: "A",
+            color: "color-10",
+            label: " ",
+            icon: "an an-lock-open",
+            tooltip: "Cliente ATIVO"
+          },
+          {
+            value: "B",
+            color: "color-07",
+            label: " ",
+            icon: "an an-lock",
+            tooltip: "Cliente BLOQUEADO"
+          }
         ]
       },
       {
         property: "tem_comodato",
-        label: "Comodato",
+        label: "Com.",
         type: "label",
-        width: "110px",
+        width: "60px",
         labels: [
-          { value: "S", color: "color-11", label: "Sim" },
-          { value: "N", color: "color-01", label: "Não" }
+          {
+            value: "S",
+            color: "color-08",
+            label: " ",
+            icon: "an an-alarm",
+            tooltip: "Possui COMODATO ativo"
+          }
         ]
       },
       { property: "codigo", label: "Código", width: "110px" },
