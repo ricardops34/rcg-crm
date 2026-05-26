@@ -72,14 +72,20 @@ export class MvcListComponent implements OnInit {
     { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "po-icon-chat" }
   ];
 
-  readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
-    { label: "Atualizar", action: () => this.refreshTable(), icon: "po-icon-refresh" },
-    { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
-    { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
-    { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
-    { label: "91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
-    { label: "Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
-    { label: "Todos os Dias", action: () => this.aplicarFiltroRapido(), icon: "po-icon-clear-content" }
+  readonly pageCustomActions: Array<any> = [
+    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
+    { 
+      label: "Filtros Rápidos",
+      icon: "an an-funnel",
+      subItems: [
+        { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
+        { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
+        { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
+        { label: "91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
+        { label: "Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
+        { separator: true, label: "Todos os Dias", action: () => this.aplicarFiltroRapido() }
+      ]
+    }
   ];
 
   ngOnInit(): void {

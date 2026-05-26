@@ -168,9 +168,11 @@ export class AnalyticsController {
       hasNext: paginated.hasNext,
     });
 
+    const legacyNegativeDiffRowColor = '#FFF7A8';
+
     const mappedItems = paginated.items.map((item: any) => ({
       ...item,
-      $rowColor: item.difference < 0 ? '#FFF9A7' : undefined,
+      $rowColor: item.difference < 0 ? legacyNegativeDiffRowColor : undefined,
     }));
 
     return {
