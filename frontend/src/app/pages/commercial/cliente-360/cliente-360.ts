@@ -9,7 +9,7 @@ import {
   PoModalComponent
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
-import { catchError, finalize, forkJoin, of } from "rxjs";
+import { catchError, finalize, of } from "rxjs";
 import { ClienteService } from "../../../services/cliente";
 import { NegociacaoService } from "../../../services/negociacao";
 
@@ -40,6 +40,8 @@ export class Cliente360Component implements OnInit {
 
   isLoading = true;
   activeTab = "estoque";
+  private clienteId?: number;
+  private loadedTabs: Record<string, boolean> = {};
 
   negociacao: any = {
     observacao: ""
@@ -47,7 +49,7 @@ export class Cliente360Component implements OnInit {
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Voltar", action: this.close.bind(this), icon: "po-icon-arrow-left" },
-    { label: "Atualizar", action: () => this.ngOnInit(), icon: "po-icon-refresh" }
+    { label: "Atualizar", action: () => this.reloadCurrentTab(), icon: "po-icon-refresh" }
   ];
 
   readonly estoqueColumns: Array<PoTableColumn> = [
@@ -127,6 +129,7 @@ export class Cliente360Component implements OnInit {
     });
 
     if (id) {
+      this.clienteId = Number(id);
       this.loadCliente(id);
     }
   }
@@ -136,7 +139,7 @@ export class Cliente360Component implements OnInit {
     this.clienteService.findOne(id).subscribe({
       next: (res) => {
         this.cliente = res;
-        this.loadAllDetails(id);
+        this.loadTab(this.activeTab);
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados do cliente.");
@@ -145,34 +148,120 @@ export class Cliente360Component implements OnInit {
     });
   }
 
-  loadAllDetails(id: number) {
+  onTabActivated(tab: string) {
+    this.activeTab = tab;
+    this.loadTab(tab);
+  }
+
+  reloadCurrentTab() {
+    if (!this.clienteId) {
+      return;
+    }
+
+    this.loadedTabs[this.activeTab] = false;
+    this.loadTab(this.activeTab);
+  }
+
+  private loadTab(tab: string) {
+    if (!this.clienteId || this.loadedTabs[tab]) {
+      this.isLoading = false;
+      return;
+    }
+
     const fallback = (label: string) => {
       console.error(`[360-DEBUG][FRONT] erro ao carregar ${label}`);
       return of([]);
     };
 
-    forkJoin({
-      comodato: this.clienteService.getComodato(id).pipe(catchError(() => fallback("comodato"))),
-      mix: this.clienteService.getMix(id).pipe(catchError(() => fallback("mix"))),
-      financeiro: this.clienteService.getFinanceiro(id).pipe(catchError(() => fallback("financeiro"))),
-      notas: this.clienteService.getNotas(id).pipe(catchError(() => fallback("notas"))),
-      estoque: this.clienteService.getEstoqueEstimado(id).pipe(catchError(() => fallback("estoque estimado"))),
-      atendimentos: this.clienteService.getAtendimentos(id).pipe(catchError(() => fallback("atendimentos"))),
-      overdueTitles: this.negociacaoService.getOverdueTitles(id).pipe(catchError(() => fallback("cobrança")))
-    }).pipe(
-      finalize(() => {
-        this.isLoading = false;
-      })
-    ).subscribe((res: any) => {
-      this.comodatoItems = res.comodato;
-      this.mixItems = res.mix;
-      this.financeiroItems = res.financeiro;
-      this.notasItems = res.notas;
-      this.atendimentosItems = res.atendimentos;
-      this.overdueTitles = res.overdueTitles;
-      this.selectedTitles = [...res.overdueTitles];
-      this.estoqueItems = res.estoque;
-    });
+    const loaders: Record<string, () => void> = {
+      estoque: () => {
+        this.isLoading = true;
+        this.clienteService.getEstoqueEstimado(this.clienteId!).pipe(
+          catchError(() => fallback("estoque estimado")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.estoqueItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      },
+      cobranca: () => {
+        this.isLoading = true;
+        this.negociacaoService.getOverdueTitles(this.clienteId!).pipe(
+          catchError(() => fallback("cobrança")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.overdueTitles = res;
+          this.selectedTitles = [...res];
+          this.loadedTabs[tab] = true;
+        });
+      },
+      mix: () => {
+        this.isLoading = true;
+        this.clienteService.getMix(this.clienteId!).pipe(
+          catchError(() => fallback("mix")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.mixItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      },
+      financeiro: () => {
+        this.isLoading = true;
+        this.clienteService.getFinanceiro(this.clienteId!).pipe(
+          catchError(() => fallback("financeiro")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.financeiroItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      },
+      notas: () => {
+        this.isLoading = true;
+        this.clienteService.getNotas(this.clienteId!).pipe(
+          catchError(() => fallback("notas")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.notasItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      },
+      comodato: () => {
+        this.isLoading = true;
+        this.clienteService.getComodato(this.clienteId!).pipe(
+          catchError(() => fallback("comodato")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.comodatoItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      },
+      atendimentos: () => {
+        this.isLoading = true;
+        this.clienteService.getAtendimentos(this.clienteId!).pipe(
+          catchError(() => fallback("atendimentos")),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe((res: any) => {
+          this.atendimentosItems = res;
+          this.loadedTabs[tab] = true;
+        });
+      }
+    };
+
+    loaders[tab]?.();
   }
 
   openNegociacao() {
@@ -208,7 +297,8 @@ export class Cliente360Component implements OnInit {
       next: () => {
         this.poNotification.success("Negociação gerada com sucesso!");
         this.modalNegociacao.close();
-        this.loadAllDetails(this.cliente.id);
+        this.loadedTabs["cobranca"] = false;
+        this.loadTab("cobranca");
       },
       error: (err) => {
         this.isLoading = false;

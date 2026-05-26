@@ -1,8 +1,6 @@
 <po-page-default [p-title]="'Visão 360: ' + (cliente.razao || '')" [p-actions]="pageActions">
-
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
-  <!-- Cabeçalho Moderno com Resumo -->
   <div class="po-row">
     <po-widget class="po-md-3 po-mb-2" p-title="Cód. ERP">
       <div class="po-font-subtitle po-text-center po-py-1">{{ cliente.codErp }}</div>
@@ -24,7 +22,7 @@
   </div>
 
   <po-tabs>
-    <po-tab p-label="Estoque do Cliente" [p-active]="activeTab === 'estoque'">
+    <po-tab p-label="Estoque do Cliente" [p-active]="activeTab === 'estoque'" (p-activated-tab)="onTabActivated('estoque')">
       <div class="po-row po-mt-2">
         <div class="po-md-12">
           <p class="po-font-text-smaller po-mb-2 po-text-color-07">
@@ -36,7 +34,7 @@
       </div>
     </po-tab>
 
-    <po-tab p-label="Cobrança" [p-active]="activeTab === 'cobranca'">
+    <po-tab p-label="Cobrança" [p-active]="activeTab === 'cobranca'" (p-activated-tab)="onTabActivated('cobranca')">
       <div class="po-row po-mt-2">
         <div class="po-md-12">
           <div class="po-row po-mb-2">
@@ -45,13 +43,9 @@
               <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" (p-click)="openNegociacao()"></po-button>
             </div>
           </div>
-          
-          <po-table 
-            [p-columns]="overdueColumns" 
-            [p-items]="overdueTitles" 
-            p-container="shadow">
-          </po-table>
-          
+
+          <po-table [p-columns]="overdueColumns" [p-items]="overdueTitles" p-container="shadow"></po-table>
+
           <p class="po-font-text-smaller po-mt-2 po-text-color-07">
             * A negociação será gerada com todos os títulos vencidos exibidos.
           </p>
@@ -59,7 +53,7 @@
       </div>
     </po-tab>
 
-    <po-tab p-label="Dados Cadastrais">
+    <po-tab p-label="Dados Cadastrais" [p-active]="activeTab === 'cadastro'" (p-activated-tab)="onTabActivated('cadastro')">
       <div class="po-row po-mt-2">
         <po-info class="po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
         <po-info class="po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
@@ -86,38 +80,36 @@
       </div>
     </po-tab>
 
-    <po-tab p-label="MIX de Produtos">
+    <po-tab p-label="MIX de Produtos" [p-active]="activeTab === 'mix'" (p-activated-tab)="onTabActivated('mix')">
       <po-table [p-columns]="mixColumns" [p-items]="mixItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="Financeiro (Geral)">
+    <po-tab p-label="Financeiro (Geral)" [p-active]="activeTab === 'financeiro'" (p-activated-tab)="onTabActivated('financeiro')">
       <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="Histórico de Notas">
+    <po-tab p-label="Histórico de Notas" [p-active]="activeTab === 'notas'" (p-activated-tab)="onTabActivated('notas')">
       <po-table [p-columns]="notasColumns" [p-items]="notasItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="Comodato">
+    <po-tab p-label="Comodato" [p-active]="activeTab === 'comodato'" (p-activated-tab)="onTabActivated('comodato')">
       <po-table [p-columns]="comodatoColumns" [p-items]="comodatoItems" p-container="shadow"></po-table>
     </po-tab>
 
-    <po-tab p-label="Atendimentos CRM">
+    <po-tab p-label="Atendimentos CRM" [p-active]="activeTab === 'atendimentos'" (p-activated-tab)="onTabActivated('atendimentos')">
       <po-table [p-columns]="atendimentosColumns" [p-items]="atendimentosItems" p-container="shadow"></po-table>
     </po-tab>
   </po-tabs>
-
 </po-page-default>
 
-<!-- Modal de Negociação -->
 <po-modal #modalNegociacao p-title="Gerar Acordo de Negociação" [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
   <div class="po-row">
     <div class="po-md-12">
       <p>Você está agrupando <strong>{{ selectedTitles.length }}</strong> título(s) para este acordo.</p>
-      <po-textarea 
-        name="obs" 
-        [(ngModel)]="negociacao.observacao" 
-        p-label="Relato da Negociação / Acordo" 
+      <po-textarea
+        name="obs"
+        [(ngModel)]="negociacao.observacao"
+        p-label="Relato da Negociação / Acordo"
         p-placeholder="Descreva o que foi acordado com o cliente..."
         [p-required]="true"
         [p-rows]="4">
