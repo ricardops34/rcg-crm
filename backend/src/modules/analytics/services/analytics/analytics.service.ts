@@ -171,6 +171,12 @@ export class AnalyticsService {
           mvc.vendedor_reduzido,
           mvc.vendedor_id,
           mvc.financeiro_status,
+          CASE WHEN EXISTS (
+            SELECT 1 FROM nota_saida ns
+            WHERE ns.cliente_id = mvc.id
+              AND ns.comodato = 'S'
+              AND ns.reg_ativo = 'S'
+          ) THEN 'S' ELSE 'N' END as tem_comodato,
           COALESCE(p.ano, $1) as ano,
           COALESCE(p.janeiro, 0) as janeiro,
           COALESCE(p.fevereiro, 0) as fevereiro,

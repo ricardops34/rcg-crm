@@ -69,7 +69,6 @@ export class MvcListComponent implements OnInit {
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
     { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" },
-    { label: "Editar Cliente", action: (item: any) => this.router.navigate(["/clientes/edit", item.cliente_id]), icon: "po-icon-edit" },
     { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "po-icon-chat" }
   ];
 
@@ -194,12 +193,24 @@ export class MvcListComponent implements OnInit {
       { property: "cliente_id", key: true, visible: false },
       {
         property: "financeiro_status",
-        label: "$",
+        label: "Fin.",
         type: "label",
-        width: "80px",
+        width: "60px",
         labels: [
-          { value: "R", color: "color-07", label: "$" },
-          { value: "B", color: "color-10", label: " " }
+          {
+            value: "R",
+            color: "color-07",
+            label: " ",
+            icon: "po-icon-warning",
+            tooltip: "Possui títulos VENCIDOS"
+          },
+          {
+            value: "B",
+            color: "color-10",
+            label: " ",
+            icon: "po-icon-ok",
+            tooltip: "Títulos em dia"
+          }
         ]
       },
       {
@@ -210,6 +221,16 @@ export class MvcListComponent implements OnInit {
         labels: [
           { value: "A", color: "color-10", label: "Ativo" },
           { value: "B", color: "color-07", label: "Bloqueado" }
+        ]
+      },
+      {
+        property: "tem_comodato",
+        label: "Comodato",
+        type: "label",
+        width: "110px",
+        labels: [
+          { value: "S", color: "color-11", label: "Sim" },
+          { value: "N", color: "color-01", label: "Não" }
         ]
       },
       { property: "codigo", label: "Código", width: "110px" },
