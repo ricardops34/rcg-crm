@@ -1,13 +1,14 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoNotificationService, 
-  PoSelectOption, 
-  PoBreadcrumb 
+import {
+  PoBreadcrumb,
+  PoModule,
+  PoNotificationService,
+  PoSelectOption
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
+import { finalize } from "rxjs";
 import { VendedorService } from "../../../services/vendedor";
 import { UnitService } from "../../../services/unit";
 
@@ -24,16 +25,11 @@ export class VendedorFormComponent implements OnInit {
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
 
-  vendedor: any = {
-    status: "A",
-    vendedor: "S",
-    supervisor: "N",
-    desligado: "N"
-  };
-  
-  isLoading: boolean = false;
-  title: string = "Novo Vendedor";
-  
+  vendedor: any = this.novoVendedor();
+
+  isLoading = false;
+  title = "Novo Vendedor";
+
   units: Array<PoSelectOption> = [];
   supervisors: Array<PoSelectOption> = [];
 
@@ -52,7 +48,8 @@ export class VendedorFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDependencies();
-    const id = this.activatedRoute.snapshot.params["id"];
+
+    const id = Number(this.activatedRoute.snapshot.params["id"]);
     if (id) {
       this.title = "Editar Vendedor";
       this.loadVendedor(id);
@@ -62,24 +59,26 @@ export class VendedorFormComponent implements OnInit {
   loadDependencies() {
     this.unitService.findAll().subscribe({
       next: (res) => {
-        if (Array.isArray(res)) {
-          this.units = res.map((u: any) => ({ label: u.name, value: u.id }));
-        }
+        this.units = Array.isArray(res)
+          ? res.map((unit: any) => ({ label: unit.name, value: unit.id }))
+          : [];
       },
-      error: (err) => {
-        this.poNotification.error("Erro ao carregar unidades de negócio.");
+      error: () => {
+        this.units = [];
+        this.poNotification.error("Erro ao carregar unidades de negocio.");
       }
     });
 
     this.vendedorService.findAll(1, 100, { status: "A" }).subscribe({
       next: (res) => {
-        if (res && Array.isArray(res.items)) {
-          this.supervisors = res.items
-            .filter((v: any) => v.supervisor === "S")
-            .map((v: any) => ({ label: v.nome, value: v.id }));
-        }
+        this.supervisors = Array.isArray(res?.items)
+          ? res.items
+              .filter((vendedor: any) => vendedor.supervisor === "S")
+              .map((vendedor: any) => ({ label: vendedor.nome, value: vendedor.id }))
+          : [];
       },
-      error: (err) => {
+      error: () => {
+        this.supervisors = [];
         this.poNotification.error("Erro ao carregar supervisores.");
       }
     });
@@ -87,31 +86,45 @@ export class VendedorFormComponent implements OnInit {
 
   loadVendedor(id: number) {
     this.isLoading = true;
-    this.vendedorService.findOne(id).subscribe({
-      next: (res) => {
-        this.vendedor = res;
+
+    this.vendedorService.findOne(id).pipe(
+      finalize(() => {
         this.isLoading = false;
+      })
+    ).subscribe({
+      next: (res) => {
+        if (!res) {
+          this.poNotification.error("Vendedor nao encontrado para edicao.");
+          this.router.navigate(["/vendedores"]);
+          return;
+        }
+
+        this.vendedor = {
+          ...this.novoVendedor(),
+          ...res
+        };
       },
       error: () => {
-        this.isLoading = false;
         this.poNotification.error("Erro ao carregar dados do vendedor.");
+        this.router.navigate(["/vendedores"]);
       }
     });
   }
 
   save() {
     this.isLoading = true;
-    // Garantir conversão de booleanos para S/N se necessário (PO-UI Switch usa boolean)
     const payload = { ...this.vendedor };
-    
-    this.vendedorService.save(payload).subscribe({
-      next: () => {
+
+    this.vendedorService.save(payload).pipe(
+      finalize(() => {
         this.isLoading = false;
+      })
+    ).subscribe({
+      next: () => {
         this.poNotification.success("Vendedor salvo com sucesso!");
         this.router.navigate(["/vendedores"]);
       },
-      error: (err) => {
-        this.isLoading = false;
+      error: () => {
         this.poNotification.error("Erro ao salvar vendedor.");
       }
     });
@@ -119,5 +132,15 @@ export class VendedorFormComponent implements OnInit {
 
   cancel() {
     this.router.navigate(["/vendedores"]);
+  }
+
+  private novoVendedor() {
+    return {
+      status: "A",
+      vendedor: "S",
+      supervisor: "N",
+      desligado: "N",
+      dashboard: "N"
+    };
   }
 }

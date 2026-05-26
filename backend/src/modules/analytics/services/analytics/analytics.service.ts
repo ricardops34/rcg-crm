@@ -211,6 +211,7 @@ export class AnalyticsService {
 
         return {
           ...item,
+          venda_mes: currentMonthSales,
           average3Months,
           difference: currentMonthSales - average3Months,
         };
