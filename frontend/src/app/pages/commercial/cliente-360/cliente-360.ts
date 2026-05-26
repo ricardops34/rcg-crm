@@ -34,12 +34,12 @@ export class Cliente360Component implements OnInit {
   financeiroItems: Array<any> = [];
   notasItems: Array<any> = [];
   atendimentosItems: Array<any> = [];
-  sugestoesItems: Array<any> = [];
+  estoqueItems: Array<any> = [];
   overdueTitles: Array<any> = [];
   selectedTitles: Array<any> = [];
 
   isLoading = true;
-  activeTab = "sugestao";
+  activeTab = "estoque";
 
   negociacao: any = {
     observacao: ""
@@ -50,21 +50,18 @@ export class Cliente360Component implements OnInit {
     { label: "Atualizar", action: () => this.ngOnInit(), icon: "po-icon-refresh" }
   ];
 
-  readonly sugestaoColumns: Array<PoTableColumn> = [
+  readonly estoqueColumns: Array<PoTableColumn> = [
     { property: "produto_nome", label: "Produto" },
-    { property: "media_mensal", label: "Média (6m)", type: "number", format: "1.2-2" },
-    { property: "qtd_atual", label: "Comprado (Mês)", type: "number" },
-    {
-      property: "sugestao_status",
-      label: "Sugestão",
-      type: "subtitle",
-      subtitles: [
-        { value: 0, color: "color-08", label: "Abastecido", content: "OK" },
-        { value: 1, color: "color-10", label: "Oportunidade", content: "VENDA" }
-      ]
-    },
-    { property: "sugestao", label: "Qtd. Sugerida", type: "number", format: "1.2-2" },
-    { property: "data_ultima_compra", label: "Última Compra", type: "date" }
+    { property: "um", label: "UM", width: "70px" },
+    { property: "qtd_embalagem", label: "Emb.", type: "number", format: "1.0-2", width: "90px" },
+    { property: "data_ultima_compra", label: "Última Compra", type: "date" },
+    { property: "qtd_ultima_compra", label: "Qtd Últ. Compra", type: "number", format: "1.0-2" },
+    { property: "consumo_medio_dia", label: "Consumo/Dia", type: "number", format: "1.0-4" },
+    { property: "intervalo_medio_dias", label: "Intervalo Médio", type: "number", format: "1.0-2" },
+    { property: "estoque_estimado", label: "Estoque Estimado", type: "number", format: "1.0-2" },
+    { property: "cobertura_dias", label: "Cobertura (Dias)", type: "number", format: "1.0-1" },
+    { property: "data_estimada_necessidade", label: "Necessidade Estimada", type: "date" },
+    { property: "qtd_sugerida", label: "Qtd. Sugerida", type: "number", format: "1.0-2" }
   ];
 
   readonly overdueColumns: Array<PoTableColumn> = [
@@ -159,7 +156,7 @@ export class Cliente360Component implements OnInit {
       mix: this.clienteService.getMix(id).pipe(catchError(() => fallback("mix"))),
       financeiro: this.clienteService.getFinanceiro(id).pipe(catchError(() => fallback("financeiro"))),
       notas: this.clienteService.getNotas(id).pipe(catchError(() => fallback("notas"))),
-      sugestoes: this.clienteService.getSugestoes(id).pipe(catchError(() => fallback("sugestões"))),
+      estoque: this.clienteService.getEstoqueEstimado(id).pipe(catchError(() => fallback("estoque estimado"))),
       atendimentos: this.clienteService.getAtendimentos(id).pipe(catchError(() => fallback("atendimentos"))),
       overdueTitles: this.negociacaoService.getOverdueTitles(id).pipe(catchError(() => fallback("cobrança")))
     }).pipe(
@@ -174,10 +171,7 @@ export class Cliente360Component implements OnInit {
       this.atendimentosItems = res.atendimentos;
       this.overdueTitles = res.overdueTitles;
       this.selectedTitles = [...res.overdueTitles];
-      this.sugestoesItems = (res.sugestoes || []).map((s: any) => ({
-        ...s,
-        sugestao_status: s.sugestao > 0 ? 1 : 0
-      }));
+      this.estoqueItems = res.estoque;
     });
   }
 

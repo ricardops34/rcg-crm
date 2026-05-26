@@ -24,13 +24,14 @@
   </div>
 
   <po-tabs>
-    <po-tab p-label="Sugestão de Compra" [p-active]="activeTab === 'sugestao'">
+    <po-tab p-label="Estoque do Cliente" [p-active]="activeTab === 'estoque'">
       <div class="po-row po-mt-2">
         <div class="po-md-12">
           <p class="po-font-text-smaller po-mb-2 po-text-color-07">
-            Produtos sugeridos com base na média de consumo dos últimos 6 meses vs compras deste mês.
+            Estoque estimado com base nas compras dos últimos 180 dias, no consumo médio e no intervalo entre compras.
+            A sugestão é arredondada para múltiplos da embalagem, evitando compra fracionada.
           </p>
-          <po-table [p-columns]="sugestaoColumns" [p-items]="sugestoesItems" p-container="shadow"></po-table>
+          <po-table [p-columns]="estoqueColumns" [p-items]="estoqueItems" p-container="shadow"></po-table>
         </div>
       </div>
     </po-tab>

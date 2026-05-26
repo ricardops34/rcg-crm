@@ -6,11 +6,11 @@ import {
   Cliente,
   ClienteAtendimentoItem,
   ClienteComodatoItem,
+  ClienteEstoqueEstimadoItem,
   ClienteFinanceiroItem,
   ClienteListResponse,
   ClienteMixItem,
   ClienteNotaItem,
-  ClienteSugestaoItem
 } from "./models/cliente.model";
 
 @Injectable({
@@ -67,8 +67,8 @@ export class ClienteService {
     return this.http.get<ClienteAtendimentoItem[]>(`${this.API_URL}/${id}/atendimentos`, { headers: this.getHeaders() });
   }
 
-  getSugestoes(id: number): Observable<ClienteSugestaoItem[]> {
-    return this.http.get<ClienteSugestaoItem[]>(`${this.API_URL}/${id}/sugestoes`, { headers: this.getHeaders() });
+  getEstoqueEstimado(id: number): Observable<ClienteEstoqueEstimadoItem[]> {
+    return this.http.get<ClienteEstoqueEstimadoItem[]>(`${this.API_URL}/${id}/estoque-estimado`, { headers: this.getHeaders() });
   }
 
   delete(id: number): Observable<void> {

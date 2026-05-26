@@ -84,12 +84,18 @@ export interface ClienteAtendimentoItem {
   [key: string]: unknown;
 }
 
-export interface ClienteSugestaoItem {
-  id?: number;
+export interface ClienteEstoqueEstimadoItem {
+  produto_id?: number;
   produto_nome?: string;
-  media_mensal?: number;
-  qtd_atual?: number;
-  sugestao?: number;
+  um?: string;
+  qtd_embalagem?: number;
   data_ultima_compra?: string;
+  qtd_ultima_compra?: number;
+  consumo_medio_dia?: number;
+  intervalo_medio_dias?: number;
+  estoque_estimado?: number;
+  data_estimada_necessidade?: string;
+  qtd_sugerida?: number;
+  cobertura_dias?: number;
   [key: string]: unknown;
 }

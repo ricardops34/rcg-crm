@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
   PoBreadcrumb,
   PoDisclaimer,
-  PoModule,
   PoModalComponent,
+  PoModule,
   PoNotificationService,
+  PoPopupComponent,
   PoSelectOption
 } from "@po-ui/ng-components";
 import {
-  PoPageDynamicTableCustomAction,
   PoPageDynamicTableCustomTableAction,
   PoPageDynamicTableField,
   PoPageDynamicTableModule
@@ -30,6 +30,7 @@ import { environment } from "../../../../environments/environment";
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
+  @ViewChild("filtroPopup", { static: true }) filtroPopup!: PoPopupComponent;
   @ViewChild("dynamicTable") dynamicTable!: any;
 
   private analyticsService = inject(AnalyticsService);
@@ -74,19 +75,17 @@ export class MvcListComponent implements OnInit {
 
   readonly pageCustomActions: Array<any> = [
     { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
-    {
-      label: "Filtros Rápidos",
-      icon: "an an-funnel",
-      subItems: [
-        { label: "até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
-        { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
-        { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
-        { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
-        { label: "91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
-        { label: "Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
-        { label: "Todos os Dias", action: () => this.aplicarFiltroRapido(), type: "danger", separator: true }
-      ]
-    }
+    { label: "Filtros Rápidos", icon: "an an-funnel", action: () => this.openFiltrosPopup() }
+  ];
+
+  readonly filtroDropdownActions: Array<any> = [
+    { label: "até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
+    { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
+    { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
+    { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
+    { label: "91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
+    { label: "Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
+    { label: "Todos os Dias", action: () => this.aplicarFiltroRapido(), type: "danger", separator: true }
   ];
 
   ngOnInit(): void {
@@ -98,20 +97,21 @@ export class MvcListComponent implements OnInit {
       !!user?.roles?.includes("SUPERVISOR") ||
       !!user?.roles?.includes("GERENTE");
 
-    console.log("[MVC-DEBUG][FRONT] ngOnInit", {
-      user,
-      isGerente: this.isGerente,
-      serviceApiBase: this.serviceApiBase,
-      serviceApi: this.serviceApi,
-      quickFilterParams: this.quickFilterParams,
-      // DIAGNÓSTICO: o PO-UI chama o serviceApi sem parâmetros extras na carga inicial.
-      // Se aparecer dados errados, o problema está na query do backend sem filtros.
-      // Se aparecer encoding errado, o problema está no banco/conexão.
-    });
-
     this.rebuildFields();
     this.loadInitialData();
     this.loadKpis();
+  }
+
+  openFiltrosPopup() {
+    setTimeout(() => {
+      const buttons = Array.from(document.querySelectorAll("po-button"));
+      const targetBtn = buttons.find(btn => btn.textContent?.includes("Filtros Rápidos"));
+
+      if (targetBtn && this.filtroPopup) {
+        this.filtroPopup.target = new ElementRef(targetBtn);
+        this.filtroPopup.toggle();
+      }
+    }, 50);
   }
 
   aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
@@ -126,28 +126,14 @@ export class MvcListComponent implements OnInit {
       this.quickFilterParams["diasAte"] = diasAte;
     }
 
-    console.log("[MVC-DEBUG][FRONT] aplicarFiltroRapido", {
-      diasDe,
-      diasAte,
-      quickFilterParams: this.quickFilterParams
-    });
-
     if (diasDe !== undefined && diasAte !== undefined) {
       this.quickFilterDisclaimers = [
-        {
-          label: "Inatividade",
-          property: "diasFaixa",
-          value: `${diasDe} a ${diasAte} dias`
-        }
+        { label: "Inatividade", property: "diasFaixa", value: `${diasDe} a ${diasAte} dias` }
       ];
       this.poNotification.information(`Filtrando inatividade entre ${diasDe} e ${diasAte} dias.`);
     } else if (diasDe !== undefined) {
       this.quickFilterDisclaimers = [
-        {
-          label: "Inatividade",
-          property: "diasFaixa",
-          value: `Acima de ${diasDe} dias`
-        }
+        { label: "Inatividade", property: "diasFaixa", value: `Acima de ${diasDe} dias` }
       ];
       this.poNotification.information(`Filtrando inatividade acima de ${diasDe} dias.`);
     } else {
@@ -164,15 +150,10 @@ export class MvcListComponent implements OnInit {
           this.vendedores = Array.isArray(res?.items)
             ? res.items.map((vendedor: any) => ({ label: vendedor.nome, value: vendedor.id }))
             : [];
-          console.log("[MVC-DEBUG][FRONT] vendedores carregados", {
-            total: this.vendedores.length,
-            itens: this.vendedores
-          });
           this.rebuildFields();
         },
         error: () => {
           this.vendedores = [];
-          console.error("[MVC-DEBUG][FRONT] erro ao carregar vendedores");
           this.poNotification.error("Erro ao carregar vendedores do filtro.");
         }
       });
@@ -183,13 +164,9 @@ export class MvcListComponent implements OnInit {
         this.tiposAtendimento = Array.isArray(res)
           ? res.map((tipo: any) => ({ label: tipo.descricao, value: tipo.id }))
           : [];
-        console.log("[MVC-DEBUG][FRONT] tipos atendimento carregados", {
-          total: this.tiposAtendimento.length
-        });
       },
       error: () => {
         this.tiposAtendimento = [];
-        console.error("[MVC-DEBUG][FRONT] erro ao carregar tipos de atendimento");
         this.poNotification.error("Erro ao carregar tipos de atendimento.");
       }
     });
@@ -204,42 +181,18 @@ export class MvcListComponent implements OnInit {
         type: "label",
         width: "60px",
         labels: [
-          {
-            value: "A",
-            color: "color-10",
-            label: " ",
-            icon: "an an-lock-open",
-            tooltip: "Cliente ATIVO"
-          },
-          {
-            value: "B",
-            color: "color-07",
-            label: " ",
-            icon: "an an-lock",
-            tooltip: "Cliente BLOQUEADO"
-          }
+          { value: "A", color: "color-10", label: " ", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
+          { value: "B", color: "color-07", label: " ", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" }
         ]
       },
       {
         property: "financeiro_status",
-        label: "Duplicadas",
+        label: "Duplicatas",
         type: "label",
         width: "60px",
         labels: [
-          {
-            value: "R",
-            color: "color-07",
-            label: " ",
-            icon: "an an-warning-circle",
-            tooltip: "Possui títulos VENCIDOS"
-          },
-          {
-            value: "B",
-            color: "color-10",
-            label: " ",
-            icon: "an an-check-circle",
-            tooltip: "Títulos em dia"
-          }
+          { value: "R", color: "color-07", label: " ", icon: "an an-warning-circle", tooltip: "Possui títulos VENCIDOS" },
+          { value: "B", color: "color-10", label: " ", icon: "an an-check-circle", tooltip: "Títulos em dia" }
         ]
       },
       {
@@ -248,13 +201,7 @@ export class MvcListComponent implements OnInit {
         type: "label",
         width: "60px",
         labels: [
-          {
-            value: "S",
-            color: "color-08",
-            label: " ",
-            icon: "an an-alarm",
-            tooltip: "Possui COMODATO ativo"
-          }
+          { value: "S", color: "color-08", label: " ", icon: "an an-alarm", tooltip: "Possui COMODATO ativo" }
         ]
       },
       { property: "codigo", label: "Código", width: "110px" },
@@ -267,15 +214,10 @@ export class MvcListComponent implements OnInit {
     ];
 
     if (this.isGerente) {
-      fields.push({
-        property: "vendedor_reduzido",
-        label: "Vendedor",
-        width: "150px"
-      });
+      fields.push({ property: "vendedor_reduzido", label: "Vendedor", width: "150px" });
     }
 
     this.fields = fields;
-    console.log("[MVC-DEBUG][FRONT] fields reconstruidos", this.fields);
   }
 
   loadKpis(year?: number, month?: number) {
@@ -283,11 +225,6 @@ export class MvcListComponent implements OnInit {
     const selectedMonth = month || new Date().getMonth() + 1;
     this.analyticsService.getDashboardData(selectedYear, selectedMonth).subscribe(res => {
       this.summary = res.summary;
-      console.log("[MVC-DEBUG][FRONT] KPIs carregados", {
-        year: selectedYear,
-        month: selectedMonth,
-        summary: this.summary
-      });
     });
   }
 
@@ -303,31 +240,14 @@ export class MvcListComponent implements OnInit {
         ...this.quickFilterParams
       };
 
-      // Montar a URL completa que será chamada para diagnóstico
-      const urlParams = new URLSearchParams();
-      Object.entries(filtrosCompletos).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) urlParams.set(k, String(v));
-      });
-      const urlDiag = `${this.serviceApi}?${urlParams.toString()}`;
-
       (this.dynamicTable as any).params = { ...filtrosCompletos };
-      console.log("[MVC-DEBUG][FRONT] refreshTable", {
-        filtrosAtuais,
-        quickFilterParams: this.quickFilterParams,
-        filtrosCompletos,
-        serviceApi: this.serviceApi,
-        urlDiagnostico: urlDiag,
-      });
       this.dynamicTable.updateDataTable(filtrosCompletos);
-    } else {
-      console.warn("[MVC-DEBUG][FRONT] refreshTable sem dynamicTable");
     }
 
     this.loadKpis();
   }
 
   removeQuickFilter(disclaimer: PoDisclaimer) {
-    console.log("[MVC-DEBUG][FRONT] removeQuickFilter", disclaimer);
     if (disclaimer.property === "diasFaixa") {
       this.quickFilterParams = {};
       this.quickFilterDisclaimers = [];
@@ -336,14 +256,12 @@ export class MvcListComponent implements OnInit {
   }
 
   clearQuickFilters() {
-    console.log("[MVC-DEBUG][FRONT] clearQuickFilters");
     this.quickFilterParams = {};
     this.quickFilterDisclaimers = [];
     this.refreshTable();
   }
 
   openAtendimento(item: any) {
-    console.log("[MVC-DEBUG][FRONT] openAtendimento", item);
     this.selectedCliente = item;
     this.atendimento = {
       clienteId: item.cliente_id,
@@ -361,16 +279,13 @@ export class MvcListComponent implements OnInit {
       return;
     }
 
-    console.log("[MVC-DEBUG][FRONT] saveAtendimento payload", this.atendimento);
     this.crmService.save(this.atendimento).subscribe({
       next: () => {
-        console.log("[MVC-DEBUG][FRONT] atendimento salvo com sucesso");
         this.poNotification.success("Atendimento registrado com sucesso!");
         this.modalAtendimento.close();
         this.refreshTable();
       },
       error: () => {
-        console.error("[MVC-DEBUG][FRONT] erro ao salvar atendimento");
         this.poNotification.error("Erro ao registrar atendimento.");
       }
     });

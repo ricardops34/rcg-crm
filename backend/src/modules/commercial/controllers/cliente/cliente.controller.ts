@@ -30,7 +30,7 @@ export class ClienteController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Lista clientes com paginação (padrão PO-UI)' })
+  @ApiOperation({ summary: 'Lista clientes com paginacao (padrao PO-UI)' })
   @ApiResponse({ status: 200, type: PaginatedClienteResponseDto })
   async findAll(
     @Query('page') page: number = 1,
@@ -45,46 +45,46 @@ export class ClienteController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca detalhes básicos de um cliente pelo ID' })
+  @ApiOperation({ summary: 'Busca detalhes basicos de um cliente pelo ID' })
   @ApiResponse({ status: 200, type: ClienteResponseDto })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.findOne(id);
   }
 
   @Get(':id/comodato')
-  @ApiOperation({ summary: 'Obtém lista de itens em comodato do cliente' })
+  @ApiOperation({ summary: 'Obtem lista de itens em comodato do cliente' })
   async getComodato(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.getComodato(id);
   }
 
   @Get(':id/mix')
-  @ApiOperation({ summary: 'Obtém o mix de produtos comprados pelo cliente' })
+  @ApiOperation({ summary: 'Obtem o mix de produtos comprados pelo cliente' })
   async getMix(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.getMix(id);
   }
 
   @Get(':id/financeiro')
-  @ApiOperation({ summary: 'Obtém o resumo financeiro (títulos, limites, atrasos)' })
+  @ApiOperation({ summary: 'Obtem o resumo financeiro (titulos, limites, atrasos)' })
   async getFinanceiro(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.getFinanceiro(id);
   }
 
   @Get(':id/notas')
-  @ApiOperation({ summary: 'Lista as últimas Notas Fiscais emitidas para o cliente' })
+  @ApiOperation({ summary: 'Lista as ultimas Notas Fiscais emitidas para o cliente' })
   async getNotas(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.getNotasFiscais(id);
   }
 
   @Get(':id/atendimentos')
-  @ApiOperation({ summary: 'Lista o histórico de atendimentos CRM do cliente' })
+  @ApiOperation({ summary: 'Lista o historico de atendimentos CRM do cliente' })
   async getAtendimentos(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.getAtendimentos(id);
   }
 
-  @Get(':id/sugestoes')
-  @ApiOperation({ summary: 'Obtém sugestões de compra baseadas no histórico' })
-  async getPurchaseSuggestion(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getPurchaseSuggestion(id);
+  @Get(':id/estoque-estimado')
+  @ApiOperation({ summary: 'Obtem o estoque estimado do cliente e a sugestao de compra' })
+  async getEstimatedStock(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.getEstimatedStock(id);
   }
 
   @Post()
@@ -104,7 +104,7 @@ export class ClienteController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove um cliente (exclusão lógica)' })
+  @ApiOperation({ summary: 'Remove um cliente (exclusao logica)' })
   @ApiResponse({ status: 200, description: 'Cliente removido com sucesso' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.clienteService.remove(id);
