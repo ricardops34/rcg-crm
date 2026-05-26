@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoTableColumn, 
+import {
+  PoModule,
+  PoTableColumn,
   PoNotificationService,
   PoPageAction,
   PoModalComponent
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
+import { catchError, finalize, forkJoin, of } from "rxjs";
 import { ClienteService } from "../../../services/cliente";
 import { NegociacaoService } from "../../../services/negociacao";
 
@@ -36,9 +37,9 @@ export class Cliente360Component implements OnInit {
   sugestoesItems: Array<any> = [];
   overdueTitles: Array<any> = [];
   selectedTitles: Array<any> = [];
-  
-  isLoading: boolean = true;
-  activeTab: string = "sugestao";
+
+  isLoading = true;
+  activeTab = "sugestao";
 
   negociacao: any = {
     observacao: ""
@@ -53,10 +54,15 @@ export class Cliente360Component implements OnInit {
     { property: "produto_nome", label: "Produto" },
     { property: "media_mensal", label: "Média (6m)", type: "number", format: "1.2-2" },
     { property: "qtd_atual", label: "Comprado (Mês)", type: "number" },
-    { property: "sugestao_status", label: "Sugestão", type: "subtitle", subtitles: [
-      { value: 0, color: "color-08", label: "Abastecido", content: "OK" },
-      { value: 1, color: "color-10", label: "Oportunidade", content: "VENDA" }
-    ]},
+    {
+      property: "sugestao_status",
+      label: "Sugestão",
+      type: "subtitle",
+      subtitles: [
+        { value: 0, color: "color-08", label: "Abastecido", content: "OK" },
+        { value: 1, color: "color-10", label: "Oportunidade", content: "VENDA" }
+      ]
+    },
     { property: "sugestao", label: "Qtd. Sugerida", type: "number", format: "1.2-2" },
     { property: "data_ultima_compra", label: "Última Compra", type: "date" }
   ];
@@ -88,11 +94,16 @@ export class Cliente360Component implements OnInit {
     { property: "parcela", label: "Parcela" },
     { property: "vencimento", label: "Vencimento", type: "date" },
     { property: "saldo", label: "Saldo", type: "currency", format: "BRL" },
-    { property: "status", label: "Status", type: "label", labels: [
-      { value: "Vencido", color: "color-07", label: "Vencido" },
-      { value: "Vencendo", color: "color-08", label: "Vencendo" },
-      { value: "A Vencer", color: "color-11", label: "A Vencer" }
-    ]}
+    {
+      property: "status",
+      label: "Status",
+      type: "label",
+      labels: [
+        { value: "Vencido", color: "color-07", label: "Vencido" },
+        { value: "Vencendo", color: "color-08", label: "Vencendo" },
+        { value: "A Vencer", color: "color-11", label: "A Vencer" }
+      ]
+    }
   ];
 
   readonly notasColumns: Array<PoTableColumn> = [
@@ -113,7 +124,9 @@ export class Cliente360Component implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.params["id"];
     this.route.queryParams.subscribe(params => {
-      if (params['tab']) this.activeTab = params['tab'];
+      if (params["tab"]) {
+        this.activeTab = params["tab"];
+      }
     });
 
     if (id) {
@@ -136,24 +149,35 @@ export class Cliente360Component implements OnInit {
   }
 
   loadAllDetails(id: number) {
-    // Carregar todas as abas em paralelo
-    this.clienteService.getComodato(id).subscribe(res => this.comodatoItems = res);
-    this.clienteService.getMix(id).subscribe(res => this.mixItems = res);
-    this.clienteService.getFinanceiro(id).subscribe(res => this.financeiroItems = res);
-    this.clienteService.getNotas(id).subscribe(res => this.notasItems = res);
-    this.clienteService.getSugestoes(id).subscribe(res => {
-      this.sugestoesItems = res.map((s: any) => ({
+    const fallback = (label: string) => {
+      console.error(`[360-DEBUG][FRONT] erro ao carregar ${label}`);
+      return of([]);
+    };
+
+    forkJoin({
+      comodato: this.clienteService.getComodato(id).pipe(catchError(() => fallback("comodato"))),
+      mix: this.clienteService.getMix(id).pipe(catchError(() => fallback("mix"))),
+      financeiro: this.clienteService.getFinanceiro(id).pipe(catchError(() => fallback("financeiro"))),
+      notas: this.clienteService.getNotas(id).pipe(catchError(() => fallback("notas"))),
+      sugestoes: this.clienteService.getSugestoes(id).pipe(catchError(() => fallback("sugestões"))),
+      atendimentos: this.clienteService.getAtendimentos(id).pipe(catchError(() => fallback("atendimentos"))),
+      overdueTitles: this.negociacaoService.getOverdueTitles(id).pipe(catchError(() => fallback("cobrança")))
+    }).pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
+    ).subscribe((res: any) => {
+      this.comodatoItems = res.comodato;
+      this.mixItems = res.mix;
+      this.financeiroItems = res.financeiro;
+      this.notasItems = res.notas;
+      this.atendimentosItems = res.atendimentos;
+      this.overdueTitles = res.overdueTitles;
+      this.selectedTitles = [...res.overdueTitles];
+      this.sugestoesItems = (res.sugestoes || []).map((s: any) => ({
         ...s,
         sugestao_status: s.sugestao > 0 ? 1 : 0
       }));
-    });
-    this.clienteService.getAtendimentos(id).subscribe(res => this.atendimentosItems = res);
-    
-    // Dados de Cobrança
-    this.negociacaoService.getOverdueTitles(id).subscribe(res => {
-      this.overdueTitles = res;
-      this.selectedTitles = [...res];
-      this.isLoading = false;
     });
   }
 
@@ -162,6 +186,7 @@ export class Cliente360Component implements OnInit {
       this.poNotification.warning("Cliente não possui títulos vencidos para negociação.");
       return;
     }
+
     this.selectedTitles = [...this.overdueTitles];
     this.negociacao.observacao = "";
     this.modalNegociacao.open();

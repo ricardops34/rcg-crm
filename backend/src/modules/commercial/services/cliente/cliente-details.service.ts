@@ -76,7 +76,14 @@ export class ClienteDetailsService {
     try {
       console.log('[360-DEBUG][BACK] getNotasFiscais clienteId=', clienteId);
       const result = await this.dataSource.query(
-        `SELECT id, nota_fiscal, serie_fiscal, dt_emissao, vlr_bruto, vlr_liquido, vendedor_nome
+        `SELECT 
+          id,
+          nota_fiscal,
+          serie_fiscal,
+          dt_emissao,
+          vlr_bruto,
+          COALESCE(vlr_itens, vlr_mercadoria, vlr_bruto) as vlr_liquido,
+          nome as vendedor_nome
          FROM cliente_notafiscal 
          WHERE cliente_id = $1
          ORDER BY dt_emissao DESC`,
@@ -94,12 +101,18 @@ export class ClienteDetailsService {
     try {
       console.log('[360-DEBUG][BACK] getAtendimentos clienteId=', clienteId);
       const result = await this.dataSource.query(
-        `SELECT a.id, a.dt_atendimento, a.observacao, v.nome as vendedor_nome, ta.descricao as tipo_atendimento
+        `SELECT 
+          a.id,
+          a.horario_inicial as dt_atendimento,
+          a.observacao,
+          v.nome as vendedor_nome,
+          ta.descricao as tipo_atendimento
          FROM atendimento a
-         JOIN vendedor v ON v.id = a.vendedor_id
-         JOIN atendimento_tipo ta ON ta.id = a.atendimento_tipo_id
+         LEFT JOIN vendedor v ON v.id = a.vendedor_id
+         LEFT JOIN atendimento_tipo ta ON ta.id = a.atendimento_tipo_id
          WHERE a.cliente_id = $1
-         ORDER BY a.dt_atendimento DESC`,
+           AND a.dt_delete IS NULL
+         ORDER BY a.horario_inicial DESC`,
         [clienteId],
       );
       console.log('[360-DEBUG][BACK] getAtendimentos OK total=', result.length);
