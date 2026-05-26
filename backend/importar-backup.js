@@ -184,6 +184,25 @@ async function run() {
 
     await executeSqlFile(backupPath, crmDb);
 
+    // 3. Recriar todas as 47 Views do Banco de Dados (CRM)
+    const viewsSqlPath = path.join(__dirname, '../database/view_postgres.sql');
+    if (fs.existsSync(viewsSqlPath)) {
+      console.log('\n📊 [3/3] RECRIANDO VIEWS DO BANCO DE DADOS (CRM)...');
+      const clientCrmViews = new Client({ ...dbConfig, database: crmDb });
+      await clientCrmViews.connect();
+      try {
+        const viewsSql = fs.readFileSync(viewsSqlPath, 'utf8');
+        await clientCrmViews.query(viewsSql);
+        console.log('✅ Todas as 47 Views (incluindo o MCV) foram recriadas com sucesso.');
+      } catch (err) {
+        console.error('⚠️ Falha ao recriar as views:', err.message);
+      } finally {
+        await clientCrmViews.end();
+      }
+    } else {
+      console.warn('⚠️ Arquivo view_postgres.sql não localizado. Pulando recriação de views.');
+    }
+
     console.log('\n===================================================');
     console.log('🎉 IMPORTAÇÃO COMPLETA REALIZADA COM SUCESSO!');
     console.log('===================================================');
