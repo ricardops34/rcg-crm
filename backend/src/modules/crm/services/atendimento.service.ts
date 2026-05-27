@@ -4,7 +4,7 @@ import { Repository, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Atendimento } from '../entities/atendimento.entity';
 import { AtendimentoTipo } from '../entities/atendimento-tipo.entity';
-import { UploadService, MulterFile } from '../../../admin/services/upload.service';
+import { UploadService, MulterFile } from '../../admin/services/upload.service';
 
 export interface SaveAtendimentoInput {
   id?: number;

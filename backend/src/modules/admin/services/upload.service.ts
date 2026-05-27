@@ -5,7 +5,7 @@ import { SystemUnit } from '../entities/system-unit.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export interface MulterFile {
+export class MulterFile {
   fieldname: string;
   originalname: string;
   encoding: string;
