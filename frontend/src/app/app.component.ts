@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, effect, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
 import { 
   PoMenuItem, 
@@ -22,7 +23,7 @@ import { RoutesRegistryService } from "./services/routes-registry.service";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, PoModule],
+  imports: [CommonModule, RouterOutlet, PoModule, FormsModule],
   templateUrl: "./app.component.html"
 })
 export class AppComponent implements OnInit {
