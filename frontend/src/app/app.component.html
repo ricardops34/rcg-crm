@@ -23,3 +23,18 @@
 <ng-template #noAuth>
   <router-outlet></router-outlet>
 </ng-template>
+
+<po-modal #modalUnit p-title="Trocar Unidade de Trabalho"
+  [p-primary-action]="{ label: 'Confirmar Troca', action: confirmUnitSwitch.bind(this) }">
+  <div class="po-row po-p-2">
+    <po-info class="po-md-12 po-mb-3" p-label="Unidade Atual" [p-value]="authService.currentUser()?.unit?.name || 'Não informada'"></po-info>
+    <po-select 
+      class="po-md-12" 
+      name="targetUnit" 
+      [(ngModel)]="selectedUnitId" 
+      p-label="Selecione a Filial de Destino" 
+      [p-options]="allowedUnitOptions"
+      p-required="true">
+    </po-select>
+  </div>
+</po-modal>

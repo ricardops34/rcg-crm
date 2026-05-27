@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from "@angular/core";
+import { Component, OnInit, inject, effect, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
 import { 
@@ -9,7 +9,9 @@ import {
   PoNotificationService,
   PoThemeService,
   PoThemeTypeEnum,
-  PoThemeA11yEnum
+  PoThemeA11yEnum,
+  PoModalComponent,
+  PoSelectOption
 } from "@po-ui/ng-components";
 import { filter } from "rxjs/operators";
 import { AuthService } from "./services/auth";
@@ -24,6 +26,8 @@ import { RoutesRegistryService } from "./services/routes-registry.service";
   templateUrl: "./app.component.html"
 })
 export class AppComponent implements OnInit {
+  @ViewChild('modalUnit', { static: true }) modalUnit!: PoModalComponent;
+
   private router = inject(Router);
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
@@ -36,6 +40,8 @@ export class AppComponent implements OnInit {
   dynamicMenus: Array<PoMenuItem> = [];
   menuItems: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
+  selectedUnitId!: number;
+  allowedUnitOptions: Array<PoSelectOption> = [];
 
   constructor() {
     effect(() => {
@@ -74,6 +80,37 @@ export class AppComponent implements OnInit {
     }
   }
 
+  openUnitSwitchModal() {
+    const user = this.authService.currentUser();
+    if (user && user.allowedUnits && user.allowedUnits.length > 0) {
+      this.allowedUnitOptions = user.allowedUnits.map((u: any) => ({
+        label: u.name,
+        value: u.id
+      }));
+      this.selectedUnitId = user.unit?.id || 0;
+      this.modalUnit.open();
+    } else {
+      this.poNotification.warning("Nenhuma filial adicional autorizada para o seu usuário.");
+    }
+  }
+
+  confirmUnitSwitch() {
+    if (!this.selectedUnitId) return;
+    this.modalUnit.close();
+    
+    this.authService.switchUnit(this.selectedUnitId).subscribe({
+      next: () => {
+        this.poNotification.success("Filial alterada com sucesso!");
+        this.refreshUserInfo();
+        this.loadMenu();
+        this.router.navigate(["/home"]);
+      },
+      error: () => {
+        this.poNotification.error("Erro ao alterar filial de trabalho. Verifique suas permissões.");
+      }
+    });
+  }
+
   // Perfil do usuário logado
   profile: PoToolbarProfile = {
     avatar: "assets/default-avatar.png",
@@ -89,6 +126,7 @@ export class AppComponent implements OnInit {
 
   // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
+    { label: "Trocar Filial", icon: "an an-arrows-clockwise", action: () => this.openUnitSwitchModal() },
     { label: "Configurações", icon: "an an-gear-six", action: () => {} },
     { label: "Apps", icon: "an an-grid-four", action: () => {} },
     { label: "Mensagens", icon: "an an-chat-circle", action: () => {}, type: "danger" },

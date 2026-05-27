@@ -1,4 +1,4 @@
-﻿# rcgcrm — Rebuild do Sistema RCG
+# rcgcrm — Rebuild do Sistema RCG
 
 Este projeto é a reconstrução moderna do sistema legado RCG, baseada nas especificações extraídas via Engenharia Reversa.
 
@@ -20,4 +20,4 @@ O Revisor e o Redator garantiram que os contratos operacionais (Fase 4) sejam ex
 - **Backend:** NestJS (TypeScript)
 - **Banco de Dados:** PostgreSQL (Mantido)
 - **Sessão/Cache:** Redis (Conforme aprovado na revisão)
-- **Frontend:** Angular + PO-UI
+- **Frontend:** Angular (`^21.2.0`) + PO-UI (`^21.15.0`) [MODERNO - Uso obrigatório de `p-danger` em vez de `p-type="danger"` para botões de alerta/remoção]

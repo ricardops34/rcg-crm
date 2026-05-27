@@ -128,4 +128,12 @@ export class AuthService {
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
     return this.http.post<AuthTerms>(`${environment.apiUrl}/admin/users/terms`, data, { headers });
   }
+
+  switchUnit(unitId: number): Observable<AuthResponse> {
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.post<AuthResponse>(`${this.API_URL}/switch-unit`, { unitId }, { headers }).pipe(
+      tap(res => this.handleAuthResponse(res))
+    );
+  }
 }

@@ -38,7 +38,7 @@ import { UnitService } from "../../../services/unit";
             <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">
               @if (unit.logo) {
                 <img [src]="unit.logo" style="max-height: 80px; max-width: 200px; border: 1px solid #ddd; padding: 4px; border-radius: 4px; background: #f9f9f9;">
-                <po-button p-label="Remover" p-type="danger" p-size="small" (p-click)="unit.logo = null"></po-button>
+                <po-button p-label="Remover" [p-danger]="true" p-size="small" (p-click)="unit.logo = null"></po-button>
               } @else {
                 <div style="font-size: 12px; color: #777; font-style: italic;">Nenhuma logo personalizada carregada. Usando a padrão do sistema.</div>
               }
@@ -54,7 +54,7 @@ import { UnitService } from "../../../services/unit";
             <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">
               @if (unit.favicon) {
                 <img [src]="unit.favicon" style="height: 32px; width: 32px; border: 1px solid #ddd; padding: 2px; border-radius: 4px; background: #f9f9f9;">
-                <po-button p-label="Remover" p-type="danger" p-size="small" (p-click)="unit.favicon = null"></po-button>
+                <po-button p-label="Remover" [p-danger]="true" p-size="small" (p-click)="unit.favicon = null"></po-button>
               } @else {
                 <div style="font-size: 12px; color: #777; font-style: italic;">Nenhum favicon personalizado carregado. Usando o padrão do sistema.</div>
               }
