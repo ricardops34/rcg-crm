@@ -29,6 +29,11 @@ export class LoginComponent implements OnInit {
   termsVersion: string = "";
   isLoading = signal<boolean>(false);
 
+  readonly customLiterals = {
+    loginHint: ' ',
+    welcome: 'Bem-vindo'
+  };
+
   ngOnInit() {
     this.loadTerms();
     this.checkSessionError();
