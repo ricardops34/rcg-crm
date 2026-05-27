@@ -69,7 +69,7 @@ export class MvcListComponent implements OnInit {
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
     { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "an an-eye" },
-    { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "an an-chat" }
+    { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "an an-chats" }
   ];
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
@@ -156,35 +156,35 @@ export class MvcListComponent implements OnInit {
   }
 
   private rebuildFields() {
-    const fields: Array<PoPageDynamicTableField> = [
+    const fields: Array<any> = [
       { property: "cliente_id", key: true, visible: false },
       {
         property: "situacao",
         label: "Situação",
-        type: "label",
+        type: "icon",
         width: "60px",
-        labels: [
-          { value: "A", color: "color-10", label: " ", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
-          { value: "B", color: "color-07", label: " ", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" }
+        icons: [
+          { value: "A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
+          { value: "B", color: "color-07", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" }
         ]
       },
       {
         property: "financeiro_status",
         label: "Duplicatas",
-        type: "label",
+        type: "icon",
         width: "60px",
-        labels: [
-          { value: "R", color: "color-07", label: " ", icon: "an an-warning-circle", tooltip: "Possui títulos VENCIDOS" },
-          { value: "B", color: "color-10", label: " ", icon: "an an-check-circle", tooltip: "Títulos em dia" }
+        icons: [
+          { value: "R", color: "color-07", icon: "an an-warning-circle", tooltip: "Possui títulos VENCIDOS" },
+          { value: "B", color: "color-10", icon: "an an-check", tooltip: "Títulos em dia" }
         ]
       },
       {
         property: "tem_comodato",
         label: "Comodato",
-        type: "label",
+        type: "icon",
         width: "60px",
-        labels: [
-          { value: "S", color: "color-08", label: " ", icon: "an an-alarm", tooltip: "Possui COMODATO ativo" }
+        icons: [
+          { value: "S", color: "color-08", icon: "an an-package", tooltip: "Possui COMODATO ativo" }
         ]
       },
       { property: "codigo", label: "Código", width: "110px" },
