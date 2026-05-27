@@ -45,12 +45,12 @@ export class ClienteListComponent implements OnInit {
 
   readonly filter: PoPageFilter = {
     action: this.onFilter.bind(this),
-    placeholder: "Filtrar por razÃ£o, CPF ou CNPJ"
+    placeholder: "Filtrar por razão, CPF ou CNPJ"
   };
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "codErp", label: "CÃ³d. ERP", width: "100px" },
-    { property: "razao", label: "RazÃ£o Social" },
+    { property: "codErp", label: "Cód. ERP", width: "100px" },
+    { property: "razao", label: "Razão Social" },
     { property: "cnpjCpf", label: "CNPJ/CPF", width: "180px" },
     { property: "status", label: "Status", type: "label", width: "120px", labels: [
       { value: "A", color: "color-10", label: "Ativo" },
@@ -61,7 +61,7 @@ export class ClienteListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "PosiÃ§Ã£o 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-eye" },
+    { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-eye" },
     { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" },
     { label: "Excluir", action: this.deleteCliente.bind(this), icon: "po-icon-delete", type: "danger" }
   ];
@@ -124,7 +124,7 @@ export class ClienteListComponent implements OnInit {
       this.isLoading = true;
       this.clienteService.delete(item.id).subscribe({
         next: () => {
-          this.poNotification.success("Cliente excluÃ­do com sucesso!");
+          this.poNotification.success("Cliente excluído com sucesso!");
           this.loadData(this.filtroAtual);
         },
         error: () => {

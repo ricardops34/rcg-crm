@@ -52,7 +52,7 @@ export class GroupListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "SeguranÃ§a", link: "/admin/users" },
+      { label: "Segurança", link: "/admin/users" },
       { label: "Perfis de Acesso" }
     ]
   };

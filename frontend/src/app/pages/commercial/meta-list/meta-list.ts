@@ -19,7 +19,7 @@ import { MetaVendedorService } from "../../../services/meta-vendedor";
   template: `
     <po-page-list
       p-title="Objetivos e Metas"
-      p-subtitle="GestÃ£o de metas mensais de vendas"
+      p-subtitle="Gestão de metas mensais de vendas"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
@@ -73,10 +73,10 @@ export class MetaListComponent implements OnInit {
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
     { property: "ano", label: "Ano", width: "80px" },
-    { property: "mes", label: "MÃªs", width: "80px" },
+    { property: "mes", label: "Mês", width: "80px" },
     { property: "vendedor.nome", label: "Vendedor" },
     { property: "valor", label: "Valor Meta", type: "currency", format: "BRL" },
-    { property: "numeroCliente", label: "PositivaÃ§Ã£o", type: "number" },
+    { property: "numeroCliente", label: "Positivação", type: "number" },
     { property: "novoCliente", label: "Novos Clientes", type: "number" },
     { property: "tipo", label: "Tipo", type: "label", labels: [
       { value: "M", color: "color-10", label: "Mensal" },
@@ -142,7 +142,7 @@ export class MetaListComponent implements OnInit {
     this.isLoading = true;
     this.metaService.delete(row.id).subscribe({
       next: () => {
-        this.poNotification.success("Meta excluÃ­da com sucesso!");
+        this.poNotification.success("Meta excluída com sucesso!");
         this.loadData(this.filtroAtual);
       },
       error: () => {

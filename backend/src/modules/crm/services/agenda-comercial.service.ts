@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 
 type ViewMode = 'month' | 'week' | 'day';
 
 @Injectable()
 export class AgendaComercialService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly cls: ClsService,
+  ) {}
 
   async getAgenda(
     view: ViewMode,
@@ -60,13 +64,16 @@ export class AgendaComercialService {
     periodEnd: Date,
     vendedorId?: number,
   ) {
-    const params: any[] = [this.formatDate(periodStart), this.formatDate(periodEnd)];
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
+    const params: any[] = [this.formatDate(periodStart), this.formatDate(periodEnd), systemUnitId];
     let vendorFilter = '';
 
     if (vendedorId) {
       params.push(vendedorId);
       vendorFilter =
-        ' AND (ns.vendedor1_id = $3 OR ns.vendedor2_id = $3)';
+        ' AND (ns.vendedor1_id = $4 OR ns.vendedor2_id = $4)';
     }
 
     return this.dataSource.query(
@@ -105,6 +112,7 @@ export class AgendaComercialService {
        LEFT JOIN vendedor v ON v.id = ns.vendedor1_id
        LEFT JOIN vendedor v2 ON v2.id = ns.vendedor2_id
        WHERE ns.reg_ativo = 'S'
+         AND ns.system_unit_id = $3
          AND COALESCE(ns.dt_nfe, ns.dt_emissao) BETWEEN $1::date AND $2::date
          ${vendorFilter}
        ORDER BY inicio ASC, ns.nota_fiscal ASC`,
@@ -118,13 +126,16 @@ export class AgendaComercialService {
     vendedorId?: number,
     atendimentoTipoId?: number,
   ) {
-    const params: any[] = [this.formatDate(periodStart), this.formatDate(periodEnd)];
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
+    const params: any[] = [this.formatDate(periodStart), this.formatDate(periodEnd), systemUnitId];
     let vendorFilter = '';
     let atendimentoTipoFilter = '';
 
     if (vendedorId) {
       params.push(vendedorId);
-      vendorFilter = ' AND a.vendedor_id = $3';
+      vendorFilter = ' AND a.vendedor_id = $4';
     }
 
     if (atendimentoTipoId) {
@@ -157,6 +168,7 @@ export class AgendaComercialService {
        LEFT JOIN cliente c ON c.id = a.cliente_id
        LEFT JOIN vendedor v ON v.id = a.vendedor_id
        WHERE a.dt_delete IS NULL
+         AND a.system_unit_id = $3
          AND a.horario_inicial::date BETWEEN $1::date AND $2::date
          ${vendorFilter}
          ${atendimentoTipoFilter}

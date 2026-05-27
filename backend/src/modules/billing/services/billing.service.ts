@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, ILike } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 import { NotaSaida } from '../entities/nota-saida.entity';
 import { NotaSaidaXml } from '../entities/notasaida-xml.entity';
 
@@ -11,6 +12,7 @@ export class BillingService {
     private notaRepository: Repository<NotaSaida>,
     @InjectRepository(NotaSaidaXml)
     private xmlRepository: Repository<NotaSaidaXml>,
+    private readonly cls: ClsService,
   ) {}
 
   async findAll(query: {
@@ -23,8 +25,11 @@ export class BillingService {
     limit?: number;
   }) {
     const { clienteId, vendedorId, startDate, endDate, nota, page = 1, limit = 50 } = query;
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
 
     const where: any = { regAtivo: 'S' };
+    if (systemUnitId) where.systemUnitId = systemUnitId;
 
     if (clienteId) where.clienteId = clienteId;
     if (vendedorId) where.vendedor1Id = vendedorId;
@@ -46,8 +51,14 @@ export class BillingService {
   }
 
   async findOne(id: number) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const where: any = { id };
+    if (systemUnitId) where.systemUnitId = systemUnitId;
+
     const nota = await this.notaRepository.findOne({
-      where: { id },
+      where,
       relations: ['cliente', 'vendedor1', 'filial', 'itens', 'itens.produto'],
     });
 
@@ -67,8 +78,14 @@ export class BillingService {
   }
 
   async getLabelData(id: number) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const where: any = { id };
+    if (systemUnitId) where.systemUnitId = systemUnitId;
+
     const nota = await this.notaRepository.findOne({
-      where: { id },
+      where,
       relations: ['cliente', 'filial'],
     });
 
@@ -88,12 +105,18 @@ export class BillingService {
   }
 
   async getComodatos(query: any) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const where: any = { 
+      regAtivo: 'S',
+      vlrComodato: Between(0.01, 999999999) 
+    };
+    if (systemUnitId) where.systemUnitId = systemUnitId;
+
     // Busca notas que tenham vlr_comodato > 0 ou itens de comodato
     return this.notaRepository.find({
-      where: { 
-        regAtivo: 'S',
-        vlrComodato: Between(0.01, 999999999) 
-      },
+      where,
       relations: ['cliente', 'vendedor1'],
       order: { dtEmissao: 'DESC' },
       take: 100

@@ -18,8 +18,8 @@ import { NegociacaoService } from "../../../services/negociacao";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list
-      p-title="CobranÃ§a e InadimplÃªncia"
-      p-subtitle="Monitoramento de dÃ©bitos e negociaÃ§Ãµes"
+      p-title="Cobrança e Inadimplência"
+      p-subtitle="Monitoramento de débitos e negociações"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="pageActions"
       [p-filter]="filter">
@@ -58,7 +58,7 @@ export class NegociacaoListComponent implements OnInit {
     items: [
       { label: "Home", link: "/" },
       { label: "Financeiro", link: "/clientes" },
-      { label: "CobranÃ§a" }
+      { label: "Cobrança" }
     ]
   };
 
@@ -72,16 +72,16 @@ export class NegociacaoListComponent implements OnInit {
   };
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "cliente_nome", label: "RazÃ£o Social" },
-    { property: "cod_erp", label: "CÃ³d. ERP", width: "100px" },
-    { property: "qtd_titulos", label: "TÃ­tulos", type: "number", width: "100px" },
+    { property: "cliente_nome", label: "Razão Social" },
+    { property: "cod_erp", label: "Cód. ERP", width: "100px" },
+    { property: "qtd_titulos", label: "Títulos", type: "number", width: "100px" },
     { property: "total_vencido", label: "Valor Vencido", type: "currency", format: "BRL" },
     { property: "maior_atraso", label: "Maior Atraso (Dias)", type: "number", width: "150px" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Nova NegociaÃ§Ã£o", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id], { queryParams: { tab: "cobranca" } }), icon: "po-icon-finance" },
-    { label: "VisÃ£o 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" }
+    { label: "Nova Negociação", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id], { queryParams: { tab: "cobranca" } }), icon: "po-icon-finance" },
+    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" }
   ];
 
   ngOnInit(): void {

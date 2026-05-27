@@ -18,8 +18,8 @@ import { ModuleService } from "../../../services/module";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list
-      p-title="MÃ³dulos do Sistema"
-      p-subtitle="GestÃ£o de agrupadores e Ã­cones do menu lateral"
+      p-title="Módulos do Sistema"
+      p-subtitle="Gestão de agrupadores e ícones do menu lateral"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
@@ -57,8 +57,8 @@ export class ModuleListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "SeguranÃ§a", link: "/admin/users" },
-      { label: "MÃ³dulos" }
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Módulos" }
     ]
   };
 
@@ -68,7 +68,7 @@ export class ModuleListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo MÃ³dulo", action: () => this.router.navigate(["/admin/modules/new"]), icon: "po-icon-plus" }
+    { label: "Novo Módulo", action: () => this.router.navigate(["/admin/modules/new"]), icon: "po-icon-plus" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
@@ -78,8 +78,8 @@ export class ModuleListComponent implements OnInit {
 
   readonly columns: Array<PoTableColumn> = [
     { property: "order", label: "Ordem", width: "80px" },
-    { property: "icon", label: "Ãcone", type: "icon", width: "80px" },
-    { property: "name", label: "Nome do MÃ³dulo" }
+    { property: "icon", label: "Ícone", type: "icon", width: "80px" },
+    { property: "name", label: "Nome do Módulo" }
   ];
 
   ngOnInit() {
@@ -118,7 +118,7 @@ export class ModuleListComponent implements OnInit {
       this.isLoading = true;
       this.moduleService.delete(module.id).subscribe({
         next: () => {
-          this.poNotification.success("MÃ³dulo excluÃ­do com sucesso!");
+          this.poNotification.success("Módulo excluído com sucesso!");
           this.loadModules(this.filtroAtual);
         },
         error: () => {

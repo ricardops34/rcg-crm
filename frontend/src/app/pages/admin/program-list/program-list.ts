@@ -29,7 +29,7 @@ import { ModuleService } from "../../../services/module";
         <po-select
           class="po-md-4"
           name="filterModule"
-          p-label="Filtrar por MÃ³dulo"
+          p-label="Filtrar por Módulo"
           [p-options]="moduleFilterOptions"
           [ngModel]="selectedModule"
           (p-change)="onModuleFilter($event)"
@@ -72,7 +72,7 @@ export class ProgramListComponent implements OnInit {
 
   programs: Array<any> = [];
   filteredPrograms: Array<any> = [];
-  moduleFilterOptions: Array<PoSelectOption> = [{ label: "Todos os MÃ³dulos", value: "" }];
+  moduleFilterOptions: Array<PoSelectOption> = [{ label: "Todos os Módulos", value: "" }];
   selectedModule: string = "";
   filterText: string = "";
   isLoading = false;
@@ -82,7 +82,7 @@ export class ProgramListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "AdministraÃ§Ã£o", link: "/admin/users" },
+      { label: "Administração", link: "/admin/users" },
       { label: "Rotinas" }
     ]
   };
@@ -100,8 +100,8 @@ export class ProgramListComponent implements OnInit {
     { property: "id", label: "ID", width: "70px", type: "number" },
     { property: "name", label: "Nome da Rotina" },
     { property: "controller", label: "Controller" },
-    { property: "moduleName", label: "MÃ³dulo", width: "160px" },
-    { property: "icon", label: "Ãcone", width: "120px" }
+    { property: "moduleName", label: "Módulo", width: "160px" },
+    { property: "icon", label: "Ícone", width: "120px" }
   ];
 
   ngOnInit() {
@@ -113,7 +113,7 @@ export class ProgramListComponent implements OnInit {
     this.moduleService.findAll().subscribe({
       next: (modules: any[]) => {
         const opts = modules.map(m => ({ label: m.name, value: String(m.id) }));
-        this.moduleFilterOptions = [{ label: "Todos os MÃ³dulos", value: "" }, ...opts];
+        this.moduleFilterOptions = [{ label: "Todos os Módulos", value: "" }, ...opts];
       }
     });
   }
@@ -125,7 +125,7 @@ export class ProgramListComponent implements OnInit {
       next: (res: any[]) => {
         this.programs = res.map(p => ({
           ...p,
-          moduleName: p.systemModule?.name ?? "â€” sem mÃ³dulo â€”"
+          moduleName: p.systemModule?.name ?? "— sem módulo —"
         }));
         this.applyFilter();
         this.isLoading = false;
@@ -178,7 +178,7 @@ export class ProgramListComponent implements OnInit {
   confirmDelete(program: any) {
     this.poDialog.confirm({
       title: "Excluir Rotina",
-      message: `Deseja realmente excluir a rotina <strong>${program.name}</strong>?<br>Esta aÃ§Ã£o nÃ£o pode ser desfeita.`,
+      message: `Deseja realmente excluir a rotina <strong>${program.name}</strong>?<br>Esta ação não pode ser desfeita.`,
       confirm: () => this.deleteProgram(program),
       cancel: () => {}
     });
@@ -188,7 +188,7 @@ export class ProgramListComponent implements OnInit {
     this.isLoading = true;
     this.programService.delete(program.id).subscribe({
       next: () => {
-        this.poNotification.success("Rotina excluÃ­da com sucesso!");
+        this.poNotification.success("Rotina excluída com sucesso!");
         this.loadPrograms();
       },
       error: () => {
