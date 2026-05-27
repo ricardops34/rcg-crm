@@ -139,16 +139,19 @@ export class AuthService {
     // Atualizar no banco para persistência
     await this.userRepository.update(user.id, { currentSessionId: sessionId });
 
+    const profile = await this.getProfile(user.id);
+    const activeUnitId = profile.unit?.id || user.systemUnitId;
+
     const payload = {
       username: user.login,
       sub: user.id,
       sid: sessionId,
-      unitId: user.systemUnitId,
+      unitId: activeUnitId,
     };
 
     return {
       accessToken: this.jwtService.sign(payload),
-      user: await this.getProfile(user.id),
+      user: profile,
     };
   }
 
@@ -205,7 +208,7 @@ export class AuthService {
       name: user.name,
       login: user.login,
       email: user.email,
-      unit: user.systemUnit,
+      unit: user.systemUnit || (allowedUnits.length > 0 ? allowedUnits[0] : null),
       allowedUnits,
       vendedorId: vendedor?.id || null,
       supervisorId: supervisor?.id || null,

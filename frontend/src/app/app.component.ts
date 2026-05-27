@@ -60,26 +60,7 @@ export class AppComponent implements OnInit {
     action: () => this.router.navigate(["/profile"])
   };
 
-  headerActionTools: Array<PoHeaderActionTool> = [
-    {
-      label: 'Trocar Filial',
-      icon: 'an an-arrows-clockwise',
-      tooltip: 'Trocar unidade de trabalho',
-      action: () => this.openUnitSwitchModal()
-    },
-    {
-      label: 'Alterar Tema',
-      icon: 'an an-paint-brush',
-      tooltip: 'Alternar tema visual',
-      action: () => this.toggleTheme()
-    },
-    {
-      label: 'Configurações',
-      icon: 'an an-gear-six',
-      tooltip: 'Configurações do sistema',
-      action: () => this.router.navigate(["/admin/settings"])
-    }
-  ];
+  headerActionTools: Array<PoHeaderActionTool> = [];
 
   constructor() {
     effect(() => {
@@ -104,6 +85,43 @@ export class AppComponent implements OnInit {
           customerBrand: this.logo,
           action: () => this.router.navigate(["/profile"])
         };
+
+        // Gerar as ferramentas da barra superior dinamicamente
+        const tools: Array<PoHeaderActionTool> = [];
+
+        // Exibe o chaveamento de filial apenas se possuir 2 ou mais filiais autorizadas
+        if (user.allowedUnits && user.allowedUnits.length > 1) {
+          tools.push({
+            label: 'Trocar Filial',
+            icon: 'an an-arrows-clockwise',
+            tooltip: 'Trocar unidade de trabalho',
+            action: () => this.openUnitSwitchModal()
+          });
+        }
+
+        tools.push(
+          {
+            label: 'Alterar Tema',
+            icon: 'an an-paint-brush',
+            tooltip: 'Alternar tema visual',
+            action: () => this.toggleTheme()
+          },
+          {
+            label: 'Configurações',
+            icon: 'an an-gear-six',
+            tooltip: 'Configurações do sistema',
+            action: () => this.router.navigate(["/admin/settings"])
+          },
+          {
+            label: 'Sair',
+            icon: 'an an-sign-out',
+            tooltip: 'Sair do sistema',
+            type: 'danger',
+            action: () => this.logout()
+          }
+        );
+
+        this.headerActionTools = tools;
       } else {
         this.logo = "logo_padrao.png";
         this.toolbarTitle = "CRM";
@@ -120,6 +138,8 @@ export class AppComponent implements OnInit {
           customerBrand: 'logo_padrao.png',
           action: () => this.router.navigate(["/profile"])
         };
+
+        this.headerActionTools = [];
       }
     });
   }
