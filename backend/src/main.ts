@@ -18,26 +18,7 @@ async function bootstrap() {
 
   // Habilitar CORS para o Frontend (Local, Docker e Produção)
   app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
-      
-      const allowedOrigins = [
-        'http://localhost:4200',
-        'https://crm.bjsoft.com.br'
-      ];
-      
-      // Permitir qualquer localhost, 127.0.0.1 ou IPs de redes locais (192.168.*, 10.*, 172.*) em qualquer porta
-      const isLocal = /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$/.test(origin);
-      
-      if (isLocal || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    },
+    origin: true, // Reflete dinamicamente a origem que fez a requisição, permitindo múltiplos subdomínios com credentials
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
