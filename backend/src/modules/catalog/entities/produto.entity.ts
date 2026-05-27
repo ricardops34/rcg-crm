@@ -76,7 +76,7 @@ export class Produto {
   @Column({ length: 200, nullable: true })
   observacao: string;
 
-  @Column({ length: 200, nullable: true })
+  @Column({ type: 'varchar', length: 200, nullable: true })
   foto: string | null;
 
   @Column({ type: 'char', length: 1, nullable: true })

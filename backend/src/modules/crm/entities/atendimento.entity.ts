@@ -95,7 +95,7 @@ export class Atendimento {
   @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
   systemUnitId: number;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   anexo: string | null;
 
   @DeleteDateColumn({ name: 'dt_delete' })

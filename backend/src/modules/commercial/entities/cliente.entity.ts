@@ -225,7 +225,7 @@ export class Cliente {
   @Column({ name: 'data_rfb', type: 'date', nullable: true })
   dataRfb: Date;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   logo: string | null;
 
   @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
