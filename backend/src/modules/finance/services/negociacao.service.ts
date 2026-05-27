@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 import { Negociacao } from '../entities/negociacao.entity';
 import { NegociacaoTituloReceber } from '../entities/negociacao-titulo-receber.entity';
 import { TituloReceber } from '../entities/titulo-receber.entity';
@@ -18,14 +19,18 @@ export class NegociacaoService {
     @InjectRepository(Atendimento)
     private atendimentoRepository: Repository<Atendimento>,
     private dataSource: DataSource,
+    private readonly cls: ClsService,
   ) {}
 
   async getDelinquentClients(vendedorId?: number) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
     let whereVendedor = '';
-    const params: any[] = [];
+    const params: any[] = [systemUnitId];
 
     if (vendedorId) {
-      whereVendedor = ' AND tr.vendedor_id = $1';
+      whereVendedor = ' AND tr.vendedor_id = $2';
       params.push(vendedorId);
     }
 
@@ -40,7 +45,8 @@ export class NegociacaoService {
         MAX(CURRENT_DATE - tr.venc_real) as maior_atraso
        FROM titulo_receber tr
        JOIN cliente c ON c.id = tr.cliente_id
-       WHERE tr.saldo > 0 
+       WHERE tr.system_unit_id = $1
+         AND tr.saldo > 0 
          AND tr.venc_real < CURRENT_DATE
          AND tr.reg_ativo = 'S'
          ${whereVendedor}
@@ -51,9 +57,13 @@ export class NegociacaoService {
   }
 
   async getTitlesForNegotiation(clienteId: number) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
     return this.tituloRepository.find({
       where: {
         clienteId,
+        systemUnitId,
         saldo: 0, // Placeholder logic: should be saldo > 0
         vencReal: undefined, // Placeholder logic: should be vencReal < today
         regAtivo: 'S',
@@ -64,14 +74,18 @@ export class NegociacaoService {
 
   // Refined query for titles for negotiation
   async getOverdueTitles(clienteId: number) {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
     return this.dataSource.query(
       `SELECT * FROM titulo_receber 
        WHERE cliente_id = $1 
+         AND system_unit_id = $2
          AND saldo > 0 
          AND venc_real < CURRENT_DATE
          AND reg_ativo = 'S'
        ORDER BY venc_real ASC`,
-      [clienteId],
+      [clienteId, systemUnitId],
     );
   }
 
@@ -129,7 +143,15 @@ export class NegociacaoService {
   }
 
   async findAll() {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
     return this.negociacaoRepository.find({
+      where: {
+        cliente: {
+          systemUnitId,
+        },
+      },
       relations: ['cliente', 'vendedor', 'titulos', 'titulos.tituloReceber'],
       order: { dt_negociacao: 'DESC' },
     });

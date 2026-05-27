@@ -18,8 +18,8 @@ import { ProductService } from "../../../services/product";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list
-      p-title="CatÃ¡logo de Produtos"
-      p-subtitle="GestÃ£o de itens e categorias"
+      p-title="Catálogo de Produtos"
+      p-subtitle="Gestão de itens e categorias"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="pageActions"
       [p-filter]="filter">
@@ -68,12 +68,12 @@ export class ProductListComponent implements OnInit {
 
   readonly filter: PoPageFilter = {
     action: this.onFilter.bind(this),
-    placeholder: "Filtrar por nome ou cÃ³digo"
+    placeholder: "Filtrar por nome ou código"
   };
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "codErp", label: "CÃ³d. ERP", width: "120px" },
-    { property: "descricao", label: "DescriÃ§Ã£o" },
+    { property: "codErp", label: "Cód. ERP", width: "120px" },
+    { property: "descricao", label: "Descrição" },
     { property: "categoria.descricao", label: "Categoria" },
     { property: "um", label: "Unidade", width: "80px" },
     { property: "status", label: "Status", type: "label", width: "100px", labels: [
@@ -105,7 +105,7 @@ export class ProductListComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
-        this.poNotification.error("Erro ao carregar catÃ¡logo.");
+        this.poNotification.error("Erro ao carregar catálogo.");
       }
     });
   }

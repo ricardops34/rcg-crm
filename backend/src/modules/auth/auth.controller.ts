@@ -94,4 +94,16 @@ export class AuthController {
 
     return this.authService.acceptTerms(req.user.userId);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('switch-unit')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Chaveia a unidade ativa do usuário gerando um novo token JWT' })
+  async switchUnit(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { unitId: number }
+  ) {
+    return this.authService.switchUnit(req.user.userId, body.unitId);
+  }
 }

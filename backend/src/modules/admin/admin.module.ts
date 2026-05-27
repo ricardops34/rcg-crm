@@ -22,6 +22,7 @@ import { ProgramsController } from './programs.controller';
 import { ModulesController } from './modules.controller';
 import { UnitsController } from './units.controller';
 import { MailService } from './services/mail.service';
+import { UploadService } from './services/upload.service';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { MailService } from './services/mail.service';
     ModulesService,
     UnitsService,
     MailService,
+    UploadService,
   ],
   controllers: [
     UsersController,
@@ -66,6 +68,7 @@ import { MailService } from './services/mail.service';
     ModulesService,
     UnitsService,
     MailService,
+    UploadService,
   ],
 })
 export class AdminModule {}

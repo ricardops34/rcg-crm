@@ -6,11 +6,13 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Audited } from '../../admin/decorators/audited.decorator';
 import { Filial } from '../../master-data/entities/filial.entity';
 import { Categoria } from './categoria.entity';
 import { SubCategoria } from './sub-categoria.entity';
+import { ProdutoImagem } from './produto-imagem.entity';
 
 @Audited()
 @Entity('produto')
@@ -74,8 +76,8 @@ export class Produto {
   @Column({ length: 200, nullable: true })
   observacao: string;
 
-  @Column({ length: 200, nullable: true })
-  foto: string;
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  foto: string | null;
 
   @Column({ type: 'char', length: 1, nullable: true })
   status: string;
@@ -130,5 +132,8 @@ export class Produto {
 
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
+
+  @OneToMany(() => ProdutoImagem, (imagem) => imagem.produto)
+  imagens: ProdutoImagem[];
 }
 

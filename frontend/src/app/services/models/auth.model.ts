@@ -31,7 +31,15 @@ export interface AuthUser {
   unit?: {
     id?: number;
     name?: string;
+    logo?: string;
+    favicon?: string;
   };
+  allowedUnits?: Array<{
+    id: number;
+    name: string;
+    logo?: string;
+    favicon?: string;
+  }>;
   roles?: string[];
   isGerente?: boolean;
   supervisorId?: number;

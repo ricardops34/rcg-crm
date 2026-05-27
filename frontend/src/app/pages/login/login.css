@@ -37,3 +37,16 @@
   height: 8px;
 }
 
+/* Customização do alinhamento da imagem de logo no login */
+::ng-deep .po-page-background-main-logo-image {
+  display: block !important;
+  height: auto !important;
+  left: 0 !important;
+  margin: 0 auto !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  position: static !important;
+  /* <-- Declare como static para anular o absolute original! */
+  right: 0 !important;
+  top: 24px !important;
+}

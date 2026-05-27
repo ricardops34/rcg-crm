@@ -132,7 +132,8 @@ SELECT DISTINCT
     cliente.data_cadastro as cliente_data_cadastro,
     cliente.primeira_compra as cliente_primeira_compra,
     cliente.ultima_visita as cliente_ultima_compra,
-    (CURRENT_DATE - cliente.ultima_visita::date) as dias_sem_compra
+    (CURRENT_DATE - cliente.ultima_visita::date) as dias_sem_compra,
+    cliente.system_unit_id as system_unit_id
 FROM cliente 
 JOIN vendedor ON vendedor.id = cliente.vendedor_id
 JOIN municipio ON municipio.id = cliente.municipio_id
@@ -167,7 +168,8 @@ SELECT
     vendedor.cod_erp as "cod_erp_vendedor",
     vendedor.nome as "nome",
     vendedor.nome_reduzido as "nome_reduzido",
-    (CURRENT_DATE - nota_saida.dt_emissao::date) as "dias"
+    (CURRENT_DATE - nota_saida.dt_emissao::date) as "dias",
+    nota_saida.system_unit_id as "system_unit_id"
 FROM 
     nota_saida, 
     cliente, 
@@ -219,7 +221,8 @@ SELECT
     data_cadastro as data_cadastro,
     condicao_pagamento_id as condicao_pagamento_id,
     tabela_preco_id as tabela_preco_id,
-    seguimento_id as seguimento_id
+    seguimento_id as seguimento_id,
+    system_unit_id as system_unit_id
 FROM cliente
 WHERE status <> 'B' AND cod_erp <> '';
 
@@ -269,6 +272,7 @@ SELECT
     regiao_cliente.id as regiao_id,
     regiao_cliente.cod_erp as regiao_codigo,
     regiao_cliente.descricao as regiao_descricao,
+    cliente.system_unit_id as system_unit_id,
     to_char(CURRENT_DATE, 'MM') as mes,
     to_char(CURRENT_DATE, 'YYYY') as ano,
     (CURRENT_DATE - INTERVAL '3 months')::date as tres,
@@ -405,7 +409,8 @@ SELECT
     produto.id as produto_id,
     cliente.id as cliente_id,
     nota_saida.vendedor1_id as vendedor_id,
-    cliente.vendedor_id as cliente_vendedor_id 
+    cliente.vendedor_id as cliente_vendedor_id,
+    nota_saida.system_unit_id as system_unit_id
 FROM nota_saida 
 JOIN nota_saida_item ON (nota_saida_item.nota_saida_id = nota_saida.id and nota_saida_item.reg_ativo = 'S')
 JOIN produto ON (nota_saida_item.produto_id = produto.id)
@@ -703,7 +708,8 @@ SELECT
     cliente.razao as cliente_razao,
     cliente.fantasia as cliente_fantasia,
     nota_saida_item.vlr_bruto as nota_saida_item_vlr_total,
-    (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) as nota_saida_item_vlr_liquido
+    (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) as nota_saida_item_vlr_liquido,
+    vendedor.system_unit_id as system_unit_id
 FROM vendedor
 LEFT JOIN nota_saida ON ( 
     nota_saida.vendedor1_id = vendedor.id
@@ -1025,7 +1031,8 @@ SELECT DISTINCT
     CASE
         WHEN meta_vendedor_mes.valor > 0 THEN round((round(sum(nota_saida_item_vlr_liquido)::numeric, 2) * 100 / meta_vendedor_mes.valor)::numeric, 2)
         ELSE 0
-    END as perc_liquido
+    END as perc_liquido,
+    view_vendedor_venda.system_unit_id as system_unit_id
 FROM view_vendedor_venda
 JOIN vendedor ON (vendedor.id = view_vendedor_venda.vendedor_id)
 LEFT JOIN meta_vendedor_mes ON (
@@ -1035,9 +1042,9 @@ LEFT JOIN meta_vendedor_mes ON (
     and meta_vendedor_mes.dt_delete is null
 )
 GROUP BY view_vendedor_venda.vendedor_id, vendedor.nome, vendedor.nome_reduzido, 
-         view_vendedor_venda.mes, view_vendedor_venda.ano, meta_vendedor_mes.valor;
+         view_vendedor_venda.mes, view_vendedor_venda.ano, meta_vendedor_mes.valor, view_vendedor_venda.system_unit_id;
 
-CREATE UNIQUE INDEX idx_vendedor_venda_mes ON view_vendedor_venda_mes (vendedor_id, ano, mes);
+CREATE UNIQUE INDEX idx_vendedor_venda_mes ON view_vendedor_venda_mes (system_unit_id, vendedor_id, ano, mes);
 
 
 -- ==========================================
@@ -1064,7 +1071,8 @@ SELECT
     SUM(CASE WHEN nota_saida.mes = '09' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS setembro,
     SUM(CASE WHEN nota_saida.mes = '10' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS outubro,
     SUM(CASE WHEN nota_saida.mes = '11' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS novembro,
-    SUM(CASE WHEN nota_saida.mes = '12' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS dezembro 
+    SUM(CASE WHEN nota_saida.mes = '12' THEN (nota_saida_item.vlr_bruto - nota_saida_item.vlr_dev) ELSE 0 END) AS dezembro,
+    cliente.system_unit_id as system_unit_id
 FROM view_ano_base_cliente venda_ano
 LEFT JOIN nota_saida ON (
     nota_saida.cliente_id = venda_ano.cliente_id 
@@ -1077,9 +1085,9 @@ LEFT JOIN nota_saida ON (
 LEFT JOIN nota_saida_item ON (nota_saida_item.nota_saida_id = nota_saida.id AND nota_saida_item.reg_ativo = 'S')
 JOIN cliente ON (cliente.id = nota_saida.cliente_id)
 JOIN vendedor ON (nota_saida.vendedor1_id = vendedor.id)
-GROUP BY cliente.id, cliente.vendedor_id, COALESCE(nota_saida.vendedor1_id, 0), cliente.razao, venda_ano.ano;
+GROUP BY cliente.id, cliente.vendedor_id, COALESCE(nota_saida.vendedor1_id, 0), cliente.razao, venda_ano.ano, cliente.system_unit_id;
 
-CREATE UNIQUE INDEX idx_pivot_venda_mes_cliente ON pivot_venda_mes_cliente (cliente_id, ano, nota_saida_vendedor_id);
+CREATE UNIQUE INDEX idx_pivot_venda_mes_cliente ON pivot_venda_mes_cliente (system_unit_id, cliente_id, ano, nota_saida_vendedor_id);
 
 -- 4.2. pivot_vendas
 DROP VIEW IF EXISTS pivot_vendas CASCADE;

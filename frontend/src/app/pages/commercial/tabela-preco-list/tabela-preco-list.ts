@@ -17,8 +17,8 @@ import { TabelaPrecoService } from "../../../services/tabela-preco";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list
-      p-title="Tabelas de PreÃ§os"
-      p-subtitle="GestÃ£o de listas de preÃ§os e vigÃªncias"
+      p-title="Tabelas de Preços"
+      p-subtitle="Gestão de listas de preços e vigências"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions">
 
@@ -54,7 +54,7 @@ export class TabelaPrecoListComponent implements OnInit {
     items: [
       { label: "Home", link: "/" },
       { label: "Comercial", link: "/clientes" },
-      { label: "Tabelas de PreÃ§os" }
+      { label: "Tabelas de Preços" }
     ]
   };
 
@@ -70,10 +70,10 @@ export class TabelaPrecoListComponent implements OnInit {
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
-    { property: "codErp", label: "CÃ³d. ERP", width: "100px" },
-    { property: "descricao", label: "DescriÃ§Ã£o" },
-    { property: "dt_inicio", label: "InÃ­cio", type: "date" },
-    { property: "dt_fim", label: "TÃ©rmino", type: "date" },
+    { property: "codErp", label: "Cód. ERP", width: "100px" },
+    { property: "descricao", label: "Descrição" },
+    { property: "dt_inicio", label: "Início", type: "date" },
+    { property: "dt_fim", label: "Término", type: "date" },
     { property: "status", label: "Status", type: "label", labels: [
       { value: "A", color: "color-10", label: "Ativa" },
       { value: "I", color: "color-07", label: "Inativa" }
@@ -103,7 +103,7 @@ export class TabelaPrecoListComponent implements OnInit {
       error: () => {
         this.isLoading = false;
         this.loadingShowMore = false;
-        this.poNotification.error("Erro ao carregar tabelas de preÃ§os.");
+        this.poNotification.error("Erro ao carregar tabelas de preços.");
       }
     });
   }
@@ -118,19 +118,19 @@ export class TabelaPrecoListComponent implements OnInit {
   }
 
   remove(row: any) {
-    if (!confirm(`Excluir a tabela de preÃ§o "${row.descricao}"?`)) {
+    if (!confirm(`Excluir a tabela de preço "${row.descricao}"?`)) {
       return;
     }
 
     this.isLoading = true;
     this.tabelaService.delete(row.id).subscribe({
       next: () => {
-        this.poNotification.success("Tabela de preÃ§o excluÃ­da com sucesso!");
+        this.poNotification.success("Tabela de preço excluída com sucesso!");
         this.loadData();
       },
       error: () => {
         this.isLoading = false;
-        this.poNotification.error("Erro ao excluir tabela de preÃ§o.");
+        this.poNotification.error("Erro ao excluir tabela de preço.");
       }
     });
   }

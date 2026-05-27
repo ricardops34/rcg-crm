@@ -51,7 +51,7 @@ export class VendedorListComponent implements OnInit {
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
-    { property: "codErp", label: "CÃ³d. ERP", width: "100px" },
+    { property: "codErp", label: "Cód. ERP", width: "100px" },
     { property: "nome", label: "Nome Completo" },
     { property: "email", label: "E-mail" },
     { property: "filialRazao", label: "Filial Principal" },
@@ -62,7 +62,7 @@ export class VendedorListComponent implements OnInit {
     { property: "celular", label: "Celular", width: "150px" },
     { property: "supervisor", label: "Supervisor?", type: "label", width: "120px", labels: [
       { value: "S", color: "color-11", label: "Sim" },
-      { value: "N", color: "color-08", label: "NÃ£o" }
+      { value: "N", color: "color-08", label: "Não" }
     ]}
   ];
 
@@ -90,7 +90,7 @@ export class VendedorListComponent implements OnInit {
       next: (res) => {
         const novosItems = (res.items || []).map((item: any) => ({
           ...item,
-          filialRazao: item.filial ? item.filial.razao : "NÃ£o vinculada"
+          filialRazao: item.filial ? item.filial.razao : "Não vinculada"
         }));
         const itemsFiltrados = this.aplicarFiltroLocal(novosItems, filter);
 
@@ -133,7 +133,7 @@ export class VendedorListComponent implements OnInit {
     this.isLoading = true;
     this.vendedorService.delete(row.id).subscribe({
       next: () => {
-        this.poNotification.success("Vendedor excluÃ­do com sucesso!");
+        this.poNotification.success("Vendedor excluído com sucesso!");
         this.loadData(this.filtroAtual);
       },
       error: () => {

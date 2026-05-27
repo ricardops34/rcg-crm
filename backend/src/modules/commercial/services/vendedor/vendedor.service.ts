@@ -18,7 +18,12 @@ export class VendedorService {
     filters?: { status?: string; dashboard?: string },
   ): Promise<[Vendedor[], number]> {
     const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
     const where: any = {};
+
+    if (systemUnitId) {
+      where.systemUnitId = systemUnitId;
+    }
 
     if (filters?.status) {
       where.status = filters.status;
@@ -55,6 +60,7 @@ export class VendedorService {
 
   async findOne(id: number): Promise<Vendedor | null> {
     const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
 
     // Validar hierarquia no acesso individual (Role-Based)
     const roles = user?.roles || [];
@@ -71,13 +77,25 @@ export class VendedorService {
       }
     }
 
+    const where: any = { id };
+    if (systemUnitId) {
+      where.systemUnitId = systemUnitId;
+    }
+
     return this.vendedorRepository.findOne({
-      where: { id },
+      where,
       relations: ['filial'],
     });
   }
 
   async save(data: any): Promise<Vendedor> {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    if (systemUnitId && !data.systemUnitId) {
+      data.systemUnitId = systemUnitId;
+    }
+
     return this.vendedorRepository.save(data);
   }
 

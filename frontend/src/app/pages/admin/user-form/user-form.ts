@@ -27,12 +27,12 @@ export class UserFormComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private poNotification = inject(PoNotificationService);
 
-  user: any = { active: "Y", groups: [] };
+  user: any = { active: "Y", groups: [], units: [] };
   isEdit: boolean = false;
   isLoading: boolean = false;
   title: string = "Novo Usuário";
 
-  unitOptions: Array<PoSelectOption> = [];
+  unitOptions: Array<any> = [];
   groupOptions: Array<PoMultiselectOption> = [];
 
   readonly breadcrumb: PoBreadcrumb = {
@@ -80,6 +80,7 @@ export class UserFormComponent implements OnInit {
         }
         this.user = { ...res, password: '' };
         this.user.groups = res.userGroups?.map((ug: any) => ug.systemGroupId) ?? [];
+        this.user.units = res.userUnits?.map((uu: any) => uu.systemUnitId) ?? [];
         this.isLoading = false;
       },
       error: () => {

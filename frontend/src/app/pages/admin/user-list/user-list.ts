@@ -10,7 +10,7 @@ import { UserService } from "../../../services/user";
   imports: [CommonModule, PoModule],
   template: `
     <po-page-list
-      p-title="UsuÃ¡rios do Sistema"
+      p-title="Usuários do Sistema"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
@@ -45,8 +45,8 @@ export class UserListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "SeguranÃ§a", link: "/admin/users" },
-      { label: "UsuÃ¡rios" }
+      { label: "Segurança", link: "/admin/users" },
+      { label: "Usuários" }
     ]
   };
 
@@ -56,7 +56,7 @@ export class UserListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo UsuÃ¡rio", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" },
+    { label: "Novo Usuário", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" },
     { label: "Configurar Termos/LGPD", action: () => this.router.navigate(["/admin/users/terms"]), icon: "po-icon-document" }
   ];
 
@@ -78,7 +78,7 @@ export class UserListComponent implements OnInit {
     { property: "acceptedTermPolicyAt", label: "Data Aceite", type: "date", format: "dd/MM/yyyy HH:mm" },
     { property: "active", label: "Ativo", type: "label", labels: [
       { value: "Y", color: "color-10", label: "Sim" },
-      { value: "N", color: "color-07", label: "NÃ£o" }
+      { value: "N", color: "color-07", label: "Não" }
     ]}
   ];
 
@@ -124,16 +124,16 @@ export class UserListComponent implements OnInit {
   }
 
   deleteUser(user: any) {
-    if (confirm(`Deseja realmente excluir o usuÃ¡rio ${user.name}?`)) {
+    if (confirm(`Deseja realmente excluir o usuário ${user.name}?`)) {
       this.isLoading = true;
       this.userService.delete(user.id).subscribe({
         next: () => {
-          this.poNotification.success("UsuÃ¡rio excluÃ­do com sucesso!");
+          this.poNotification.success("Usuário excluído com sucesso!");
           this.loadUsers(this.filtroAtual);
         },
         error: () => {
           this.isLoading = false;
-          this.poNotification.error("Erro ao excluir usuÃ¡rio.");
+          this.poNotification.error("Erro ao excluir usuário.");
         }
       });
     }

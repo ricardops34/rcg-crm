@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { SystemUser } from '../admin/entities/system-user.entity';
+import { SystemUserUnit } from '../admin/entities/system-user-unit.entity';
 import { PermissionsService } from '../admin/permissions.service';
 import { MailService } from '../admin/services/mail.service';
 import { Vendedor } from '../commercial/entities/vendedor.entity';
@@ -138,16 +139,19 @@ export class AuthService {
     // Atualizar no banco para persistência
     await this.userRepository.update(user.id, { currentSessionId: sessionId });
 
+    const profile = await this.getProfile(user.id);
+    const activeUnitId = profile.unit?.id || user.systemUnitId;
+
     const payload = {
       username: user.login,
       sub: user.id,
       sid: sessionId,
-      unitId: user.systemUnitId,
+      unitId: activeUnitId,
     };
 
     return {
       accessToken: this.jwtService.sign(payload),
-      user: await this.getProfile(user.id),
+      user: profile,
     };
   }
 
@@ -182,12 +186,30 @@ export class AuthService {
 
     const isGerente = userRoles.includes('GERENTE') || userRoles.includes('ADMIN');
 
+    // Buscar todas as unidades permitidas para o usuário na tabela associativa
+    const userUnits = await this.userRepository.manager
+      .getRepository(SystemUserUnit)
+      .find({
+        where: { systemUserId: userId },
+        relations: ['systemUnit'],
+      });
+
+    const rawAllowedUnits = [
+      user.systemUnit,
+      ...userUnits.map((uu) => uu.systemUnit),
+    ].filter((unit) => !!unit);
+
+    const allowedUnits = rawAllowedUnits.filter(
+      (unit, idx, self) => self.findIndex((u) => u.id === unit.id) === idx,
+    );
+
     return {
       id: user.id,
       name: user.name,
       login: user.login,
       email: user.email,
-      unit: user.systemUnit,
+      unit: user.systemUnit || (allowedUnits.length > 0 ? allowedUnits[0] : null),
+      allowedUnits,
       vendedorId: vendedor?.id || null,
       supervisorId: supervisor?.id || null,
       managedVendedorIds,
@@ -199,6 +221,39 @@ export class AuthService {
         controller: user.frontpage.controller
       } : null,
       programs: programs,
+    };
+  }
+
+  async switchUnit(userId: number, targetUnitId: number) {
+    const profile = await this.getProfile(userId);
+    
+    // Validar se targetUnitId está entre as unidades permitidas
+    const isAllowed = profile.allowedUnits.some((u) => u && u.id === targetUnitId);
+    if (!isAllowed) {
+      throw new UnauthorizedException('Acesso negado à unidade selecionada');
+    }
+
+    // Buscar a unidade ativa selecionada
+    const activeUnit = profile.allowedUnits.find((u) => u && u.id === targetUnitId);
+
+    // Gerar novo ID de sessão única
+    const sessionId = uuidv4();
+    await this.cacheManager.set(`session:${userId}`, sessionId, 86400000); 
+    await this.userRepository.update(userId, { currentSessionId: sessionId });
+
+    const payload = {
+      username: profile.login,
+      sub: userId,
+      sid: sessionId,
+      unitId: targetUnitId,
+    };
+
+    // Sobrescrever a unidade ativa no perfil para o retorno
+    profile.unit = activeUnit as any;
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: profile,
     };
   }
 

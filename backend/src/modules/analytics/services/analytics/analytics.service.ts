@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 import { Vendedor } from '../../../commercial/entities/vendedor.entity';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class AnalyticsService {
     private dataSource: DataSource,
     @InjectRepository(Vendedor)
     private vendedorRepository: Repository<Vendedor>,
+    private readonly cls: ClsService,
   ) {}
 
   async getVendedorIdByUser(systemUserId: number): Promise<number | null> {
@@ -23,12 +25,19 @@ export class AnalyticsService {
   }
 
   async getDashboardStats(year: number, month: number, vendedorId?: number) {
-    let whereVendedor = '';
-    const params: any[] = [year.toString(), month.toString().padStart(2, '0')];
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
+
+    let whereVendedorKpi = '';
+    let whereVendedorCategory = '';
+    let whereVendedorSellers = '';
+    const params: any[] = [year.toString(), month.toString().padStart(2, '0'), systemUnitId];
 
     if (vendedorId) {
-      whereVendedor = ' AND vendedor_id = $3';
       params.push(vendedorId);
+      whereVendedorKpi = ' AND vendedor_id = $4';
+      whereVendedorCategory = ' AND vt.vendedor_id = $4';
+      whereVendedorSellers = ' AND vendedor_id = $4';
     }
 
     try {
@@ -39,19 +48,20 @@ export class AnalyticsService {
           SUM(vlr_liquido) as realized,
           AVG(perc_liquido) as achievement
          FROM view_vendedor_venda_mes 
-         WHERE ano = $1 AND mes = $2` + whereVendedor,
+         WHERE ano = $1 AND mes = $2 AND system_unit_id = $3` + whereVendedorKpi,
         params,
       );
 
       // 2. Vendas por Categoria (Rosca)
       const categories = await this.dataSource.query(
         `SELECT 
-          categoria as label,
-          SUM(vlr_liquido) as value
-         FROM view_total_catogoria_mes
-         WHERE ano = $1 AND mes = $2` +
-          whereVendedor +
-          ` GROUP BY categoria ORDER BY value DESC LIMIT 5`,
+          vt.categoria as label,
+          SUM(vt.vlr_liquido) as value
+         FROM view_total_catogoria_mes vt
+         JOIN vendedor v ON v.id = vt.vendedor_id
+         WHERE vt.ano = $1 AND vt.mes = $2 AND v.system_unit_id = $3` +
+          whereVendedorCategory +
+          ` GROUP BY vt.categoria ORDER BY value DESC LIMIT 5`,
         params,
       );
 
@@ -63,7 +73,7 @@ export class AnalyticsService {
             nome as label,
             SUM(vlr_liquido) as value
            FROM view_vendedor_venda_mes
-           WHERE ano = $1 AND mes = $2
+           WHERE ano = $1 AND mes = $2 AND system_unit_id = $3
            GROUP BY nome ORDER BY value DESC LIMIT 5`,
           params,
         );
@@ -104,8 +114,11 @@ export class AnalyticsService {
     },
   ) {
     try {
-      let where = ` WHERE 1=1`;
-      const params: any[] = [year.toString()]; // Pass year as string to leverage unique composite B-tree index
+      const user = this.cls.get('user');
+      const systemUnitId = user?.unitId || 1;
+
+      let where = ` WHERE mvc.system_unit_id = $2`;
+      const params: any[] = [year.toString(), systemUnitId];
 
       if (vendedorId) {
         params.push(vendedorId);
@@ -176,6 +189,7 @@ export class AnalyticsService {
             WHERE ns.cliente_id = mvc.id
               AND ns.comodato = 'S'
               AND ns.reg_ativo = 'S'
+              AND ns.system_unit_id = $2
           ) THEN 'S' ELSE 'N' END as tem_comodato,
           COALESCE(p.ano, $1) as ano,
           COALESCE(p.janeiro, 0) as janeiro,
@@ -191,7 +205,7 @@ export class AnalyticsService {
           COALESCE(p.novembro, 0) as novembro,
           COALESCE(p.dezembro, 0) as dezembro
         FROM mvc
-        LEFT JOIN pivot_venda_mes_cliente p ON p.cliente_id = mvc.id AND p.ano = $1
+        LEFT JOIN pivot_venda_mes_cliente p ON p.cliente_id = mvc.id AND p.ano = $1 AND p.system_unit_id = $2
         ${where}
       `;
 

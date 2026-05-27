@@ -19,7 +19,7 @@ import { UnitService } from "../../../services/unit";
   template: `
     <po-page-list
       p-title="Unidades do Sistema"
-      p-subtitle="GestÃ£o de filiais e conexÃµes"
+      p-subtitle="Gestão de filiais e conexões"
       [p-breadcrumb]="breadcrumb"
       [p-actions]="actions"
       [p-filter]="filter">
@@ -57,7 +57,7 @@ export class UnitListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "SeguranÃ§a", link: "/admin/users" },
+      { label: "Segurança", link: "/admin/users" },
       { label: "Unidades" }
     ]
   };
@@ -79,7 +79,7 @@ export class UnitListComponent implements OnInit {
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "80px" },
     { property: "name", label: "Nome da Unidade" },
-    { property: "connectionName", label: "ConexÃ£o (ERP)" }
+    { property: "connectionName", label: "Conexão (ERP)" }
   ];
 
   ngOnInit() {
@@ -118,7 +118,7 @@ export class UnitListComponent implements OnInit {
       this.isLoading = true;
       this.unitService.delete(unit.id).subscribe({
         next: () => {
-          this.poNotification.success("Unidade excluÃ­da com sucesso!");
+          this.poNotification.success("Unidade excluída com sucesso!");
           this.loadUnits(this.filtroAtual);
         },
         error: () => {

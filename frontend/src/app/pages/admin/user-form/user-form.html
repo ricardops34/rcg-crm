@@ -21,15 +21,23 @@
       <po-select class="po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
     </div>
 
-    <po-divider p-label="Permissões e Perfil"></po-divider>
+    <po-divider p-label="Permissões e Acesso"></po-divider>
     <div class="po-row">
       <po-multiselect 
-        class="po-md-12" 
+        class="po-md-6" 
         name="groups" 
         [(ngModel)]="user.groups" 
         p-label="Perfis de Acesso" 
         [p-options]="groupOptions" 
         p-placeholder="Selecione um ou mais perfis">
+      </po-multiselect>
+      <po-multiselect 
+        class="po-md-6" 
+        name="units" 
+        [(ngModel)]="user.units" 
+        p-label="Unidades de Acesso Adicionais" 
+        [p-options]="unitOptions" 
+        p-placeholder="Selecione filiais adicionais para o usuário">
       </po-multiselect>
     </div>
   </form>

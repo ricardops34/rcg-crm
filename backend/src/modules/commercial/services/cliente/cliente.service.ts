@@ -1,8 +1,9 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Cliente } from '../../entities/cliente.entity';
+import { UploadService, MulterFile } from '../../../admin/services/upload.service';
 
 export type CreateClienteInput = Omit<Partial<Cliente>, 'nascimento'> & {
   nascimento?: string | Date;
@@ -13,6 +14,7 @@ export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    private readonly uploadService: UploadService,
     private readonly cls: ClsService,
   ) {}
 
@@ -20,7 +22,12 @@ export class ClienteService {
     const user = this.cls.get('user');
     const where: any = {};
 
-    // Hierarquia de Acesso Baseada em Perfis (Role-Based)
+    // 1. Filtro de Multitenancy (system_unit_id) obrigatório para todas as buscas
+    if (user?.unitId) {
+      where.systemUnitId = user.unitId;
+    }
+
+    // 2. Hierarquia de Acesso Baseada em Perfis (Role-Based)
     const roles = user?.roles || [];
     
     if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
@@ -49,8 +56,15 @@ export class ClienteService {
 
   async findOne(id: number): Promise<Cliente | null> {
     const user = this.cls.get('user');
+    const where: any = { id };
+
+    // Filtro de Multitenancy (system_unit_id) obrigatório
+    if (user?.unitId) {
+      where.systemUnitId = user.unitId;
+    }
+
     const cliente = await this.clienteRepository.findOne({
-      where: { id },
+      where,
       relations: [
         'vendedor',
         'filial',
@@ -82,16 +96,98 @@ export class ClienteService {
   }
 
   async create(data: CreateClienteInput): Promise<Cliente> {
-    const cliente = this.clienteRepository.create(data as DeepPartial<Cliente>);
+    const user = this.cls.get('user');
+    
+    // Injetar o system_unit_id automaticamente na criação do cliente
+    const clienteData = {
+      ...data,
+      systemUnitId: user?.unitId || 1,
+    };
+
+    const cliente = this.clienteRepository.create(clienteData as DeepPartial<Cliente>);
     return this.clienteRepository.save(cliente);
   }
 
   async update(id: number, data: CreateClienteInput): Promise<Cliente | null> {
-    await this.clienteRepository.update(id, data as any);
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new ForbiddenException('Cliente não encontrado ou acesso negado para esta unidade');
+    }
+
+    // Impede a troca forçada de tenant no payload de update
+    const { systemUnitId, ...updatePayload } = data as any;
+
+    await this.clienteRepository.update(id, updatePayload);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new ForbiddenException('Cliente não encontrado ou acesso negado para esta unidade');
+    }
+    
+    // Remove fisicamente a imagem da logo associada a este cliente do disco
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+    
     await this.clienteRepository.delete(id);
+  }
+
+  async adicionarLogo(id: number, file: MulterFile): Promise<Cliente> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    }
+
+    const unitId = cliente.systemUnitId || 1;
+
+    // 1. Se já existia uma logo anterior, apaga do disco para não acumular arquivos soltos
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+
+    // 2. Salvar novo arquivo físico com validação estrita de cota
+    const caminho = await this.uploadService.verificarCotaESalvar(
+      unitId,
+      file,
+      `clientes/cliente_${id}`,
+    );
+
+    // 3. Atualizar e salvar no banco de dados
+    cliente.logo = caminho;
+    await this.clienteRepository.save(cliente);
+
+    return this.findOne(id) as Promise<Cliente>;
+  }
+
+  async removerLogo(id: number): Promise<Cliente> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    }
+
+    // 1. Remove fisicamente a logo antiga do disco
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+
+    // 2. Limpar a referência no banco de dados
+    cliente.logo = null;
+    await this.clienteRepository.save(cliente);
+
+    return this.findOne(id) as Promise<Cliente>;
+  }
+
+  async obterTodosCaminhosLogos(systemUnitId: number): Promise<string[]> {
+    const clientes = await this.clienteRepository.find({
+      select: ['logo'],
+      where: { systemUnitId },
+    });
+    
+    return clientes
+      .map((c) => c.logo)
+      .filter((logo): logo is string => typeof logo === 'string' && logo.length > 0);
   }
 }

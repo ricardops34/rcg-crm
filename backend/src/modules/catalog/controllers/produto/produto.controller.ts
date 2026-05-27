@@ -9,9 +9,13 @@ import {
   ParseIntPipe,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ProdutoService } from '../../services/produto/produto.service';
+import { MulterFile } from '../../../admin/services/upload.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
@@ -71,5 +75,27 @@ export class ProdutoController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.produtoService.remove(id);
+  }
+
+  @Post(':id/imagens')
+  @ApiOperation({ summary: 'Adiciona uma foto à galeria do produto' })
+  @UseInterceptors(FileInterceptor('file'))
+  async adicionarImagem(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: MulterFile,
+  ) {
+    return this.produtoService.adicionarImagem(id, file);
+  }
+
+  @Put('imagens/:imagemId/principal')
+  @ApiOperation({ summary: 'Define uma foto específica como a principal do produto' })
+  async definirPrincipal(@Param('imagemId', ParseIntPipe) imagemId: number) {
+    return this.produtoService.definirPrincipal(imagemId);
+  }
+
+  @Delete('imagens/:imagemId')
+  @ApiOperation({ summary: 'Remove uma foto da galeria do produto' })
+  async removerImagem(@Param('imagemId', ParseIntPipe) imagemId: number) {
+    return this.produtoService.removerImagem(imagemId);
   }
 }

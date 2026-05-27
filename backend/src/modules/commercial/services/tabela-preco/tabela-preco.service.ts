@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { ClsService } from 'nestjs-cls';
 import { TabelaPreco } from '../../entities/tabela-preco.entity';
 import { TabelaPrecoItem } from '../../entities/tabela-preco-item.entity';
 
@@ -12,10 +13,20 @@ export class TabelaPrecoService {
     @InjectRepository(TabelaPrecoItem)
     private tabelaPrecoItemRepository: Repository<TabelaPrecoItem>,
     private dataSource: DataSource,
+    private readonly cls: ClsService,
   ) {}
 
   async findAll(page = 1, limit = 100): Promise<[TabelaPreco[], number]> {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const where: any = {};
+    if (systemUnitId) {
+      where.systemUnitId = systemUnitId;
+    }
+
     return this.tabelaPrecoRepository.findAndCount({
+      where,
       skip: (page - 1) * limit,
       take: limit,
       order: { descricao: 'ASC' },
@@ -23,7 +34,15 @@ export class TabelaPrecoService {
   }
 
   async findOne(id: number): Promise<TabelaPreco> {
-    const table = await this.tabelaPrecoRepository.findOne({ where: { id } });
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const where: any = { id };
+    if (systemUnitId) {
+      where.systemUnitId = systemUnitId;
+    }
+
+    const table = await this.tabelaPrecoRepository.findOne({ where });
     if (!table) {
       throw new NotFoundException(
         `Tabela de preço com ID ${id} não encontrada`,
@@ -34,6 +53,8 @@ export class TabelaPrecoService {
 
   async findItems(tabelaPrecoId: number) {
     await this.findOne(tabelaPrecoId);
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId || 1;
 
     return this.dataSource.query(
       `SELECT
@@ -46,9 +67,9 @@ export class TabelaPrecoService {
         tpi.status
        FROM tabela_preco_item tpi
        LEFT JOIN produto p ON p.id = tpi.produto_id
-       WHERE tpi.tabela_preco_id = $1
+       WHERE tpi.tabela_preco_id = $1 AND tpi.system_unit_id = $2
        ORDER BY tpi.item ASC, p.descricao ASC`,
-      [tabelaPrecoId],
+      [tabelaPrecoId, systemUnitId],
     );
   }
 
@@ -74,12 +95,25 @@ export class TabelaPrecoService {
   }
 
   async save(data: Partial<TabelaPreco>): Promise<TabelaPreco> {
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    if (systemUnitId && !data.systemUnitId) {
+      data.systemUnitId = systemUnitId;
+    }
+
     return this.tabelaPrecoRepository.save(data);
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
-    await this.tabelaPrecoItemRepository.delete({ tabelaPrecoId: id });
+    const user = this.cls.get('user');
+    const systemUnitId = user?.unitId;
+
+    const deleteWhere: any = { tabelaPrecoId: id };
+    if (systemUnitId) deleteWhere.systemUnitId = systemUnitId;
+
+    await this.tabelaPrecoItemRepository.delete(deleteWhere);
     await this.tabelaPrecoRepository.delete(id);
   }
 }

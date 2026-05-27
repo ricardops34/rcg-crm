@@ -1,15 +1,21 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, effect, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
-import { 
-  PoMenuItem, 
-  PoModule, 
-  PoToolbarAction, 
-  PoToolbarProfile, 
+import {
+  PoMenuItem,
+  PoModule,
+  PoToolbarAction,
+  PoToolbarProfile,
   PoNotificationService,
   PoThemeService,
   PoThemeTypeEnum,
-  PoThemeA11yEnum
+  PoThemeA11yEnum,
+  PoModalComponent,
+  PoSelectOption,
+  PoHeaderActionTool,
+  PoHeaderBrand,
+  PoHeaderUser
 } from "@po-ui/ng-components";
 import { filter } from "rxjs/operators";
 import { AuthService } from "./services/auth";
@@ -20,10 +26,12 @@ import { RoutesRegistryService } from "./services/routes-registry.service";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, PoModule],
+  imports: [CommonModule, RouterOutlet, PoModule, FormsModule],
   templateUrl: "./app.component.html"
 })
 export class AppComponent implements OnInit {
+  @ViewChild('modalUnit', { static: true }) modalUnit!: PoModalComponent;
+
   private router = inject(Router);
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
@@ -31,11 +39,160 @@ export class AppComponent implements OnInit {
   private routesRegistry = inject(RoutesRegistryService);
 
   user: any;
-  logo: string = "assets/logo_rcg.png";
+  logo: string = "logo_padrao.png";
   currentTheme: string = "rcg";
   dynamicMenus: Array<PoMenuItem> = [];
   menuItems: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
+  selectedUnitId!: number;
+  allowedUnitOptions: Array<PoSelectOption> = [];
+  toolbarTitle: string = "CRM";
+
+  headerBrand: PoHeaderBrand = {
+    title: 'CRM',
+    logo: 'logo_padrao.png',
+    action: () => this.router.navigate(["/home"])
+  };
+
+  headerUser: PoHeaderUser = {
+    avatar: 'assets/default-avatar.png',
+    customerBrand: 'logo_bj.png',
+    action: () => this.router.navigate(["/profile"])
+  };
+
+  headerActionTools: Array<PoHeaderActionTool> = [];
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user && user.unit) {
+        if (user.unit.logo) {
+          this.logo = user.unit.logo;
+        } else {
+          this.logo = "logo_padrao.png";
+        }
+        this.toolbarTitle = `CRM - ${user.unit.name || ''}`;
+        this.updateFavicon(user.unit.favicon);
+
+        this.headerBrand = {
+          title: this.toolbarTitle,
+          logo: this.logo,
+          action: () => this.router.navigate(["/home"])
+        };
+
+        this.headerUser = {
+          avatar: user.avatar || "assets/default-avatar.png",
+          customerBrand: this.logo,
+          action: () => this.router.navigate(["/profile"])
+        };
+
+        // Gerar as ferramentas da barra superior dinamicamente
+        const tools: Array<PoHeaderActionTool> = [];
+
+        // Exibe o chaveamento de filial apenas se possuir 2 ou mais filiais autorizadas
+        if (user.allowedUnits && user.allowedUnits.length > 1) {
+          tools.push({
+            label: 'Trocar Filial',
+            icon: 'an an-arrows-clockwise',
+            tooltip: 'Trocar unidade de trabalho',
+            action: () => this.openUnitSwitchModal()
+          });
+        }
+
+        tools.push(
+          {
+            label: 'Alterar Tema',
+            icon: 'an an-paint-brush',
+            tooltip: 'Alternar tema visual',
+            action: () => this.toggleTheme()
+          },
+          {
+            label: 'Configurações',
+            icon: 'an an-gear-six',
+            tooltip: 'Configurações do sistema',
+            action: () => this.router.navigate(["/admin/settings"])
+          },
+          {
+            label: 'Sair',
+            icon: 'an an-sign-out',
+            tooltip: 'Sair do sistema',
+            action: () => this.logout()
+          }
+        );
+
+        this.headerActionTools = tools;
+      } else {
+        this.logo = "logo_padrao.png";
+        this.toolbarTitle = "CRM";
+        this.updateFavicon(null);
+
+        this.headerBrand = {
+          title: this.toolbarTitle,
+          logo: this.logo,
+          action: () => this.router.navigate(["/home"])
+        };
+
+        this.headerUser = {
+          avatar: "assets/default-avatar.png",
+          customerBrand: 'logo_padrao.png',
+          action: () => this.router.navigate(["/profile"])
+        };
+
+        this.headerActionTools = [];
+      }
+    });
+  }
+
+  updateFavicon(faviconBase64: string | null | undefined) {
+    if (typeof document !== 'undefined') {
+      const faviconElement = document.getElementById("app-favicon") as HTMLLinkElement ||
+        document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+
+      const defaultFavicon = "favicon.ico";
+
+      if (faviconElement) {
+        faviconElement.href = faviconBase64 ? faviconBase64 : defaultFavicon;
+      } else {
+        const link = document.createElement('link');
+        link.id = 'app-favicon';
+        link.rel = 'icon';
+        link.type = 'image/x-icon';
+        link.href = faviconBase64 ? faviconBase64 : defaultFavicon;
+        document.head.appendChild(link);
+      }
+    }
+  }
+
+  openUnitSwitchModal() {
+    const user = this.authService.currentUser();
+    if (user && user.allowedUnits && user.allowedUnits.length > 0) {
+      this.allowedUnitOptions = user.allowedUnits.map((u: any) => ({
+        label: u.name,
+        value: u.id
+      }));
+      this.selectedUnitId = user.unit?.id || 0;
+      this.modalUnit.open();
+    } else {
+      this.poNotification.warning("Nenhuma filial adicional autorizada para o seu usuário.");
+    }
+  }
+
+  confirmUnitSwitch() {
+    if (!this.selectedUnitId) return;
+    this.modalUnit.close();
+
+    this.authService.switchUnit(this.selectedUnitId).subscribe({
+      next: () => {
+        this.poNotification.success("Filial alterada com sucesso!");
+        this.refreshUserInfo();
+        this.loadMenu();
+        this.router.navigate(["/home"]);
+      },
+      error: () => {
+        this.poNotification.error("Erro ao alterar filial de trabalho. Verifique suas permissões.");
+      }
+    });
+  }
 
   // Perfil do usuário logado
   profile: PoToolbarProfile = {
@@ -52,9 +209,10 @@ export class AppComponent implements OnInit {
 
   // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
-    { label: "Configurações", icon: "an an-gear-six", action: () => {} },
-    { label: "Apps", icon: "an an-grid-four", action: () => {} },
-    { label: "Mensagens", icon: "an an-chat-circle", action: () => {}, type: "danger" },
+    { label: "Trocar Filial", icon: "an an-arrows-clockwise", action: () => this.openUnitSwitchModal() },
+    { label: "Configurações", icon: "an an-gear-six", action: () => { } },
+    { label: "Apps", icon: "an an-grid-four", action: () => { } },
+    { label: "Mensagens", icon: "an an-chat-circle", action: () => { }, type: "danger" },
     { label: "Alterar Tema", icon: "an an-paint-brush", action: () => this.toggleTheme() }
   ];
 
@@ -62,7 +220,7 @@ export class AppComponent implements OnInit {
     this.checkRoute();
     this.refreshUserInfo();
     this.loadTheme();
-    
+
     if (this.authService.isAuthenticated()) {
       this.loadMenu();
     }
