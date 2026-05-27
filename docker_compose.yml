@@ -31,6 +31,7 @@ services:
       - DB_SEED=${DB_SEED:-false}
     volumes:
       - rcg-backup:/app/backup
+      - rcg-uploads:/app/uploads
     deploy:
       replicas: 2
       update_config:
@@ -73,5 +74,6 @@ networks:
 
 volumes:
   rcg-backup:
+  rcg-uploads:
 
 
