@@ -1,8 +1,9 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Cliente } from '../../entities/cliente.entity';
+import { UploadService } from '../../../admin/services/upload.service';
 
 export type CreateClienteInput = Omit<Partial<Cliente>, 'nascimento'> & {
   nascimento?: string | Date;
@@ -13,6 +14,7 @@ export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    private readonly uploadService: UploadService,
     private readonly cls: ClsService,
   ) {}
 
@@ -125,6 +127,67 @@ export class ClienteService {
       throw new ForbiddenException('Cliente não encontrado ou acesso negado para esta unidade');
     }
     
+    // Remove fisicamente a imagem da logo associada a este cliente do disco
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+    
     await this.clienteRepository.delete(id);
+  }
+
+  async adicionarLogo(id: number, file: Express.Multer.File): Promise<Cliente> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    }
+
+    const unitId = cliente.systemUnitId || 1;
+
+    // 1. Se já existia uma logo anterior, apaga do disco para não acumular arquivos soltos
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+
+    // 2. Salvar novo arquivo físico com validação estrita de cota
+    const caminho = await this.uploadService.verificarCotaESalvar(
+      unitId,
+      file,
+      `clientes/cliente_${id}`,
+    );
+
+    // 3. Atualizar e salvar no banco de dados
+    cliente.logo = caminho;
+    await this.clienteRepository.save(cliente);
+
+    return this.findOne(id) as Promise<Cliente>;
+  }
+
+  async removerLogo(id: number): Promise<Cliente> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    }
+
+    // 1. Remove fisicamente a logo antiga do disco
+    if (cliente.logo) {
+      this.uploadService.removerArquivoFisico(cliente.logo);
+    }
+
+    // 2. Limpar a referência no banco de dados
+    cliente.logo = null;
+    await this.clienteRepository.save(cliente);
+
+    return this.findOne(id) as Promise<Cliente>;
+  }
+
+  async obterTodosCaminhosLogos(systemUnitId: number): Promise<string[]> {
+    const clientes = await this.clienteRepository.find({
+      select: ['logo'],
+      where: { systemUnitId },
+    });
+    
+    return clientes
+      .map((c) => c.logo)
+      .filter((logo): logo is string => typeof logo === 'string' && logo.length > 0);
   }
 }

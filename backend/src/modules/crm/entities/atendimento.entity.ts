@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -91,6 +91,12 @@ export class Atendimento {
 
   @UpdateDateColumn({ name: 'dt_alteracao', nullable: true })
   dtAlteracao: Date;
+
+  @Column({ name: 'system_unit_id', type: 'integer', nullable: true })
+  systemUnitId: number;
+
+  @Column({ length: 255, nullable: true })
+  anexo: string;
 
   @DeleteDateColumn({ name: 'dt_delete' })
   dtDelete: Date;

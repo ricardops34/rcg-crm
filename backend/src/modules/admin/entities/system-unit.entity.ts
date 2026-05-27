@@ -16,4 +16,7 @@ export class SystemUnit {
 
   @Column({ type: 'text', nullable: true })
   favicon: string;
+
+  @Column({ name: 'limite_disco_mb', type: 'integer', default: 1000 })
+  limiteDiscoMb: number;
 }

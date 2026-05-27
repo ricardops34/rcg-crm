@@ -6,6 +6,7 @@ import { Produto } from './entities/produto.entity';
 import { Armazem } from './entities/armazem.entity';
 import { Fabricante } from './entities/fabricante.entity';
 import { Estoque } from './entities/estoque.entity';
+import { ProdutoImagem } from './entities/produto-imagem.entity';
 import { SyncCatalogService } from './services/sync-catalog/sync-catalog.service';
 import { SyncCatalogController } from './controllers/sync-catalog/sync-catalog.controller';
 import { ProdutoController } from './controllers/produto/produto.controller';
@@ -22,6 +23,7 @@ import { AdminModule } from '../admin/admin.module';
       Armazem,
       Fabricante,
       Estoque,
+      ProdutoImagem,
     ]),
     MasterDataModule,
     AdminModule,

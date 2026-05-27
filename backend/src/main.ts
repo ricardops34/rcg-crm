@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
+import * as express from 'express';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Servir arquivos físicos de uploads de forma estática
+  app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
+
+  // Aumentar o limite do corpo da requisição para aceitar imagens em Base64 (upload de logos/favicons)
+  app.use(json({ limit: '10mb' }));
+  app.use(urlencoded({ limit: '10mb', extended: true }));
 
   // Habilitar CORS para o Frontend (Local, Docker e Produção)
   app.enableCors({
