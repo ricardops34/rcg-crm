@@ -59,8 +59,12 @@ export class ClienteService {
     return this.http.get<ClienteFinanceiroItem[]>(`${this.API_URL}/${id}/financeiro`, { headers: this.getHeaders() });
   }
 
-  getNotas(id: number): Observable<ClienteNotaItem[]> {
-    return this.http.get<ClienteNotaItem[]>(`${this.API_URL}/${id}/notas`, { headers: this.getHeaders() });
+  getNotas(id: number, monthsOffset: number = 0, monthsWindow: number = 12): Observable<any> {
+    const params = new HttpParams()
+      .set("monthsOffset", monthsOffset.toString())
+      .set("monthsWindow", monthsWindow.toString());
+
+    return this.http.get<any>(`${this.API_URL}/${id}/notas`, { headers: this.getHeaders(), params });
   }
 
   getAtendimentos(id: number): Observable<ClienteAtendimentoItem[]> {

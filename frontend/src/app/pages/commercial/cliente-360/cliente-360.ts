@@ -42,6 +42,10 @@ export class Cliente360Component implements OnInit {
   activeTab = "estoque";
   private clienteId?: number;
   private loadedTabs: Record<string, boolean> = {};
+  notasHasNext = false;
+  notasMonthsOffset = 0;
+  readonly notasMonthsWindow = 12;
+  isLoadingMoreNotas = false;
 
   negociacao: any = {
     observacao: ""
@@ -225,13 +229,15 @@ export class Cliente360Component implements OnInit {
       },
       notas: () => {
         this.isLoading = true;
-        this.clienteService.getNotas(this.clienteId!).pipe(
+        this.notasMonthsOffset = 0;
+        this.clienteService.getNotas(this.clienteId!, this.notasMonthsOffset, this.notasMonthsWindow).pipe(
           catchError(() => fallback("notas")),
           finalize(() => {
             this.isLoading = false;
           })
         ).subscribe((res: any) => {
-          this.notasItems = res;
+          this.notasItems = res?.items || [];
+          this.notasHasNext = Boolean(res?.hasNext);
           this.loadedTabs[tab] = true;
         });
       },
@@ -262,6 +268,30 @@ export class Cliente360Component implements OnInit {
     };
 
     loaders[tab]?.();
+  }
+
+  loadMoreNotas() {
+    if (!this.clienteId || !this.notasHasNext || this.isLoadingMoreNotas) {
+      return;
+    }
+
+    this.isLoadingMoreNotas = true;
+    const nextOffset = this.notasMonthsOffset + this.notasMonthsWindow;
+
+    this.clienteService.getNotas(this.clienteId, nextOffset, this.notasMonthsWindow).pipe(
+      finalize(() => {
+        this.isLoadingMoreNotas = false;
+      })
+    ).subscribe({
+      next: (res: any) => {
+        this.notasMonthsOffset = nextOffset;
+        this.notasItems = [...this.notasItems, ...(res?.items || [])];
+        this.notasHasNext = Boolean(res?.hasNext);
+      },
+      error: () => {
+        this.poNotification.error("Erro ao carregar mais notas.");
+      }
+    });
   }
 
   openNegociacao() {

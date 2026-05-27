@@ -89,7 +89,14 @@
     </po-tab>
 
     <po-tab p-label="Histórico de Notas" [p-active]="activeTab === 'notas'" (p-activated-tab)="onTabActivated('notas')">
-      <po-table [p-columns]="notasColumns" [p-items]="notasItems" p-container="shadow"></po-table>
+      <po-table
+        [p-columns]="notasColumns"
+        [p-items]="notasItems"
+        [p-show-more-disabled]="!notasHasNext"
+        [p-loading-show-more]="isLoadingMoreNotas"
+        (p-show-more)="loadMoreNotas()"
+        p-container="shadow">
+      </po-table>
     </po-tab>
 
     <po-tab p-label="Comodato" [p-active]="activeTab === 'comodato'" (p-activated-tab)="onTabActivated('comodato')">

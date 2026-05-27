@@ -71,8 +71,16 @@ export class ClienteController {
 
   @Get(':id/notas')
   @ApiOperation({ summary: 'Lista as ultimas Notas Fiscais emitidas para o cliente' })
-  async getNotas(@Param('id', ParseIntPipe) id: number) {
-    return this.detailsService.getNotasFiscais(id);
+  async getNotas(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('monthsOffset') monthsOffset?: string,
+    @Query('monthsWindow') monthsWindow?: string,
+  ) {
+    return this.detailsService.getNotasFiscais(
+      id,
+      parseInt(monthsOffset || '0', 10) || 0,
+      parseInt(monthsWindow || '12', 10) || 12,
+    );
   }
 
   @Get(':id/atendimentos')

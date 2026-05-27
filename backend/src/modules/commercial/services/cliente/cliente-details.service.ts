@@ -72,10 +72,10 @@ export class ClienteDetailsService {
     }
   }
 
-  async getNotasFiscais(clienteId: number) {
+  async getNotasFiscais(clienteId: number, monthsOffset: number = 0, monthsWindow: number = 12) {
     try {
-      console.log('[360-DEBUG][BACK] getNotasFiscais clienteId=', clienteId);
-      const result = await this.dataSource.query(
+      console.log('[360-DEBUG][BACK] getNotasFiscais clienteId=', clienteId, 'monthsOffset=', monthsOffset, 'monthsWindow=', monthsWindow);
+      const items = await this.dataSource.query(
         `SELECT
           id,
           nota_fiscal,
@@ -86,11 +86,26 @@ export class ClienteDetailsService {
           nome as vendedor_nome
          FROM cliente_notafiscal
          WHERE cliente_id = $1
+           AND dt_emissao >= (CURRENT_DATE - (($2 + $3) || ' months')::interval)
+           AND dt_emissao < (CURRENT_DATE - ($2 || ' months')::interval + INTERVAL '1 day')
          ORDER BY dt_emissao DESC`,
-        [clienteId],
+        [clienteId, monthsOffset, monthsWindow],
       );
-      console.log('[360-DEBUG][BACK] getNotasFiscais OK total=', result.length);
-      return result;
+      const olderRows = await this.dataSource.query(
+        `SELECT 1
+         FROM cliente_notafiscal
+         WHERE cliente_id = $1
+           AND dt_emissao < (CURRENT_DATE - (($2 + $3) || ' months')::interval)
+         LIMIT 1`,
+        [clienteId, monthsOffset, monthsWindow],
+      );
+      console.log('[360-DEBUG][BACK] getNotasFiscais OK total=', items.length, 'hasNext=', olderRows.length > 0);
+      return {
+        items,
+        hasNext: olderRows.length > 0,
+        monthsOffset,
+        monthsWindow,
+      };
     } catch (err) {
       console.error('[360-DEBUG][BACK] getNotasFiscais ERRO', { clienteId, message: err.message, detail: err.detail });
       throw err;
