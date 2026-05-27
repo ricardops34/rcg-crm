@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
 import { 
@@ -31,11 +31,48 @@ export class AppComponent implements OnInit {
   private routesRegistry = inject(RoutesRegistryService);
 
   user: any;
-  logo: string = "assets/logo_rcg.png";
+  logo: string = "logo_padrao.png";
   currentTheme: string = "rcg";
   dynamicMenus: Array<PoMenuItem> = [];
   menuItems: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user && user.unit) {
+        if (user.unit.logo) {
+          this.logo = user.unit.logo;
+        } else {
+          this.logo = "logo_padrao.png";
+        }
+        this.updateFavicon(user.unit.favicon);
+      } else {
+        this.logo = "logo_padrao.png";
+        this.updateFavicon(null);
+      }
+    });
+  }
+
+  updateFavicon(faviconBase64: string | null | undefined) {
+    if (typeof document !== 'undefined') {
+      const faviconElement = document.getElementById("app-favicon") as HTMLLinkElement || 
+                             document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+      
+      const defaultFavicon = "favicon.ico";
+      
+      if (faviconElement) {
+        faviconElement.href = faviconBase64 ? faviconBase64 : defaultFavicon;
+      } else {
+        const link = document.createElement('link');
+        link.id = 'app-favicon';
+        link.rel = 'icon';
+        link.type = 'image/x-icon';
+        link.href = faviconBase64 ? faviconBase64 : defaultFavicon;
+        document.head.appendChild(link);
+      }
+    }
+  }
 
   // Perfil do usuário logado
   profile: PoToolbarProfile = {

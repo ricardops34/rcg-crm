@@ -31,6 +31,8 @@ export interface AuthUser {
   unit?: {
     id?: number;
     name?: string;
+    logo?: string;
+    favicon?: string;
   };
   roles?: string[];
   isGerente?: boolean;

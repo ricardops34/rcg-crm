@@ -26,6 +26,41 @@ import { UnitService } from "../../../services/unit";
           <po-input class="po-md-8" name="name" [(ngModel)]="unit.name" p-label="Nome da Unidade" p-required p-clean></po-input>
           <po-input class="po-md-4" name="connectionName" [(ngModel)]="unit.connectionName" p-label="Nome da Conexão (ERP)" p-help="Ex: erp_producao"></po-input>
         </div>
+
+        <po-divider p-label="Identidade Visual da Unidade (Tenant)"></po-divider>
+        <div class="po-row">
+          <!-- Upload da Logo -->
+          <div class="po-md-6 po-mb-2">
+            <span class="po-field-title" style="display: block; margin-bottom: 8px;">Logomarca Personalizada</span>
+            <po-button p-label="Selecionar Imagem da Logo" p-icon="po-icon-upload" (p-click)="logoInput.click()"></po-button>
+            <input #logoInput type="file" (change)="onLogoSelected($event)" style="display: none" accept="image/*">
+            
+            <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">
+              @if (unit.logo) {
+                <img [src]="unit.logo" style="max-height: 80px; max-width: 200px; border: 1px solid #ddd; padding: 4px; border-radius: 4px; background: #f9f9f9;">
+                <po-button p-label="Remover" p-type="danger" p-size="small" (p-click)="unit.logo = null"></po-button>
+              } @else {
+                <div style="font-size: 12px; color: #777; font-style: italic;">Nenhuma logo personalizada carregada. Usando a padrão do sistema.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Upload do Favicon -->
+          <div class="po-md-6 po-mb-2">
+            <span class="po-field-title" style="display: block; margin-bottom: 8px;">Favicon Personalizado (.ico/.png)</span>
+            <po-button p-label="Selecionar Imagem do Favicon" p-icon="po-icon-upload" (p-click)="faviconInput.click()"></po-button>
+            <input #faviconInput type="file" (change)="onFaviconSelected($event)" style="display: none" accept="image/x-icon, image/png, image/jpeg">
+            
+            <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">
+              @if (unit.favicon) {
+                <img [src]="unit.favicon" style="height: 32px; width: 32px; border: 1px solid #ddd; padding: 2px; border-radius: 4px; background: #f9f9f9;">
+                <po-button p-label="Remover" p-type="danger" p-size="small" (p-click)="unit.favicon = null"></po-button>
+              } @else {
+                <div style="font-size: 12px; color: #777; font-style: italic;">Nenhum favicon personalizado carregado. Usando o padrão do sistema.</div>
+              }
+            </div>
+          </div>
+        </div>
       </form>
       
     </po-page-edit>
@@ -56,6 +91,28 @@ export class UnitFormComponent implements OnInit {
       this.isEdit = true;
       this.title = "Editar Unidade";
       this.loadUnit(id);
+    }
+  }
+
+  onLogoSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.unit.logo = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onFaviconSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.unit.favicon = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 

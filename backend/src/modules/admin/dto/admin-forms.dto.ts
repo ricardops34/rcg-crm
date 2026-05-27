@@ -21,6 +21,21 @@ export class CreateUnitDto {
   @IsString()
   @IsOptional()
   status?: string;
+
+  @ApiProperty({ example: 'erp_prod', description: 'Nome da conexão no ERP', required: false })
+  @IsString()
+  @IsOptional()
+  connectionName?: string;
+
+  @ApiProperty({ example: 'data:image/png;base64,...', description: 'Logo em Base64', required: false })
+  @IsString()
+  @IsOptional()
+  logo?: string;
+
+  @ApiProperty({ example: 'data:image/x-icon;base64,...', description: 'Favicon em Base64', required: false })
+  @IsString()
+  @IsOptional()
+  favicon?: string;
 }
 
 export class UpdateUnitDto extends PartialType(CreateUnitDto) {}
