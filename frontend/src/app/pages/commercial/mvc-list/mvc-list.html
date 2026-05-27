@@ -1,33 +1,54 @@
-
 <div class="po-row" *ngIf="quickFilterDisclaimers.length">
   <div class="po-md-12">
-    <po-disclaimer-group [p-title]="'Apresentando resultados filtrados por:'" [p-disclaimers]="quickFilterDisclaimers"
-      (p-remove)="removeQuickFilter($event)" (p-remove-all)="clearQuickFilters()">
+    <po-disclaimer-group
+      [p-title]="'Apresentando resultados filtrados por:'"
+      [p-disclaimers]="quickFilterDisclaimers"
+      (p-remove)="removeQuickFilter($event)"
+      (p-remove-all)="clearQuickFilters()">
     </po-disclaimer-group>
   </div>
 </div>
 
-<po-page-dynamic-table #dynamicTable p-title="Cockpit de Vendas (MCV)" [p-breadcrumb]="breadcrumb" [p-fields]="fields"
-  [p-service-api]="serviceApi" [p-table-custom-actions]="tableCustomActions" [p-actions-right]="pageCustomRight"
-  [p-page-custom-actions]="pageCustomActions" [p-concat-filters]="true" p-quick-search-param="search">
+<po-page-dynamic-table
+  #dynamicTable
+  p-title="Cockpit de Vendas (MCV)"
+  [p-breadcrumb]="breadcrumb"
+  [p-fields]="fields"
+  [p-service-api]="serviceApi"
+  [p-table-custom-actions]="tableCustomActions"
+  [p-page-custom-actions]="pageCustomActions"
+  [p-concat-filters]="true"
+  p-quick-search-param="search">
 </po-page-dynamic-table>
 
-<po-modal #modalAtendimento p-title="Registrar Atendimento"
+<po-modal
+  #modalAtendimento
+  p-title="Registrar Atendimento"
   [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">
   <div class="po-row">
     <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedCliente.cliente_nome"></po-info>
   </div>
 
   <div class="po-row">
-    <po-select class="po-md-12" name="tipo" [ngModel]="atendimento.atendimentoTipoId"
-      (p-change)="atendimento.atendimentoTipoId = $event" p-label="Tipo de Contato" [p-options]="tiposAtendimento"
+    <po-select
+      class="po-md-12"
+      name="tipo"
+      [ngModel]="atendimento.atendimentoTipoId"
+      (p-change)="atendimento.atendimentoTipoId = $event"
+      p-label="Tipo de Contato"
+      [p-options]="tiposAtendimento"
       [p-required]="true">
     </po-select>
   </div>
 
   <div class="po-row">
-    <po-textarea class="po-md-12" name="obs" [(ngModel)]="atendimento.observacao" p-label="Relato do Atendimento"
-      [p-required]="true" [p-rows]="4">
+    <po-textarea
+      class="po-md-12"
+      name="obs"
+      [(ngModel)]="atendimento.observacao"
+      p-label="Relato do Atendimento"
+      [p-required]="true"
+      [p-rows]="4">
     </po-textarea>
   </div>
 

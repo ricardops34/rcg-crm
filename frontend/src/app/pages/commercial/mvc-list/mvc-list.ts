@@ -7,7 +7,6 @@ import {
   PoModalComponent,
   PoModule,
   PoNotificationService,
-  PoPopupComponent,
   PoSelectOption
 } from "@po-ui/ng-components";
 import {
@@ -81,7 +80,7 @@ export class MvcListComponent implements OnInit {
     { label: "Inatividade: 61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
     { label: "Inatividade: 91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
     { label: "Inatividade: Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
-    { label: "Inatividade: Todos", action: () => this.aplicarFiltroRapido(), type: "danger" }
+    { label: "Inatividade: Todos", action: () => this.aplicarFiltroRapido() }
   ];
 
   ngOnInit(): void {
@@ -96,13 +95,6 @@ export class MvcListComponent implements OnInit {
     this.rebuildFields();
     this.loadInitialData();
     this.loadKpis();
-  }
-
-  refreshTable() {
-    if (this.dynamicTable) {
-      this.dynamicTable.items = []; 
-    }
-    this.loadInitialData();
   }
 
   aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
