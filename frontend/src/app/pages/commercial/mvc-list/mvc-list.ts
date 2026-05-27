@@ -11,6 +11,7 @@ import {
   PoSelectOption
 } from "@po-ui/ng-components";
 import {
+  PoPageDynamicTableCustomAction,
   PoPageDynamicTableCustomTableAction,
   PoPageDynamicTableField,
   PoPageDynamicTableModule
@@ -73,8 +74,10 @@ export class MvcListComponent implements OnInit {
     { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "an an-chat" }
   ];
 
-  readonly pageCustomActions: Array<any> = [
-    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
+  readonly pageCustomright: Array<any> = [
+    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" }
+  ];
+  readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
     { label: "Filtros Rápidos", icon: "an an-funnel", action: () => this.openFiltrosPopup() }
   ];
 

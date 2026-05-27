@@ -8,9 +8,9 @@
   </div>
 </div>
 
-<po-page-dynamic-table #dynamicTable p-title="Cockpit de Vendas (MCV)" [p-breadcrumb]="breadcrumb" [p-fields]="fields" [p-service-api]="serviceApi"
-  [p-table-custom-actions]="tableCustomActions" [p-page-custom-actions]="pageCustomActions" [p-concat-filters]="true"
-  p-quick-search-param="search">
+<po-page-dynamic-table #dynamicTable p-title="Cockpit de Vendas (MCV)" [p-breadcrumb]="breadcrumb" [p-fields]="fields"
+  [p-service-api]="serviceApi" [p-table-custom-actions]="tableCustomActions" [p-actions-right]="pageCustomRight"
+  [p-page-custom-actions]="pageCustomActions" [p-concat-filters]="true" p-quick-search-param="search">
 </po-page-dynamic-table>
 
 <po-modal #modalAtendimento p-title="Registrar Atendimento"
