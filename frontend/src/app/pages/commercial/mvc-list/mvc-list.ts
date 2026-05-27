@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, inject, Renderer2 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -29,9 +29,9 @@ import { environment } from "../../../../environments/environment";
   imports: [CommonModule, PoModule, FormsModule, PoPageDynamicTableModule],
   templateUrl: "./mvc-list.html"
 })
-export class MvcListComponent implements OnInit {
+export class MvcListComponent implements OnInit, AfterViewInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
-  @ViewChild("filtroPopup", { static: true }) filtroPopup!: PoPopupComponent;
+  @ViewChild("filtrosDropdownContainer", { static: true }) filtrosDropdownContainer!: ElementRef;
   @ViewChild("dynamicTable") dynamicTable!: any;
 
   private analyticsService = inject(AnalyticsService);
@@ -40,6 +40,7 @@ export class MvcListComponent implements OnInit {
   private crmService = inject(CrmService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private renderer = inject(Renderer2);
 
   summary: any = { goal: 0, realized: 0, achievement: 0 };
   isGerente = false;
@@ -74,11 +75,8 @@ export class MvcListComponent implements OnInit {
     { label: "Novo Atendimento", action: (item: any) => this.openAtendimento(item), icon: "an an-chat" }
   ];
 
-  readonly pageCustomright: Array<any> = [
-    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" }
-  ];
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
-    { label: "Filtros Rápidos", icon: "an an-funnel", action: () => this.openFiltrosPopup() }
+    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filtroDropdownActions: Array<any> = [
@@ -105,16 +103,22 @@ export class MvcListComponent implements OnInit {
     this.loadKpis();
   }
 
-  openFiltrosPopup() {
+  ngAfterViewInit() {
+    // Tática avançada para injetar o po-dropdown genuíno no cabeçalho do PO-UI
+    // já que o po-page-dynamic-table não aceita dropdowns nativamente no array de pageCustomActions.
     setTimeout(() => {
-      const buttons = Array.from(document.querySelectorAll("po-button"));
-      const targetBtn = buttons.find(btn => btn.textContent?.includes("Filtros Rápidos"));
-
-      if (targetBtn && this.filtroPopup) {
-        this.filtroPopup.target = new ElementRef(targetBtn);
-        this.filtroPopup.toggle();
+      const headerActionsContainer = document.querySelector('po-page-dynamic-table .po-page-header-actions');
+      if (headerActionsContainer && this.filtrosDropdownContainer) {
+        this.renderer.appendChild(headerActionsContainer, this.filtrosDropdownContainer.nativeElement);
       }
-    }, 50);
+    }, 100);
+  }
+
+  refreshTable() {
+    if (this.dynamicTable) {
+      this.dynamicTable.items = []; 
+    }
+    this.loadInitialData();
   }
 
   aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
