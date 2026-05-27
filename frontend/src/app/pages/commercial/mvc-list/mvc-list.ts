@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, inject, Renderer2 } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -29,9 +29,8 @@ import { environment } from "../../../../environments/environment";
   imports: [CommonModule, PoModule, FormsModule, PoPageDynamicTableModule],
   templateUrl: "./mvc-list.html"
 })
-export class MvcListComponent implements OnInit, AfterViewInit {
+export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
-  @ViewChild("filtrosDropdownContainer", { static: true }) filtrosDropdownContainer!: ElementRef;
   @ViewChild("dynamicTable") dynamicTable!: any;
 
   private analyticsService = inject(AnalyticsService);
@@ -40,7 +39,6 @@ export class MvcListComponent implements OnInit, AfterViewInit {
   private crmService = inject(CrmService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
-  private renderer = inject(Renderer2);
 
   summary: any = { goal: 0, realized: 0, achievement: 0 };
   isGerente = false;
@@ -76,17 +74,14 @@ export class MvcListComponent implements OnInit, AfterViewInit {
   ];
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
-    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" }
-  ];
-
-  readonly filtroDropdownActions: Array<any> = [
-    { label: "até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
-    { label: "16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
-    { label: "31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
-    { label: "61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
-    { label: "91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
-    { label: "Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
-    { label: "Todos os Dias", action: () => this.aplicarFiltroRapido(), type: "danger", separator: true }
+    { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
+    { label: "Inatividade: até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
+    { label: "Inatividade: 16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
+    { label: "Inatividade: 31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
+    { label: "Inatividade: 61 a 90 Dias", action: () => this.aplicarFiltroRapido(61, 90) },
+    { label: "Inatividade: 91 a 120 Dias", action: () => this.aplicarFiltroRapido(91, 120) },
+    { label: "Inatividade: Acima de 120 Dias", action: () => this.aplicarFiltroRapido(121) },
+    { label: "Inatividade: Todos", action: () => this.aplicarFiltroRapido(), type: "danger" }
   ];
 
   ngOnInit(): void {
@@ -101,17 +96,6 @@ export class MvcListComponent implements OnInit, AfterViewInit {
     this.rebuildFields();
     this.loadInitialData();
     this.loadKpis();
-  }
-
-  ngAfterViewInit() {
-    // Tática avançada para injetar o po-dropdown genuíno no cabeçalho do PO-UI
-    // já que o po-page-dynamic-table não aceita dropdowns nativamente no array de pageCustomActions.
-    setTimeout(() => {
-      const headerActionsContainer = document.querySelector('po-page-dynamic-table .po-page-header-actions');
-      if (headerActionsContainer && this.filtrosDropdownContainer) {
-        this.renderer.appendChild(headerActionsContainer, this.filtrosDropdownContainer.nativeElement);
-      }
-    }, 100);
   }
 
   refreshTable() {
