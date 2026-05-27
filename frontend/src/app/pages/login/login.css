@@ -39,8 +39,9 @@
 
 /* Ajuste do tamanho e proporção da logomarca na tela de login do PO-UI */
 ::ng-deep po-page-login img {
-  max-height: 80px !important;  /* Altere a altura máxima conforme desejar */
-  max-width: 260px !important;  /* Altere a largura máxima conforme desejar */
+  max-height: 80px !important;
+  /* Altere a altura máxima conforme desejar */
+  max-width: 460px !important;
+  /* Altere a largura máxima conforme desejar */
   object-fit: contain !important;
 }
-

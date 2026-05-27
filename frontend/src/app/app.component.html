@@ -1,14 +1,12 @@
 <div class="po-wrapper" *ngIf="authService.isAuthenticated() && !isLoginPage; else noAuth">
 
-  <po-header
-    [p-brand]="headerBrand"
-    [p-actions-tools]="headerActionTools"
-    [p-header-user]="headerUser"
+  <po-header [p-brand]="headerBrand" [p-actions-tools]="headerActionTools" [p-header-user]="headerUser"
     [p-side-menu-only-action]="true">
   </po-header>
 
   <po-menu [p-collapsed]="true" [p-menus]="menuItems" [p-filter]="true" [p-automatic-toggle]="true">
 
+    <!--
     <ng-template p-menu-header-template>
       <div class="po-p-3 po-pt-4 po-mb-3 po-text-center" style="background-color: white; border-bottom: 1px solid #f1f1f1;">
         <img [src]="logo" style="max-height: 50px; max-width: 100%; object-fit: contain; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" alt="Logo da Unidade">
@@ -18,6 +16,7 @@
         </div>
       </div>
     </ng-template>
+    -->
 
   </po-menu>
 
@@ -31,15 +30,10 @@
 <po-modal #modalUnit p-title="Trocar Unidade de Trabalho"
   [p-primary-action]="{ label: 'Confirmar Troca', action: confirmUnitSwitch.bind(this) }">
   <div class="po-row po-p-2">
-    <po-info class="po-md-12 po-mb-3" p-label="Unidade Atual" [p-value]="authService.currentUser()?.unit?.name || 'Não informada'"></po-info>
-    <po-select 
-      class="po-md-12" 
-      name="targetUnit" 
-      [ngModel]="selectedUnitId" 
-      (p-change)="selectedUnitId = $event" 
-      p-label="Selecione a Filial de Destino" 
-      [p-options]="allowedUnitOptions"
-      p-required="true">
+    <po-info class="po-md-12 po-mb-3" p-label="Unidade Atual"
+      [p-value]="authService.currentUser()?.unit?.name || 'Não informada'"></po-info>
+    <po-select class="po-md-12" name="targetUnit" [ngModel]="selectedUnitId" (p-change)="selectedUnitId = $event"
+      p-label="Selecione a Filial de Destino" [p-options]="allowedUnitOptions" p-required="true">
     </po-select>
   </div>
 </po-modal>
