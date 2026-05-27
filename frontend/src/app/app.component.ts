@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
   isLoginPage: boolean = true;
   selectedUnitId!: number;
   allowedUnitOptions: Array<PoSelectOption> = [];
+  toolbarTitle: string = "CRM";
 
   constructor() {
     effect(() => {
@@ -53,9 +54,11 @@ export class AppComponent implements OnInit {
         } else {
           this.logo = "logo_padrao.png";
         }
+        this.toolbarTitle = `CRM - ${user.unit.name || ''}`;
         this.updateFavicon(user.unit.favicon);
       } else {
         this.logo = "logo_padrao.png";
+        this.toolbarTitle = "CRM";
         this.updateFavicon(null);
       }
     });
