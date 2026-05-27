@@ -5,6 +5,15 @@ import { SystemUnit } from '../entities/system-unit.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
 @Injectable()
 export class UploadService {
   private readonly uploadRootDir = path.resolve(process.cwd(), 'uploads');
@@ -58,7 +67,7 @@ export class UploadService {
    */
   async verificarCotaESalvar(
     tenantId: number,
-    file: Express.Multer.File,
+    file: MulterFile,
     subpasta: string,
   ): Promise<string> {
     // 1. Obter cota configurada na filial (tabela system_unit)

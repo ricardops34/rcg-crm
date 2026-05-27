@@ -226,7 +226,7 @@ export class Cliente {
   dataRfb: Date;
 
   @Column({ length: 255, nullable: true })
-  logo: string;
+  logo: string | null;
 
   @CreateDateColumn({ name: 'dt_inclusao', nullable: true })
   dtInclusao: Date;

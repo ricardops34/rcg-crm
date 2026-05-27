@@ -77,7 +77,7 @@ export class Produto {
   observacao: string;
 
   @Column({ length: 200, nullable: true })
-  foto: string;
+  foto: string | null;
 
   @Column({ type: 'char', length: 1, nullable: true })
   status: string;

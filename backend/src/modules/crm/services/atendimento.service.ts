@@ -4,7 +4,7 @@ import { Repository, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Atendimento } from '../entities/atendimento.entity';
 import { AtendimentoTipo } from '../entities/atendimento-tipo.entity';
-import { UploadService } from '../../../admin/services/upload.service';
+import { UploadService, MulterFile } from '../../../admin/services/upload.service';
 
 export interface SaveAtendimentoInput {
   id?: number;
@@ -120,7 +120,7 @@ export class AtendimentoService {
     return atendimento;
   }
 
-  async adicionarAnexo(id: number, file: Express.Multer.File): Promise<Atendimento> {
+  async adicionarAnexo(id: number, file: MulterFile): Promise<Atendimento> {
     const atendimento = await this.findOne(id);
     const unitId = atendimento.systemUnitId || 1;
 

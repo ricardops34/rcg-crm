@@ -5,7 +5,7 @@ import { ClsService } from 'nestjs-cls';
 import { Produto } from '../../entities/produto.entity';
 import { Categoria } from '../../entities/categoria.entity';
 import { ProdutoImagem } from '../../entities/produto-imagem.entity';
-import { UploadService } from '../../../admin/services/upload.service';
+import { UploadService, MulterFile } from '../../../admin/services/upload.service';
 
 @Injectable()
 export class ProdutoService {
@@ -115,7 +115,7 @@ export class ProdutoService {
     await this.produtoRepository.delete(id);
   }
 
-  async adicionarImagem(produtoId: number, file: Express.Multer.File): Promise<ProdutoImagem> {
+  async adicionarImagem(produtoId: number, file: MulterFile): Promise<ProdutoImagem> {
     const produto = await this.findOne(produtoId);
     const systemUnitId = produto.systemUnitId || 1;
 

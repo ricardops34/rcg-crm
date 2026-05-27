@@ -96,7 +96,7 @@ export class Atendimento {
   systemUnitId: number;
 
   @Column({ length: 255, nullable: true })
-  anexo: string;
+  anexo: string | null;
 
   @DeleteDateColumn({ name: 'dt_delete' })
   dtDelete: Date;

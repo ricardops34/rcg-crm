@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, DeepPartial } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Cliente } from '../../entities/cliente.entity';
-import { UploadService } from '../../../admin/services/upload.service';
+import { UploadService, MulterFile } from '../../../admin/services/upload.service';
 
 export type CreateClienteInput = Omit<Partial<Cliente>, 'nascimento'> & {
   nascimento?: string | Date;
@@ -135,7 +135,7 @@ export class ClienteService {
     await this.clienteRepository.delete(id);
   }
 
-  async adicionarLogo(id: number, file: Express.Multer.File): Promise<Cliente> {
+  async adicionarLogo(id: number, file: MulterFile): Promise<Cliente> {
     const cliente = await this.findOne(id);
     if (!cliente) {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado`);

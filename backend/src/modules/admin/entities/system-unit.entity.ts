@@ -12,10 +12,10 @@ export class SystemUnit {
   connectionName: string;
 
   @Column({ type: 'text', nullable: true })
-  logo: string;
+  logo: string | null;
 
   @Column({ type: 'text', nullable: true })
-  favicon: string;
+  favicon: string | null;
 
   @Column({ name: 'limite_disco_mb', type: 'integer', default: 1000 })
   limiteDiscoMb: number;

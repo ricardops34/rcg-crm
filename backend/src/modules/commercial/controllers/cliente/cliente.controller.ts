@@ -15,6 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ClienteService } from '../../services/cliente/cliente.service';
+import { MulterFile } from '../../../admin/services/upload.service';
 import { ClienteDetailsService } from '../../services/cliente/cliente-details.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
@@ -126,7 +127,7 @@ export class ClienteController {
   @UseInterceptors(FileInterceptor('file'))
   async adicionarLogo(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: MulterFile,
   ) {
     return this.clienteService.adicionarLogo(id, file);
   }

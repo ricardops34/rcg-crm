@@ -3,15 +3,22 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
+  Param,
+  ParseIntPipe,
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../auth/decorators/permissions.decorator';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AtendimentoService } from '../services/atendimento.service';
+import { MulterFile } from '../../admin/services/upload.service';
 import { CreateAtendimentoDto, AtendimentoResponseDto, AtendimentoTipoResponseDto } from '../../crm/dto/atendimento.dto';
 
 interface AuthenticatedRequest extends Request {
@@ -80,5 +87,21 @@ export class AtendimentoController {
     }
 
     return user?.vendedorId || vendedorId;
+  }
+
+  @Post('atendimentos/:id/anexo')
+  @ApiOperation({ summary: 'Adiciona ou atualiza o anexo de um atendimento' })
+  @UseInterceptors(FileInterceptor('file'))
+  async adicionarAnexo(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: MulterFile,
+  ) {
+    return this.atendimentoService.adicionarAnexo(id, file);
+  }
+
+  @Delete('atendimentos/:id/anexo')
+  @ApiOperation({ summary: 'Remove o anexo de um atendimento' })
+  async removerAnexo(@Param('id', ParseIntPipe) id: number) {
+    return this.atendimentoService.removerAnexo(id);
   }
 }

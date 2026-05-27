@@ -15,6 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ProdutoService } from '../../services/produto/produto.service';
+import { MulterFile } from '../../../admin/services/upload.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/guards/permissions.guard';
 import { RequirePermission } from '../../../auth/decorators/permissions.decorator';
@@ -81,7 +82,7 @@ export class ProdutoController {
   @UseInterceptors(FileInterceptor('file'))
   async adicionarImagem(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: MulterFile,
   ) {
     return this.produtoService.adicionarImagem(id, file);
   }
