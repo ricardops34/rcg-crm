@@ -31,7 +31,8 @@
     <po-select 
       class="po-md-12" 
       name="targetUnit" 
-      [(ngModel)]="selectedUnitId" 
+      [ngModel]="selectedUnitId" 
+      (p-change)="selectedUnitId = $event" 
       p-label="Selecione a Filial de Destino" 
       [p-options]="allowedUnitOptions"
       p-required="true">
