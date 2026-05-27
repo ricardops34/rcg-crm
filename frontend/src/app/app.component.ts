@@ -56,6 +56,7 @@ export class AppComponent implements OnInit {
 
   headerUser: PoHeaderUser = {
     avatar: 'assets/default-avatar.png',
+    customerBrand: 'logo_padrao.png',
     action: () => this.router.navigate(["/profile"])
   };
 
@@ -100,7 +101,7 @@ export class AppComponent implements OnInit {
 
         this.headerUser = {
           avatar: user.avatar || "assets/default-avatar.png",
-          title: user.name || user.login,
+          customerBrand: this.logo,
           action: () => this.router.navigate(["/profile"])
         };
       } else {
@@ -116,6 +117,7 @@ export class AppComponent implements OnInit {
 
         this.headerUser = {
           avatar: "assets/default-avatar.png",
+          customerBrand: 'logo_padrao.png',
           action: () => this.router.navigate(["/profile"])
         };
       }
