@@ -2,11 +2,11 @@ import { Component, OnInit, inject, effect, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
-import { 
-  PoMenuItem, 
-  PoModule, 
-  PoToolbarAction, 
-  PoToolbarProfile, 
+import {
+  PoMenuItem,
+  PoModule,
+  PoToolbarAction,
+  PoToolbarProfile,
   PoNotificationService,
   PoThemeService,
   PoThemeTypeEnum,
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
 
   headerUser: PoHeaderUser = {
     avatar: 'assets/default-avatar.png',
-    customerBrand: 'logo_padrao.png',
+    customerBrand: 'logo_bj.png',
     action: () => this.router.navigate(["/profile"])
   };
 
@@ -116,7 +116,6 @@ export class AppComponent implements OnInit {
             label: 'Sair',
             icon: 'an an-sign-out',
             tooltip: 'Sair do sistema',
-            type: 'danger',
             action: () => this.logout()
           }
         );
@@ -146,11 +145,11 @@ export class AppComponent implements OnInit {
 
   updateFavicon(faviconBase64: string | null | undefined) {
     if (typeof document !== 'undefined') {
-      const faviconElement = document.getElementById("app-favicon") as HTMLLinkElement || 
-                             document.querySelector("link[rel*='icon']") as HTMLLinkElement;
-      
+      const faviconElement = document.getElementById("app-favicon") as HTMLLinkElement ||
+        document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+
       const defaultFavicon = "favicon.ico";
-      
+
       if (faviconElement) {
         faviconElement.href = faviconBase64 ? faviconBase64 : defaultFavicon;
       } else {
@@ -181,7 +180,7 @@ export class AppComponent implements OnInit {
   confirmUnitSwitch() {
     if (!this.selectedUnitId) return;
     this.modalUnit.close();
-    
+
     this.authService.switchUnit(this.selectedUnitId).subscribe({
       next: () => {
         this.poNotification.success("Filial alterada com sucesso!");
@@ -211,9 +210,9 @@ export class AppComponent implements OnInit {
   // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
     { label: "Trocar Filial", icon: "an an-arrows-clockwise", action: () => this.openUnitSwitchModal() },
-    { label: "Configurações", icon: "an an-gear-six", action: () => {} },
-    { label: "Apps", icon: "an an-grid-four", action: () => {} },
-    { label: "Mensagens", icon: "an an-chat-circle", action: () => {}, type: "danger" },
+    { label: "Configurações", icon: "an an-gear-six", action: () => { } },
+    { label: "Apps", icon: "an an-grid-four", action: () => { } },
+    { label: "Mensagens", icon: "an an-chat-circle", action: () => { }, type: "danger" },
     { label: "Alterar Tema", icon: "an an-paint-brush", action: () => this.toggleTheme() }
   ];
 
@@ -221,7 +220,7 @@ export class AppComponent implements OnInit {
     this.checkRoute();
     this.refreshUserInfo();
     this.loadTheme();
-    
+
     if (this.authService.isAuthenticated()) {
       this.loadMenu();
     }
