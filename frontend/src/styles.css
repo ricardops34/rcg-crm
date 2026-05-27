@@ -22,25 +22,6 @@ body.po-theme-dark .po-menu {
 body.po-theme-dark .po-page-header {
     background-color: #252525;
 }
-    background-color: #1c1c1c;
-    color: #ffffff;
-}
-
-body.po-theme-dark .po-wrapper {
-    background-color: #1c1c1c;
-}
-
-body.po-theme-dark .po-toolbar {
-    background-color: #2d2d2d;
-}
-
-body.po-theme-dark .po-menu {
-    background-color: #2d2d2d;
-}
-
-body.po-theme-dark .po-page-header {
-    background-color: #252525;
-}
 
 body.po-theme-dark .po-table {
     background-color: #2d2d2d;
@@ -69,4 +50,13 @@ body.po-theme-dark .po-widget {
 .po-multiselect,
 .po-lookup {
     border-radius: 2px !important;
+}
+
+/* Correção do espaçamento superior de páginas para evitar sobreposição sob o Header fixo */
+.po-wrapper po-page-default,
+.po-wrapper po-page-list,
+.po-wrapper po-page-edit,
+.po-wrapper po-page-detail {
+    display: block;
+    margin-top: 56px;
 }
