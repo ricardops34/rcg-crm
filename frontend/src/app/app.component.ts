@@ -12,7 +12,10 @@ import {
   PoThemeTypeEnum,
   PoThemeA11yEnum,
   PoModalComponent,
-  PoSelectOption
+  PoSelectOption,
+  PoHeaderActionTool,
+  PoHeaderBrand,
+  PoHeaderUser
 } from "@po-ui/ng-components";
 import { filter } from "rxjs/operators";
 import { AuthService } from "./services/auth";
@@ -45,6 +48,38 @@ export class AppComponent implements OnInit {
   allowedUnitOptions: Array<PoSelectOption> = [];
   toolbarTitle: string = "CRM";
 
+  headerBrand: PoHeaderBrand = {
+    title: 'CRM',
+    logo: 'logo_padrao.png',
+    action: () => this.router.navigate(["/home"])
+  };
+
+  headerUser: PoHeaderUser = {
+    avatar: 'assets/default-avatar.png',
+    action: () => this.router.navigate(["/profile"])
+  };
+
+  headerActionTools: Array<PoHeaderActionTool> = [
+    {
+      label: 'Trocar Filial',
+      icon: 'an an-arrows-clockwise',
+      tooltip: 'Trocar unidade de trabalho',
+      action: () => this.openUnitSwitchModal()
+    },
+    {
+      label: 'Alterar Tema',
+      icon: 'an an-paint-brush',
+      tooltip: 'Alternar tema visual',
+      action: () => this.toggleTheme()
+    },
+    {
+      label: 'Configurações',
+      icon: 'an an-gear-six',
+      tooltip: 'Configurações do sistema',
+      action: () => this.router.navigate(["/admin/settings"])
+    }
+  ];
+
   constructor() {
     effect(() => {
       const user = this.authService.currentUser();
@@ -56,10 +91,33 @@ export class AppComponent implements OnInit {
         }
         this.toolbarTitle = `CRM - ${user.unit.name || ''}`;
         this.updateFavicon(user.unit.favicon);
+
+        this.headerBrand = {
+          title: this.toolbarTitle,
+          logo: this.logo,
+          action: () => this.router.navigate(["/home"])
+        };
+
+        this.headerUser = {
+          avatar: user.avatar || "assets/default-avatar.png",
+          title: user.name || user.login,
+          action: () => this.router.navigate(["/profile"])
+        };
       } else {
         this.logo = "logo_padrao.png";
         this.toolbarTitle = "CRM";
         this.updateFavicon(null);
+
+        this.headerBrand = {
+          title: this.toolbarTitle,
+          logo: this.logo,
+          action: () => this.router.navigate(["/home"])
+        };
+
+        this.headerUser = {
+          avatar: "assets/default-avatar.png",
+          action: () => this.router.navigate(["/profile"])
+        };
       }
     });
   }

@@ -1,7 +1,11 @@
 <div class="po-wrapper" *ngIf="authService.isAuthenticated() && !isLoginPage; else noAuth">
 
-  <po-toolbar [p-title]="toolbarTitle" [p-profile]="profile" [p-profile-actions]="profileActions" [p-actions]="toolbarActions">
-  </po-toolbar>
+  <po-header
+    [p-brand]="headerBrand"
+    [p-actions-tools]="headerActionTools"
+    [p-header-user]="headerUser"
+    [p-side-menu-only-action]="true">
+  </po-header>
 
   <po-menu [p-collapsed]="true" [p-menus]="menuItems" [p-filter]="true" [p-automatic-toggle]="true">
 
