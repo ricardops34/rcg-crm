@@ -216,15 +216,15 @@ export class MvcListComponent implements OnInit {
       const filtrosAtuais = { ...((this.dynamicTable as any).params || {}) };
       delete filtrosAtuais["diasDe"];
       delete filtrosAtuais["diasAte"];
+      delete filtrosAtuais["page"];
 
-      const filtrosCompletos = {
-        page: 1,
+      const filtrosBase = {
         ...filtrosAtuais,
         ...this.quickFilterParams
       };
 
-      (this.dynamicTable as any).params = { ...filtrosCompletos };
-      this.dynamicTable.updateDataTable(filtrosCompletos);
+      (this.dynamicTable as any).params = { ...filtrosBase };
+      this.dynamicTable.updateDataTable({ page: 1, ...filtrosBase });
     }
 
     this.loadKpis();
