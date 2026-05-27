@@ -20,7 +20,12 @@ export class ClienteService {
     const user = this.cls.get('user');
     const where: any = {};
 
-    // Hierarquia de Acesso Baseada em Perfis (Role-Based)
+    // 1. Filtro de Multitenancy (system_unit_id) obrigatório para todas as buscas
+    if (user?.unitId) {
+      where.systemUnitId = user.unitId;
+    }
+
+    // 2. Hierarquia de Acesso Baseada em Perfis (Role-Based)
     const roles = user?.roles || [];
     
     if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
@@ -49,8 +54,15 @@ export class ClienteService {
 
   async findOne(id: number): Promise<Cliente | null> {
     const user = this.cls.get('user');
+    const where: any = { id };
+
+    // Filtro de Multitenancy (system_unit_id) obrigatório
+    if (user?.unitId) {
+      where.systemUnitId = user.unitId;
+    }
+
     const cliente = await this.clienteRepository.findOne({
-      where: { id },
+      where,
       relations: [
         'vendedor',
         'filial',
@@ -82,16 +94,37 @@ export class ClienteService {
   }
 
   async create(data: CreateClienteInput): Promise<Cliente> {
-    const cliente = this.clienteRepository.create(data as DeepPartial<Cliente>);
+    const user = this.cls.get('user');
+    
+    // Injetar o system_unit_id automaticamente na criação do cliente
+    const clienteData = {
+      ...data,
+      systemUnitId: user?.unitId || 1,
+    };
+
+    const cliente = this.clienteRepository.create(clienteData as DeepPartial<Cliente>);
     return this.clienteRepository.save(cliente);
   }
 
   async update(id: number, data: CreateClienteInput): Promise<Cliente | null> {
-    await this.clienteRepository.update(id, data as any);
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new ForbiddenException('Cliente não encontrado ou acesso negado para esta unidade');
+    }
+
+    // Impede a troca forçada de tenant no payload de update
+    const { systemUnitId, ...updatePayload } = data as any;
+
+    await this.clienteRepository.update(id, updatePayload);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
+    const cliente = await this.findOne(id);
+    if (!cliente) {
+      throw new ForbiddenException('Cliente não encontrado ou acesso negado para esta unidade');
+    }
+    
     await this.clienteRepository.delete(id);
   }
 }
