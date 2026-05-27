@@ -1,8 +1,8 @@
-<po-page-login p-title="RCG CRM" p-background="assets/crm_login_bg.png" p-logo="logo_padrao.png"
-  [p-loading]="isLoading()" (p-login-submit)="loginSubmit($event)">
+<po-page-login p-title="CRM" p-background="assets/crm_login_bg.png" p-logo="logo_padrao.png" [p-loading]="isLoading()"
+  (p-login-submit)="loginSubmit($event)">
 </po-page-login>
 
-<po-modal #modal2fa p-title="Autenticação de Dois Fatores"
+<po-modal #modal2fa p-title="Autenticação de Dois Fatores" x'
   [p-primary-action]="{ label: 'Confirmar', action: confirm2fa.bind(this) }">
   <div class="po-row">
     <po-info p-label="Segurança"

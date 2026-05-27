@@ -191,10 +191,14 @@ export class AuthService {
         relations: ['systemUnit'],
       });
 
-    const allowedUnits = [
+    const rawAllowedUnits = [
       user.systemUnit,
       ...userUnits.map((uu) => uu.systemUnit),
-    ].filter((unit, idx, self) => unit && self.findIndex((u) => u.id === unit.id) === idx);
+    ].filter((unit) => !!unit);
+
+    const allowedUnits = rawAllowedUnits.filter(
+      (unit, idx, self) => self.findIndex((u) => u.id === unit.id) === idx,
+    );
 
     return {
       id: user.id,
