@@ -1,20 +1,22 @@
-<div class="po-row" *ngIf="quickFilterDisclaimers.length">
-  <div class="po-md-12">
-    <po-disclaimer-group
-      [p-title]="'Apresentando resultados filtrados por:'"
-      [p-disclaimers]="quickFilterDisclaimers"
-      (p-remove)="removeQuickFilter($event)"
-      (p-remove-all)="clearQuickFilters()">
-    </po-disclaimer-group>
+@if (quickFilterDisclaimers().length) {
+  <div class="po-row">
+    <div class="po-md-12">
+      <po-disclaimer-group
+        [p-title]="'Apresentando resultados filtrados por:'"
+        [p-disclaimers]="quickFilterDisclaimers()"
+        (p-remove)="removeQuickFilter($event)"
+        (p-remove-all)="clearQuickFilters()">
+      </po-disclaimer-group>
+    </div>
   </div>
-</div>
+}
 
 <po-page-dynamic-table
   #dynamicTable
   p-title="Cockpit de Vendas (MCV)"
   [p-breadcrumb]="breadcrumb"
-  [p-fields]="fields"
-  [p-service-api]="serviceApi"
+  [p-fields]="fields()"
+  [p-service-api]="serviceApi()"
   [p-table-custom-actions]="tableCustomActions"
   [p-page-custom-actions]="pageCustomActions"
   [p-concat-filters]="true"
@@ -26,17 +28,17 @@
   p-title="Registrar Atendimento"
   [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">
   <div class="po-row">
-    <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedCliente.cliente_nome"></po-info>
+    <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedCliente().cliente_nome"></po-info>
   </div>
 
   <div class="po-row">
     <po-select
       class="po-md-12"
       name="tipo"
-      [ngModel]="atendimento.atendimentoTipoId"
-      (p-change)="atendimento.atendimentoTipoId = $event"
+      [ngModel]="atendimento().atendimentoTipoId"
+      (p-change)="updateAtendimentoTipo($event)"
       p-label="Tipo de Contato"
-      [p-options]="tiposAtendimento"
+      [p-options]="tiposAtendimento()"
       [p-required]="true">
     </po-select>
   </div>
@@ -45,7 +47,8 @@
     <po-textarea
       class="po-md-12"
       name="obs"
-      [(ngModel)]="atendimento.observacao"
+      [ngModel]="atendimento().observacao"
+      (ngModelChange)="updateObservacao($event)"
       p-label="Relato do Atendimento"
       [p-required]="true"
       [p-rows]="4">
@@ -53,7 +56,12 @@
   </div>
 
   <div class="po-row">
-    <po-datepicker class="po-md-6" name="retorno" [(ngModel)]="atendimento.retorno" p-label="Agendar Retorno?">
+    <po-datepicker 
+      class="po-md-6" 
+      name="retorno" 
+      [ngModel]="atendimento().retorno" 
+      (ngModelChange)="updateRetorno($event)" 
+      p-label="Agendar Retorno?">
     </po-datepicker>
   </div>
 </po-modal>

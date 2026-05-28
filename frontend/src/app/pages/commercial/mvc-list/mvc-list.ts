@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject, signal, DestroyRef } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -13,7 +14,8 @@ import {
   PoPageDynamicTableCustomAction,
   PoPageDynamicTableCustomTableAction,
   PoPageDynamicTableField,
-  PoPageDynamicTableModule
+  PoPageDynamicTableModule,
+  PoPageDynamicTableComponent
 } from "@po-ui/ng-templates";
 import { FormsModule } from "@angular/forms";
 import { AnalyticsService } from "../../../services/analytics";
@@ -21,6 +23,22 @@ import { AuthService } from "../../../services/auth";
 import { VendedorService } from "../../../services/vendedor";
 import { CrmService } from "../../../services/crm";
 import { environment } from "../../../../environments/environment";
+
+interface ISummaryKPI {
+  goal: number;
+  realized: number;
+  achievement: number;
+}
+
+interface IAtendimento {
+  clienteId?: number;
+  atendimentoTipoId?: number;
+  observacao: string;
+  horarioInicial: Date;
+  horarioFinal: Date;
+  retorno?: Date;
+  [key: string]: any;
+}
 
 @Component({
   selector: "app-mvc-list",
@@ -30,7 +48,7 @@ import { environment } from "../../../../environments/environment";
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
-  @ViewChild("dynamicTable") dynamicTable!: any;
+  @ViewChild("dynamicTable") dynamicTable!: PoPageDynamicTableComponent;
 
   private analyticsService = inject(AnalyticsService);
   private authService = inject(AuthService);
@@ -38,24 +56,25 @@ export class MvcListComponent implements OnInit {
   private crmService = inject(CrmService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private destroyRef = inject(DestroyRef);
 
-  summary: any = { goal: 0, realized: 0, achievement: 0 };
-  isGerente = false;
+  summary = signal<ISummaryKPI>({ goal: 0, realized: 0, achievement: 0 });
+  isGerente = signal<boolean>(false);
 
-  vendedores: Array<PoSelectOption> = [];
-  tiposAtendimento: Array<PoSelectOption> = [];
-  fields: Array<PoPageDynamicTableField> = [];
-  quickFilterDisclaimers: Array<PoDisclaimer> = [];
+  vendedores = signal<Array<PoSelectOption>>([]);
+  tiposAtendimento = signal<Array<PoSelectOption>>([]);
+  fields = signal<Array<PoPageDynamicTableField>>([]);
+  quickFilterDisclaimers = signal<Array<PoDisclaimer>>([]);
 
-  atendimento: any = {
+  atendimento = signal<IAtendimento>({
     atendimentoTipoId: undefined,
     observacao: "",
     horarioInicial: new Date(),
     horarioFinal: new Date()
-  };
+  });
 
-  selectedCliente: any = {};
-  private readonly serviceApiBase = `${environment.apiUrl}/analytics/mvc/table`;
+  selectedCliente = signal<any>({});
+  readonly serviceApiBase = `${environment.apiUrl}/analytics/mvc/table`;
   private quickFilterParams: Record<string, any> = {};
 
   readonly breadcrumb: PoBreadcrumb = {
@@ -65,7 +84,7 @@ export class MvcListComponent implements OnInit {
     ]
   };
 
-  serviceApi = this.serviceApiBase;
+  serviceApi = signal<string>(this.serviceApiBase);
 
   readonly tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [
     { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "an an-eye" },
@@ -86,11 +105,12 @@ export class MvcListComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
 
-    this.isGerente =
+    this.isGerente.set(
       user?.login === "admin" ||
       !!user?.roles?.includes("ADMIN") ||
       !!user?.roles?.includes("SUPERVISOR") ||
-      !!user?.roles?.includes("GERENTE");
+      !!user?.roles?.includes("GERENTE")
+    );
 
     this.rebuildFields();
     this.loadInitialData();
@@ -99,8 +119,7 @@ export class MvcListComponent implements OnInit {
 
   aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
     this.quickFilterParams = {};
-    this.quickFilterDisclaimers = [];
-
+    
     if (diasDe !== undefined) {
       this.quickFilterParams["diasDe"] = diasDe;
     }
@@ -110,16 +129,17 @@ export class MvcListComponent implements OnInit {
     }
 
     if (diasDe !== undefined && diasAte !== undefined) {
-      this.quickFilterDisclaimers = [
+      this.quickFilterDisclaimers.set([
         { label: "Inatividade", property: "diasFaixa", value: `${diasDe} a ${diasAte} dias` }
-      ];
+      ]);
       this.poNotification.information(`Filtrando inatividade entre ${diasDe} e ${diasAte} dias.`);
     } else if (diasDe !== undefined) {
-      this.quickFilterDisclaimers = [
+      this.quickFilterDisclaimers.set([
         { label: "Inatividade", property: "diasFaixa", value: `Acima de ${diasDe} dias` }
-      ];
+      ]);
       this.poNotification.information(`Filtrando inatividade acima de ${diasDe} dias.`);
     } else {
+      this.quickFilterDisclaimers.set([]);
       this.poNotification.information("Exibindo todos os clientes.");
     }
 
@@ -127,36 +147,40 @@ export class MvcListComponent implements OnInit {
   }
 
   loadInitialData() {
-    if (this.isGerente) {
-      this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" }).subscribe({
-        next: (res) => {
-          this.vendedores = Array.isArray(res?.items)
-            ? res.items.map((vendedor: any) => ({ label: vendedor.nome, value: vendedor.id }))
-            : [];
-          this.rebuildFields();
-        },
-        error: () => {
-          this.vendedores = [];
-          this.poNotification.error("Erro ao carregar vendedores do filtro.");
-        }
-      });
+    if (this.isGerente()) {
+      this.vendedorService.findAll(1, 1000, { status: "A", dashboard: "S" })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (res) => {
+            this.vendedores.set(Array.isArray(res?.items)
+              ? res.items.map((vendedor: any) => ({ label: vendedor.nome, value: vendedor.id }))
+              : []);
+            this.rebuildFields();
+          },
+          error: () => {
+            this.vendedores.set([]);
+            this.poNotification.error("Erro ao carregar vendedores do filtro.");
+          }
+        });
     }
 
-    this.crmService.getTipos().subscribe({
-      next: (res) => {
-        this.tiposAtendimento = Array.isArray(res)
-          ? res.map((tipo: any) => ({ label: tipo.descricao, value: tipo.id }))
-          : [];
-      },
-      error: () => {
-        this.tiposAtendimento = [];
-        this.poNotification.error("Erro ao carregar tipos de atendimento.");
-      }
-    });
+    this.crmService.getTipos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.tiposAtendimento.set(Array.isArray(res)
+            ? res.map((tipo: any) => ({ label: tipo.descricao, value: tipo.id }))
+            : []);
+        },
+        error: () => {
+          this.tiposAtendimento.set([]);
+          this.poNotification.error("Erro ao carregar tipos de atendimento.");
+        }
+      });
   }
 
   private rebuildFields() {
-    const fields: Array<any> = [
+    const newFields: Array<PoPageDynamicTableField> = [
       { property: "cliente_id", key: true, visible: false },
       {
         property: "statusIcons",
@@ -172,7 +196,7 @@ export class MvcListComponent implements OnInit {
           { value: "COM_S", color: "color-08", icon: "an an-package", tooltip: "Possui COMODATO ativo" },
           { value: "COM_N", color: "color-04", icon: "an an-package", tooltip: "Sem comodato" }
         ]
-      },
+      } as any,
       { property: "codigo", label: "Código", width: "110px" },
       { property: "cliente_nome", label: "Razão Social", filter: true },
       { property: "fantasia", label: "Nome Fantasia", filter: true },
@@ -182,24 +206,27 @@ export class MvcListComponent implements OnInit {
       { property: "dias", label: "Dias", type: "number", width: "110px", filter: true }
     ];
 
-    if (this.isGerente) {
-      fields.push({ property: "vendedor_reduzido", label: "Vendedor", width: "150px" });
+    if (this.isGerente()) {
+      newFields.push({ property: "vendedor_reduzido", label: "Vendedor", width: "150px" });
     }
 
-    this.fields = fields;
+    this.fields.set(newFields);
   }
 
   loadKpis(year?: number, month?: number) {
     const selectedYear = year || new Date().getFullYear();
     const selectedMonth = month || new Date().getMonth() + 1;
-    this.analyticsService.getDashboardData(selectedYear, selectedMonth).subscribe(res => {
-      this.summary = res.summary;
-    });
+    this.analyticsService.getDashboardData(selectedYear, selectedMonth)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        this.summary.set(res.summary);
+      });
   }
 
   refreshTable() {
     if (this.dynamicTable) {
-      const filtrosAtuais = { ...((this.dynamicTable as any).params || {}) };
+      const dynTable: any = this.dynamicTable;
+      const filtrosAtuais = { ...(dynTable.params || {}) };
       delete filtrosAtuais["diasDe"];
       delete filtrosAtuais["diasAte"];
       delete filtrosAtuais["page"];
@@ -209,8 +236,10 @@ export class MvcListComponent implements OnInit {
         ...this.quickFilterParams
       };
 
-      (this.dynamicTable as any).params = { ...filtrosBase };
-      this.dynamicTable.updateDataTable({ page: 1, ...filtrosBase });
+      dynTable.params = { ...filtrosBase };
+      if (typeof dynTable.updateDataTable === 'function') {
+         dynTable.updateDataTable({ page: 1, ...filtrosBase });
+      }
     }
 
     this.loadKpis();
@@ -219,44 +248,63 @@ export class MvcListComponent implements OnInit {
   removeQuickFilter(disclaimer: PoDisclaimer) {
     if (disclaimer.property === "diasFaixa") {
       this.quickFilterParams = {};
-      this.quickFilterDisclaimers = [];
+      this.quickFilterDisclaimers.set([]);
       this.refreshTable();
     }
   }
 
   clearQuickFilters() {
     this.quickFilterParams = {};
-    this.quickFilterDisclaimers = [];
+    this.quickFilterDisclaimers.set([]);
     this.refreshTable();
   }
 
   openAtendimento(item: any) {
-    this.selectedCliente = item;
-    this.atendimento = {
+    this.selectedCliente.set(item);
+    this.atendimento.set({
       clienteId: item.cliente_id,
       atendimentoTipoId: undefined,
       observacao: "",
       horarioInicial: new Date(),
       horarioFinal: new Date()
-    };
+    });
     this.modalAtendimento.open();
   }
 
   saveAtendimento() {
-    if (!this.atendimento.atendimentoTipoId || !this.atendimento.observacao) {
+    const currentAtendimento = this.atendimento();
+    if (!currentAtendimento.atendimentoTipoId || !currentAtendimento.observacao) {
       this.poNotification.warning("Preencha o tipo e a observação.");
       return;
     }
 
-    this.crmService.save(this.atendimento).subscribe({
-      next: () => {
-        this.poNotification.success("Atendimento registrado com sucesso!");
-        this.modalAtendimento.close();
-        this.refreshTable();
-      },
-      error: () => {
-        this.poNotification.error("Erro ao registrar atendimento.");
-      }
-    });
+    this.crmService.save(currentAtendimento)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.poNotification.success("Atendimento registrado com sucesso!");
+          this.modalAtendimento.close();
+          this.refreshTable();
+        },
+        error: () => {
+          this.poNotification.error("Erro ao registrar atendimento.");
+        }
+      });
+  }
+
+  updateAtendimentoTipo(id: number) {
+    this.atendimento.update(a => ({...a, atendimentoTipoId: id}));
+  }
+
+  updateObservacao(obs: string) {
+    this.atendimento.update(a => ({...a, observacao: obs}));
+  }
+
+  updateRetorno(dt: string | Date) {
+    let dateObj: Date | undefined;
+    if (dt) {
+      dateObj = typeof dt === 'string' ? new Date(dt) : dt;
+    }
+    this.atendimento.update(a => ({...a, retorno: dateObj}));
   }
 }
