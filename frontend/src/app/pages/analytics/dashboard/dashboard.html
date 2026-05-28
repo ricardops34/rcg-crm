@@ -5,7 +5,7 @@
   <!-- Filtros -->
   <div class="po-row">
     <po-select 
-      class="po-md-2" 
+      class="po-sm-12 po-md-2" 
       name="year" 
       p-label="Ano" 
       [p-options]="years" 
@@ -14,7 +14,7 @@
     </po-select>
 
     <po-select 
-      class="po-md-2" 
+      class="po-sm-12 po-md-2" 
       name="month" 
       p-label="Mês" 
       [p-options]="months" 
@@ -24,7 +24,7 @@
 
     <po-select 
       *ngIf="isGerente"
-      class="po-md-4" 
+      class="po-sm-12 po-md-4" 
       name="vendedor" 
       p-label="Vendedor (Visão Hierárquica)" 
       [p-options]="vendedores" 
@@ -38,21 +38,21 @@
 
   <!-- KPIs -->
   <div class="po-row">
-    <po-widget class="po-md-4 po-mb-2" p-title="Meta do Mês">
+    <po-widget class="po-sm-12 po-md-4 po-mb-2" p-title="Meta do Mês">
       <div class="po-font-subtitle po-text-center po-py-2">
         <po-icon p-icon="po-icon-target" class="po-mr-1"></po-icon>
         {{ summary?.goal | currency:'BRL' }}
       </div>
     </po-widget>
 
-    <po-widget class="po-md-4 po-mb-2" p-title="Realizado">
+    <po-widget class="po-sm-12 po-md-4 po-mb-2" p-title="Realizado">
       <div class="po-font-subtitle po-text-center po-py-2">
         <po-icon p-icon="po-icon-finance" class="po-mr-1"></po-icon>
         {{ summary?.realized | currency:'BRL' }}
       </div>
     </po-widget>
 
-    <po-widget class="po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
+    <po-widget class="po-sm-12 po-md-4 po-mb-2" p-title="Atingimento (%)" [p-primary]="true">
       <div class="po-font-subtitle po-text-center po-py-2" [ngClass]="{'po-text-color-07': (summary?.achievement || 0) < 80, 'po-text-color-10': (summary?.achievement || 0) >= 100}">
         <po-icon [p-icon]="(summary?.achievement || 0) >= 100 ? 'po-icon-ok' : 'po-icon-chart-line'" class="po-mr-1"></po-icon>
         {{ summary?.achievement | number:'1.1-2' }}%
@@ -62,7 +62,7 @@
 
   <!-- Gráficos -->
   <div class="po-row">
-    <po-widget class="po-md-6 po-mt-2 po-mb-2" p-title="Vendas por Categoria">
+    <po-widget class="po-sm-12 po-md-6 po-mt-2 po-mb-2" p-title="Vendas por Categoria">
       <po-chart 
         [p-series]="categorySeries" 
         [p-type]="chartType"
@@ -70,7 +70,7 @@
       </po-chart>
     </po-widget>
 
-    <po-widget class="po-md-6 po-mt-2 po-mb-2" p-title="Top 5 Vendedores">
+    <po-widget class="po-sm-12 po-md-6 po-mt-2 po-mb-2" p-title="Top 5 Vendedores">
       <po-chart 
         [p-series]="sellerSeries" 
         [p-type]="barChartType"
@@ -83,7 +83,7 @@
 
   <!-- Lista MCV Integrada -->
   <div class="po-row">
-    <div class="po-md-12">
+    <div class="po-sm-12 po-md-12">
       <po-table
         [p-columns]="mvcColumns"
         [p-items]="mvcItems"

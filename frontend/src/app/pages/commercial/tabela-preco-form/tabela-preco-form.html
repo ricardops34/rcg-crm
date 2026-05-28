@@ -10,20 +10,20 @@
     
     <po-divider p-label="Definição da Tabela"></po-divider>
     <div class="po-row">
-      <po-input class="po-md-2" name="codErp" [(ngModel)]="tabela.codErp" p-label="Cód. ERP"></po-input>
-      <po-input class="po-md-6" name="descricao" [(ngModel)]="tabela.descricao" p-label="Descrição da Tabela" p-required></po-input>
-      <po-select class="po-md-2" name="status" [ngModel]="tabela.status" (p-change)="tabela.status = $event" p-label="Status" [p-options]="[{label:'Ativa', value:'A'}, {label:'Inativa', value:'I'}]"></po-select>
-      <po-switch class="po-md-2" name="utiliza" [(ngModel)]="tabela.utiliza" p-label="Em Uso" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
+      <po-input class="po-sm-12 po-md-2" name="codErp" [(ngModel)]="tabela.codErp" p-label="Cód. ERP"></po-input>
+      <po-input class="po-sm-12 po-md-6" name="descricao" [(ngModel)]="tabela.descricao" p-label="Descrição da Tabela" p-required></po-input>
+      <po-select class="po-sm-12 po-md-2" name="status" [ngModel]="tabela.status" (p-change)="tabela.status = $event" p-label="Status" [p-options]="[{label:'Ativa', value:'A'}, {label:'Inativa', value:'I'}]"></po-select>
+      <po-switch class="po-sm-12 po-md-2" name="utiliza" [(ngModel)]="tabela.utiliza" p-label="Em Uso" p-label-off="Não" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
     </div>
 
     <div class="po-row">
-      <po-datepicker class="po-md-3" name="dt_inicio" [(ngModel)]="tabela.dt_inicio" p-label="Data Início"></po-datepicker>
-      <po-datepicker class="po-md-3" name="dt_fim" [(ngModel)]="tabela.dt_fim" p-label="Data Fim"></po-datepicker>
+      <po-datepicker class="po-sm-12 po-md-3" name="dt_inicio" [(ngModel)]="tabela.dt_inicio" p-label="Data Início"></po-datepicker>
+      <po-datepicker class="po-sm-12 po-md-3" name="dt_fim" [(ngModel)]="tabela.dt_fim" p-label="Data Fim"></po-datepicker>
     </div>
 
     <po-divider p-label="Itens e Preços"></po-divider>
     <div class="po-row">
-      <div class="po-md-12">
+      <div class="po-sm-12 po-md-12">
         <po-table [p-columns]="itemColumns" [p-items]="items" p-container="shadow"></po-table>
       </div>
     </div>

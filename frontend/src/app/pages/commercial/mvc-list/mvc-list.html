@@ -1,6 +1,6 @@
 @if (quickFilterDisclaimers().length) {
   <div class="po-row">
-    <div class="po-md-12">
+    <div class="po-sm-12 po-md-12">
       <po-disclaimer-group
         [p-title]="'Apresentando resultados filtrados por:'"
         [p-disclaimers]="quickFilterDisclaimers()"
@@ -28,12 +28,12 @@
   p-title="Registrar Atendimento"
   [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">
   <div class="po-row">
-    <po-info class="po-md-12" p-label="Cliente" [p-value]="selectedCliente().cliente_nome"></po-info>
+    <po-info class="po-sm-12 po-md-12" p-label="Cliente" [p-value]="selectedCliente().cliente_nome"></po-info>
   </div>
 
   <div class="po-row">
     <po-select
-      class="po-md-12"
+      class="po-sm-12 po-md-12"
       name="tipo"
       [ngModel]="atendimento().atendimentoTipoId"
       (p-change)="updateAtendimentoTipo($event)"
@@ -45,7 +45,7 @@
 
   <div class="po-row">
     <po-textarea
-      class="po-md-12"
+      class="po-sm-12 po-md-12"
       name="obs"
       [ngModel]="atendimento().observacao"
       (ngModelChange)="updateObservacao($event)"
@@ -57,7 +57,7 @@
 
   <div class="po-row">
     <po-datepicker 
-      class="po-md-6" 
+      class="po-sm-12 po-md-6" 
       name="retorno" 
       [ngModel]="atendimento().retorno" 
       (ngModelChange)="updateRetorno($event)" 

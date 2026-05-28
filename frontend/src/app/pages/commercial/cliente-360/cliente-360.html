@@ -2,21 +2,21 @@
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <div class="po-row">
-    <po-widget class="po-md-3 po-mb-2" p-title="Cód. ERP">
+    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Cód. ERP">
       <div class="po-font-subtitle po-text-center po-py-1">{{ cliente.codErp }}</div>
     </po-widget>
 
-    <po-widget class="po-md-3 po-mb-2" p-title="Status">
+    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Status">
       <div class="po-font-subtitle po-text-center po-py-1">
         <po-tag [p-value]="cliente.status === 'A' ? 'ATIVO' : 'BLOQUEADO'" [p-color]="cliente.status === 'A' ? 'color-10' : 'color-07'"></po-tag>
       </div>
     </po-widget>
 
-    <po-widget class="po-md-3 po-mb-2" p-title="Última Compra">
+    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Última Compra">
       <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.ultimaCompra | date:'dd/MM/yyyy') || 'N/A' }}</div>
     </po-widget>
 
-    <po-widget class="po-md-3 po-mb-2" p-title="Limite">
+    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Limite">
       <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.limite | currency:'BRL') || 'R$ 0,00' }}</div>
     </po-widget>
   </div>
@@ -24,7 +24,7 @@
   <po-tabs>
     <po-tab p-label="Estoque do Cliente" [p-active]="activeTab === 'estoque'" (p-activated-tab)="onTabActivated('estoque')">
       <div class="po-row po-mt-2">
-        <div class="po-md-12">
+        <div class="po-sm-12 po-md-12">
           <p class="po-font-text-smaller po-mb-2 po-text-color-07">
             Estoque estimado com base nas compras dos últimos 180 dias, no consumo médio e no intervalo entre compras.
             A sugestão é arredondada para múltiplos da embalagem, evitando compra fracionada.
@@ -36,10 +36,10 @@
 
     <po-tab p-label="Cobrança" [p-active]="activeTab === 'cobranca'" (p-activated-tab)="onTabActivated('cobranca')">
       <div class="po-row po-mt-2">
-        <div class="po-md-12">
+        <div class="po-sm-12 po-md-12">
           <div class="po-row po-mb-2">
-            <po-info class="po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length.toString()"></po-info>
-            <div class="po-md-8 po-text-right">
+            <po-info class="po-sm-12 po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length.toString()"></po-info>
+            <div class="po-sm-12 po-md-8 po-text-right">
               <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" (p-click)="openNegociacao()"></po-button>
             </div>
           </div>
@@ -55,28 +55,28 @@
 
     <po-tab p-label="Dados Cadastrais" [p-active]="activeTab === 'cadastro'" (p-activated-tab)="onTabActivated('cadastro')">
       <div class="po-row po-mt-2">
-        <po-info class="po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
-        <po-info class="po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
+        <po-info class="po-sm-12 po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
+        <po-info class="po-sm-12 po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-4" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
-        <po-info class="po-md-4" p-label="Inscrição Estadual" [p-value]="cliente.ie"></po-info>
-        <po-info class="po-md-4" p-label="Tipo" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Inscrição Estadual" [p-value]="cliente.ie"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Tipo" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-6" p-label="Endereço Completo" [p-value]="(cliente.endereco || '') + ', ' + (cliente.bairro || '')"></po-info>
-        <po-info class="po-md-3" p-label="Cidade/UF" [p-value]="(cliente.municipio?.descricao || '') + ' - ' + (cliente.uf || '')"></po-info>
-        <po-info class="po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
+        <po-info class="po-sm-12 po-md-6" p-label="Endereço Completo" [p-value]="(cliente.endereco || '') + ', ' + (cliente.bairro || '')"></po-info>
+        <po-info class="po-sm-12 po-md-3" p-label="Cidade/UF" [p-value]="(cliente.municipio?.descricao || '') + ' - ' + (cliente.uf || '')"></po-info>
+        <po-info class="po-sm-12 po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
-        <po-info class="po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
-        <po-info class="po-md-4" p-label="E-mail" [p-value]="cliente.email"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="E-mail" [p-value]="cliente.email"></po-info>
       </div>
       <div class="po-row">
-        <po-info class="po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
-        <po-info class="po-md-4" p-label="Condição de PGTO" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
-        <po-info class="po-md-4" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Condição de PGTO" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
       </div>
     </po-tab>
 
@@ -111,7 +111,7 @@
 
 <po-modal #modalNegociacao p-title="Gerar Acordo de Negociação" [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
   <div class="po-row">
-    <div class="po-md-12">
+    <div class="po-sm-12 po-md-12">
       <p>Você está agrupando <strong>{{ selectedTitles.length }}</strong> título(s) para este acordo.</p>
       <po-textarea
         name="obs"

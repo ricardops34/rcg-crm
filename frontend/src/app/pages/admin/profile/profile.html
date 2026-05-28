@@ -3,7 +3,7 @@
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <div class="po-row po-mb-3 po-mt-2">
-    <div class="po-md-12" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <div class="po-sm-12 po-md-12" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
       <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/avatar/avatar_00.png'"></po-avatar>
       <po-button p-label="Trocar Foto" (p-click)="openAvatarSelection()" p-icon="an an-camera"></po-button>
     </div>

@@ -8,9 +8,9 @@
   <form #groupForm="ngForm">
     <po-divider p-label="Dados do Perfil"></po-divider>
     <div class="po-row">
-      <po-input class="po-md-6" name="name" [(ngModel)]="group.name" p-label="Nome do Perfil" p-required p-clean></po-input>
+      <po-input class="po-sm-12 po-md-6" name="name" [(ngModel)]="group.name" p-label="Nome do Perfil" p-required p-clean></po-input>
       <po-select 
-        class="po-md-6" 
+        class="po-sm-12 po-md-6" 
         name="role" 
         [ngModel]="group.role" 
         (p-change)="group.role = $event"
@@ -23,7 +23,7 @@
     <po-divider p-label="Rotinas e Permissões"></po-divider>
     
     <div class="po-row">
-      <div class="po-md-12">
+      <div class="po-sm-12 po-md-12">
         <p class="po-font-text-smaller po-mb-2 po-text-color-07">
           Selecione as rotinas que este perfil pode acessar e o nível de permissão (CRUD).
         </p>

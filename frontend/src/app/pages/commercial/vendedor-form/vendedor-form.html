@@ -10,31 +10,31 @@
   <form #formVendedor="ngForm">
     <po-divider p-label="Informacoes Basicas"></po-divider>
     <div class="po-row">
-      <po-input class="po-md-2" name="codErp" [(ngModel)]="vendedor.codErp" p-label="Cod. ERP" p-clean></po-input>
-      <po-input class="po-md-6" name="nome" [(ngModel)]="vendedor.nome" p-label="Nome Completo" p-required="true" p-clean></po-input>
-      <po-input class="po-md-4" name="nomeReduzido" [(ngModel)]="vendedor.nomeReduzido" p-label="Nome de Guerra" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-2" name="codErp" [(ngModel)]="vendedor.codErp" p-label="Cod. ERP" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-6" name="nome" [(ngModel)]="vendedor.nome" p-label="Nome Completo" p-required="true" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-4" name="nomeReduzido" [(ngModel)]="vendedor.nomeReduzido" p-label="Nome de Guerra" p-clean></po-input>
     </div>
 
     <div class="po-row">
-      <po-input class="po-md-4" name="email" [(ngModel)]="vendedor.email" p-label="E-mail" p-icon="po-icon-mail" p-clean></po-input>
-      <po-input class="po-md-2" name="ddd" [(ngModel)]="vendedor.ddd" p-label="DDD" p-mask="99" p-clean></po-input>
-      <po-input class="po-md-3" name="telefone" [(ngModel)]="vendedor.telefone" p-label="Telefone" p-mask="9999-9999" p-clean></po-input>
-      <po-input class="po-md-3" name="celular" [(ngModel)]="vendedor.celular" p-label="Celular" p-mask="99999-9999" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-4" name="email" [(ngModel)]="vendedor.email" p-label="E-mail" p-icon="po-icon-mail" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-2" name="ddd" [(ngModel)]="vendedor.ddd" p-label="DDD" p-mask="99" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-3" name="telefone" [(ngModel)]="vendedor.telefone" p-label="Telefone" p-mask="9999-9999" p-clean></po-input>
+      <po-input class="po-sm-12 po-md-3" name="celular" [(ngModel)]="vendedor.celular" p-label="Celular" p-mask="99999-9999" p-clean></po-input>
     </div>
 
     <po-divider p-label="Configuracao e Hierarquia"></po-divider>
     <div class="po-row">
-      <po-select class="po-md-3" name="systemUnitId" [ngModel]="vendedor.systemUnitId" (p-change)="vendedor.systemUnitId = $event" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
-      <po-select class="po-md-3" name="status" [ngModel]="vendedor.status" (p-change)="vendedor.status = $event" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
-      <po-datepicker class="po-md-3" name="dtNascimento" [(ngModel)]="vendedor.dtNascimento" p-label="Data de Nascimento"></po-datepicker>
-      <po-input class="po-md-3" name="systemUsersId" [(ngModel)]="vendedor.systemUsersId" p-label="ID Usuario Relacionado" p-help="ID da tabela system_users" p-type="number"></po-input>
+      <po-select class="po-sm-12 po-md-3" name="systemUnitId" [ngModel]="vendedor.systemUnitId" (p-change)="vendedor.systemUnitId = $event" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
+      <po-select class="po-sm-12 po-md-3" name="status" [ngModel]="vendedor.status" (p-change)="vendedor.status = $event" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
+      <po-datepicker class="po-sm-12 po-md-3" name="dtNascimento" [(ngModel)]="vendedor.dtNascimento" p-label="Data de Nascimento"></po-datepicker>
+      <po-input class="po-sm-12 po-md-3" name="systemUsersId" [(ngModel)]="vendedor.systemUsersId" p-label="ID Usuario Relacionado" p-help="ID da tabela system_users" p-type="number"></po-input>
     </div>
 
     <div class="po-row">
-      <po-switch class="po-md-3" name="supervisor" [(ngModel)]="vendedor.supervisor" p-label="E Supervisor?" p-label-off="Nao" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
-      <po-select class="po-md-3" name="supervisorId" [ngModel]="vendedor.supervisorId" (p-change)="vendedor.supervisorId = $event" p-label="Supervisor Imediato" [p-options]="supervisors" [p-disabled]="vendedor.supervisor === 'S'"></po-select>
-      <po-switch class="po-md-3" name="dashboard" [(ngModel)]="vendedor.dashboard" p-label="Exibir Dashboard?" p-label-off="Nao" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
-      <po-switch class="po-md-3" name="desligado" [(ngModel)]="vendedor.desligado" p-label="Vendedor Desligado" p-label-off="Nao" p-label-on="Sim" p-true-value="S" p-false-value="N"></po-switch>
+      <po-switch class="po-sm-12 po-md-3" name="supervisor" [ngModel]="vendedor.supervisor === 'S'" (p-change)="vendedor.supervisor = $event ? 'S' : 'N'" p-label="E Supervisor?" p-label-off="Nao" p-label-on="Sim"></po-switch>
+      <po-select class="po-sm-12 po-md-3" name="supervisorId" [ngModel]="vendedor.supervisorId" (p-change)="vendedor.supervisorId = $event" p-label="Supervisor Imediato" [p-options]="supervisors" [p-disabled]="vendedor.supervisor === 'S'"></po-select>
+      <po-switch class="po-sm-12 po-md-3" name="dashboard" [ngModel]="vendedor.dashboard === 'S'" (p-change)="vendedor.dashboard = $event ? 'S' : 'N'" p-label="Exibir Dashboard?" p-label-off="Nao" p-label-on="Sim"></po-switch>
+      <po-switch class="po-sm-12 po-md-3" name="desligado" [ngModel]="vendedor.desligado === 'S'" (p-change)="vendedor.desligado = $event ? 'S' : 'N'" p-label="Vendedor Desligado" p-label-off="Nao" p-label-on="Sim"></po-switch>
     </div>
   </form>
 </po-page-edit>

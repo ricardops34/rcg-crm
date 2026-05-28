@@ -10,21 +10,21 @@
   <form #userForm="ngForm">
     <po-divider p-label="Informações Básicas"></po-divider>
     <div class="po-row">
-      <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome Completo" p-required p-clean></po-input>
-      <po-input class="po-md-3" name="login" [(ngModel)]="user.login" p-label="Login de Acesso" p-required p-clean></po-input>
-      <po-password class="po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit ? 'true' : 'false'" p-clean></po-password>
+      <po-input class="po-sm-12 po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome Completo" p-required p-clean></po-input>
+      <po-input class="po-sm-12 po-md-3" name="login" [(ngModel)]="user.login" p-label="Login de Acesso" p-required p-clean></po-input>
+      <po-password class="po-sm-12 po-md-3" name="password" [(ngModel)]="user.password" p-label="Senha" [p-required]="!isEdit ? 'true' : 'false'" p-clean></po-password>
     </div>
     
     <div class="po-row">
-      <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
-      <po-select class="po-md-3" name="systemUnitId" [ngModel]="user.systemUnitId" (p-change)="user.systemUnitId = $event" p-label="Unidade / Filial" [p-options]="unitOptions" p-required="true"></po-select>
-      <po-select class="po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
+      <po-input class="po-sm-12 po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
+      <po-select class="po-sm-12 po-md-3" name="systemUnitId" [ngModel]="user.systemUnitId" (p-change)="user.systemUnitId = $event" p-label="Unidade / Filial" [p-options]="unitOptions" p-required="true"></po-select>
+      <po-select class="po-sm-12 po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
     </div>
 
     <po-divider p-label="Permissões e Acesso"></po-divider>
     <div class="po-row">
       <po-multiselect 
-        class="po-md-6" 
+        class="po-sm-12 po-md-6" 
         name="groups" 
         [(ngModel)]="user.groups" 
         p-label="Perfis de Acesso" 
@@ -32,7 +32,7 @@
         p-placeholder="Selecione um ou mais perfis">
       </po-multiselect>
       <po-multiselect 
-        class="po-md-6" 
+        class="po-sm-12 po-md-6" 
         name="units" 
         [(ngModel)]="user.units" 
         p-label="Unidades de Acesso Adicionais" 

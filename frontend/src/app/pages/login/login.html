@@ -7,14 +7,14 @@
   <div class="po-row">
     <po-info p-label="Segurança"
       p-value="Informe o código de 6 dígitos enviado para seu e-mail ou gerado no app."></po-info>
-    <po-input class="po-md-12" name="2fa" [(ngModel)]="twoFactorCode" p-label="Código 2FA" p-mask="999999"></po-input>
+    <po-input class="po-sm-12 po-md-12" name="2fa" [(ngModel)]="twoFactorCode" p-label="Código 2FA" p-mask="999999"></po-input>
   </div>
 </po-modal>
 
 <po-modal #modalTerms p-title="Termos de Uso e LGPD"
   [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this), disabled: !termsAccepted }">
   <div class="po-row">
-    <div class="po-md-12">
+    <div class="po-sm-12 po-md-12">
       <p>Para continuar utilizando o RCG CRM, você deve ler e aceitar nossos novos Termos de Uso e Política de
         Privacidade (LGPD).</p>
 
