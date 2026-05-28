@@ -36,6 +36,11 @@ export class CreateUnitDto {
   @IsString()
   @IsOptional()
   favicon?: string;
+
+  @ApiProperty({ example: 1000, description: 'Limite de disco da unidade em MB', required: false, default: 1000 })
+  @IsNumber()
+  @IsOptional()
+  limiteDiscoMb?: number;
 }
 
 export class UpdateUnitDto extends PartialType(CreateUnitDto) {}
