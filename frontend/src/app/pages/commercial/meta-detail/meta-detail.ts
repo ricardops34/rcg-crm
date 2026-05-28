@@ -11,7 +11,7 @@ import {
   PoDialogService
 } from "@po-ui/ng-components";
 import { finalize } from "rxjs";
-import { MetaService } from "../../../services/meta";
+import { MetaVendedorService } from "../../../services/meta-vendedor";
 
 @Component({
   selector: "app-meta-detail",
@@ -20,7 +20,7 @@ import { MetaService } from "../../../services/meta";
   templateUrl: "./meta-detail.html"
 })
 export class MetaDetailComponent implements OnInit {
-  private metaService = inject(MetaService);
+  private metaService = inject(MetaVendedorService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
@@ -45,7 +45,7 @@ export class MetaDetailComponent implements OnInit {
     { property: "ano", label: "Ano", divider: "Período e Responsável", gridColumns: 2, gridSmColumns: 12 },
     { property: "mes", label: "Mês", gridColumns: 3, gridSmColumns: 12 },
     { property: "vendedorNome", label: "Vendedor", gridColumns: 5, gridSmColumns: 12 },
-    { property: "tipo", label: "Tipo", gridColumns: 2, gridSmColumns: 12, value: (val) => val === 'M' ? 'Mensal' : (val === 'S' ? 'Semanal' : val) },
+    { property: "tipoFormatado", label: "Tipo", gridColumns: 2, gridSmColumns: 12 },
     { property: "valor", label: "Valor do Objetivo (R$)", divider: "Metas de Valor e Volume", type: "currency", gridColumns: 4, gridSmColumns: 12 },
     { property: "numeroCliente", label: "Meta de Positivação", gridColumns: 4, gridSmColumns: 12 },
     { property: "novoCliente", label: "Meta de Novos Clientes", gridColumns: 4, gridSmColumns: 12 }
@@ -97,7 +97,8 @@ export class MetaDetailComponent implements OnInit {
 
         this.meta = {
           ...res,
-          vendedorNome: res.vendedor?.nome || res.vendedorId
+          vendedorNome: (res as any).vendedor?.nome || (res as any).vendedorId,
+          tipoFormatado: res.tipo === 'M' ? 'Mensal' : (res.tipo === 'S' ? 'Semanal' : res.tipo)
         };
       },
       error: () => {

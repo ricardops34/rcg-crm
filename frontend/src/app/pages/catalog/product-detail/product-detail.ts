@@ -49,7 +49,7 @@ export class ProductDetailComponent implements OnInit {
     { property: "categoriaDescricao", label: "Categoria", gridColumns: 3, gridSmColumns: 12 },
     { property: "um", label: "U.M.", gridColumns: 3, gridSmColumns: 12 },
     { property: "ncm", label: "NCM", gridColumns: 3, gridSmColumns: 12 },
-    { property: "status", label: "Status", gridColumns: 3, gridSmColumns: 12, tag: true, color: (val) => val === 'A' ? 'color-10' : 'color-07', value: (val) => val === 'A' ? 'Ativo' : 'Inativo' },
+    { property: "statusFormatado", label: "Status", gridColumns: 3, gridSmColumns: 12 },
 
     { property: "informacoes_tecnicas", label: "Ficha Técnica", divider: "Informações Técnicas", gridColumns: 12, gridSmColumns: 12 }
   ];
@@ -100,7 +100,8 @@ export class ProductDetailComponent implements OnInit {
 
         this.product = {
           ...res,
-          categoriaDescricao: res.categoria?.descricao || res.categoriaId
+          categoriaDescricao: (res as any).categoria?.descricao || (res as any).categoriaId,
+          statusFormatado: res.status === 'A' ? 'Ativo' : 'Inativo'
         };
       },
       error: () => {

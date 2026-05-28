@@ -51,14 +51,14 @@ export class VendedorDetailComponent implements OnInit {
     { property: "celular", label: "Celular", gridColumns: 3, gridSmColumns: 12 },
 
     { property: "systemUnitNome", label: "Unidade Principal", divider: "Configuração e Hierarquia", gridColumns: 3, gridSmColumns: 12 },
-    { property: "status", label: "Status", gridColumns: 3, gridSmColumns: 12, tag: true, color: (val) => val === 'A' ? 'color-10' : 'color-07', value: (val) => val === 'A' ? 'Ativo' : 'Inativo' },
+    { property: "statusFormatado", label: "Status", gridColumns: 3, gridSmColumns: 12 },
     { property: "dtNascimento", label: "Data Nascimento", type: "date", gridColumns: 3, gridSmColumns: 12 },
     { property: "systemUsersId", label: "ID Usuário Relacionado", gridColumns: 3, gridSmColumns: 12 },
 
-    { property: "supervisor", label: "É Supervisor?", gridColumns: 3, gridSmColumns: 12, value: (val) => val === 'S' ? 'Sim' : 'Não' },
+    { property: "supervisorFormatado", label: "É Supervisor?", gridColumns: 3, gridSmColumns: 12 },
     { property: "supervisorNome", label: "Supervisor Imediato", gridColumns: 3, gridSmColumns: 12 },
-    { property: "dashboard", label: "Exibir Dashboard?", gridColumns: 3, gridSmColumns: 12, value: (val) => val === 'S' ? 'Sim' : 'Não' },
-    { property: "desligado", label: "Desligado?", gridColumns: 3, gridSmColumns: 12, tag: true, color: (val) => val === 'S' ? 'color-07' : 'color-08', value: (val) => val === 'S' ? 'Sim' : 'Não' }
+    { property: "dashboardFormatado", label: "Exibir Dashboard?", gridColumns: 3, gridSmColumns: 12 },
+    { property: "desligadoFormatado", label: "Desligado?", gridColumns: 3, gridSmColumns: 12 }
   ];
 
   ngOnInit(): void {
@@ -107,8 +107,12 @@ export class VendedorDetailComponent implements OnInit {
 
         this.vendedor = {
           ...res,
-          systemUnitNome: res.systemUnit?.name || res.systemUnitId,
-          supervisorNome: res.supervisorParent?.nome || res.supervisorId
+          systemUnitNome: (res as any).systemUnit?.name || (res as any).systemUnitId,
+          supervisorNome: (res as any).supervisorParent?.nome || (res as any).supervisorId,
+          statusFormatado: res.status === 'A' ? 'Ativo' : 'Inativo',
+          supervisorFormatado: res.supervisor === 'S' ? 'Sim' : 'Não',
+          dashboardFormatado: res.dashboard === 'S' ? 'Sim' : 'Não',
+          desligadoFormatado: res.desligado === 'S' ? 'Sim' : 'Não'
         };
       },
       error: () => {

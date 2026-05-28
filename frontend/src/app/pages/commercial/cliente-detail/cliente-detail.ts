@@ -47,8 +47,8 @@ export class ClienteDetailComponent implements OnInit {
     { property: "fantasia", label: "Nome Fantasia", gridColumns: 4, gridSmColumns: 12 },
     { property: "cnpjCpf", label: "CNPJ / CPF", gridColumns: 4, gridSmColumns: 12 },
     { property: "ie", label: "Inscrição Estadual", gridColumns: 3, gridSmColumns: 12 },
-    { property: "tipo", label: "Tipo", gridColumns: 2, gridSmColumns: 12, value: (val) => val === 'J' ? 'Jurídica' : 'Física' },
-    { property: "status", label: "Status", gridColumns: 3, gridSmColumns: 12, tag: true, color: (val) => val === 'A' ? 'color-10' : 'color-07', value: (val) => val === 'A' ? 'Ativo' : 'Bloqueado' },
+    { property: "tipoFormatado", label: "Tipo", gridColumns: 2, gridSmColumns: 12 },
+    { property: "statusFormatado", label: "Status", gridColumns: 3, gridSmColumns: 12 },
     { property: "cep", label: "CEP", divider: "Localização", gridColumns: 2, gridSmColumns: 12 },
     { property: "endereco", label: "Endereço", gridColumns: 6, gridSmColumns: 12 },
     { property: "bairro", label: "Bairro", gridColumns: 4, gridSmColumns: 12 },
@@ -111,8 +111,10 @@ export class ClienteDetailComponent implements OnInit {
         // Custom mapping to display relations nicely
         this.cliente = {
           ...res,
-          vendedorNome: res.vendedor?.nome || res.vendedorId,
-          municipioNome: res.municipio?.nome || res.municipioId
+          vendedorNome: (res as any).vendedor?.nome || (res as any).vendedorId,
+          municipioNome: (res as any).municipio?.name || (res as any).municipioId,
+          tipoFormatado: res.tipo === 'J' ? 'Jurídica' : 'Física',
+          statusFormatado: res.status === 'A' ? 'Ativo' : 'Bloqueado'
         };
       },
       error: () => {

@@ -45,8 +45,8 @@ export class TabelaPrecoDetailComponent implements OnInit {
   readonly fields: Array<PoDynamicViewField> = [
     { property: "codErp", label: "Cód. ERP", divider: "Definição da Tabela", gridColumns: 2, gridSmColumns: 12 },
     { property: "descricao", label: "Descrição da Tabela", gridColumns: 6, gridSmColumns: 12 },
-    { property: "status", label: "Status", gridColumns: 2, gridSmColumns: 12, tag: true, color: (val) => val === 'A' ? 'color-10' : 'color-07', value: (val) => val === 'A' ? 'Ativa' : 'Inativa' },
-    { property: "utiliza", label: "Em Uso", gridColumns: 2, gridSmColumns: 12, value: (val) => val === 'S' ? 'Sim' : 'Não' },
+    { property: "statusFormatado", label: "Status", gridColumns: 2, gridSmColumns: 12 },
+    { property: "utilizaFormatado", label: "Em Uso", gridColumns: 2, gridSmColumns: 12 },
     { property: "dt_inicio", label: "Data Início", type: "date", gridColumns: 3, gridSmColumns: 12 },
     { property: "dt_fim", label: "Data Fim", type: "date", gridColumns: 3, gridSmColumns: 12 }
   ];
@@ -101,7 +101,11 @@ export class TabelaPrecoDetailComponent implements OnInit {
           return;
         }
 
-        this.tabela = res;
+        this.tabela = {
+          ...res,
+          statusFormatado: res.status === 'A' ? 'Ativa' : 'Inativa',
+          utilizaFormatado: res.utiliza === 'S' ? 'Sim' : 'Não'
+        };
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados da tabela.");

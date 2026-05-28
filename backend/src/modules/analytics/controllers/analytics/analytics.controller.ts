@@ -86,6 +86,7 @@ export class AnalyticsController {
     @Query('year') year: string,
     @Query('page') page?: string,
     @Query('pageSize') pageSize?: string,
+    @Query('order') order?: string,
     @Query('vendedorId') vendedorId?: string,
     @Query('vendedor_id') vendedor_id?: string,
     @Query('dias') dias?: string,
@@ -157,7 +158,7 @@ export class AnalyticsController {
 
     const currentPage = parseInt(page || '1') || 1;
     const currentPageSize = parseInt(pageSize || '10') || 10;
-    const paginated = this.analyticsService.paginateMvcItems(items, currentPage, currentPageSize);
+    const paginated = this.analyticsService.paginateMvcItems(items, currentPage, currentPageSize, order);
 
     console.log('[MVC-DEBUG][BACK][CONTROLLER] getMvcTable retorno service', {
       total: items.length,

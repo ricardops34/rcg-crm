@@ -223,7 +223,7 @@ export class MvcListComponent implements OnInit {
           if (row.dias > 180) return 'color-07';
           if (row.dias >= 90) return 'color-08';
           if (row.dias >= 60) return 'color-09';
-          if (row.dias >= 30 return 'color-04';
+          if (row.dias >= 30) return 'color-04';
           return 'color-10';
         }
       } as any

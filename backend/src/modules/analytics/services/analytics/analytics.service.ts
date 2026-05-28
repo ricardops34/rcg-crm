@@ -293,7 +293,25 @@ export class AnalyticsService {
       throw err;
     }
   }
-  paginateMvcItems(items: Array<any>, page: number, pageSize: number) {
+  paginateMvcItems(items: Array<any>, page: number, pageSize: number, order?: string) {
+    if (order) {
+      const isDesc = order.startsWith('-');
+      const property = isDesc ? order.substring(1) : order;
+
+      items.sort((a, b) => {
+        let valA = a[property];
+        let valB = b[property];
+
+        if (typeof valA === 'string' && typeof valB === 'string') {
+          return isDesc ? valB.localeCompare(valA) : valA.localeCompare(valB);
+        } else {
+          valA = valA || 0;
+          valB = valB || 0;
+          return isDesc ? valB - valA : valA - valB;
+        }
+      });
+    }
+
     const safePage = Math.max(1, Number(page) || 1);
     const safePageSize = Math.max(1, Number(pageSize) || 10);
     const start = (safePage - 1) * safePageSize;
