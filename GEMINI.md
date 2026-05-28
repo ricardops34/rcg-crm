@@ -119,6 +119,14 @@ Para garantir a estabilidade e a conformidade técnica em todos os desenvolvimen
        </po-lookup>
        ```
 
+### 5. Registro de Novas Rotinas (Controle de Acesso)
+*   **Regra de Ouro**: Sempre que uma nova tela/rotina for criada no frontend, é obrigatório criar o seu respectivo registro nas tabelas de controle de acesso do banco de dados para que ela apareça no Menu Lateral e tenha suas permissões validadas.
+*   **Passo a Passo Obrigatório**:
+    1.  **Frontend (`app.routes.ts`)**: Mapear a rota passando o `controller` (ex: `data: { controller: 'MinhaNovaRotinaList' }`). Lembre-se: as telas filhas (como os Forms de edição/criação) geralmente usam o *mesmo controller* da lista pai para herdar permissões, então você não precisa inserir a tela de Form no banco, apenas a de List.
+    2.  **Banco de Dados (`system_program`)**: Criar a instrução de `INSERT INTO system_program` vinculando o `controller` a um `system_module_id` existente.
+    3.  **Banco de Dados (`system_group_program`)**: Criar a instrução de `INSERT INTO system_group_program` concedendo as permissões (view, insert, update, delete) aos grupos necessários (ex: `ADMIN`).
+    4.  **Consolidação**: Sempre registre esses `INSERTS` atualizando o script de inicialização do banco correspondente (ex: `database/crm/04-initial-data.sql`) para manter as migrações consistentes.
+
 ---
 
 ## 📝 Padrão de Codificação e Resposta
