@@ -69,12 +69,12 @@ export class VendedorListComponent implements OnInit {
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Novo Vendedor", action: this.create.bind(this), icon: "po-icon-user-add" },
-    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "po-icon-filter" },
     { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
 
   readonly filter: PoPageFilter = {
     action: this.onFilter.bind(this),
+    advancedAction: this.openAdvancedFilters.bind(this),
     placeholder: "Filtrar por nome ou e-mail"
   };
 

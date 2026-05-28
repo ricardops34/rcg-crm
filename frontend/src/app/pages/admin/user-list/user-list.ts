@@ -9,6 +9,7 @@ import {
   PoNotificationService,
   PoPageAction,
   PoSelectOption,
+  PoPageFilter,
   PoTableAction,
   PoTableColumn,
   PoTableColumnSort,
@@ -34,20 +35,20 @@ type UserAdvancedFilters = {
       [p-actions]="actions"
       [p-filter]="filter">
 
-      <div class="advanced-filters-panel" *ngIf="hasAppliedFilters()">
-        <div class="advanced-filters-title">Apresentando resultados filtrados por:</div>
-        <div class="advanced-filters-tags">
-          <button class="advanced-filter-clear" type="button" (click)="clearAdvancedFilters()">Remover todos</button>
-          <button
-            class="advanced-filter-tag"
-            type="button"
-            *ngFor="let appliedFilter of appliedFilters"
-            (click)="removeAdvancedFilter(appliedFilter.key)">
-            {{ appliedFilter.label }}
-            <span class="advanced-filter-tag-close">x</span>
-          </button>
+      @if (hasAppliedFilters()) {
+        <div class="advanced-filters-panel">
+          <div class="advanced-filters-title">Apresentando resultados filtrados por:</div>
+          <div class="advanced-filters-tags">
+            <button class="advanced-filter-clear" type="button" (click)="clearAdvancedFilters()">Remover todos</button>
+            @for (appliedFilter of appliedFilters; track appliedFilter.key) {
+              <button class="advanced-filter-tag" type="button" (click)="removeAdvancedFilter(appliedFilter.key)">
+                {{ appliedFilter.label }}
+                <span class="advanced-filter-tag-close">x</span>
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      }
 
       <po-table
         [p-columns]="columns"
@@ -133,14 +134,14 @@ export class UserListComponent implements OnInit {
     ]
   };
 
-  readonly filter: any = {
+  readonly filter: PoPageFilter = {
     action: this.loadUsers.bind(this),
+    advancedAction: this.openAdvancedFilters.bind(this),
     placeholder: "Pesquisar por nome ou login"
   };
 
   readonly actions: Array<PoPageAction> = [
     { label: "Novo Usuario", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" },
-    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "po-icon-filter" },
     { label: "Configurar Termos/LGPD", action: () => this.router.navigate(["/admin/users/terms"]), icon: "po-icon-document" }
   ];
 

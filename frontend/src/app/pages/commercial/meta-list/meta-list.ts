@@ -36,20 +36,20 @@ type MetaFilters = {
       [p-actions]="pageActions"
       [p-filter]="filter">
 
-      <div class="meta-filters-panel" *ngIf="hasAppliedFilters()">
-        <div class="meta-filters-title">Apresentando resultados filtrados por:</div>
-        <div class="meta-filters-tags">
-          <button class="meta-filter-clear" type="button" (click)="clearAdvancedFilters()">Remover todos</button>
-          <button
-            class="meta-filter-tag"
-            type="button"
-            *ngFor="let appliedFilter of appliedFilters"
-            (click)="removeFilter(appliedFilter.key)">
-            {{ appliedFilter.label }}
-            <span class="meta-filter-tag-close">x</span>
-          </button>
+      @if (hasAppliedFilters()) {
+        <div class="meta-filters-panel">
+          <div class="meta-filters-title">Apresentando resultados filtrados por:</div>
+          <div class="meta-filters-tags">
+            <button class="meta-filter-clear" type="button" (click)="clearAdvancedFilters()">Remover todos</button>
+            @for (appliedFilter of appliedFilters; track appliedFilter.key) {
+              <button class="meta-filter-tag" type="button" (click)="removeFilter(appliedFilter.key)">
+                {{ appliedFilter.label }}
+                <span class="meta-filter-tag-close">x</span>
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      }
 
       <po-table
         [p-columns]="columns"
@@ -148,12 +148,12 @@ export class MetaListComponent implements OnInit {
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Novo Objetivo", action: () => this.router.navigate(["/metas/new"]), icon: "po-icon-target" },
-    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "po-icon-filter" },
     { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
 
   readonly filter: PoPageFilter = {
     action: this.onFilter.bind(this),
+    advancedAction: this.openAdvancedFilters.bind(this),
     placeholder: "Pesquisar por ano ou vendedor"
   };
 
