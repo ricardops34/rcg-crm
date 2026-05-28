@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -9,7 +9,7 @@ import {
   PoModalComponent
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
-import { catchError, finalize, of } from "rxjs";
+import { Subject, catchError, finalize, of, takeUntil } from "rxjs";
 import { ClienteService } from "../../../services/cliente";
 import { NegociacaoService } from "../../../services/negociacao";
 
@@ -19,7 +19,7 @@ import { NegociacaoService } from "../../../services/negociacao";
   imports: [CommonModule, PoModule, FormsModule],
   templateUrl: "./cliente-360.html"
 })
-export class Cliente360Component implements OnInit {
+export class Cliente360Component implements OnInit, OnDestroy {
   @ViewChild("modalNegociacao", { static: true }) modalNegociacao!: PoModalComponent;
 
   private route = inject(ActivatedRoute);
@@ -27,6 +27,7 @@ export class Cliente360Component implements OnInit {
   private clienteService = inject(ClienteService);
   private negociacaoService = inject(NegociacaoService);
   private poNotification = inject(PoNotificationService);
+  private destroy$ = new Subject<void>();
 
   cliente: any = {};
   comodatoItems: Array<any> = [];
@@ -38,7 +39,13 @@ export class Cliente360Component implements OnInit {
   overdueTitles: Array<any> = [];
   selectedTitles: Array<any> = [];
 
-  isLoading = true;
+  // Overlay apenas para carga inicial do cliente e submit de negociação
+  isLoadingCliente = true;
+  // Loading por aba — alimenta [p-loading] em cada po-table
+  tabLoading: Record<string, boolean> = {};
+  // Previne requests duplicados ao trocar de aba rapidamente
+  private loadingTabs: Record<string, boolean> = {};
+
   activeTab = "estoque";
   private clienteId?: number;
   private loadedTabs: Record<string, boolean> = {};
@@ -47,9 +54,7 @@ export class Cliente360Component implements OnInit {
   readonly notasMonthsWindow = 12;
   isLoadingMoreNotas = false;
 
-  negociacao: any = {
-    observacao: ""
-  };
+  negociacao: any = { observacao: "" };
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Voltar", action: this.close.bind(this), icon: "po-icon-arrow-left" },
@@ -125,29 +130,36 @@ export class Cliente360Component implements OnInit {
   ];
 
   ngOnInit() {
+    // snapshot evita subscription não encerrada em queryParams
     const id = this.route.snapshot.params["id"];
-    this.route.queryParams.subscribe(params => {
-      if (params["tab"]) {
-        this.activeTab = params["tab"];
-      }
-    });
-
+    const tabParam = this.route.snapshot.queryParams["tab"];
+    if (tabParam) {
+      this.activeTab = tabParam;
+    }
     if (id) {
       this.clienteId = Number(id);
       this.loadCliente(id);
     }
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadCliente(id: number) {
-    this.isLoading = true;
-    this.clienteService.findOne(id).subscribe({
+    this.isLoadingCliente = true;
+    this.clienteService.findOne(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.cliente = res;
+        // Dados cadastrais já estão no objeto cliente — não precisa de request separado
+        this.loadedTabs["cadastro"] = true;
+        this.isLoadingCliente = false;
         this.loadTab(this.activeTab);
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados do cliente.");
-        this.isLoading = false;
+        this.isLoadingCliente = false;
       }
     });
   }
@@ -158,110 +170,104 @@ export class Cliente360Component implements OnInit {
   }
 
   reloadCurrentTab() {
-    if (!this.clienteId) {
-      return;
-    }
-
+    if (!this.clienteId) return;
     this.loadedTabs[this.activeTab] = false;
+    this.loadingTabs[this.activeTab] = false;
     this.loadTab(this.activeTab);
   }
 
   private loadTab(tab: string) {
-    if (!this.clienteId || this.loadedTabs[tab]) {
-      this.isLoading = false;
+    // Não carrega se: sem ID, já carregado, ou já está em voo (previne request duplicado)
+    if (!this.clienteId || this.loadedTabs[tab] || this.loadingTabs[tab]) {
       return;
     }
 
     const fallback = (label: string) => {
-      console.error(`[360-DEBUG][FRONT] erro ao carregar ${label}`);
+      this.poNotification.error(`Erro ao carregar ${label}.`);
       return of([]);
+    };
+
+    const startLoading = () => {
+      this.loadingTabs[tab] = true;
+      this.tabLoading[tab] = true;
+    };
+
+    const stopLoading = () => {
+      this.tabLoading[tab] = false;
+      this.loadingTabs[tab] = false;
     };
 
     const loaders: Record<string, () => void> = {
       estoque: () => {
-        this.isLoading = true;
+        startLoading();
         this.clienteService.getEstoqueEstimado(this.clienteId!).pipe(
           catchError(() => fallback("estoque estimado")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.estoqueItems = res;
+          this.estoqueItems = res ?? [];
           this.loadedTabs[tab] = true;
         });
       },
       cobranca: () => {
-        this.isLoading = true;
+        startLoading();
         this.negociacaoService.getOverdueTitles(this.clienteId!).pipe(
           catchError(() => fallback("cobrança")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.overdueTitles = res;
-          this.selectedTitles = [...res];
+          this.overdueTitles = res ?? [];
+          this.selectedTitles = [...this.overdueTitles];
           this.loadedTabs[tab] = true;
         });
       },
       mix: () => {
-        this.isLoading = true;
+        startLoading();
         this.clienteService.getMix(this.clienteId!).pipe(
-          catchError(() => fallback("mix")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          catchError(() => fallback("mix de produtos")),
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.mixItems = res;
+          this.mixItems = res ?? [];
           this.loadedTabs[tab] = true;
         });
       },
       financeiro: () => {
-        this.isLoading = true;
+        startLoading();
         this.clienteService.getFinanceiro(this.clienteId!).pipe(
           catchError(() => fallback("financeiro")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.financeiroItems = res;
+          this.financeiroItems = res ?? [];
           this.loadedTabs[tab] = true;
         });
       },
       notas: () => {
-        this.isLoading = true;
+        startLoading();
         this.notasMonthsOffset = 0;
-        this.clienteService.getNotas(this.clienteId!, this.notasMonthsOffset, this.notasMonthsWindow).pipe(
-          catchError(() => fallback("notas")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+        this.clienteService.getNotas(this.clienteId!, 0, this.notasMonthsWindow).pipe(
+          catchError(() => fallback("notas fiscais")),
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.notasItems = res?.items || [];
+          this.notasItems = res?.items ?? [];
           this.notasHasNext = Boolean(res?.hasNext);
           this.loadedTabs[tab] = true;
         });
       },
       comodato: () => {
-        this.isLoading = true;
+        startLoading();
         this.clienteService.getComodato(this.clienteId!).pipe(
           catchError(() => fallback("comodato")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.comodatoItems = res;
+          this.comodatoItems = res ?? [];
           this.loadedTabs[tab] = true;
         });
       },
       atendimentos: () => {
-        this.isLoading = true;
+        startLoading();
         this.clienteService.getAtendimentos(this.clienteId!).pipe(
           catchError(() => fallback("atendimentos")),
-          finalize(() => {
-            this.isLoading = false;
-          })
+          finalize(stopLoading)
         ).subscribe((res: any) => {
-          this.atendimentosItems = res;
+          this.atendimentosItems = res ?? [];
           this.loadedTabs[tab] = true;
         });
       }
@@ -271,25 +277,21 @@ export class Cliente360Component implements OnInit {
   }
 
   loadMoreNotas() {
-    if (!this.clienteId || !this.notasHasNext || this.isLoadingMoreNotas) {
-      return;
-    }
+    if (!this.clienteId || !this.notasHasNext || this.isLoadingMoreNotas) return;
 
     this.isLoadingMoreNotas = true;
     const nextOffset = this.notasMonthsOffset + this.notasMonthsWindow;
 
     this.clienteService.getNotas(this.clienteId, nextOffset, this.notasMonthsWindow).pipe(
-      finalize(() => {
-        this.isLoadingMoreNotas = false;
-      })
+      finalize(() => { this.isLoadingMoreNotas = false; })
     ).subscribe({
       next: (res: any) => {
         this.notasMonthsOffset = nextOffset;
-        this.notasItems = [...this.notasItems, ...(res?.items || [])];
+        this.notasItems = [...this.notasItems, ...(res?.items ?? [])];
         this.notasHasNext = Boolean(res?.hasNext);
       },
       error: () => {
-        this.poNotification.error("Erro ao carregar mais notas.");
+        this.poNotification.error("Erro ao carregar mais notas fiscais.");
       }
     });
   }
@@ -299,7 +301,6 @@ export class Cliente360Component implements OnInit {
       this.poNotification.warning("Cliente não possui títulos vencidos para negociação.");
       return;
     }
-
     this.selectedTitles = [...this.overdueTitles];
     this.negociacao.observacao = "";
     this.modalNegociacao.open();
@@ -310,28 +311,29 @@ export class Cliente360Component implements OnInit {
       this.poNotification.error("É obrigatório selecionar TODOS os títulos vencidos para gerar a negociação.");
       return;
     }
-
-    if (!this.negociacao.observacao) {
+    if (!this.negociacao.observacao?.trim()) {
       this.poNotification.warning("Informe uma observação para a negociação.");
       return;
     }
 
-    this.isLoading = true;
+    this.isLoadingCliente = true;
     const payload = {
       clienteId: this.cliente.id,
-      observacao: this.negociacao.observacao,
-      tituloIds: this.selectedTitles.map(t => t.id)
+      observacao: this.negociacao.observacao.trim(),
+      tituloIds: this.selectedTitles.map((t: any) => t.id)
     };
 
     this.negociacaoService.create(payload).subscribe({
       next: () => {
+        this.isLoadingCliente = false;
         this.poNotification.success("Negociação gerada com sucesso!");
         this.modalNegociacao.close();
         this.loadedTabs["cobranca"] = false;
+        this.loadingTabs["cobranca"] = false;
         this.loadTab("cobranca");
       },
-      error: (err) => {
-        this.isLoading = false;
+      error: (err: any) => {
+        this.isLoadingCliente = false;
         this.poNotification.error(err.error?.message || "Erro ao gerar negociação.");
       }
     });

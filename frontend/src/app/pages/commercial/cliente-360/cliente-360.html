@@ -1,5 +1,9 @@
 <po-page-default [p-title]="'Visão 360: ' + (cliente.razao || '')" [p-actions]="pageActions">
-  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+
+  <!-- Overlay apenas para carga inicial do cliente e submit de negociação -->
+  @if (isLoadingCliente) {
+    <po-loading-overlay [p-screen-lock]="true"></po-loading-overlay>
+  }
 
   <div class="po-row">
     <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Cód. ERP">
@@ -8,7 +12,10 @@
 
     <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Status">
       <div class="po-font-subtitle po-text-center po-py-1">
-        <po-tag [p-value]="cliente.status === 'A' ? 'ATIVO' : 'BLOQUEADO'" [p-color]="cliente.status === 'A' ? 'color-10' : 'color-07'"></po-tag>
+        <po-tag
+          [p-value]="cliente.status === 'A' ? 'ATIVO' : 'BLOQUEADO'"
+          [p-color]="cliente.status === 'A' ? 'color-10' : 'color-07'">
+        </po-tag>
       </div>
     </po-widget>
 
@@ -22,30 +29,50 @@
   </div>
 
   <po-tabs>
-    <po-tab p-label="Estoque do Cliente" [p-active]="activeTab === 'estoque'" (p-activated-tab)="onTabActivated('estoque')">
+
+    <po-tab
+      p-label="Estoque do Cliente"
+      [p-active]="activeTab === 'estoque'"
+      (p-activated-tab)="onTabActivated('estoque')">
       <div class="po-row po-mt-2">
         <div class="po-sm-12 po-md-12">
           <p class="po-font-text-smaller po-mb-2 po-text-color-07">
-            Estoque estimado com base nas compras dos últimos 180 dias, no consumo médio e no intervalo entre compras.
-            A sugestão é arredondada para múltiplos da embalagem, evitando compra fracionada.
+            Estoque estimado com base nas compras dos últimos 180 dias, consumo médio e intervalo entre compras.
+            A sugestão é arredondada para múltiplos da embalagem.
           </p>
-          <po-table [p-columns]="estoqueColumns" [p-items]="estoqueItems" p-container="shadow"></po-table>
+          <po-table
+            [p-columns]="estoqueColumns"
+            [p-items]="estoqueItems"
+            [p-loading]="tabLoading['estoque']"
+            p-container="shadow">
+          </po-table>
         </div>
       </div>
     </po-tab>
 
-    <po-tab p-label="Cobrança" [p-active]="activeTab === 'cobranca'" (p-activated-tab)="onTabActivated('cobranca')">
+    <po-tab
+      p-label="Cobrança"
+      [p-active]="activeTab === 'cobranca'"
+      (p-activated-tab)="onTabActivated('cobranca')">
       <div class="po-row po-mt-2">
         <div class="po-sm-12 po-md-12">
           <div class="po-row po-mb-2">
             <po-info class="po-sm-12 po-md-4" p-label="Títulos Vencidos" [p-value]="overdueTitles.length.toString()"></po-info>
             <div class="po-sm-12 po-md-8 po-text-right">
-              <po-button p-label="Gerar Negociação" p-icon="po-icon-finance" (p-click)="openNegociacao()"></po-button>
+              <po-button
+                p-label="Gerar Negociação"
+                p-icon="po-icon-finance"
+                [p-disabled]="tabLoading['cobranca'] || overdueTitles.length === 0"
+                (p-click)="openNegociacao()">
+              </po-button>
             </div>
           </div>
-
-          <po-table [p-columns]="overdueColumns" [p-items]="overdueTitles" p-container="shadow"></po-table>
-
+          <po-table
+            [p-columns]="overdueColumns"
+            [p-items]="overdueTitles"
+            [p-loading]="tabLoading['cobranca']"
+            p-container="shadow">
+          </po-table>
           <p class="po-font-text-smaller po-mt-2 po-text-color-07">
             * A negociação será gerada com todos os títulos vencidos exibidos.
           </p>
@@ -53,7 +80,10 @@
       </div>
     </po-tab>
 
-    <po-tab p-label="Dados Cadastrais" [p-active]="activeTab === 'cadastro'" (p-activated-tab)="onTabActivated('cadastro')">
+    <po-tab
+      p-label="Dados Cadastrais"
+      [p-active]="activeTab === 'cadastro'"
+      (p-activated-tab)="onTabActivated('cadastro')">
       <div class="po-row po-mt-2">
         <po-info class="po-sm-12 po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
         <po-info class="po-sm-12 po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
@@ -80,18 +110,38 @@
       </div>
     </po-tab>
 
-    <po-tab p-label="MIX de Produtos" [p-active]="activeTab === 'mix'" (p-activated-tab)="onTabActivated('mix')">
-      <po-table [p-columns]="mixColumns" [p-items]="mixItems" p-container="shadow"></po-table>
+    <po-tab
+      p-label="MIX de Produtos"
+      [p-active]="activeTab === 'mix'"
+      (p-activated-tab)="onTabActivated('mix')">
+      <po-table
+        [p-columns]="mixColumns"
+        [p-items]="mixItems"
+        [p-loading]="tabLoading['mix']"
+        p-container="shadow">
+      </po-table>
     </po-tab>
 
-    <po-tab p-label="Financeiro (Geral)" [p-active]="activeTab === 'financeiro'" (p-activated-tab)="onTabActivated('financeiro')">
-      <po-table [p-columns]="financeiroColumns" [p-items]="financeiroItems" p-container="shadow"></po-table>
+    <po-tab
+      p-label="Financeiro (Geral)"
+      [p-active]="activeTab === 'financeiro'"
+      (p-activated-tab)="onTabActivated('financeiro')">
+      <po-table
+        [p-columns]="financeiroColumns"
+        [p-items]="financeiroItems"
+        [p-loading]="tabLoading['financeiro']"
+        p-container="shadow">
+      </po-table>
     </po-tab>
 
-    <po-tab p-label="Histórico de Notas" [p-active]="activeTab === 'notas'" (p-activated-tab)="onTabActivated('notas')">
+    <po-tab
+      p-label="Histórico de Notas"
+      [p-active]="activeTab === 'notas'"
+      (p-activated-tab)="onTabActivated('notas')">
       <po-table
         [p-columns]="notasColumns"
         [p-items]="notasItems"
+        [p-loading]="tabLoading['notas']"
         [p-show-more-disabled]="!notasHasNext"
         [p-loading-show-more]="isLoadingMoreNotas"
         (p-show-more)="loadMoreNotas()"
@@ -99,17 +149,38 @@
       </po-table>
     </po-tab>
 
-    <po-tab p-label="Comodato" [p-active]="activeTab === 'comodato'" (p-activated-tab)="onTabActivated('comodato')">
-      <po-table [p-columns]="comodatoColumns" [p-items]="comodatoItems" p-container="shadow"></po-table>
+    <po-tab
+      p-label="Comodato"
+      [p-active]="activeTab === 'comodato'"
+      (p-activated-tab)="onTabActivated('comodato')">
+      <po-table
+        [p-columns]="comodatoColumns"
+        [p-items]="comodatoItems"
+        [p-loading]="tabLoading['comodato']"
+        p-container="shadow">
+      </po-table>
     </po-tab>
 
-    <po-tab p-label="Atendimentos CRM" [p-active]="activeTab === 'atendimentos'" (p-activated-tab)="onTabActivated('atendimentos')">
-      <po-table [p-columns]="atendimentosColumns" [p-items]="atendimentosItems" p-container="shadow"></po-table>
+    <po-tab
+      p-label="Atendimentos CRM"
+      [p-active]="activeTab === 'atendimentos'"
+      (p-activated-tab)="onTabActivated('atendimentos')">
+      <po-table
+        [p-columns]="atendimentosColumns"
+        [p-items]="atendimentosItems"
+        [p-loading]="tabLoading['atendimentos']"
+        p-container="shadow">
+      </po-table>
     </po-tab>
+
   </po-tabs>
+
 </po-page-default>
 
-<po-modal #modalNegociacao p-title="Gerar Acordo de Negociação" [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
+<po-modal
+  #modalNegociacao
+  p-title="Gerar Acordo de Negociação"
+  [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
   <div class="po-row">
     <div class="po-sm-12 po-md-12">
       <p>Você está agrupando <strong>{{ selectedTitles.length }}</strong> título(s) para este acordo.</p>
