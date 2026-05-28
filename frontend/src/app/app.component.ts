@@ -332,8 +332,8 @@ export class AppComponent implements OnInit {
   }
 
   openThemePopup() {
-    if (this.themePopupRef && this.themeAnchorRef) {
-      this.themePopupRef.toggle(this.themeAnchorRef.nativeElement);
+    if (this.themeAnchorRef) {
+      this.themeAnchorRef.nativeElement.click();
     }
   }
 
