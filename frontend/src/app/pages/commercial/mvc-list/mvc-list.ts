@@ -160,14 +160,15 @@ export class MvcListComponent implements OnInit {
       { property: "cliente_id", key: true, visible: false },
       {
         property: "statusIcons",
-        label: "Status",
+        label: "Situação",
         type: "icon",
         width: "120px",
         icons: [
           { value: "SIT_A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
           { value: "SIT_B", color: "color-07", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" },
-          { value: "FIN_R", color: "color-07", icon: "an an-currency-dollar", tooltip: "Possui títulos VENCIDOS" },
-          { value: "FIN_B", color: "color-04", icon: "an an-currency-dollar", tooltip: "Títulos em dia" },
+          { value: "FIN_B", color: "color-07", icon: "an an-currency-dollar", tooltip: "Possui títulos VENCIDOS" },
+          { value: "FIN_A", color: "color-02", icon: "an an-currency-dollar", tooltip: "Títulos a VENCER" },
+          { value: "FIN_C", color: "color-10", icon: "an an-currency-dollar", tooltip: "Sem títulos pendentes" },
           { value: "COM_S", color: "color-08", icon: "an an-package", tooltip: "Possui COMODATO ativo" },
           { value: "COM_N", color: "color-04", icon: "an an-package", tooltip: "Sem comodato" }
         ]

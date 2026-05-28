@@ -183,7 +183,17 @@ export class AnalyticsService {
           mvc.carteira,
           mvc.vendedor_reduzido,
           mvc.vendedor_id,
-          mvc.financeiro_status,
+          CASE 
+            WHEN EXISTS (
+              SELECT 1 FROM titulo_receber tr 
+              WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.reg_ativo = 'S' AND tr.venc_real < CURRENT_DATE AND tr.system_unit_id = $2
+            ) THEN 'B'
+            WHEN EXISTS (
+              SELECT 1 FROM titulo_receber tr 
+              WHERE tr.cliente_id = mvc.id AND tr.saldo > 0 AND tr.reg_ativo = 'S' AND tr.venc_real >= CURRENT_DATE AND tr.system_unit_id = $2
+            ) THEN 'A'
+            ELSE 'C'
+          END as financeiro_status,
           CASE WHEN EXISTS (
             SELECT 1 FROM nota_saida ns
             WHERE ns.cliente_id = mvc.id

@@ -178,8 +178,9 @@ export class AnalyticsController {
       else statusIcons.push('SIT_B');
 
       // Financeiro (Cifrão)
-      if (item.financeiro_status === 'R') statusIcons.push('FIN_R');
-      else statusIcons.push('FIN_B');
+      if (item.financeiro_status === 'B') statusIcons.push('FIN_B'); // Vencidos (Vermelho)
+      else if (item.financeiro_status === 'A') statusIcons.push('FIN_A'); // A Vencer (Azul)
+      else statusIcons.push('FIN_C'); // Sem Pendências (Verde)
 
       // Comodato (Caixa)
       if (item.tem_comodato === 'S') statusIcons.push('COM_S');
