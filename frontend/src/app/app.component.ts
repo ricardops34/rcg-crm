@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
   };
 
   headerUser: PoHeaderUser = {
-    avatar: 'assets/default-avatar.png',
+    avatar: 'assets/avatar/avatar_00.png',
     customerBrand: 'logo_bj.png',
     action: () => this.router.navigate(["/profile"])
   };
@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
         };
 
         this.headerUser = {
-          avatar: user.avatar || "assets/default-avatar.png",
+          avatar: user.avatar || "assets/avatar/avatar_00.png",
           customerBrand: this.logo,
           action: () => this.router.navigate(["/profile"])
         };
@@ -133,7 +133,7 @@ export class AppComponent implements OnInit {
         };
 
         this.headerUser = {
-          avatar: "assets/default-avatar.png",
+          avatar: "assets/avatar/avatar_00.png",
           customerBrand: 'logo_padrao.png',
           action: () => this.router.navigate(["/profile"])
         };
@@ -196,7 +196,7 @@ export class AppComponent implements OnInit {
 
   // Perfil do usuário logado
   profile: PoToolbarProfile = {
-    avatar: "assets/default-avatar.png",
+    avatar: "assets/avatar/avatar_00.png",
     subtitle: "",
     title: "Carregando..."
   };
@@ -247,7 +247,7 @@ export class AppComponent implements OnInit {
       this.profile = {
         title: this.user.name || this.user.login,
         subtitle: this.user.email || "",
-        avatar: this.user.avatar || "assets/default-avatar.png"
+        avatar: this.user.avatar || "assets/avatar/avatar_00.png"
       };
     }
   }

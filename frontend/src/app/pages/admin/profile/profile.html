@@ -1,17 +1,14 @@
-<po-page-default p-title="Meu Perfil" [p-actions]="actions">
+<po-page-slide #pageSlide p-title="Meu Perfil" [p-actions]="actions" [p-click-out]="true" (p-close)="closeProfile()">
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
   <div class="po-row">
     <div class="po-md-2 po-text-center">
-      <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/default-avatar.png'"></po-avatar>
-      <po-button 
-        class="po-mt-1"
-        p-label="Trocar Foto"
-        (p-click)="openAvatarSelection()">
+      <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/avatar/avatar_00.png'"></po-avatar>
+      <po-button class="po-mt-1" p-label="Trocar Foto" (p-click)="openAvatarSelection()">
       </po-button>
     </div>
-    
+
     <div class="po-md-10">
       <div class="po-row">
         <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome de Exibição" p-required></po-input>
@@ -28,7 +25,8 @@
 
   <div class="po-row">
     <po-password class="po-md-4" name="newPassword" [(ngModel)]="passwordData.new" p-label="Nova Senha"></po-password>
-    <po-password class="po-md-4" name="confirmPassword" [(ngModel)]="passwordData.confirm" p-label="Confirmar Nova Senha"></po-password>
+    <po-password class="po-md-4" name="confirmPassword" [(ngModel)]="passwordData.confirm"
+      p-label="Confirmar Nova Senha"></po-password>
   </div>
 
   <div class="po-row po-mt-2">
@@ -37,18 +35,16 @@
     </p>
   </div>
 
-</po-page-default>
+  </po-page-slide>
 
-<po-modal #avatarModal p-title="Selecione seu Avatar" p-size="lg">
-  <div class="po-row" style="justify-content: center; gap: 16px;">
-    @for (avatar of availableAvatars; track avatar) {
-      <div 
-        (click)="selectAvatar(avatar)"
+  <po-modal #avatarModal p-title="Selecione seu Avatar" p-size="lg">
+    <div class="po-row" style="justify-content: center; gap: 16px;">
+      @for (avatar of availableAvatars; track avatar) {
+      <div (click)="selectAvatar(avatar)"
         style="cursor: pointer; border-radius: 50%; padding: 4px; border: 2px solid transparent; transition: border 0.2s"
-        onmouseover="this.style.borderColor='var(--color-brand-01)'"
-        onmouseout="this.style.borderColor='transparent'">
+        onmouseover="this.style.borderColor='var(--color-brand-01)'" onmouseout="this.style.borderColor='transparent'">
         <po-avatar p-size="md" [p-src]="avatar"></po-avatar>
       </div>
-    }
-  </div>
-</po-modal>
+      }
+    </div>
+  </po-modal>

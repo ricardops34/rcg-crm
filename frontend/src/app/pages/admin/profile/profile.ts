@@ -1,11 +1,13 @@
 import { Component, OnInit, inject, ViewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, Location } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
 import {
   PoModule,
   PoNotificationService,
   PoPageAction,
-  PoModalComponent
+  PoModalComponent,
+  PoPageSlideComponent
 } from "@po-ui/ng-components";
 import { AuthService } from "../../../services/auth";
 import { AuthUser } from "../../../services/models/auth.model";
@@ -18,9 +20,12 @@ import { AuthUser } from "../../../services/models/auth.model";
 })
 export class ProfileComponent implements OnInit {
   @ViewChild('avatarModal', { static: true }) avatarModal!: PoModalComponent;
+  @ViewChild('pageSlide', { static: true }) pageSlide!: PoPageSlideComponent;
 
   private authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
+  private router = inject(Router);
+  private location = inject(Location);
 
   user: Partial<AuthUser> = {};
   isLoading: boolean = true;
@@ -30,13 +35,14 @@ export class ProfileComponent implements OnInit {
     confirm: ""
   };
 
-  availableAvatars = Array.from({ length: 13 }, (_, i) => `assets/avatar/avatar_${(i + 1).toString().padStart(2, '0')}.png`);
+  availableAvatars = Array.from({ length: 14 }, (_, i) => `assets/avatar/avatar_${i.toString().padStart(2, '0')}.png`);
 
   readonly actions: Array<PoPageAction> = [
     { label: "Salvar Alterações", action: this.saveProfile.bind(this), icon: "po-icon-ok" }
   ];
 
   ngOnInit() {
+    this.pageSlide.open();
     this.loadProfile();
   }
 
@@ -87,5 +93,9 @@ export class ProfileComponent implements OnInit {
   selectAvatar(avatarPath: string) {
     this.user.avatar = avatarPath;
     this.avatarModal.close();
+  }
+
+  closeProfile() {
+    this.location.back();
   }
 }
