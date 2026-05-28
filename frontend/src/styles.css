@@ -44,24 +44,6 @@ body.po-theme-dark .po-widget {
     border-color: #404040;
 }
 
-/* Deixar botões e campos de formulário quadrados ("não arredondados") */
-:root {
-    --border-radius-md: 2px;
-    --border-radius-lg: 2px;
-}
-
-.po-button,
-.po-button-group-button,
-.po-input,
-.po-select,
-.po-combo,
-.po-datepicker,
-.po-number,
-.po-textarea,
-.po-multiselect,
-.po-lookup {
-    border-radius: 2px !important;
-}
 
 /* Fix for squashed avatars in PO-UI */
 po-avatar,
