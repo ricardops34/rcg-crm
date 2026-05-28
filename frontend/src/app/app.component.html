@@ -10,15 +10,6 @@
 
     <router-outlet></router-outlet>
 
-    <!-- Âncora invisível posicionada abaixo do botão de tema no header -->
-    <span #themeAnchor class="theme-popup-anchor"></span>
-    <po-popup
-      #themePopup
-      [p-target]="themeAnchor"
-      [p-actions]="themeActions"
-      p-position="bottom-left">
-    </po-popup>
-
   </div>
 } @else {
   <router-outlet></router-outlet>

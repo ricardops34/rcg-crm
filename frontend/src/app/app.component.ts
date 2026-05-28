@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChild, ChangeDetectorRef, signal, ElementRef } from "@angular/core";
+import { Component, OnInit, inject, effect, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
@@ -32,8 +32,6 @@ import { ParameterService } from "./services/parameter";
 })
 export class AppComponent implements OnInit {
   @ViewChild('modalUnit', { static: true }) modalUnit!: PoModalComponent;
-  @ViewChild('themePopup') themePopupRef?: any;
-  @ViewChild('themeAnchor') themeAnchorRef?: ElementRef;
 
   private router = inject(Router);
   public authService = inject(AuthService);
@@ -46,7 +44,6 @@ export class AppComponent implements OnInit {
   user: any;
   logo: string = "logo_padrao.png";
   currentTheme: string = "rcg";
-  isDark = signal<boolean>(false);
   dynamicMenus: Array<PoMenuItem> = [];
   menuItems: Array<PoMenuItem> = [];
   isLoginPage: boolean = true;
@@ -110,8 +107,8 @@ export class AppComponent implements OnInit {
         tools.push({
           label: 'Alterar Tema',
           icon: 'an an-paint-brush',
-          tooltip: 'Alternar tema visual',
-          action: () => this.openThemePopup()
+          tooltip: 'Alternar entre tema RCG/CBA e Allia',
+          action: () => this.toggleTheme()
         });
 
         // Adiciona engrenagem de Configurações APENAS para perfil ADMIN
@@ -295,57 +292,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  get themeActions(): Array<any> {
-    return [
-      {
-        label: 'RCG/CBA',
-        icon: 'an an-paint-bucket',
-        selected: this.currentTheme === 'rcg',
-        action: () => this.setThemeBrand('rcg')
-      },
-      {
-        label: 'Allia',
-        icon: 'an an-paint-bucket',
-        selected: this.currentTheme === 'allia',
-        action: () => this.setThemeBrand('allia')
-      },
-      {
-        label: 'Escuro',
-        icon: 'an an-moon',
-        selected: this.isDark(),
-        separator: true,
-        action: () => this.setThemeType('dark')
-      },
-      {
-        label: 'Claro',
-        icon: 'an an-sun',
-        selected: !this.isDark(),
-        action: () => this.setThemeType('light')
-      }
-    ];
-  }
-
-  setThemeBrand(brand: 'rcg' | 'allia') {
-    this.currentTheme = brand;
-    localStorage.setItem('theme', brand);
-    this.applyTheme();
-  }
-
-  openThemePopup() {
-    if (this.themePopupRef && this.themeAnchorRef) {
-      this.themePopupRef.toggle(this.themeAnchorRef);
-    }
-  }
-
-  setThemeType(type: 'light' | 'dark') {
-    const dark = type === 'dark';
-    this.isDark.set(dark);
-    localStorage.setItem('themeType', type);
-    this.themeService.changeCurrentThemeType(
-      dark ? PoThemeTypeEnum.dark : PoThemeTypeEnum.light
-    );
-  }
-
   toggleTheme() {
     this.currentTheme = this.currentTheme === "rcg" ? "allia" : "rcg";
     localStorage.setItem("theme", this.currentTheme);
@@ -354,17 +300,14 @@ export class AppComponent implements OnInit {
 
   loadTheme() {
     this.currentTheme = localStorage.getItem("theme") || "rcg";
-    const savedType = localStorage.getItem("themeType") || "light";
-    this.isDark.set(savedType === "dark");
     this.applyTheme();
   }
 
   applyTheme() {
-    const themeType = this.isDark() ? PoThemeTypeEnum.dark : PoThemeTypeEnum.light;
     if (this.currentTheme === "allia") {
-      this.themeService.setTheme(alliaPoUiTheme, themeType, PoThemeA11yEnum.AAA, true);
+      this.themeService.setTheme(alliaPoUiTheme, PoThemeTypeEnum.light, PoThemeA11yEnum.AAA, true);
     } else {
-      this.themeService.setTheme(rcgPoUiTheme, themeType, PoThemeA11yEnum.AAA, true);
+      this.themeService.setTheme(rcgPoUiTheme, PoThemeTypeEnum.light, PoThemeA11yEnum.AAA, true);
     }
   }
 

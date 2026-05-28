@@ -1,16 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "@schedule-x/theme-default/dist/index.css";
 
-/* Âncora do popup de seleção de tema — posicionada abaixo do botão de pincel no header */
-.theme-popup-anchor {
-  position: fixed;
-  top: 56px;
-  right: 96px;
-  width: 1px;
-  height: 1px;
-  display: block;
-  z-index: 9999;
-}
 
 /* Tema Escuro customizado para PO-UI */
 body.po-theme-dark {
