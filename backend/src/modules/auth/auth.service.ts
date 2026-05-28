@@ -140,7 +140,15 @@ export class AuthService {
     await this.userRepository.update(user.id, { currentSessionId: sessionId });
 
     const profile = await this.getProfile(user.id);
-    const activeUnitId = profile.unit?.id || user.systemUnitId;
+    let activeUnitId = profile.unit?.id || user.systemUnitId;
+
+    if (user.systemUnitId) {
+      const allowed = profile.allowedUnits.find(u => u.id === user.systemUnitId);
+      if (allowed) {
+        activeUnitId = allowed.id;
+        profile.unit = allowed as any;
+      }
+    }
 
     const payload = {
       username: user.login,
@@ -277,5 +285,34 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     return this.login(user as any);
+  }
+  async getUserUnitsByLogin(login: string) {
+    const normalizedLogin = login.toLowerCase().trim();
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.systemUnit', 'systemUnit')
+      .where('LOWER(user.login) = :login', { login: normalizedLogin })
+      .andWhere('user.active = :active', { active: 'Y' })
+      .getOne();
+
+    if (!user) return [];
+
+    const userUnits = await this.userRepository.manager
+      .getRepository(SystemUserUnit)
+      .find({
+        where: { systemUserId: user.id },
+        relations: ['systemUnit'],
+      });
+
+    const rawAllowedUnits = [
+      user.systemUnit,
+      ...userUnits.map((uu) => uu.systemUnit),
+    ].filter((unit) => !!unit);
+
+    const allowedUnits = rawAllowedUnits.filter(
+      (unit, idx, self) => self.findIndex((u) => u.id === unit.id) === idx,
+    );
+
+    return allowedUnits.map(u => ({ value: u.id, label: u.name }));
   }
 }

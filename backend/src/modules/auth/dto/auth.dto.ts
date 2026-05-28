@@ -20,6 +20,14 @@ export class LoginDto {
   @IsString()
   @IsOptional()
   password?: string;
+
+  @ApiProperty({ 
+    example: 1, 
+    description: 'ID da unidade de negócio selecionada', 
+    required: false
+  })
+  @IsOptional()
+  systemUnitId?: number;
 }
 
 export class Verify2faDto {
