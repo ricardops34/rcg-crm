@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
     effect(() => {
       const user = this.authService.currentUser();
       const sysName = this.parameterService.systemName();
-      
+
       if (user && user.unit) {
         if (user.unit.logo) {
           this.logo = user.unit.logo;
@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
 
         this.headerUser = {
           avatar: user.avatar || "assets/avatar/avatar_00.png",
-          customerBrand: this.logo,
+          customerBrand: "logo_bj.png",//this.logo,
           action: () => this.router.navigate(["/profile"])
         };
 
@@ -142,7 +142,7 @@ export class AppComponent implements OnInit {
 
         this.headerUser = {
           avatar: "assets/avatar/avatar_00.png",
-          customerBrand: 'logo_padrao.png',
+          customerBrand: 'logo_bj.png',
           action: () => this.router.navigate(["/profile"])
         };
 
