@@ -78,6 +78,12 @@ export class ParameterListComponent implements OnInit {
   readonly tableActions: Array<PoTableAction> = [
     { label: "Editar", action: (row: any) => this.router.navigate([`/admin/parameters/edit/${row.id}`]), icon: "po-icon-edit" },
     {
+      label: "Tornar por Unidade",
+      action: (row: any) => this.confirmSplitByUnit(row),
+      icon: "po-icon-share",
+      visible: (row: any) => row.systemUnitId === null
+    },
+    {
       label: "Excluir",
       action: (row: any) => this.confirmDelete(row),
       icon: "po-icon-delete",
@@ -157,6 +163,28 @@ export class ParameterListComponent implements OnInit {
       title: "Excluir Parametro",
       message: `Deseja realmente excluir o parametro <strong>${parameter.parameter}</strong>?`,
       confirm: () => this.deleteParameter(parameter)
+    });
+  }
+
+  confirmSplitByUnit(row: any) {
+    this.poDialog.confirm({
+      title: "Tornar por Unidade",
+      message: `Deseja realmente transformar o parâmetro <strong>${row.parameter}</strong> em parâmetros individuais por unidade? Isso criará cópias dele para todas as unidades cadastradas e removerá este registro global.`,
+      confirm: () => this.splitParameterByUnit(row)
+    });
+  }
+
+  private splitParameterByUnit(parameter: any) {
+    this.isLoading = true;
+    this.parameterService.splitByUnit(parameter.id).subscribe({
+      next: () => {
+        this.poNotification.success("Parâmetro dividido por unidade com sucesso!");
+        this.loadParameters(this.filtroAtual);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.poNotification.error(error?.error?.message || "Erro ao dividir parâmetro por unidade.");
+      }
     });
   }
 

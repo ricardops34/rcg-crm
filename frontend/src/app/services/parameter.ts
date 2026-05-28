@@ -45,15 +45,32 @@ export class ParameterService {
     return this.http.post<any>(`${this.API_URL}/test-smtp`, data, { headers: this.getHeaders() });
   }
 
+  splitByUnit(id: number): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/${id}/split-by-unit`, {}, { headers: this.getHeaders() });
+  }
+
   /**
    * Inicializa o cache reativo de parâmetros de sistema a partir do banco de dados
    */
   loadDefaultParameters() {
+    const userJson = localStorage.getItem("user");
+    const user = userJson ? JSON.parse(userJson) : null;
+    const unitId = user?.unit?.id || null;
+
     this.findAll().subscribe({
       next: (res: any[]) => {
         const items = res || [];
-        const limitParam = items.find(i => i.parameter?.toLowerCase() === 'sys_query_limit');
-        const nameParam = items.find(i => i.parameter?.toLowerCase() === 'sys_system_name');
+        
+        // Localiza dando preferência para a filial ativa e faz fallback para o global (NULL)
+        const getParam = (name: string) => {
+          const nameLower = name.toLowerCase();
+          const unitParam = items.find(i => i.parameter?.toLowerCase() === nameLower && i.systemUnitId === unitId);
+          if (unitParam) return unitParam;
+          return items.find(i => i.parameter?.toLowerCase() === nameLower && i.systemUnitId === null);
+        };
+
+        const limitParam = getParam('sys_query_limit');
+        const nameParam = getParam('sys_system_name');
 
         if (limitParam && limitParam.content) {
           const val = Number(limitParam.content);

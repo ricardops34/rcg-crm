@@ -15,25 +15,45 @@ export class MailService {
     private readonly parameterRepository: Repository<SystemParameter>,
   ) {}
 
-  async sendMail(to: string, subject: string, body: string): Promise<boolean> {
-    // 1. Buscar parâmetros SMTP do banco de dados de forma dinâmica
-    const params = await this.parameterRepository.find({
-      where: {
-        parameter: In([
+  async sendMail(to: string, subject: string, body: string, systemUnitId?: number): Promise<boolean> {
+    // 1. Buscar parâmetros SMTP do banco de dados (da unidade ou globais)
+    const query = this.parameterRepository
+      .createQueryBuilder('parameter')
+      .where('parameter.parameter IN (:...names)', {
+        names: [
           'sys_smtp_host',
           'sys_smtp_port',
           'sys_smtp_user',
           'sys_smtp_pass',
           'sys_smtp_from',
           'sys_smtp_secure',
-        ]),
-      },
-    });
+        ],
+      });
+
+    if (systemUnitId) {
+      query.andWhere(
+        '(parameter.system_unit_id = :systemUnitId OR parameter.system_unit_id IS NULL)',
+        { systemUnitId },
+      );
+    } else {
+      query.andWhere('parameter.system_unit_id IS NULL');
+    }
+
+    const params = await query.getMany();
 
     const configMap = new Map<string, string>();
-    params.forEach((p) => {
-      configMap.set(p.parameter.toLowerCase(), p.content || '');
-    });
+    
+    // Alimenta primeiro com os globais
+    params
+      .filter((p) => p.systemUnitId === null)
+      .forEach((p) => configMap.set(p.parameter.toLowerCase(), p.content || ''));
+
+    // Sobrepõe com os da unidade (se houver correspondência específica)
+    if (systemUnitId) {
+      params
+        .filter((p) => p.systemUnitId === systemUnitId)
+        .forEach((p) => configMap.set(p.parameter.toLowerCase(), p.content || ''));
+    }
 
     const host = configMap.get('sys_smtp_host')?.trim() || '';
     const portStr = configMap.get('sys_smtp_port')?.trim();
@@ -138,10 +158,10 @@ export class MailService {
     }
   }
 
-  async send2FAToken(email: string, token: string) {
+  async send2FAToken(email: string, token: string, systemUnitId?: number) {
     const subject = 'Seu código de acesso - RCG CRM';
     const body = `Olá, seu código de verificação é: <b>${token}</b>. Ele expira em 10 minutos.`;
-    return this.sendMail(email, subject, body);
+    return this.sendMail(email, subject, body, systemUnitId);
   }
 
   async sendPasswordReset(email: string, token: string) {

@@ -109,7 +109,7 @@ export class AuthService {
       
       // Enviar e-mail (se o usuário tiver e-mail)
       if (user.email) {
-        await this.mailService.send2FAToken(user.email, code);
+        await this.mailService.send2FAToken(user.email, code, user.systemUnitId);
       } else {
         console.warn(`[AUTH] ⚠️ Usuário ${user.id} sem e-mail cadastrado para 2FA.`);
       }

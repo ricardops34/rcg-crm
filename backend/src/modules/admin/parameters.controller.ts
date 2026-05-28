@@ -53,6 +53,13 @@ export class ParametersController {
     return this.parametersService.remove(+id);
   }
 
+  @Post(':id/split-by-unit')
+  @ApiOperation({ summary: 'Duplica um parametro global criando uma copia para cada unidade existente' })
+  @ApiResponse({ status: 200, description: 'Parametro desmembrado por unidade com sucesso' })
+  async splitByUnit(@Param('id') id: string) {
+    return this.parametersService.splitByUnit(+id);
+  }
+
   @Post('test-smtp')
   @ApiOperation({ summary: 'Testa a conexao SMTP enviando um e-mail de teste real' })
   @ApiResponse({ status: 200, description: 'Conexao testada com sucesso' })

@@ -2,12 +2,15 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { SystemParameter } from './entities/system-parameter.entity';
+import { SystemUnit } from './entities/system-unit.entity';
 
 @Injectable()
 export class ParametersService {
   constructor(
     @InjectRepository(SystemParameter, 'security')
     private readonly parameterRepository: Repository<SystemParameter>,
+    @InjectRepository(SystemUnit, 'security')
+    private readonly unitRepository: Repository<SystemUnit>,
   ) {}
 
   async findAll() {
@@ -94,6 +97,43 @@ export class ParametersService {
     }
 
     return this.parameterRepository.delete(id);
+  }
+
+  async splitByUnit(id: number) {
+    const parameter = await this.parameterRepository.findOne({
+      where: { id },
+    });
+
+    if (!parameter) {
+      throw new NotFoundException('Parametro nao encontrado');
+    }
+
+    if (parameter.systemUnitId !== null) {
+      throw new BadRequestException('Este parametro ja esta definido para uma unidade especifica');
+    }
+
+    const units = await this.unitRepository.find();
+    if (units.length === 0) {
+      throw new BadRequestException('Nenhuma unidade cadastrada no sistema para criar as copias');
+    }
+
+    await this.parameterRepository.manager.transaction(async (transactionalEntityManager) => {
+      for (const unit of units) {
+        const copy = transactionalEntityManager.create(SystemParameter, {
+          parameter: parameter.parameter,
+          type: parameter.type,
+          content: parameter.content,
+          system: parameter.system,
+          description: parameter.description,
+          systemUnitId: unit.id,
+        });
+        await transactionalEntityManager.save(SystemParameter, copy);
+      }
+
+      await transactionalEntityManager.delete(SystemParameter, id);
+    });
+
+    return { success: true };
   }
 
   private async validateDuplicate(data: Partial<SystemParameter> & { id?: number }) {
