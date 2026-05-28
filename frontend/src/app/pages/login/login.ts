@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   termsAccepted: boolean = false;
   termsContent: string = "";
   termsVersion: string = "";
+  loginLogo: string = this.authService.getLoginLogo();
   isLoading = signal<boolean>(false);
 
   readonly customLiterals = {
@@ -75,6 +76,7 @@ export class LoginComponent implements OnInit {
       this.modalTerms.open();
     } else {
       const user = res.user;
+      this.loginLogo = this.authService.getLoginLogo();
       this.poNotification.success(`Bem-vindo, ${user?.name}!`);
       this.router.navigate(["/home"]);
     }

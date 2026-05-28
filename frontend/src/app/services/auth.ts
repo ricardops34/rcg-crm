@@ -16,6 +16,8 @@ import {
   providedIn: "root"
 })
 export class AuthService {
+  private readonly DEFAULT_LOGIN_LOGO = "logo_bj.png";
+  private readonly LOGIN_LOGO_STORAGE_KEY = "loginLogo";
 
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
@@ -52,6 +54,7 @@ export class AuthService {
       localStorage.setItem("token", res.accessToken);
       if (!res.nextStep && res.user) {
         localStorage.setItem("user", JSON.stringify(res.user));
+        this.persistLoginLogo(res.user);
         this.currentUser.set(res.user);
       }
     }
@@ -92,6 +95,15 @@ export class AuthService {
   getUser(): AuthUser | null {
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) as AuthUser : null;
+  }
+
+  getLoginLogo(): string {
+    return localStorage.getItem(this.LOGIN_LOGO_STORAGE_KEY) || this.DEFAULT_LOGIN_LOGO;
+  }
+
+  private persistLoginLogo(user: AuthUser): void {
+    const logo = user.unit?.logo || this.DEFAULT_LOGIN_LOGO;
+    localStorage.setItem(this.LOGIN_LOGO_STORAGE_KEY, logo);
   }
 
   hasPermission(controller: string): boolean {
