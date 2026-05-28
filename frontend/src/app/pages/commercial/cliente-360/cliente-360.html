@@ -1,9 +1,5 @@
 <po-page-default [p-title]="'Visão 360: ' + (cliente.razao || '')" [p-actions]="pageActions">
 
-  <!-- Overlay apenas para carga inicial do cliente e submit de negociação -->
-  @if (isLoadingCliente) {
-    <po-loading-overlay [p-screen-lock]="true"></po-loading-overlay>
-  }
 
   <div class="po-row">
     <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Cód. ERP">
@@ -24,10 +20,7 @@
     </po-widget>
 
     <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Venda 30d">
-      <div class="po-font-subtitle po-text-center po-py-1">
-        @if (venda30d === null) { <span class="po-text-color-neutral-mid-3">Carregando...</span> }
-        @else { {{ venda30d | currency:'BRL' }} }
-      </div>
+      <div class="po-font-subtitle po-text-center po-py-1">{{ (venda30d ?? 0) | currency:'BRL' }}</div>
     </po-widget>
   </div>
 
@@ -183,7 +176,7 @@
 <po-modal
   #modalNegociacao
   p-title="Gerar Acordo de Negociação"
-  [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this) }">
+  [p-primary-action]="{ label: 'Confirmar Negociação', action: confirmNegociacao.bind(this), loading: isLoadingNegociacao }">
   <div class="po-row">
     <div class="po-sm-12 po-md-12">
       <p>Você está agrupando <strong>{{ selectedTitles.length }}</strong> título(s) para este acordo.</p>

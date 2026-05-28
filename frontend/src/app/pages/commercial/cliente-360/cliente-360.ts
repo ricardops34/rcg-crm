@@ -40,8 +40,8 @@ export class Cliente360Component implements OnInit, OnDestroy {
   overdueTitles: Array<any> = [];
   selectedTitles: Array<any> = [];
 
-  // Overlay apenas para carga inicial do cliente e submit de negociação
-  isLoadingCliente = true;
+  isLoadingCliente = false;
+  isLoadingNegociacao = false;
   // Loading por aba — alimenta [p-loading] em cada po-table
   tabLoading: Record<string, boolean> = {};
   // Previne requests duplicados ao trocar de aba rapidamente
@@ -149,12 +149,10 @@ export class Cliente360Component implements OnInit, OnDestroy {
   }
 
   loadCliente(id: number) {
-    this.isLoadingCliente = true;
     this.clienteService.findOne(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.cliente = res;
         this.loadedTabs["cadastro"] = true;
-        this.isLoadingCliente = false;
         // Carrega venda30d de forma assíncrona sem bloquear a tela
         this.clienteService.getVenda30d(id)
           .pipe(takeUntil(this.destroy$))
@@ -162,7 +160,6 @@ export class Cliente360Component implements OnInit, OnDestroy {
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados do cliente.");
-        this.isLoadingCliente = false;
       }
     });
   }
@@ -319,7 +316,7 @@ export class Cliente360Component implements OnInit, OnDestroy {
       return;
     }
 
-    this.isLoadingCliente = true;
+    this.isLoadingNegociacao = true;
     const payload = {
       clienteId: this.cliente.id,
       observacao: this.negociacao.observacao.trim(),
@@ -328,7 +325,7 @@ export class Cliente360Component implements OnInit, OnDestroy {
 
     this.negociacaoService.create(payload).subscribe({
       next: () => {
-        this.isLoadingCliente = false;
+        this.isLoadingNegociacao = false;
         this.poNotification.success("Negociação gerada com sucesso!");
         this.modalNegociacao.close();
         this.loadedTabs["cobranca"] = false;
@@ -336,7 +333,7 @@ export class Cliente360Component implements OnInit, OnDestroy {
         this.loadTab("cobranca");
       },
       error: (err: any) => {
-        this.isLoadingCliente = false;
+        this.isLoadingNegociacao = false;
         this.poNotification.error(err.error?.message || "Erro ao gerar negociação.");
       }
     });
