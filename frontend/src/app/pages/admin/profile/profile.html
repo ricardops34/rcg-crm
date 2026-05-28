@@ -1,4 +1,4 @@
-<po-page-slide #pageSlide p-title="Meu Perfil" [p-actions]="actions" [p-click-out]="true" (p-close)="closeProfile()">
+<po-page-slide #pageSlide p-title="Meu Perfil" [p-click-out]="true" (p-close)="closeProfile()">
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
@@ -35,7 +35,12 @@
     </p>
   </div>
 
-  </po-page-slide>
+  <po-page-slide-footer>
+    <po-button p-label="Salvar Alterações" p-kind="primary" [p-disabled]="isLoading" (p-click)="saveProfile()">
+    </po-button>
+  </po-page-slide-footer>
+
+</po-page-slide>
 
   <po-modal #avatarModal p-title="Selecione seu Avatar" p-size="lg">
     <div class="po-row" style="justify-content: center; gap: 16px;">

@@ -170,10 +170,27 @@ export class AnalyticsController {
 
     const legacyNegativeDiffRowColor = '#FFF7A8';
 
-    const mappedItems = paginated.items.map((item: any) => ({
-      ...item,
-      $rowColor: item.difference < 0 ? legacyNegativeDiffRowColor : undefined,
-    }));
+    const mappedItems = paginated.items.map((item: any) => {
+      const statusIcons = [];
+      
+      // Situação (Cadeado)
+      if (item.situacao === 'A') statusIcons.push('SIT_A');
+      else statusIcons.push('SIT_B');
+
+      // Financeiro (Cifrão)
+      if (item.financeiro_status === 'R') statusIcons.push('FIN_R');
+      else statusIcons.push('FIN_B');
+
+      // Comodato (Caixa)
+      if (item.tem_comodato === 'S') statusIcons.push('COM_S');
+      else statusIcons.push('COM_N');
+
+      return {
+        ...item,
+        statusIcons,
+        $rowColor: item.difference < 0 ? legacyNegativeDiffRowColor : undefined,
+      };
+    });
 
     return {
       items: mappedItems,

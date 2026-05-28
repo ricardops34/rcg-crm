@@ -159,32 +159,17 @@ export class MvcListComponent implements OnInit {
     const fields: Array<any> = [
       { property: "cliente_id", key: true, visible: false },
       {
-        property: "situacao",
-        label: "Situação",
+        property: "statusIcons",
+        label: "Status",
         type: "icon",
-        width: "60px",
+        width: "120px",
         icons: [
-          { value: "A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
-          { value: "B", color: "color-07", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" }
-        ]
-      },
-      {
-        property: "financeiro_status",
-        label: "Duplicatas",
-        type: "icon",
-        width: "60px",
-        icons: [
-          { value: "R", color: "color-07", icon: "an an-warning-circle", tooltip: "Possui títulos VENCIDOS" },
-          { value: "B", color: "color-10", icon: "an an-check", tooltip: "Títulos em dia" }
-        ]
-      },
-      {
-        property: "tem_comodato",
-        label: "Comodato",
-        type: "icon",
-        width: "60px",
-        icons: [
-          { value: "S", color: "color-08", icon: "an an-package", tooltip: "Possui COMODATO ativo" }
+          { value: "SIT_A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
+          { value: "SIT_B", color: "color-07", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" },
+          { value: "FIN_R", color: "color-07", icon: "an an-currency-dollar", tooltip: "Possui títulos VENCIDOS" },
+          { value: "FIN_B", color: "color-04", icon: "an an-currency-dollar", tooltip: "Títulos em dia" },
+          { value: "COM_S", color: "color-08", icon: "an an-package", tooltip: "Possui COMODATO ativo" },
+          { value: "COM_N", color: "color-04", icon: "an an-package", tooltip: "Sem comodato" }
         ]
       },
       { property: "codigo", label: "Código", width: "110px" },
