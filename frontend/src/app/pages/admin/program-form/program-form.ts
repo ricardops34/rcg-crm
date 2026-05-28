@@ -43,7 +43,7 @@ interface ProgramForm {
             [(ngModel)]="program.name"
             p-label="Nome da Tela / Rotina"
             p-required
-            [p-disabled]="isEdit"
+            [p-disabled]="isEdit ? 'true' : 'false'"
             p-clean>
           </po-input>
           <po-input
