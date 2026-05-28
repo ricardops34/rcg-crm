@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChild } from "@angular/core";
+import { Component, OnInit, inject, effect, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
@@ -35,8 +35,9 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
-  private readonly themeService = inject(PoThemeService);
+  private themeService = inject(PoThemeService);
   private routesRegistry = inject(RoutesRegistryService);
+  private cdr = inject(ChangeDetectorRef);
 
   user: any;
   logo: string = "logo_padrao.png";
@@ -233,6 +234,7 @@ export class AppComponent implements OnInit {
         this.refreshUserInfo();
         this.loadMenu();
       }
+      this.cdr.detectChanges();
     });
   }
 
@@ -303,17 +305,8 @@ export class AppComponent implements OnInit {
   }
 
   updateMenu() {
-    const frontpage = this.user?.frontpage?.controller;
-    const routes: any = {
-      "DashboardVendedor": "/dashboard",
-      "MvcList": "/mvc",
-      "ClienteList": "/clientes",
-      "SystemUserList": "/admin/users"
-    };
-    const homeTarget = frontpage && routes[frontpage] ? routes[frontpage] : "/home";
-
     const items: Array<PoMenuItem> = [
-      { label: "Home", action: () => this.router.navigate([homeTarget]), icon: "an an-house", shortLabel: "Home" },
+      { label: "Home", action: () => this.router.navigate(["/home"]), icon: "an an-house", shortLabel: "Home" },
     ];
 
     if (this.dynamicMenus.length > 0) {

@@ -74,24 +74,9 @@ export class LoginComponent implements OnInit {
     } else if (res.nextStep === "TERMS") {
       this.modalTerms.open();
     } else {
-      // Redirecionamento Inteligente (Baseado no Legado)
       const user = res.user;
-      const frontpage = user?.frontpage?.controller;
-      
       this.poNotification.success(`Bem-vindo, ${user?.name}!`);
-
-      if (frontpage) {
-        const routes: any = {
-          "DashboardVendedor": "/dashboard",
-          "MvcList": "/mvc",
-          "ClienteList": "/clientes",
-          "SystemUserList": "/admin/users"
-        };
-        const target = routes[frontpage] || "/home";
-        this.router.navigate([target]);
-      } else {
-        this.router.navigate(["/home"]);
-      }
+      this.router.navigate(["/home"]);
     }
   }
 
