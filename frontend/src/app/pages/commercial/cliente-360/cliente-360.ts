@@ -152,10 +152,11 @@ export class Cliente360Component implements OnInit, OnDestroy {
     this.clienteService.findOne(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.cliente = res;
-        // Dados cadastrais já estão no objeto cliente — não precisa de request separado
+        // Dados cadastrais já estão no objeto cliente — aba ativa por padrão, sem request extra
         this.loadedTabs["cadastro"] = true;
         this.isLoadingCliente = false;
-        this.loadTab(this.activeTab);
+        // Não pré-carrega nenhuma aba: o carregamento é 100% lazy,
+        // acionado apenas pelo clique do usuário via onTabActivated().
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados do cliente.");
