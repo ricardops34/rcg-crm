@@ -13,7 +13,7 @@ export class ParametersService {
   async findAll() {
     return this.parameterRepository.find({
       relations: ['systemUnit'],
-      order: { systemParameter: 'ASC', systemUnitId: 'ASC' },
+      order: { parameter: 'ASC', systemUnitId: 'ASC' },
     });
   }
 
@@ -33,22 +33,23 @@ export class ParametersService {
   async save(data: Partial<SystemParameter> & { id?: number }) {
     const payload = {
       ...data,
-      systemParameter: data.systemParameter?.trim(),
-      systemType: data.systemType?.trim().toUpperCase(),
-      systemContent: data.systemContent == null ? null : String(data.systemContent),
-      systemSystem: data.systemSystem?.trim().toUpperCase(),
+      parameter: data.parameter?.trim(),
+      type: data.type?.trim().toUpperCase(),
+      content: data.content == null ? null : String(data.content),
+      system: data.system?.trim().toUpperCase(),
       systemUnitId: data.systemUnitId || null,
+      description: data.description == null ? null : String(data.description),
     };
 
-    if (!payload.systemParameter) {
+    if (!payload.parameter) {
       throw new BadRequestException('Nome do parametro e obrigatorio');
     }
 
-    if (!['DATA', 'NUMERO', 'LOGICO', 'CARACTER'].includes(payload.systemType || '')) {
+    if (!['DATA', 'NUMERO', 'LOGICO', 'CARACTER'].includes(payload.type || '')) {
       throw new BadRequestException('Tipo de parametro invalido');
     }
 
-    if (!['S', 'N'].includes(payload.systemSystem || '')) {
+    if (!['S', 'N'].includes(payload.system || '')) {
       throw new BadRequestException('Indicador de parametro de usuario invalido');
     }
 
@@ -61,7 +62,7 @@ export class ParametersService {
   async remove(id: number) {
     const parameter = await this.findOne(id);
 
-    if (parameter.systemSystem === 'N') {
+    if (parameter.system === 'N') {
       throw new BadRequestException('Parametros de sistema nao podem ser excluidos');
     }
 
@@ -71,8 +72,8 @@ export class ParametersService {
   private async validateDuplicate(data: Partial<SystemParameter> & { id?: number }) {
     const query = this.parameterRepository
       .createQueryBuilder('parameter')
-      .where('LOWER(parameter.system_parameter) = LOWER(:systemParameter)', {
-        systemParameter: data.systemParameter,
+      .where('LOWER(parameter.parameter) = LOWER(:parameter)', {
+        parameter: data.parameter,
       });
 
     if (data.systemUnitId) {

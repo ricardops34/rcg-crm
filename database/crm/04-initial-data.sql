@@ -94,7 +94,8 @@ INSERT INTO system_program (id, name, controller, system_module_id, "order", ico
 (11, 'Manutenção de Menus', 'SystemMenuEditor', 3, 7, 'po-icon-menu', NULL),
 
 -- MÓDULO: Configurações (ID 4)
-(12, 'Parâmetros do Sistema', 'SystemParameterList', 4, 1, 'po-icon-sliders', NULL);
+(12, 'Parâmetros do Sistema', 'SystemParameterList', 4, 1, 'po-icon-sliders', NULL),
+(13, 'Configurações do Sistema', 'SystemSettings', 4, 2, 'an an-gear-six', NULL);
 
 -- Reajuste da sequence para system_program de forma segura contra retornos NULL
 SELECT setval(seq, COALESCE((SELECT MAX(id)+1 FROM system_program), 1), false)
@@ -126,7 +127,8 @@ INSERT INTO system_group_program (system_group_id, system_program_id, actions) V
 (1, 9, '{"view":true,"insert":true,"update":true,"delete":true}'),
 (1, 10, '{"view":true,"insert":true,"update":true,"delete":true}'),
 (1, 11, '{"view":true,"insert":true,"update":true,"delete":true}'),
-(1, 12, '{"view":true,"insert":true,"update":true,"delete":true}');
+(1, 12, '{"view":true,"insert":true,"update":true,"delete":true}'),
+(1, 13, '{"view":true,"insert":true,"update":true,"delete":true}');
 
 -- Perfil Gerente/Supervisor (ID 2) - Acesso ao dashboard e rotinas comerciais
 INSERT INTO system_group_program (system_group_id, system_program_id, actions) VALUES
@@ -335,5 +337,38 @@ WHERE controller = 'SystemMenuEditor';
 UPDATE system_program 
 SET icon = 'an an-sliders' 
 WHERE controller = 'SystemParameterList';
+
+-- 10. CARGA DE PARÂMETROS PADRÃO DO SISTEMA (system_parameter)
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_host', 'CARACTER', '', 'S', 'Servidor SMTP de envio de e-mails'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_host' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_port', 'NUMERO', '587', 'S', 'Porta SMTP de envio de e-mails'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_port' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_user', 'CARACTER', '', 'S', 'Usuário de autenticação do servidor SMTP'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_user' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_pass', 'CARACTER', '', 'S', 'Senha de autenticação do servidor SMTP'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_pass' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_from', 'CARACTER', 'nao-responda@rcg.com.br', 'S', 'E-mail remetente padrão do sistema'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_from' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_smtp_secure', 'CARACTER', 'TLS', 'S', 'Tipo de segurança/criptografia SMTP (SSL/TLS/NONE)'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_smtp_secure' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_system_name', 'CARACTER', 'RCG CRM', 'S', 'Nome customizado do sistema'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_system_name' AND system_unit_id IS NULL);
+
+INSERT INTO system_parameter (system_unit_id, parameter, type, content, system, description)
+SELECT NULL, 'sys_query_limit', 'NUMERO', '20', 'S', 'Limite de linhas exibidas em buscas padrão'
+WHERE NOT EXISTS (SELECT 1 FROM system_parameter WHERE LOWER(parameter) = 'sys_query_limit' AND system_unit_id IS NULL);
 
 COMMIT;

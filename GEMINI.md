@@ -127,6 +127,18 @@ Para garantir a estabilidade e a conformidade técnica em todos os desenvolvimen
     3.  **Banco de Dados (`system_group_program`)**: Criar a instrução de `INSERT INTO system_group_program` concedendo as permissões (view, insert, update, delete) aos grupos necessários (ex: `ADMIN`).
     4.  **Consolidação**: Sempre registre esses `INSERTS` atualizando o script de inicialização do banco correspondente (ex: `database/crm/04-initial-data.sql`) para manter as migrações consistentes.
 
+### 6. Uso de Parâmetros Globais de Sistema (`sys_system_name` e `sys_query_limit`)
+*   **Regra de Ouro (Título Reativo)**: Nunca use strings estáticas ou hardcoded (como `"CRM"`) para o título da barra superior ou de cabeçalhos principais do sistema. Sempre consuma reativamente a propriedade `this.parameterService.systemName()` que armazena em cache o valor do parâmetro `sys_system_name` do banco de dados.
+*   **Regra de Ouro (Limite de Registros Dinâmico)**: Nunca declare constantes fixas de paginação (como `itensPorPagina = 20`) nas telas de listagem. Sempre crie um Getter que consulte o limite global reativo do `ParameterService`:
+    ```typescript
+    private parameterService = inject(ParameterService);
+    
+    get itensPorPagina(): number {
+      return this.parameterService.queryLimit();
+    }
+    ```
+    Isto garante consistência visual e adaptabilidade do limite sob demanda definido pelos administradores no painel de configurações.
+
 ---
 
 ## 📝 Padrão de Codificação e Resposta

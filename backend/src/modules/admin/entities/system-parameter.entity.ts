@@ -13,15 +13,18 @@ export class SystemParameter {
   @JoinColumn({ name: 'system_unit_id' })
   systemUnit?: SystemUnit | null;
 
-  @Column({ name: 'system_parameter', length: 150 })
-  systemParameter: string;
+  @Column({ name: 'parameter', length: 150 })
+  parameter: string;
 
-  @Column({ name: 'system_type', length: 20 })
-  systemType: string;
+  @Column({ name: 'type', length: 20 })
+  type: string;
 
-  @Column({ name: 'system_content', type: 'text', nullable: true })
-  systemContent: string | null;
+  @Column({ name: 'content', type: 'text', nullable: true })
+  content: string | null;
 
-  @Column({ name: 'system_system', length: 1, default: 'N' })
-  systemSystem: string;
+  @Column({ name: 'system', length: 1, default: 'N' })
+  system: string;
+
+  @Column({ name: 'description', type: 'text', nullable: true })
+  description: string | null;
 }

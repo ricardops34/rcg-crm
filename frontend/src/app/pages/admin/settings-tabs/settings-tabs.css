@@ -1,0 +1,20 @@
+/* Estilos auxiliares mínimos para o componente de configurações em abas */
+
+.po-mt-2 {
+  margin-top: 16px;
+}
+
+.po-mt-3 {
+  margin-top: 24px;
+}
+
+.po-mr-1 {
+  margin-right: 8px;
+}
+
+.po-text-right {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -107,21 +107,27 @@ export class CreateParameterDto {
   @ApiProperty({ example: 'DIAS_BLOQUEIO_PEDIDO', description: 'Nome tecnico do parametro' })
   @IsString()
   @IsNotEmpty()
-  systemParameter: string;
+  parameter: string;
 
   @ApiProperty({ example: 'NUMERO', description: 'Tipo do conteudo do parametro', enum: ['DATA', 'NUMERO', 'LOGICO', 'CARACTER'] })
   @IsString()
   @IsIn(['DATA', 'NUMERO', 'LOGICO', 'CARACTER'])
-  systemType: string;
+  type: string;
 
   @ApiProperty({ example: '30', description: 'Conteudo/valor do parametro', required: false })
   @IsOptional()
-  systemContent?: string;
+  @IsString()
+  content?: string;
 
   @ApiProperty({ example: 'N', description: 'Indica se e parametro de usuario (S/N)', enum: ['S', 'N'], default: 'N' })
   @IsString()
   @IsIn(['S', 'N'])
-  systemSystem: string;
+  system: string;
+
+  @ApiProperty({ example: 'Descricao explicativa do parametro', description: 'Propósito do parametro', required: false })
+  @IsString()
+  @IsOptional()
+  description?: string;
 }
 
 export class UpdateParameterDto extends PartialType(CreateParameterDto) {}

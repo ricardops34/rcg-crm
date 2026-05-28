@@ -22,6 +22,7 @@ import { AuthService } from "./services/auth";
 import { rcgPoUiTheme } from "../temas/rcg/rcg-theme";
 import { alliaPoUiTheme } from "../temas/allia/allia-theme";
 import { RoutesRegistryService } from "./services/routes-registry.service";
+import { ParameterService } from "./services/parameter";
 
 @Component({
   selector: "app-root",
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
   private poNotification = inject(PoNotificationService);
   private themeService = inject(PoThemeService);
   private routesRegistry = inject(RoutesRegistryService);
+  public parameterService = inject(ParameterService);
   private cdr = inject(ChangeDetectorRef);
 
   user: any;
@@ -66,13 +68,15 @@ export class AppComponent implements OnInit {
   constructor() {
     effect(() => {
       const user = this.authService.currentUser();
+      const sysName = this.parameterService.systemName();
+      
       if (user && user.unit) {
         if (user.unit.logo) {
           this.logo = user.unit.logo;
         } else {
           this.logo = "logo_bj.png";
         }
-        this.toolbarTitle = `CRM - ${user.unit.name || ''}`;
+        this.toolbarTitle = `${sysName} - ${user.unit.name || ''}`;
         this.updateFavicon(user.unit.favicon);
 
         this.headerBrand = {
@@ -224,6 +228,7 @@ export class AppComponent implements OnInit {
 
     if (this.authService.isAuthenticated()) {
       this.loadMenu();
+      this.parameterService.loadDefaultParameters();
     }
 
     this.router.events.pipe(
@@ -233,6 +238,7 @@ export class AppComponent implements OnInit {
       if (!this.isLoginPage && this.authService.isAuthenticated()) {
         this.refreshUserInfo();
         this.loadMenu();
+        this.parameterService.loadDefaultParameters();
       }
       this.cdr.detectChanges();
     });

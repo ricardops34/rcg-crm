@@ -45,9 +45,12 @@ export class ParameterListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly poNotification = inject(PoNotificationService);
   private readonly poDialog = inject(PoDialogService);
-  private readonly itensPorPagina = 20;
   private paginaAtual = 1;
   private filtroAtual = "";
+
+  get itensPorPagina(): number {
+    return this.parameterService.queryLimit();
+  }
   private allParameters: Array<any> = [];
 
   parameters: Array<any> = [];
@@ -79,15 +82,16 @@ export class ParameterListComponent implements OnInit {
       action: (row: any) => this.confirmDelete(row),
       icon: "po-icon-delete",
       type: "danger",
-      disabled: (row: any) => row.systemSystem === "N"
+      disabled: (row: any) => row.system === "N"
     }
   ];
 
   readonly columns: Array<PoTableColumn> = [
-    { property: "systemParameter", label: "Parametro" },
+    { property: "parameter", label: "Parametro" },
+    { property: "description", label: "Descricao" },
     { property: "unitName", label: "Unidade", width: "180px" },
     {
-      property: "systemType",
+      property: "type",
       label: "Tipo",
       width: "120px",
       type: "label",
@@ -100,7 +104,7 @@ export class ParameterListComponent implements OnInit {
     },
     { property: "displayContent", label: "Conteudo" },
     {
-      property: "systemSystem",
+      property: "system",
       label: "Parametro de Usuario?",
       width: "180px",
       type: "label",
@@ -151,7 +155,7 @@ export class ParameterListComponent implements OnInit {
   confirmDelete(parameter: any) {
     this.poDialog.confirm({
       title: "Excluir Parametro",
-      message: `Deseja realmente excluir o parametro <strong>${parameter.systemParameter}</strong>?`,
+      message: `Deseja realmente excluir o parametro <strong>${parameter.parameter}</strong>?`,
       confirm: () => this.deleteParameter(parameter)
     });
   }
@@ -183,17 +187,18 @@ export class ParameterListComponent implements OnInit {
 
     const filtroNormalizado = filter.toLowerCase();
     return parameters.filter((item) =>
-      item.systemParameter?.toLowerCase().includes(filtroNormalizado) ||
+      item.parameter?.toLowerCase().includes(filtroNormalizado) ||
       item.unitName?.toLowerCase().includes(filtroNormalizado) ||
-      item.displayContent?.toLowerCase().includes(filtroNormalizado)
+      item.displayContent?.toLowerCase().includes(filtroNormalizado) ||
+      item.description?.toLowerCase().includes(filtroNormalizado)
     );
   }
 
   private formatContent(item: any): string {
-    if (item.systemType === "LOGICO") {
-      return item.systemContent === "S" ? "Sim" : "Nao";
+    if (item.type === "LOGICO") {
+      return item.content === "S" ? "Sim" : "Nao";
     }
 
-    return item.systemContent ?? "";
+    return item.content ?? "";
   }
 }

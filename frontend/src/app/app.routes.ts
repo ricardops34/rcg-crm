@@ -37,6 +37,7 @@ import { UnitFormComponent } from './pages/admin/unit-form/unit-form';
 import { ModuleListComponent } from './pages/admin/module-list/module-list';
 import { ModuleFormComponent } from './pages/admin/module-form/module-form';
 import { MenuEditorComponent } from './pages/admin/menu-editor/menu-editor';
+import { SettingsTabsComponent } from './pages/admin/settings-tabs/settings-tabs';
 import { authGuard } from './guards/auth-guard';
 import { HomeComponent } from './pages/home/home';
 import { ConfiguratorWorkbenchComponent } from './pages/configurator/configurator-workbench/configurator-workbench';
@@ -96,6 +97,7 @@ export const routes: Routes = [
       { path: 'admin/parameters', component: ParameterListComponent, data: { controller: 'SystemParameterList' } },
       { path: 'admin/parameters/new', component: ParameterFormComponent, data: { controller: 'SystemParameterList' } },
       { path: 'admin/parameters/edit/:id', component: ParameterFormComponent, data: { controller: 'SystemParameterList' } },
+      { path: 'admin/settings', component: SettingsTabsComponent, data: { controller: 'SystemSettings' } },
       { path: 'profile', component: ProfileComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ] 

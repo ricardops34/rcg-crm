@@ -104,19 +104,20 @@ CREATE TABLE IF NOT EXISTS public.system_change_log (
 CREATE TABLE IF NOT EXISTS public.system_parameter (
     id SERIAL PRIMARY KEY,
     system_unit_id INTEGER NULL REFERENCES public.system_unit(id),
-    system_parameter VARCHAR(150) NOT NULL,
-    system_type VARCHAR(20) NOT NULL,
-    system_content TEXT NULL,
-    system_system CHAR(1) NOT NULL DEFAULT 'N',
-    CONSTRAINT chk_system_parameter_type
-        CHECK (system_type IN ('DATA', 'NUMERO', 'LOGICO', 'CARACTER')),
-    CONSTRAINT chk_system_parameter_user
-        CHECK (system_system IN ('S', 'N'))
+    parameter VARCHAR(150) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    content TEXT NULL,
+    system CHAR(1) NOT NULL DEFAULT 'N',
+    description TEXT NULL,
+    CONSTRAINT chk_parameter_type
+        CHECK (type IN ('DATA', 'NUMERO', 'LOGICO', 'CARACTER')),
+    CONSTRAINT chk_parameter_system
+        CHECK (system IN ('S', 'N'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_system_parameter_name ON public.system_parameter (system_parameter);
-CREATE INDEX IF NOT EXISTS idx_system_parameter_unit ON public.system_parameter (system_unit_id);
-CREATE UNIQUE INDEX IF NOT EXISTS uq_system_parameter_global ON public.system_parameter (LOWER(system_parameter)) WHERE system_unit_id IS NULL;
-CREATE UNIQUE INDEX IF NOT EXISTS uq_system_parameter_per_unit ON public.system_parameter (system_unit_id, LOWER(system_parameter)) WHERE system_unit_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_parameter_name ON public.system_parameter (parameter);
+CREATE INDEX IF NOT EXISTS idx_parameter_unit ON public.system_parameter (system_unit_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_parameter_global ON public.system_parameter (LOWER(parameter)) WHERE system_unit_id IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_parameter_per_unit ON public.system_parameter (system_unit_id, LOWER(parameter)) WHERE system_unit_id IS NOT NULL;
 
 COMMIT;

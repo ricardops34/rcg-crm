@@ -11,6 +11,7 @@ import {
   PoBreadcrumb
 } from "@po-ui/ng-components";
 import { ClienteService } from "../../../services/cliente";
+import { ParameterService } from "../../../services/parameter";
 
 @Component({
   selector: "app-cliente-list",
@@ -20,11 +21,15 @@ import { ClienteService } from "../../../services/cliente";
 })
 export class ClienteListComponent implements OnInit {
   private clienteService = inject(ClienteService);
+  private parameterService = inject(ParameterService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
   private paginaAtual = 1;
-  private readonly itensPorPagina = 20;
   private filtroAtual = "";
+
+  get itensPorPagina(): number {
+    return this.parameterService.queryLimit();
+  }
 
   items: Array<any> = [];
   isLoading: boolean = true;

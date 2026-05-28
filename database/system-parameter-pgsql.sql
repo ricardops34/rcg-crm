@@ -2,30 +2,31 @@
 CREATE TABLE IF NOT EXISTS system_parameter (
   id SERIAL PRIMARY KEY,
   system_unit_id INTEGER NULL REFERENCES system_unit(id),
-  system_parameter VARCHAR(150) NOT NULL,
-  system_type VARCHAR(20) NOT NULL,
-  system_content TEXT NULL,
-  "system_user" CHAR(1) NOT NULL DEFAULT 'N',
-  CONSTRAINT chk_system_parameter_type
-    CHECK (system_type IN ('DATA', 'NUMERO', 'LOGICO', 'CARACTER')),
-  CONSTRAINT chk_system_parameter_user
-    CHECK ("system_user" IN ('S', 'N'))
+  parameter VARCHAR(150) NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  content TEXT NULL,
+  system CHAR(1) NOT NULL DEFAULT 'N',
+  description TEXT NULL,
+  CONSTRAINT chk_parameter_type
+    CHECK (type IN ('DATA', 'NUMERO', 'LOGICO', 'CARACTER')),
+  CONSTRAINT chk_parameter_system
+    CHECK (system IN ('S', 'N'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_system_parameter_name
-  ON system_parameter (system_parameter);
+CREATE INDEX IF NOT EXISTS idx_parameter_name
+  ON system_parameter (parameter);
 
-CREATE INDEX IF NOT EXISTS idx_system_parameter_unit
+CREATE INDEX IF NOT EXISTS idx_parameter_unit
   ON system_parameter (system_unit_id);
 
 -- Garante unicidade do parametro global
-CREATE UNIQUE INDEX IF NOT EXISTS uq_system_parameter_global
-  ON system_parameter (LOWER(system_parameter))
+CREATE UNIQUE INDEX IF NOT EXISTS uq_parameter_global
+  ON system_parameter (LOWER(parameter))
   WHERE system_unit_id IS NULL;
 
 -- Garante unicidade do parametro por unidade
-CREATE UNIQUE INDEX IF NOT EXISTS uq_system_parameter_per_unit
-  ON system_parameter (system_unit_id, LOWER(system_parameter))
+CREATE UNIQUE INDEX IF NOT EXISTS uq_parameter_per_unit
+  ON system_parameter (system_unit_id, LOWER(parameter))
   WHERE system_unit_id IS NOT NULL;
 
 -- Cadastro das rotinas de parametros

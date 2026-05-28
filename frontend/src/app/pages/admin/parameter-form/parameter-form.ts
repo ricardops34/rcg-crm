@@ -9,10 +9,11 @@ import { UnitService } from "../../../services/unit";
 interface ParameterFormData {
   id?: number;
   systemUnitId: number | null;
-  systemParameter: string;
-  systemType: string;
-  systemContent: any;
-  systemSystem: string;
+  parameter: string;
+  type: string;
+  content: any;
+  system: string;
+  description: string;
 }
 
 @Component({
@@ -41,8 +42,8 @@ interface ParameterFormData {
 
           <po-input
             class="po-md-4"
-            name="systemParameter"
-            [(ngModel)]="parameter.systemParameter"
+            name="parameter"
+            [(ngModel)]="parameter.parameter"
             p-label="Parametro"
             p-required
             p-clean>
@@ -50,8 +51,8 @@ interface ParameterFormData {
 
           <po-select
             class="po-md-4"
-            name="systemType"
-            [ngModel]="parameter.systemType"
+            name="type"
+            [ngModel]="parameter.type"
             (ngModelChange)="onTypeChange($event)"
             p-label="Tipo"
             [p-options]="typeOptions"
@@ -59,39 +60,50 @@ interface ParameterFormData {
           </po-select>
         </div>
 
+        <po-divider p-label="Descricao"></po-divider>
+        <div class="po-row">
+          <po-input
+            class="po-md-12"
+            name="description"
+            [(ngModel)]="parameter.description"
+            p-label="Descrição explicativa do parâmetro"
+            p-clean>
+          </po-input>
+        </div>
+
         <po-divider p-label="Conteudo e Escopo"></po-divider>
         <div class="po-row">
           <po-input
-            *ngIf="parameter.systemType === 'CARACTER'"
+            *ngIf="parameter.type === 'CARACTER'"
             class="po-md-6"
-            name="systemContentCharacter"
-            [(ngModel)]="parameter.systemContent"
+            name="contentCharacter"
+            [(ngModel)]="parameter.content"
             p-label="Conteudo"
             p-clean>
           </po-input>
 
           <po-number
-            *ngIf="parameter.systemType === 'NUMERO'"
+            *ngIf="parameter.type === 'NUMERO'"
             class="po-md-6"
-            name="systemContentNumber"
-            [(ngModel)]="parameter.systemContent"
+            name="contentNumber"
+            [(ngModel)]="parameter.content"
             p-label="Conteudo">
           </po-number>
 
           <po-datepicker
-            *ngIf="parameter.systemType === 'DATA'"
+            *ngIf="parameter.type === 'DATA'"
             class="po-md-6"
-            name="systemContentDate"
-            [(ngModel)]="parameter.systemContent"
+            name="contentDate"
+            [(ngModel)]="parameter.content"
             p-label="Conteudo">
           </po-datepicker>
 
           <po-switch
-            *ngIf="parameter.systemType === 'LOGICO'"
+            *ngIf="parameter.type === 'LOGICO'"
             class="po-md-6"
-            name="systemContentLogical"
-            [ngModel]="parameter.systemContent === 'S'"
-            (p-change)="parameter.systemContent = $event ? 'S' : 'N'"
+            name="contentLogical"
+            [ngModel]="parameter.content === 'S'"
+            (p-change)="parameter.content = $event ? 'S' : 'N'"
             p-label="Conteudo"
             p-label-off="Nao"
             p-label-on="Sim">
@@ -99,16 +111,16 @@ interface ParameterFormData {
 
           <po-switch
             class="po-md-6"
-            name="systemSystem"
-            [ngModel]="parameter.systemSystem === 'S'"
-            (p-change)="parameter.systemSystem = $event ? 'S' : 'N'"
+            name="system"
+            [ngModel]="parameter.system === 'S'"
+            (p-change)="parameter.system = $event ? 'S' : 'N'"
             p-label="Parametro de Usuario?"
             p-label-off="Nao (Sistema)"
             p-label-on="Sim">
           </po-switch>
         </div>
 
-        <div class="po-row" *ngIf="parameter.systemSystem === 'N'">
+        <div class="po-row" *ngIf="parameter.system === 'N'">
           <div class="po-md-12">
             <po-info
               p-label="Atenção"
@@ -129,10 +141,11 @@ export class ParameterFormComponent implements OnInit {
 
   parameter: ParameterFormData = {
     systemUnitId: null,
-    systemParameter: "",
-    systemType: "CARACTER",
-    systemContent: "",
-    systemSystem: "N"
+    parameter: "",
+    type: "CARACTER",
+    content: "",
+    system: "N",
+    description: ""
   };
 
   unitOptions: Array<PoSelectOption> = [];
@@ -188,10 +201,11 @@ export class ParameterFormComponent implements OnInit {
         this.parameter = {
           id: res.id,
           systemUnitId: res.systemUnitId ?? null,
-          systemParameter: res.systemParameter ?? "",
-          systemType: res.systemType ?? "CARACTER",
-          systemContent: this.parseContent(res.systemType, res.systemContent),
-          systemSystem: res.systemSystem ?? "N"
+          parameter: res.parameter ?? "",
+          type: res.type ?? "CARACTER",
+          content: this.parseContent(res.type, res.content),
+          system: res.system ?? "N",
+          description: res.description ?? ""
         };
         this.isLoading = false;
       },
@@ -204,12 +218,12 @@ export class ParameterFormComponent implements OnInit {
   }
 
   onTypeChange(type: string) {
-    this.parameter.systemType = type;
-    this.parameter.systemContent = type === "LOGICO" ? "N" : "";
+    this.parameter.type = type;
+    this.parameter.content = type === "LOGICO" ? "N" : "";
   }
 
   save() {
-    if (!this.parameter.systemParameter?.trim()) {
+    if (!this.parameter.parameter?.trim()) {
       this.poNotification.warning("Informe o nome do parametro.");
       return;
     }
@@ -217,8 +231,9 @@ export class ParameterFormComponent implements OnInit {
     this.isLoading = true;
     this.parameterService.save({
       ...this.parameter,
-      systemParameter: this.parameter.systemParameter.trim(),
-      systemContent: this.normalizeContent()
+      parameter: this.parameter.parameter.trim(),
+      content: this.normalizeContent(),
+      description: this.parameter.description?.trim() || null
     }).subscribe({
       next: () => {
         this.isLoading = false;
@@ -249,20 +264,20 @@ export class ParameterFormComponent implements OnInit {
   }
 
   private normalizeContent() {
-    if (this.parameter.systemType === "DATA") {
-      return this.parameter.systemContent ? String(this.parameter.systemContent) : null;
+    if (this.parameter.type === "DATA") {
+      return this.parameter.content ? String(this.parameter.content) : null;
     }
 
-    if (this.parameter.systemType === "NUMERO") {
-      return this.parameter.systemContent === null || this.parameter.systemContent === undefined || this.parameter.systemContent === ""
+    if (this.parameter.type === "NUMERO") {
+      return this.parameter.content === null || this.parameter.content === undefined || this.parameter.content === ""
         ? null
-        : String(this.parameter.systemContent);
+        : String(this.parameter.content);
     }
 
-    if (this.parameter.systemType === "LOGICO") {
-      return this.parameter.systemContent === "S" ? "S" : "N";
+    if (this.parameter.type === "LOGICO") {
+      return this.parameter.content === "S" ? "S" : "N";
     }
 
-    return this.parameter.systemContent ?? "";
+    return this.parameter.content ?? "";
   }
 }

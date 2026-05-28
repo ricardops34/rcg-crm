@@ -1,0 +1,159 @@
+<po-page-default
+  p-title="Configurações do Sistema"
+  p-subtitle="Gerenciamento de parâmetros de e-mail e opções gerais de sistema"
+  [p-breadcrumb]="breadcrumb">
+
+  <po-tabs>
+    <!-- ABA 1: CONFIGURAÇÕES DE E-MAIL -->
+    <po-tab p-label="E-mail (SMTP)" [p-active]="true">
+      <po-container [p-no-border]="false" class="po-mt-2">
+        <form #emailForm="ngForm">
+          <po-divider p-label="Servidor de Envio (SMTP)"></po-divider>
+          
+          <div class="po-row">
+            <po-input
+              class="po-md-6"
+              name="smtpHost"
+              [ngModel]="smtpHost()"
+              (ngModelChange)="smtpHost.set($event)"
+              p-label="Servidor SMTP"
+              p-placeholder="ex: smtp.exemplo.com.br"
+              p-required
+              p-clean>
+            </po-input>
+
+            <po-number
+              class="po-md-3"
+              name="smtpPort"
+              [ngModel]="smtpPort()"
+              (ngModelChange)="smtpPort.set($event)"
+              p-label="Porta SMTP"
+              p-placeholder="ex: 587 ou 465"
+              p-required>
+            </po-number>
+
+            <po-select
+              class="po-md-3"
+              name="smtpSecure"
+              [ngModel]="smtpSecure()"
+              (ngModelChange)="smtpSecure.set($event)"
+              p-label="Segurança"
+              [p-options]="secureOptions"
+              p-required>
+            </po-select>
+          </div>
+
+          <po-divider p-label="Credenciais e Remetente"></po-divider>
+          
+          <div class="po-row">
+            <po-input
+              class="po-md-4"
+              name="smtpFrom"
+              [ngModel]="smtpFrom()"
+              (ngModelChange)="smtpFrom.set($event)"
+              p-label="Remetente (E-mail)"
+              p-placeholder="ex: nao-responda@empresa.com"
+              p-required
+              p-clean>
+            </po-input>
+
+            <po-input
+              class="po-md-4"
+              name="smtpUser"
+              [ngModel]="smtpUser()"
+              (ngModelChange)="smtpUser.set($event)"
+              p-label="Usuário SMTP"
+              p-placeholder="ex: email@empresa.com"
+              p-required
+              p-clean>
+            </po-input>
+
+            <po-password
+              class="po-md-4"
+              name="smtpPass"
+              [ngModel]="smtpPass()"
+              (ngModelChange)="smtpPass.set($event)"
+              p-label="Senha SMTP"
+              p-placeholder="Informe a senha de envio"
+              p-required>
+            </po-password>
+          </div>
+
+          <div class="po-row po-mt-3">
+            <div class="po-md-12 po-text-right">
+              <po-button
+                p-label="Cancelar"
+                p-kind="secondary"
+                class="po-mr-1"
+                (p-click)="cancel()">
+              </po-button>
+              <po-button
+                p-label="Testar Conexão"
+                p-kind="secondary"
+                class="po-mr-1"
+                [p-disabled]="!emailForm.valid || isLoading() || isTesting()"
+                [p-loading]="isTesting()"
+                (p-click)="testEmailConnection()">
+              </po-button>
+              <po-button
+                p-label="Salvar Configurações de E-mail"
+                p-kind="primary"
+                [p-disabled]="!emailForm.valid || isLoading() || isTesting()"
+                (p-click)="saveEmailSettings()">
+              </po-button>
+            </div>
+          </div>
+        </form>
+      </po-container>
+    </po-tab>
+
+    <!-- ABA 2: CONFIGURAÇÕES GERAIS -->
+    <po-tab p-label="Geral">
+      <po-container [p-no-border]="false" class="po-mt-2">
+        <form #generalForm="ngForm">
+          <po-divider p-label="Configurações Gerais do Sistema"></po-divider>
+          
+          <div class="po-row">
+            <po-input
+              class="po-md-6"
+              name="systemName"
+              [ngModel]="systemName()"
+              (ngModelChange)="systemName.set($event)"
+              p-label="Nome do Sistema"
+              p-placeholder="Nome de exibição nas telas e relatórios"
+              p-required
+              p-clean>
+            </po-input>
+
+            <po-number
+              class="po-md-6"
+              name="queryLimit"
+              [ngModel]="queryLimit()"
+              (ngModelChange)="queryLimit.set($event)"
+              p-label="Limite Padrão de Consultas"
+              p-placeholder="ex: 20"
+              p-required>
+            </po-number>
+          </div>
+
+          <div class="po-row po-mt-3">
+            <div class="po-md-12 po-text-right">
+              <po-button
+                p-label="Cancelar"
+                p-kind="secondary"
+                class="po-mr-1"
+                (p-click)="cancel()">
+              </po-button>
+              <po-button
+                p-label="Salvar Configurações Gerais"
+                p-kind="primary"
+                [p-disabled]="!generalForm.valid || isLoading()"
+                (p-click)="saveGeneralSettings()">
+              </po-button>
+            </div>
+          </div>
+        </form>
+      </po-container>
+    </po-tab>
+  </po-tabs>
+</po-page-default>
