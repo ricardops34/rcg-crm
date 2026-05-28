@@ -117,7 +117,7 @@ export class SettingsTabsComponent implements OnInit {
     ];
 
     emailParams.forEach(param => {
-      const dbItem = this.parametersDb.get(param.name);
+      const dbItem = this.parametersDb.get(param.name.toUpperCase());
       const payload: any = {
         parameter: param.name,
         type: param.type,
@@ -158,7 +158,7 @@ export class SettingsTabsComponent implements OnInit {
     ];
 
     generalParams.forEach(param => {
-      const dbItem = this.parametersDb.get(param.name);
+      const dbItem = this.parametersDb.get(param.name.toUpperCase());
       const payload: any = {
         parameter: param.name,
         type: param.type,

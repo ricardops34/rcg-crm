@@ -53,7 +53,34 @@ export class ParametersService {
       throw new BadRequestException('Indicador de parametro de usuario invalido');
     }
 
-    await this.validateDuplicate(payload);
+    // Comportamento UPSERT: Se nao forneceu ID, verifica se ja existe por nome + unidade
+    if (!payload.id) {
+      const query = this.parameterRepository
+        .createQueryBuilder('parameter')
+        .where('LOWER(parameter.parameter) = LOWER(:parameter)', {
+          parameter: payload.parameter,
+        });
+
+      if (payload.systemUnitId) {
+        query.andWhere('parameter.system_unit_id = :systemUnitId', {
+          systemUnitId: payload.systemUnitId,
+        });
+      } else {
+        query.andWhere('parameter.system_unit_id IS NULL');
+      }
+
+      const existing = await query.getOne();
+      if (existing) {
+        payload.id = existing.id;
+        // Preserva os dados originais caso nao tenham sido preenchidos no novo payload
+        payload.type = payload.type || existing.type;
+        payload.system = payload.system || existing.system;
+        payload.description = payload.description || existing.description;
+      }
+    } else {
+      // Se forneceu ID, valida duplicidade garantindo que nao colida com outro registro
+      await this.validateDuplicate(payload);
+    }
 
     const entity = this.parameterRepository.create(payload);
     return this.parameterRepository.save(entity);
