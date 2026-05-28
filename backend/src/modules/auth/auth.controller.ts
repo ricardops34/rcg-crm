@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Param,
   Body,
   UnauthorizedException,
   HttpCode,
@@ -20,6 +21,7 @@ interface AuthenticatedRequest extends Request {
     userId: number;
     username: string;
     scope?: string;
+    systemUnitId?: number;
   };
 }
 
@@ -37,6 +39,12 @@ export class AuthController {
     return this.usersService.getTerms();
   }
 
+  @Get('units-by-login/:login')
+  @ApiOperation({ summary: 'Lista as unidades disponiveis para um login informado' })
+  async getUnitsByLogin(@Param('login') login: string) {
+    return this.authService.getUserUnitsByLogin(login);
+  }
+
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Realiza o login básico (usuário/senha)' })
@@ -50,7 +58,10 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
-    return this.authService.login(user as AuthUser);
+    return this.authService.login({
+      ...(user as AuthUser),
+      systemUnitId: body.systemUnitId ? Number(body.systemUnitId) : undefined,
+    });
   }
 
   @ApiBearerAuth()
@@ -78,6 +89,7 @@ export class AuthController {
     return this.authService.login({
       ...user,
       twoFactorVerified: true,
+      systemUnitId: req.user.systemUnitId,
     });
   }
 
@@ -92,7 +104,7 @@ export class AuthController {
       throw new UnauthorizedException('Token inválido para esta operação');
     }
 
-    return this.authService.acceptTerms(req.user.userId);
+    return this.authService.acceptTerms(req.user.userId, req.user.systemUnitId);
   }
 
   @ApiBearerAuth()

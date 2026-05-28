@@ -114,7 +114,12 @@ export class AuthService {
         console.warn(`[AUTH] ⚠️ Usuário ${user.id} sem e-mail cadastrado para 2FA.`);
       }
 
-      const payload = { sub: user.id, username: user.login, scope: '2fa' };
+      const payload = {
+        sub: user.id,
+        username: user.login,
+        scope: '2fa',
+        unitId: user.systemUnitId,
+      };
       return {
         nextStep: '2FA',
         accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
@@ -122,7 +127,12 @@ export class AuthService {
     }
 
     if (user.acceptedTermPolicy !== 'Y') {
-      const payload = { sub: user.id, username: user.login, scope: 'TERMS' };
+      const payload = {
+        sub: user.id,
+        username: user.login,
+        scope: 'TERMS',
+        unitId: user.systemUnitId,
+      };
       return {
         nextStep: 'TERMS',
         accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
@@ -277,14 +287,17 @@ export class AuthService {
     return user?.currentSessionId || null;
   }
 
-  async acceptTerms(userId: number) {
+  async acceptTerms(userId: number, systemUnitId?: number) {
     await this.userRepository.update(userId, {
       acceptedTermPolicy: 'Y',
       acceptedTermPolicyAt: new Date().toISOString(),
     });
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    return this.login(user as any);
+    return this.login({
+      ...(user as any),
+      systemUnitId,
+    });
   }
   async getUserUnitsByLogin(login: string) {
     const normalizedLogin = login.toLowerCase().trim();
@@ -313,6 +326,11 @@ export class AuthService {
       (unit, idx, self) => self.findIndex((u) => u.id === unit.id) === idx,
     );
 
-    return allowedUnits.map(u => ({ value: u.id, label: u.name }));
+    return allowedUnits.map((u) => ({
+      value: u.id,
+      label: u.name,
+      logo: u.logo,
+      favicon: u.favicon,
+    }));
   }
 }

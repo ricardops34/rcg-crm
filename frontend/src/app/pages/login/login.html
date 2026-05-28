@@ -1,5 +1,6 @@
-<po-page-login p-title="CRM" p-background="assets/crm_login_bg.png" [p-logo]="loginLogo" [p-loading]="isLoading()"
-  (p-login-submit)="loginSubmit($event)" [p-literals]="customLiterals">
+<po-page-login p-title="CRM" p-background="assets/crm_login_bg.png" [p-logo]="loginLogo"
+  [p-secondary-logo]="secondaryLoginLogo" [p-custom-field]="$any(loginUnitField)" [p-loading]="isLoading()"
+  (p-login-change)="onLoginChange($event)" (p-login-submit)="loginSubmit($event)" [p-literals]="customLiterals">
 </po-page-login>
 
 <po-modal #modal2fa p-title="Autenticação de Dois Fatores"

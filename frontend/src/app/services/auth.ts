@@ -8,6 +8,7 @@ import {
   AuthTerms,
   AuthUser,
   JwtPayload,
+  LoginUnitOption,
   LoginPayload,
   SaveTermsPayload
 } from "./models/auth.model";
@@ -29,6 +30,10 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, loginData).pipe(
       tap(res => this.handleAuthResponse(res))
     );
+  }
+
+  getUnitsByLogin(login: string): Observable<LoginUnitOption[]> {
+    return this.http.get<LoginUnitOption[]>(`${this.API_URL}/units-by-login/${encodeURIComponent(login)}`);
   }
 
   verify2fa(code: string): Observable<AuthResponse> {

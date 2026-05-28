@@ -58,6 +58,14 @@ export interface AuthResponse {
 export interface LoginPayload {
   login: string;
   password: string;
+  systemUnitId?: number;
+}
+
+export interface LoginUnitOption {
+  value: number;
+  label: string;
+  logo?: string;
+  favicon?: string;
 }
 
 export interface SaveTermsPayload {
