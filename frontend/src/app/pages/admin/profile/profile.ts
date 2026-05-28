@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import {
   PoModule,
   PoNotificationService,
-  PoPageAction,
   PoModalComponent,
   PoPageSlideComponent
 } from "@po-ui/ng-components";
@@ -36,10 +35,6 @@ export class ProfileComponent implements OnInit {
   };
 
   availableAvatars = Array.from({ length: 14 }, (_, i) => `assets/avatar/avatar_${i.toString().padStart(2, '0')}.png`);
-
-  readonly actions: Array<PoPageAction> = [
-    { label: "Salvar Alterações", action: this.saveProfile.bind(this), icon: "po-icon-ok" }
-  ];
 
   ngOnInit() {
     this.pageSlide.open();
