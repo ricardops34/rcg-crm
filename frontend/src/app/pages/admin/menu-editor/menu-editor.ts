@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { forkJoin } from "rxjs";
 import { Router } from "@angular/router";
 import {
   PoModule,
@@ -75,7 +76,7 @@ interface ModuleGroup {
             <po-table
               [p-columns]="columns"
               [p-items]="mod.programs"
-              [p-actions]="orphanTableActions"
+              [p-actions]="tableActions"
               p-container="shadow"
               [p-striped]="true"
               [p-sort]="true">
@@ -88,7 +89,7 @@ interface ModuleGroup {
             <po-table
               [p-columns]="columns"
               [p-items]="orphanPrograms"
-              [p-actions]="tableActions"
+              [p-actions]="orphanTableActions"
               p-container="shadow"
               [p-striped]="true">
             </po-table>
@@ -298,43 +299,47 @@ export class MenuEditorComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    Promise.all([
-      this.moduleService.findAll().toPromise(),
-      this.programService.findAll().toPromise()
-    ]).then(([modules, programs]) => {
-      const mods: any[] = modules ?? [];
-      const progs: any[] = programs ?? [];
+    
+    forkJoin({
+      modules: this.moduleService.findAll(),
+      programs: this.programService.findAll()
+    }).subscribe({
+      next: ({ modules, programs }) => {
+        const mods: any[] = modules ?? [];
+        const progs: any[] = programs ?? [];
 
-      this.allPrograms = progs;
+        this.allPrograms = progs;
 
-      this.moduleOptions = [
-        { label: "— Sem módulo (não aparece no menu) —", value: null as any },
-        ...mods.map(m => ({ label: m.name, value: m.id }))
-      ];
+        this.moduleOptions = [
+          { label: "— Sem módulo (não aparece no menu) —", value: null as any },
+          ...mods.map(m => ({ label: m.name, value: m.id }))
+        ];
 
-      this.moduleFilterOptions = [
-        { label: "Todos os Módulos", value: "" },
-        ...mods.map(m => ({ label: m.name, value: String(m.id) }))
-      ];
+        this.moduleFilterOptions = [
+          { label: "Todos os Módulos", value: "" },
+          ...mods.map(m => ({ label: m.name, value: String(m.id) }))
+        ];
 
-      this.allModules = mods.map(m => ({
-        id: m.id,
-        name: m.name,
-        icon: m.icon || "po-icon-more",
-        programs: progs
-          .filter(p => p.systemModuleId === m.id)
-          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      }));
+        this.allModules = mods.map(m => ({
+          id: m.id,
+          name: m.name,
+          icon: m.icon || "po-icon-more",
+          programs: progs
+            .filter(p => p.systemModuleId === m.id)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        }));
 
-      this.orphanPrograms = progs
-        .filter(p => !p.systemModuleId)
-        .sort((a, b) => a.name.localeCompare(b.name));
+        this.orphanPrograms = progs
+          .filter(p => !p.systemModuleId)
+          .sort((a, b) => a.name.localeCompare(b.name));
 
-      this.applyFilter();
-      this.isLoading = false;
-    }).catch(() => {
-      this.isLoading = false;
-      this.poNotification.error("Erro ao carregar dados do menu.");
+        this.applyFilter();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao carregar dados do menu.");
+      }
     });
   }
 

@@ -1,4 +1,4 @@
-import { Injectable, signal } from "@angular/core";
+import { Injectable, signal, computed } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, tap } from "rxjs";
 import { environment } from "../../environments/environment";
@@ -23,6 +23,12 @@ export class AuthService {
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   currentUser = signal<AuthUser | null>(this.getUser());
+
+  isAdmin = computed(() => {
+    const user = this.currentUser();
+    if (!user) return false;
+    return user.login === 'admin' || user.roles?.includes('ADMIN');
+  });
 
   constructor(private http: HttpClient) { }
 
@@ -114,7 +120,7 @@ export class AuthService {
   hasPermission(controller: string): boolean {
     const user = this.getUser();
     if (!user) return false;
-    if (user.login === 'admin' || user.roles?.includes('ADMIN')) return true;
+    if (this.isAdmin()) return true;
     if (!user.programs) return false;
     return user.programs.some((p) => p.controller === controller);
   }

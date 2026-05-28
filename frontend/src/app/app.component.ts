@@ -104,26 +104,29 @@ export class AppComponent implements OnInit {
           });
         }
 
-        tools.push(
-          {
-            label: 'Alterar Tema',
-            icon: 'an an-paint-brush',
-            tooltip: 'Alternar tema visual',
-            action: () => this.toggleTheme()
-          },
-          {
+        tools.push({
+          label: 'Alterar Tema',
+          icon: 'an an-paint-brush',
+          tooltip: 'Alternar tema visual',
+          action: () => this.toggleTheme()
+        });
+
+        // Adiciona engrenagem de Configurações APENAS para perfil ADMIN
+        if (this.authService.isAdmin()) {
+          tools.push({
             label: 'Configurações',
             icon: 'an an-gear-six',
             tooltip: 'Configurações do sistema',
             action: () => this.router.navigate(["/admin/settings"])
-          },
-          {
-            label: 'Sair',
-            icon: 'an an-sign-out',
-            tooltip: 'Sair do sistema',
-            action: () => this.logout()
-          }
-        );
+          });
+        }
+
+        tools.push({
+          label: 'Sair',
+          icon: 'an an-sign-out',
+          tooltip: 'Sair do sistema',
+          action: () => this.logout()
+        });
 
         this.headerActionTools = tools;
       } else {
@@ -208,14 +211,12 @@ export class AppComponent implements OnInit {
 
   readonly profileActions: Array<PoToolbarAction> = [
     { label: "Meu Perfil", action: () => this.router.navigate(["/profile"]), icon: "an an-user-circle" },
-    { label: "Configurações", action: () => this.router.navigate(["/admin/settings"]), icon: "an an-gear-six" },
     { label: "Sair", action: () => this.logout(), icon: "an an-sign-out", type: "danger" }
   ];
 
   // Ações da toolbar conforme modelo menu superior.png
   readonly toolbarActions: Array<PoToolbarAction> = [
     { label: "Trocar Filial", icon: "an an-arrows-clockwise", action: () => this.openUnitSwitchModal() },
-    { label: "Configurações", icon: "an an-gear-six", action: () => { } },
     { label: "Apps", icon: "an an-grid-four", action: () => { } },
     { label: "Mensagens", icon: "an an-chat-circle", action: () => { }, type: "danger" },
     { label: "Alterar Tema", icon: "an an-paint-brush", action: () => this.toggleTheme() }
