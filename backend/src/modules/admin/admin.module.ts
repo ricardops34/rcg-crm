@@ -4,6 +4,7 @@ import { SystemUnit } from './entities/system-unit.entity';
 import { SystemGroup } from './entities/system-group.entity';
 import { SystemProgram } from './entities/system-program.entity';
 import { SystemModule } from './entities/system-module.entity';
+import { SystemParameter } from './entities/system-parameter.entity';
 import { SystemPreference } from './entities/system-preference.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemUserProgram } from './entities/system-user-program.entity';
@@ -16,11 +17,13 @@ import { GroupsService } from './groups.service';
 import { ProgramsService } from './programs.service';
 import { ModulesService } from './modules.service';
 import { UnitsService } from './units.service';
+import { ParametersService } from './parameters.service';
 import { UsersController } from './users.controller';
 import { GroupsController } from './groups.controller';
 import { ProgramsController } from './programs.controller';
 import { ModulesController } from './modules.controller';
 import { UnitsController } from './units.controller';
+import { ParametersController } from './parameters.controller';
 import { MailService } from './services/mail.service';
 import { UploadService } from './services/upload.service';
 
@@ -32,6 +35,7 @@ import { UploadService } from './services/upload.service';
         SystemGroup,
         SystemProgram,
         SystemModule,
+        SystemParameter,
         SystemPreference,
         SystemUserGroup,
         SystemUserProgram,
@@ -49,6 +53,7 @@ import { UploadService } from './services/upload.service';
     ProgramsService,
     ModulesService,
     UnitsService,
+    ParametersService,
     MailService,
     UploadService,
   ],
@@ -58,6 +63,7 @@ import { UploadService } from './services/upload.service';
     ProgramsController,
     ModulesController,
     UnitsController,
+    ParametersController,
   ],
   exports: [
     TypeOrmModule,
@@ -67,6 +73,7 @@ import { UploadService } from './services/upload.service';
     ProgramsService,
     ModulesService,
     UnitsService,
+    ParametersService,
     MailService,
     UploadService,
   ],

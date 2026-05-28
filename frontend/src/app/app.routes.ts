@@ -30,6 +30,8 @@ import { GroupListComponent } from './pages/admin/group-list/group-list';
 import { GroupFormComponent } from './pages/admin/group-form/group-form';
 import { ProgramListComponent } from './pages/admin/program-list/program-list';
 import { ProgramFormComponent } from './pages/admin/program-form/program-form';
+import { ParameterListComponent } from './pages/admin/parameter-list/parameter-list';
+import { ParameterFormComponent } from './pages/admin/parameter-form/parameter-form';
 import { UnitListComponent } from './pages/admin/unit-list/unit-list';
 import { UnitFormComponent } from './pages/admin/unit-form/unit-form';
 import { ModuleListComponent } from './pages/admin/module-list/module-list';
@@ -91,6 +93,9 @@ export const routes: Routes = [
       { path: 'admin/programs', component: ProgramListComponent, data: { controller: 'SystemProgramList' } },
       { path: 'admin/programs/new', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
       { path: 'admin/programs/edit/:id', component: ProgramFormComponent, data: { controller: 'SystemProgramList' } },
+      { path: 'admin/parameters', component: ParameterListComponent, data: { controller: 'SystemParameterList' } },
+      { path: 'admin/parameters/new', component: ParameterFormComponent, data: { controller: 'SystemParameterList' } },
+      { path: 'admin/parameters/edit/:id', component: ParameterFormComponent, data: { controller: 'SystemParameterList' } },
       { path: 'profile', component: ProfileComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ] 

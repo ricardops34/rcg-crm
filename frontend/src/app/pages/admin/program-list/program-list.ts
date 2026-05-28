@@ -6,9 +6,7 @@ import {
   PoPageAction,
   PoTableColumn,
   PoTableAction,
-  PoNotificationService,
   PoBreadcrumb,
-  PoDialogService,
   PoSelectOption
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
@@ -29,7 +27,7 @@ import { ModuleService } from "../../../services/module";
         <po-select
           class="po-md-4"
           name="filterModule"
-          p-label="Filtrar por Módulo"
+          p-label="Filtrar por Modulo"
           [p-options]="moduleFilterOptions"
           [ngModel]="selectedModule"
           (p-change)="onModuleFilter($event)"
@@ -62,19 +60,17 @@ import { ModuleService } from "../../../services/module";
   `
 })
 export class ProgramListComponent implements OnInit {
-  private programService = inject(ProgramService);
-  private moduleService = inject(ModuleService);
-  private router = inject(Router);
-  private poNotification = inject(PoNotificationService);
-  private poDialog = inject(PoDialogService);
+  private readonly programService = inject(ProgramService);
+  private readonly moduleService = inject(ModuleService);
+  private readonly router = inject(Router);
   private readonly itensPorPagina = 20;
   private paginaAtual = 1;
 
   programs: Array<any> = [];
   filteredPrograms: Array<any> = [];
-  moduleFilterOptions: Array<PoSelectOption> = [{ label: "Todos os Módulos", value: "" }];
-  selectedModule: string = "";
-  filterText: string = "";
+  moduleFilterOptions: Array<PoSelectOption> = [{ label: "Todos os Modulos", value: "" }];
+  selectedModule = "";
+  filterText = "";
   isLoading = false;
   loadingShowMore = false;
   hasNext = false;
@@ -82,7 +78,7 @@ export class ProgramListComponent implements OnInit {
   readonly breadcrumb: PoBreadcrumb = {
     items: [
       { label: "Home", link: "/" },
-      { label: "Administração", link: "/admin/users" },
+      { label: "Administracao", link: "/admin/users" },
       { label: "Rotinas" }
     ]
   };
@@ -92,16 +88,15 @@ export class ProgramListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/programs/edit/${row.id}`]), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.confirmDelete.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/programs/edit/${row.id}`]), icon: "po-icon-edit" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
     { property: "id", label: "ID", width: "70px", type: "number" },
     { property: "name", label: "Nome da Rotina" },
     { property: "controller", label: "Controller" },
-    { property: "moduleName", label: "Módulo", width: "160px" },
-    { property: "icon", label: "Ícone", width: "120px" }
+    { property: "moduleName", label: "Modulo", width: "160px" },
+    { property: "icon", label: "Icone", width: "120px" }
   ];
 
   ngOnInit() {
@@ -112,8 +107,8 @@ export class ProgramListComponent implements OnInit {
   loadModules() {
     this.moduleService.findAll().subscribe({
       next: (modules: any[]) => {
-        const opts = modules.map(m => ({ label: m.name, value: String(m.id) }));
-        this.moduleFilterOptions = [{ label: "Todos os Módulos", value: "" }, ...opts];
+        const opts = modules.map((module) => ({ label: module.name, value: String(module.id) }));
+        this.moduleFilterOptions = [{ label: "Todos os Modulos", value: "" }, ...opts];
       }
     });
   }
@@ -123,14 +118,16 @@ export class ProgramListComponent implements OnInit {
     this.paginaAtual = 1;
     this.programService.findAll().subscribe({
       next: (res: any[]) => {
-        this.programs = res.map(p => ({
-          ...p,
-          moduleName: p.systemModule?.name ?? "— sem módulo —"
+        this.programs = res.map((program) => ({
+          ...program,
+          moduleName: program.systemModule?.name ?? "-- sem modulo --"
         }));
         this.applyFilter();
         this.isLoading = false;
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -159,42 +156,21 @@ export class ProgramListComponent implements OnInit {
 
   applyFilter() {
     let result = [...this.programs];
+
     if (this.selectedModule) {
-      result = result.filter(p => String(p.systemModuleId) === this.selectedModule);
+      result = result.filter((program) => String(program.systemModuleId) === this.selectedModule);
     }
+
     if (this.filterText?.trim()) {
-      const q = this.filterText.toLowerCase();
-      result = result.filter(p =>
-        p.name?.toLowerCase().includes(q) ||
-        p.controller?.toLowerCase().includes(q)
+      const search = this.filterText.toLowerCase();
+      result = result.filter((program) =>
+        program.name?.toLowerCase().includes(search) ||
+        program.controller?.toLowerCase().includes(search)
       );
     }
 
-    const limite = this.paginaAtual * this.itensPorPagina;
-    this.filteredPrograms = result.slice(0, limite);
-    this.hasNext = result.length > limite;
-  }
-
-  confirmDelete(program: any) {
-    this.poDialog.confirm({
-      title: "Excluir Rotina",
-      message: `Deseja realmente excluir a rotina <strong>${program.name}</strong>?<br>Esta ação não pode ser desfeita.`,
-      confirm: () => this.deleteProgram(program),
-      cancel: () => {}
-    });
-  }
-
-  deleteProgram(program: any) {
-    this.isLoading = true;
-    this.programService.delete(program.id).subscribe({
-      next: () => {
-        this.poNotification.success("Rotina excluída com sucesso!");
-        this.loadPrograms();
-      },
-      error: () => {
-        this.isLoading = false;
-        this.poNotification.error("Erro ao excluir rotina.");
-      }
-    });
+    const limit = this.paginaAtual * this.itensPorPagina;
+    this.filteredPrograms = result.slice(0, limit);
+    this.hasNext = result.length > limit;
   }
 }

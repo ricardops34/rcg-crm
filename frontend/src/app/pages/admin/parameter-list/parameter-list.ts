@@ -1,0 +1,199 @@
+import { Component, OnInit, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import {
+  PoBreadcrumb,
+  PoDialogService,
+  PoModule,
+  PoNotificationService,
+  PoPageAction,
+  PoPageFilter,
+  PoTableAction,
+  PoTableColumn
+} from "@po-ui/ng-components";
+import { ParameterService } from "../../../services/parameter";
+
+@Component({
+  selector: "app-parameter-list",
+  standalone: true,
+  imports: [CommonModule, PoModule],
+  template: `
+    <po-page-list
+      p-title="Parametros do Sistema"
+      p-subtitle="Gestao de parametros globais e por unidade"
+      [p-breadcrumb]="breadcrumb"
+      [p-actions]="actions"
+      [p-filter]="filter">
+
+      <po-table
+        [p-columns]="columns"
+        [p-items]="parameters"
+        [p-actions]="tableActions"
+        [p-loading]="isLoading"
+        [p-loading-show-more]="loadingShowMore"
+        [p-show-more-disabled]="!hasNext"
+        (p-show-more)="showMore()"
+        p-container="shadow"
+        [p-striped]="true"
+        [p-sort]="true">
+      </po-table>
+    </po-page-list>
+  `
+})
+export class ParameterListComponent implements OnInit {
+  private readonly parameterService = inject(ParameterService);
+  private readonly router = inject(Router);
+  private readonly poNotification = inject(PoNotificationService);
+  private readonly poDialog = inject(PoDialogService);
+  private readonly itensPorPagina = 20;
+  private paginaAtual = 1;
+  private filtroAtual = "";
+  private allParameters: Array<any> = [];
+
+  parameters: Array<any> = [];
+  isLoading = false;
+  loadingShowMore = false;
+  hasNext = false;
+
+  readonly breadcrumb: PoBreadcrumb = {
+    items: [
+      { label: "Home", link: "/" },
+      { label: "Administracao", link: "/admin/users" },
+      { label: "Parametros" }
+    ]
+  };
+
+  readonly filter: PoPageFilter = {
+    action: this.loadParameters.bind(this),
+    placeholder: "Pesquisar por parametro, conteudo ou unidade"
+  };
+
+  readonly actions: Array<PoPageAction> = [
+    { label: "Novo Parametro", action: () => this.router.navigate(["/admin/parameters/new"]), icon: "po-icon-plus" }
+  ];
+
+  readonly tableActions: Array<PoTableAction> = [
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/parameters/edit/${row.id}`]), icon: "po-icon-edit" },
+    {
+      label: "Excluir",
+      action: (row: any) => this.confirmDelete(row),
+      icon: "po-icon-delete",
+      type: "danger",
+      disabled: (row: any) => row.systemSystem === "N"
+    }
+  ];
+
+  readonly columns: Array<PoTableColumn> = [
+    { property: "systemParameter", label: "Parametro" },
+    { property: "unitName", label: "Unidade", width: "180px" },
+    {
+      property: "systemType",
+      label: "Tipo",
+      width: "120px",
+      type: "label",
+      labels: [
+        { value: "DATA", color: "color-01", label: "Data" },
+        { value: "NUMERO", color: "color-08", label: "Numero" },
+        { value: "LOGICO", color: "color-11", label: "Logico" },
+        { value: "CARACTER", color: "color-07", label: "Caracter" }
+      ]
+    },
+    { property: "displayContent", label: "Conteudo" },
+    {
+      property: "systemSystem",
+      label: "Parametro de Usuario?",
+      width: "180px",
+      type: "label",
+      labels: [
+        { value: "S", color: "color-11", label: "Sim" },
+        { value: "N", color: "color-07", label: "Nao (Sistema)" }
+      ]
+    }
+  ];
+
+  ngOnInit() {
+    this.loadParameters();
+  }
+
+  loadParameters(filter: string = "") {
+    this.filtroAtual = filter;
+    this.paginaAtual = 1;
+    this.isLoading = true;
+
+    this.parameterService.findAll().subscribe({
+      next: (res: any[]) => {
+        this.allParameters = this.aplicarFiltroLocal((res || []).map((item) => ({
+          ...item,
+          unitName: item.systemUnit?.name ?? "Todas as unidades",
+          displayContent: this.formatContent(item)
+        })), filter);
+        this.atualizarPaginaVisivel();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.poNotification.error("Erro ao carregar parametros.");
+      }
+    });
+  }
+
+  showMore() {
+    if (!this.hasNext || this.loadingShowMore) {
+      return;
+    }
+
+    this.loadingShowMore = true;
+    this.paginaAtual += 1;
+    this.atualizarPaginaVisivel();
+    this.loadingShowMore = false;
+  }
+
+  confirmDelete(parameter: any) {
+    this.poDialog.confirm({
+      title: "Excluir Parametro",
+      message: `Deseja realmente excluir o parametro <strong>${parameter.systemParameter}</strong>?`,
+      confirm: () => this.deleteParameter(parameter)
+    });
+  }
+
+  private deleteParameter(parameter: any) {
+    this.isLoading = true;
+    this.parameterService.delete(parameter.id).subscribe({
+      next: () => {
+        this.poNotification.success("Parametro excluido com sucesso!");
+        this.loadParameters(this.filtroAtual);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.poNotification.error(error?.error?.message || "Erro ao excluir parametro.");
+      }
+    });
+  }
+
+  private atualizarPaginaVisivel() {
+    const limite = this.paginaAtual * this.itensPorPagina;
+    this.parameters = this.allParameters.slice(0, limite);
+    this.hasNext = this.allParameters.length > limite;
+  }
+
+  private aplicarFiltroLocal(parameters: Array<any>, filter: string): Array<any> {
+    if (!filter) {
+      return parameters;
+    }
+
+    const filtroNormalizado = filter.toLowerCase();
+    return parameters.filter((item) =>
+      item.systemParameter?.toLowerCase().includes(filtroNormalizado) ||
+      item.unitName?.toLowerCase().includes(filtroNormalizado) ||
+      item.displayContent?.toLowerCase().includes(filtroNormalizado)
+    );
+  }
+
+  private formatContent(item: any): string {
+    if (item.systemType === "LOGICO") {
+      return item.systemContent === "S" ? "Sim" : "Nao";
+    }
+
+    return item.systemContent ?? "";
+  }
+}

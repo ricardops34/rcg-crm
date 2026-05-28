@@ -42,6 +42,7 @@ export class RoutesRegistryService {
     { value: 'SystemMenuEditor', label: 'Manutencao de Menus', path: '/admin/menu-editor', icon: 'an an-sidebar-simple', module: 'Administracao' },
     { value: 'SystemScreenConfigurator', label: 'Configurador de Telas', path: '/admin/configurador', icon: 'an an-sidebar-simple', module: 'Configurador' },
     { value: 'SystemProgramList', label: 'Rotinas do Sistema', path: '/admin/programs', icon: 'an an-list', module: 'Administracao' },
+    { value: 'SystemParameterList', label: 'Parametros do Sistema', path: '/admin/parameters', icon: 'an an-sliders', module: 'Administracao' },
     { value: 'SystemProfileForm', label: 'Meu Perfil', path: '/profile', icon: 'an an-user-circle', module: 'Administracao' }
   ];
 
