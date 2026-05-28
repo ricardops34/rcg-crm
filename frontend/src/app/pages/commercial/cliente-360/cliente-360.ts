@@ -46,7 +46,7 @@ export class Cliente360Component implements OnInit, OnDestroy {
   // Previne requests duplicados ao trocar de aba rapidamente
   private loadingTabs: Record<string, boolean> = {};
 
-  activeTab = "estoque";
+  activeTab = "cadastro";
   private clienteId?: number;
   private loadedTabs: Record<string, boolean> = {};
   notasHasNext = false;

@@ -31,6 +31,36 @@
   <po-tabs>
 
     <po-tab
+      p-label="Dados Cadastrais"
+      [p-active]="activeTab === 'cadastro'"
+      (p-activated-tab)="onTabActivated('cadastro')">
+      <div class="po-row po-mt-2">
+        <po-info class="po-sm-12 po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
+        <po-info class="po-sm-12 po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-sm-12 po-md-4" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Inscrição Estadual" [p-value]="cliente.ie"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Tipo" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-sm-12 po-md-6" p-label="Endereço Completo" [p-value]="(cliente.endereco || '') + ', ' + (cliente.bairro || '')"></po-info>
+        <po-info class="po-sm-12 po-md-3" p-label="Cidade/UF" [p-value]="(cliente.municipio?.descricao || '') + ' - ' + (cliente.uf || '')"></po-info>
+        <po-info class="po-sm-12 po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-sm-12 po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="E-mail" [p-value]="cliente.email"></po-info>
+      </div>
+      <div class="po-row">
+        <po-info class="po-sm-12 po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Condição de PGTO" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
+        <po-info class="po-sm-12 po-md-4" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
+      </div>
+    </po-tab>
+
+    <po-tab
       p-label="Estoque do Cliente"
       [p-active]="activeTab === 'estoque'"
       (p-activated-tab)="onTabActivated('estoque')">
@@ -77,36 +107,6 @@
             * A negociação será gerada com todos os títulos vencidos exibidos.
           </p>
         </div>
-      </div>
-    </po-tab>
-
-    <po-tab
-      p-label="Dados Cadastrais"
-      [p-active]="activeTab === 'cadastro'"
-      (p-activated-tab)="onTabActivated('cadastro')">
-      <div class="po-row po-mt-2">
-        <po-info class="po-sm-12 po-md-6" p-label="Razão Social" [p-value]="cliente.razao"></po-info>
-        <po-info class="po-sm-12 po-md-6" p-label="Nome Fantasia" [p-value]="cliente.fantasia"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-sm-12 po-md-4" p-label="CNPJ/CPF" [p-value]="cliente.cnpjCpf"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="Inscrição Estadual" [p-value]="cliente.ie"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="Tipo" [p-value]="cliente.tipo === 'F' ? 'Física' : 'Jurídica'"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-sm-12 po-md-6" p-label="Endereço Completo" [p-value]="(cliente.endereco || '') + ', ' + (cliente.bairro || '')"></po-info>
-        <po-info class="po-sm-12 po-md-3" p-label="Cidade/UF" [p-value]="(cliente.municipio?.descricao || '') + ' - ' + (cliente.uf || '')"></po-info>
-        <po-info class="po-sm-12 po-md-3" p-label="CEP" [p-value]="cliente.cep"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-sm-12 po-md-4" p-label="Telefone" [p-value]="cliente.telefone1"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="Celular" [p-value]="cliente.celular"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="E-mail" [p-value]="cliente.email"></po-info>
-      </div>
-      <div class="po-row">
-        <po-info class="po-sm-12 po-md-4" p-label="Vendedor" [p-value]="cliente.vendedor?.nome"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="Condição de PGTO" [p-value]="cliente.condicaoPagamento?.descricao"></po-info>
-        <po-info class="po-sm-12 po-md-4" p-label="Tabela de Preço" [p-value]="cliente.tabelaPreco?.descricao"></po-info>
       </div>
     </po-tab>
 

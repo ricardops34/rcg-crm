@@ -1,11 +1,11 @@
 <po-page-default p-title="Painel Inicial">
   <div class="welcome-container">
-    
+
     <!-- Hero Banner Premium -->
     <div class="hero-banner po-row po-mb-4">
       <div class="po-sm-12 po-md-8 hero-text-col">
         <h1 class="hero-title">Olá, {{ userName }}!</h1>
-        <p class="hero-subtitle">Bem-vindo ao RCG CRM. Tenha um excelente dia de negócios e ótimas vendas!</p>
+        <p class="hero-subtitle">Bem-vindo ao CRM. Tenha um excelente dia de negócios e ótimas vendas!</p>
       </div>
       <div class="po-sm-12 po-md-4 hero-stats-col po-text-right">
         <span class="hero-date">{{ currentDate | date: "dd 'de' MMMM 'de' yyyy" }}</span>
@@ -14,7 +14,7 @@
 
     <!-- Grid de Conteúdo -->
     <div class="po-row">
-      
+
       <!-- Coluna 1: Agenda do Dia (4 colunas) -->
       <div class="po-sm-12 po-md-4 po-mb-4">
         <div class="custom-card card-agenda">
@@ -27,19 +27,21 @@
               <span class="po-icon po-icon-loading po-font-title" style="font-size: 24px; color: #555ad1;"></span>
               <p class="po-mt-2" style="font-size: 13px; color: #666;">Buscando compromissos...</p>
             </div>
-            
+
             <div *ngIf="!isLoadingAgenda">
               <div *ngFor="let ev of agendaEvents" class="agenda-item" [style.border-left-color]="ev.cor || '#2563eb'">
                 <div class="agenda-time-row">
                   <span class="agenda-time">{{ ev.formattedTime }}</span>
-                  <po-tag [p-value]="ev.tipo === 'venda' ? 'Faturamento' : (ev.atendimentoTipoDescricao || 'Atendimento')" [p-color]="getEventTagColor(ev)"></po-tag>
+                  <po-tag
+                    [p-value]="ev.tipo === 'venda' ? 'Faturamento' : (ev.atendimentoTipoDescricao || 'Atendimento')"
+                    [p-color]="getEventTagColor(ev)"></po-tag>
                 </div>
                 <div class="agenda-title">{{ ev.titulo }}</div>
                 <div class="agenda-client" *ngIf="ev.clienteNome">
                   <i class="an an-user-circle po-mr-1"></i> {{ ev.clienteNome }}
                 </div>
               </div>
-              
+
               <div *ngIf="agendaEvents.length === 0" class="empty-state">
                 <i class="an an-calendar-x"></i>
                 <p>Nenhum compromisso agendado para hoje.</p>
@@ -112,7 +114,8 @@
           </div>
           <div class="card-body-custom shortcuts-grid">
             <div *ngFor="let link of quickLinks" class="shortcut-item" (click)="navigateTo(link.route)">
-              <div class="shortcut-icon-wrapper" [style.background-color]="link.color + '15'" [style.color]="link.color">
+              <div class="shortcut-icon-wrapper" [style.background-color]="link.color + '15'"
+                [style.color]="link.color">
                 <i [className]="link.icon"></i>
               </div>
               <div class="shortcut-details">
