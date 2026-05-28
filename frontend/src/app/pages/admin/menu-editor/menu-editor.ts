@@ -75,7 +75,7 @@ interface ModuleGroup {
             <po-table
               [p-columns]="columns"
               [p-items]="mod.programs"
-              [p-actions]="tableActions"
+              [p-actions]="orphanTableActions"
               p-container="shadow"
               [p-striped]="true"
               [p-sort]="true">
@@ -267,6 +267,17 @@ export class MenuEditorComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
+    { label: "Editar", action: (row: any) => this.openEdit(row), icon: "po-icon-edit" },
+    {
+      label: "Retirar do menu",
+      action: (row: any) => this.detachFromMenu(row),
+      icon: "po-icon-minus",
+      type: "danger"
+    }
+  ];
+
+  readonly orphanTableActions: Array<PoTableAction> = [
+    { label: "Adicionar ao menu", action: (row: any) => this.attachToMenu(row), icon: "po-icon-plus" },
     { label: "Editar", action: (row: any) => this.openEdit(row), icon: "po-icon-edit" }
   ];
 
@@ -368,6 +379,43 @@ export class MenuEditorComponent implements OnInit {
       systemModuleId: program.systemModuleId ?? null
     };
     this.editModal.open();
+  }
+
+  attachToMenu(program: any) {
+    this.editingProgram = {
+      id: program.id,
+      name: program.name ?? "",
+      controller: program.controller ?? "",
+      icon: program.icon ?? "",
+      order: program.order ?? 1,
+      systemModuleId: program.systemModuleId ?? null
+    };
+    this.editModal.open();
+  }
+
+  detachFromMenu(program: any) {
+    this.poDialog.confirm({
+      title: "Retirar rotina do menu",
+      message: `Deseja retirar a rotina <strong>${program.name}</strong> do menu? Ela continuará cadastrada, mas ficará sem módulo e não aparecerá na navegação.`,
+      confirm: () => {
+        this.programService.save({
+          id: program.id,
+          name: program.name,
+          controller: program.controller,
+          icon: program.icon ?? "",
+          order: program.order ?? 1,
+          systemModuleId: null
+        }).subscribe({
+          next: () => {
+            this.poNotification.success("Rotina retirada do menu com sucesso!");
+            this.loadData();
+          },
+          error: () => {
+            this.poNotification.error("Erro ao retirar rotina do menu.");
+          }
+        });
+      }
+    });
   }
 
   saveEdit() {

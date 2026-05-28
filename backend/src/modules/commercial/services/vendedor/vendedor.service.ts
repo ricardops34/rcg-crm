@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Vendedor } from '../../entities/vendedor.entity';
 
@@ -15,21 +15,28 @@ export class VendedorService {
   async findAll(
     page = 1,
     limit = 10,
-    filters?: { status?: string; dashboard?: string },
+    filters?: { status?: string; dashboard?: string; supervisor?: string; order?: string },
   ): Promise<[Vendedor[], number]> {
     const user = this.cls.get('user');
     const systemUnitId = user?.unitId;
-    const where: any = {};
+    const query = this.vendedorRepository
+      .createQueryBuilder('vendedor')
+      .leftJoinAndSelect('vendedor.filial', 'filial');
 
     if (systemUnitId) {
-      where.systemUnitId = systemUnitId;
+      query.andWhere('vendedor.systemUnitId = :systemUnitId', { systemUnitId });
     }
 
     if (filters?.status) {
-      where.status = filters.status;
+      query.andWhere('vendedor.status = :status', { status: filters.status });
     }
+
     if (filters?.dashboard) {
-      where.dashboard = filters.dashboard;
+      query.andWhere('vendedor.dashboard = :dashboard', { dashboard: filters.dashboard });
+    }
+
+    if (filters?.supervisor) {
+      query.andWhere('vendedor.supervisor = :supervisor', { supervisor: filters.supervisor });
     }
 
     // Hierarquia de Acesso Baseada em Perfis (Role-Based)
@@ -37,25 +44,38 @@ export class VendedorService {
 
     if (!roles.includes('ADMIN') && !roles.includes('GERENTE')) {
       if (roles.includes('SUPERVISOR') && user.managedVendedorIds?.length > 0) {
-        // Supervisor vê a si mesmo e sua equipe
         const sellerIds = [...user.managedVendedorIds];
         if (user.vendedorId) sellerIds.push(user.vendedorId);
-        where.id = In(sellerIds);
+        query.andWhere('vendedor.id IN (:...sellerIds)', { sellerIds: [...new Set(sellerIds)] });
       } else if (roles.includes('VENDEDOR') && user.vendedorId) {
-        // Vendedor vê apenas a si mesmo
-        where.id = user.vendedorId;
+        query.andWhere('vendedor.id = :vendedorId', { vendedorId: user.vendedorId });
       } else {
         return [[], 0];
       }
     }
 
-    return this.vendedorRepository.findAndCount({
-      where,
-      relations: ['filial'],
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { nome: 'ASC' },
-    });
+    const sortMap: Record<string, string> = {
+      id: 'vendedor.id',
+      codErp: 'vendedor.codErp',
+      nome: 'vendedor.nome',
+      email: 'vendedor.email',
+      filialRazao: 'filial.razao',
+      status: 'vendedor.status',
+      celular: 'vendedor.celular',
+      supervisor: 'vendedor.supervisor',
+    };
+
+    const orderValue = filters?.order || 'nome';
+    const isDescending = orderValue.startsWith('-');
+    const orderKey = isDescending ? orderValue.slice(1) : orderValue;
+    const orderColumn = sortMap[orderKey] || 'vendedor.nome';
+
+    query
+      .orderBy(orderColumn, isDescending ? 'DESC' : 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    return query.getManyAndCount();
   }
 
   async findOne(id: number): Promise<Vendedor | null> {

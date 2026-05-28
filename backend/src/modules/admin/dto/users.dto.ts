@@ -81,27 +81,27 @@ export class CreateUserDto {
   systemUnitId?: number;
 
   @ApiProperty({
-    example: 'S',
+    example: 'Y',
     description: 'Indica se o usuário está ativo no sistema (S - Sim / N - Não)',
-    enum: ['S', 'N'],
+    enum: ['Y', 'N'],
     required: false,
-    default: 'S',
+    default: 'Y',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['S', 'N'], { message: 'O campo active deve ser S ou N' })
+  @IsIn(['Y', 'N'], { message: 'O campo active deve ser Y ou N' })
   active?: string;
 
   @ApiProperty({
     example: 'N',
     description: 'Indica se a autenticação em duas etapas (2FA) está habilitada (S - Sim / N - Não)',
-    enum: ['S', 'N'],
+    enum: ['Y', 'N'],
     required: false,
     default: 'N',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['S', 'N'], { message: 'O campo twoFactorEnabled deve ser S ou N' })
+  @IsIn(['Y', 'N'], { message: 'O campo twoFactorEnabled deve ser Y ou N' })
   twoFactorEnabled?: string;
 
   @ApiProperty({

@@ -4,6 +4,21 @@
   [p-actions]="pageActions"
   [p-filter]="filter">
 
+  <div class="advanced-filters-panel" *ngIf="hasAppliedFilters()">
+    <div class="advanced-filters-title">Apresentando resultados filtrados por:</div>
+    <div class="advanced-filters-tags">
+      <button class="advanced-filter-clear" type="button" (click)="clearAdvancedFilters()">Remover todos</button>
+      <button
+        class="advanced-filter-tag"
+        type="button"
+        *ngFor="let appliedFilter of appliedFilters"
+        (click)="removeAdvancedFilter(appliedFilter.key)">
+        {{ appliedFilter.label }}
+        <span class="advanced-filter-tag-close">x</span>
+      </button>
+    </div>
+  </div>
+
   <po-table
     [p-loading]="isLoading"
     [p-loading-show-more]="loadingShowMore"
@@ -12,8 +27,44 @@
     [p-actions]="actions"
     [p-show-more-disabled]="!hasNext"
     (p-show-more)="showMore()"
+    (p-sort-by)="onSort($event)"
     p-container="shadow"
     [p-striped]="true"
     [p-sort]="true">
   </po-table>
+
+  <po-modal
+    #advancedFilterModal
+    p-title="Busca avancada"
+    [p-primary-action]="{ label: 'Aplicar filtros', action: applyAdvancedFilters.bind(this) }"
+    [p-secondary-action]="{ label: 'Limpar', action: resetDraftFilters.bind(this) }">
+    <div class="po-row">
+      <po-select
+        class="po-sm-12 po-md-4"
+        name="status"
+        [ngModel]="draftFilters.status"
+        (p-change)="draftFilters.status = $event"
+        p-label="Status"
+        [p-options]="statusOptions">
+      </po-select>
+
+      <po-select
+        class="po-sm-12 po-md-4"
+        name="supervisor"
+        [ngModel]="draftFilters.supervisor"
+        (p-change)="draftFilters.supervisor = $event"
+        p-label="Supervisor"
+        [p-options]="yesNoOptions">
+      </po-select>
+
+      <po-select
+        class="po-sm-12 po-md-4"
+        name="dashboard"
+        [ngModel]="draftFilters.dashboard"
+        (p-change)="draftFilters.dashboard = $event"
+        p-label="Dashboard"
+        [p-options]="yesNoOptions">
+      </po-select>
+    </div>
+  </po-modal>
 </po-page-list>

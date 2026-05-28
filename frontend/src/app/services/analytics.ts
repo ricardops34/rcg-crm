@@ -18,7 +18,7 @@ export class AnalyticsService {
     return new HttpHeaders().set("Authorization", `Bearer ${token}`);
   }
 
-  getDashboardData(year?: number, month?: number): Observable<DashboardData> {
+  getDashboardData(year?: number, month?: number, vendedorId?: number): Observable<DashboardData> {
     const y = year || new Date().getFullYear();
     const m = month || new Date().getMonth() + 1;
     
@@ -27,9 +27,11 @@ export class AnalyticsService {
       .set('year', y.toString())
       .set('month', m.toString());
 
+    const finalParams = vendedorId ? params.set('vendedorId', vendedorId.toString()) : params;
+
     return this.http.get<DashboardData>(`${this.API_URL}/dashboard`, {
       headers: this.getHeaders(),
-      params: params
+      params: finalParams
     });
   }
 

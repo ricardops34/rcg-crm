@@ -1,36 +1,64 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
+  PoBreadcrumb,
+  PoModalComponent,
   PoModule,
-  PoTableColumn,
-  PoTableAction,
-  PoPageAction,
   PoPageFilter,
+  PoPageAction,
   PoNotificationService,
-  PoBreadcrumb
+  PoSelectOption,
+  PoTableAction,
+  PoTableColumn,
+  PoTableColumnSort,
+  PoTableColumnSortType
 } from "@po-ui/ng-components";
 import { VendedorService } from "../../../services/vendedor";
+
+type VendedorAdvancedFilters = {
+  status?: string;
+  supervisor?: string;
+  dashboard?: string;
+};
 
 @Component({
   selector: "app-vendedor-list",
   standalone: true,
-  imports: [CommonModule, PoModule],
+  imports: [CommonModule, FormsModule, PoModule],
   templateUrl: "./vendedor-list.html"
 })
 export class VendedorListComponent implements OnInit {
+  @ViewChild("advancedFilterModal", { static: true }) advancedFilterModal!: PoModalComponent;
+
   private vendedorService = inject(VendedorService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
   private paginaAtual = 1;
   private readonly itensPorPagina = 20;
   private filtroAtual = "";
+  private sortOrder?: string;
 
   items: Array<any> = [];
   isLoading: boolean = true;
   loadingShowMore: boolean = false;
   hasNext: boolean = false;
   total: number = 0;
+  advancedFilters: VendedorAdvancedFilters = {};
+  draftFilters: VendedorAdvancedFilters = {};
+
+  readonly statusOptions: Array<PoSelectOption> = [
+    { label: "Todos", value: undefined as unknown as string },
+    { label: "Ativo", value: "A" },
+    { label: "Bloqueado", value: "B" }
+  ];
+
+  readonly yesNoOptions: Array<PoSelectOption> = [
+    { label: "Todos", value: undefined as unknown as string },
+    { label: "Sim", value: "S" },
+    { label: "Nao", value: "N" }
+  ];
 
   readonly breadcrumb: PoBreadcrumb = {
     items: [
@@ -41,6 +69,7 @@ export class VendedorListComponent implements OnInit {
 
   readonly pageActions: Array<PoPageAction> = [
     { label: "Novo Vendedor", action: this.create.bind(this), icon: "po-icon-user-add" },
+    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "po-icon-filter" },
     { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
   ];
 
@@ -76,6 +105,24 @@ export class VendedorListComponent implements OnInit {
     this.loadData();
   }
 
+  get appliedFilters(): Array<{ key: keyof VendedorAdvancedFilters; label: string }> {
+    const filters: Array<{ key: keyof VendedorAdvancedFilters; label: string }> = [];
+
+    if (this.advancedFilters.status) {
+      filters.push({ key: "status", label: `Status: ${this.getOptionLabel(this.statusOptions, this.advancedFilters.status)}` });
+    }
+
+    if (this.advancedFilters.supervisor) {
+      filters.push({ key: "supervisor", label: `Supervisor: ${this.getOptionLabel(this.yesNoOptions, this.advancedFilters.supervisor)}` });
+    }
+
+    if (this.advancedFilters.dashboard) {
+      filters.push({ key: "dashboard", label: `Dashboard: ${this.getOptionLabel(this.yesNoOptions, this.advancedFilters.dashboard)}` });
+    }
+
+    return filters;
+  }
+
   loadData(filter: string = "", append: boolean = false) {
     this.filtroAtual = filter;
 
@@ -87,7 +134,10 @@ export class VendedorListComponent implements OnInit {
       this.isLoading = true;
     }
 
-    this.vendedorService.findAll(this.paginaAtual, this.itensPorPagina).subscribe({
+    this.vendedorService.findAll(this.paginaAtual, this.itensPorPagina, {
+      ...this.advancedFilters,
+      order: this.sortOrder
+    }).subscribe({
       next: (res) => {
         const novosItems = (res.items || []).map((item: any) => ({
           ...item,
@@ -111,6 +161,54 @@ export class VendedorListComponent implements OnInit {
 
   onFilter(filter: string) {
     this.loadData(filter);
+  }
+
+  onSort(sort: PoTableColumnSort) {
+    const property = sort.column?.property;
+    if (!property) {
+      return;
+    }
+
+    this.sortOrder = sort.type === PoTableColumnSortType.Descending ? `-${property}` : property;
+    this.loadData(this.filtroAtual);
+  }
+
+  openAdvancedFilters() {
+    this.draftFilters = { ...this.advancedFilters };
+    this.advancedFilterModal.open();
+  }
+
+  applyAdvancedFilters() {
+    this.advancedFilters = {
+      status: this.draftFilters.status || undefined,
+      supervisor: this.draftFilters.supervisor || undefined,
+      dashboard: this.draftFilters.dashboard || undefined
+    };
+    this.advancedFilterModal.close();
+    this.loadData(this.filtroAtual);
+  }
+
+  resetDraftFilters() {
+    this.draftFilters = {};
+  }
+
+  clearAdvancedFilters() {
+    this.advancedFilters = {};
+    this.draftFilters = {};
+    this.loadData(this.filtroAtual);
+  }
+
+  removeAdvancedFilter(key: keyof VendedorAdvancedFilters) {
+    this.advancedFilters = {
+      ...this.advancedFilters,
+      [key]: undefined
+    };
+    this.draftFilters = { ...this.advancedFilters };
+    this.loadData(this.filtroAtual);
+  }
+
+  hasAppliedFilters(): boolean {
+    return Boolean(this.advancedFilters.status || this.advancedFilters.supervisor || this.advancedFilters.dashboard);
   }
 
   showMore() {
@@ -155,5 +253,9 @@ export class VendedorListComponent implements OnInit {
       item.nome?.toLowerCase().includes(filtroNormalizado) ||
       item.email?.toLowerCase().includes(filtroNormalizado)
     );
+  }
+
+  private getOptionLabel(options: Array<PoSelectOption>, value?: string): string {
+    return options.find((option) => option.value === value)?.label || String(value || "");
   }
 }

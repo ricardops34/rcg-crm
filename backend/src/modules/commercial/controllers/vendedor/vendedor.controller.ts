@@ -33,10 +33,14 @@ export class VendedorController {
     @Query('limit') limit: number = 10,
     @Query('status') status?: string,
     @Query('dashboard') dashboard?: string,
+    @Query('supervisor') supervisor?: string,
+    @Query('order') order?: string,
   ) {
     const [items, total] = await this.vendedorService.findAll(page, limit, {
       status,
       dashboard,
+      supervisor,
+      order,
     });
     return { items, total, hasNext: total > page * limit };
   }

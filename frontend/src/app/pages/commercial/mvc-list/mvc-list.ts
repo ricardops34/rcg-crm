@@ -49,6 +49,7 @@ interface IAtendimento {
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
+  @ViewChild("modalAdvancedFilters", { static: true }) modalAdvancedFilters!: PoModalComponent;
   @ViewChild("dynamicTable") dynamicTable!: PoPageDynamicTableComponent;
 
   private analyticsService = inject(AnalyticsService);
@@ -66,6 +67,8 @@ export class MvcListComponent implements OnInit {
   tiposAtendimento = signal<Array<PoSelectOption>>([]);
   fields = signal<Array<PoPageDynamicTableField>>([]);
   quickFilterDisclaimers = signal<Array<PoDisclaimer>>([]);
+  advancedFilterVendedorId = signal<number | undefined>(undefined);
+  draftAdvancedFilterVendedorId = signal<number | undefined>(undefined);
 
   atendimento = signal<IAtendimento>({
     atendimentoTipoId: undefined,
@@ -94,7 +97,8 @@ export class MvcListComponent implements OnInit {
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
     { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
-    { label: "Limpar Filtros", action: () => this.clearAllFilters(), icon: "po-icon-filter" },
+    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "an an-magnifying-glass" },
+    { label: "Limpar Filtros", action: () => this.clearAllFilters(), icon: "an an-funnel" },
     { label: "Inatividade: até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
     { label: "Inatividade: 16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
     { label: "Inatividade: 31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
@@ -131,20 +135,14 @@ export class MvcListComponent implements OnInit {
     }
 
     if (diasDe !== undefined && diasAte !== undefined) {
-      this.quickFilterDisclaimers.set([
-        { label: "Inatividade", property: "diasFaixa", value: `${diasDe} a ${diasAte} dias` }
-      ]);
       this.poNotification.information(`Filtrando inatividade entre ${diasDe} e ${diasAte} dias.`);
     } else if (diasDe !== undefined) {
-      this.quickFilterDisclaimers.set([
-        { label: "Inatividade", property: "diasFaixa", value: `Acima de ${diasDe} dias` }
-      ]);
       this.poNotification.information(`Filtrando inatividade acima de ${diasDe} dias.`);
     } else {
-      this.quickFilterDisclaimers.set([]);
       this.poNotification.information("Exibindo todos os clientes.");
     }
 
+    this.rebuildDisclaimers();
     this.refreshTable();
   }
 
@@ -236,10 +234,10 @@ export class MvcListComponent implements OnInit {
     this.fields.set(newFields);
   }
 
-  loadKpis(year?: number, month?: number) {
+  loadKpis(year?: number, month?: number, vendedorId?: number) {
     const selectedYear = year || new Date().getFullYear();
     const selectedMonth = month || new Date().getMonth() + 1;
-    this.analyticsService.getDashboardData(selectedYear, selectedMonth)
+    this.analyticsService.getDashboardData(selectedYear, selectedMonth, vendedorId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         this.summary.set(res.summary);
@@ -252,11 +250,13 @@ export class MvcListComponent implements OnInit {
       const filtrosAtuais = { ...(dynTable.params || {}) };
       delete filtrosAtuais["diasDe"];
       delete filtrosAtuais["diasAte"];
+      delete filtrosAtuais["vendedorId"];
       delete filtrosAtuais["page"];
 
       const filtrosBase = {
         ...filtrosAtuais,
-        ...this.quickFilterParams
+        ...this.quickFilterParams,
+        ...(this.advancedFilterVendedorId() ? { vendedorId: this.advancedFilterVendedorId() } : {})
       };
 
       dynTable.params = { ...filtrosBase };
@@ -265,19 +265,27 @@ export class MvcListComponent implements OnInit {
       }
     }
 
-    this.loadKpis();
+    this.loadKpis(undefined, undefined, this.advancedFilterVendedorId());
   }
 
   removeQuickFilter(disclaimer: PoDisclaimer) {
     if (disclaimer.property === "diasFaixa") {
       this.quickFilterParams = {};
-      this.quickFilterDisclaimers.set([]);
-      this.refreshTable();
     }
+
+    if (disclaimer.property === "vendedorId") {
+      this.advancedFilterVendedorId.set(undefined);
+      this.draftAdvancedFilterVendedorId.set(undefined);
+    }
+
+    this.rebuildDisclaimers();
+    this.refreshTable();
   }
 
   clearAllFilters() {
     this.quickFilterParams = {};
+    this.advancedFilterVendedorId.set(undefined);
+    this.draftAdvancedFilterVendedorId.set(undefined);
     this.quickFilterDisclaimers.set([]);
     if (this.dynamicTable) {
       const dynTable: any = this.dynamicTable;
@@ -287,6 +295,26 @@ export class MvcListComponent implements OnInit {
       }
     }
     this.loadKpis();
+  }
+
+  openAdvancedFilters() {
+    this.draftAdvancedFilterVendedorId.set(this.advancedFilterVendedorId());
+    this.modalAdvancedFilters.open();
+  }
+
+  applyAdvancedFilters() {
+    this.advancedFilterVendedorId.set(this.draftAdvancedFilterVendedorId());
+    this.rebuildDisclaimers();
+    this.modalAdvancedFilters.close();
+    this.refreshTable();
+  }
+
+  clearDraftAdvancedFilters() {
+    this.draftAdvancedFilterVendedorId.set(undefined);
+  }
+
+  updateDraftAdvancedFilterVendedor(vendedorId: number | undefined) {
+    this.draftAdvancedFilterVendedorId.set(vendedorId);
   }
 
   openAtendimento(item: any) {
@@ -336,5 +364,33 @@ export class MvcListComponent implements OnInit {
       dateObj = typeof dt === 'string' ? new Date(dt) : dt;
     }
     this.atendimento.update(a => ({ ...a, retorno: dateObj }));
+  }
+
+  private rebuildDisclaimers() {
+    const disclaimers: Array<PoDisclaimer> = [];
+
+    if (this.quickFilterParams["diasDe"] !== undefined && this.quickFilterParams["diasAte"] !== undefined) {
+      disclaimers.push({
+        label: "Inatividade",
+        property: "diasFaixa",
+        value: `${this.quickFilterParams["diasDe"]} a ${this.quickFilterParams["diasAte"]} dias`
+      });
+    } else if (this.quickFilterParams["diasDe"] !== undefined) {
+      disclaimers.push({
+        label: "Inatividade",
+        property: "diasFaixa",
+        value: `Acima de ${this.quickFilterParams["diasDe"]} dias`
+      });
+    }
+
+    if (this.advancedFilterVendedorId()) {
+      disclaimers.push({
+        label: "Vendedor",
+        property: "vendedorId",
+        value: this.vendedores().find((item) => item.value === this.advancedFilterVendedorId())?.label || String(this.advancedFilterVendedorId())
+      });
+    }
+
+    this.quickFilterDisclaimers.set(disclaimers);
   }
 }

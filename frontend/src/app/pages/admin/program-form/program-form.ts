@@ -64,7 +64,7 @@ interface ProgramForm {
             (ngModelChange)="program.systemModuleId = $event"
             p-label="Módulo (Grupo no Menu)"
             [p-options]="moduleOptions"
-            p-required="true">
+            >
           </po-select>
           <po-number
             class="po-md-3"

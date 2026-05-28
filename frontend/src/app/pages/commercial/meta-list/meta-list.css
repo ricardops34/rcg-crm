@@ -1,0 +1,49 @@
+.meta-filters-panel {
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  border: 1px solid #e6e8ef;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.meta-filters-title {
+  margin-bottom: 14px;
+  color: #2f3c4d;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.meta-filters-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.meta-filter-clear,
+.meta-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.meta-filter-clear {
+  color: #9f3d23;
+  background: #fdebe6;
+}
+
+.meta-filter-tag {
+  color: #26438b;
+  background: #e8edff;
+}
+
+.meta-filter-tag-close {
+  font-size: 16px;
+  text-transform: lowercase;
+}

@@ -30,5 +30,7 @@ export interface VendedorListResponse {
 export interface VendedorFilters {
   status?: string;
   dashboard?: string;
+  supervisor?: string;
+  order?: string;
   [key: string]: string | number | boolean | undefined | null;
 }

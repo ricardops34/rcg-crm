@@ -13,22 +13,57 @@ export class MetaVendedorService {
     private readonly cls: ClsService,
   ) {}
 
-  async findAll(page = 1, limit = 10): Promise<[MetaVendedorMes[], number]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    filters: { ano?: string; mes?: string; vendedorId?: number; order?: string } = {},
+  ): Promise<[MetaVendedorMes[], number]> {
     const user = this.cls.get('user');
     const systemUnitId = user?.unitId;
+    const query = this.metaRepository
+      .createQueryBuilder('meta')
+      .leftJoinAndSelect('meta.vendedor', 'vendedor')
+      .where('1 = 1');
 
-    const where: any = {};
     if (systemUnitId) {
-      where.vendedor = { systemUnitId };
+      query.andWhere('vendedor.systemUnitId = :systemUnitId', { systemUnitId });
     }
 
-    return this.metaRepository.findAndCount({
-      where,
-      relations: ['vendedor'],
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { ano: 'DESC', mes: 'DESC' },
-    });
+    if (filters.ano) {
+      query.andWhere('meta.ano = :ano', { ano: filters.ano });
+    }
+
+    if (filters.mes) {
+      query.andWhere('meta.mes = :mes', { mes: filters.mes });
+    }
+
+    if (filters.vendedorId) {
+      query.andWhere('meta.vendedorId = :vendedorId', { vendedorId: filters.vendedorId });
+    }
+
+    const sortMap: Record<string, string> = {
+      id: 'meta.id',
+      ano: 'meta.ano',
+      mes: 'meta.mes',
+      'vendedor.nome': 'vendedor.nome',
+      valor: 'meta.valor',
+      numeroCliente: 'meta.numeroCliente',
+      novoCliente: 'meta.novoCliente',
+      tipo: 'meta.tipo',
+    };
+
+    const sortField = filters.order?.startsWith('-') ? filters.order.slice(1) : filters.order;
+    const sortDirection = filters.order?.startsWith('-') ? 'DESC' : 'ASC';
+    const resolvedSortField = sortField ? sortMap[sortField] : undefined;
+
+    const orderedQuery = resolvedSortField
+      ? query.orderBy(resolvedSortField, sortDirection as 'ASC' | 'DESC')
+      : query.orderBy('meta.ano', 'DESC').addOrderBy('meta.mes', 'DESC');
+
+    return orderedQuery
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
   }
 
   async findOne(id: number): Promise<MetaVendedorMes | null> {

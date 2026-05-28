@@ -16,8 +16,23 @@ export class MetaVendedorService {
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
-  findAll(page: number = 1, limit: number = 10): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}?page=${page}&limit=${limit}`, { headers: this.getHeaders() });
+  findAll(
+    page: number = 1,
+    limit: number = 10,
+    extraParams: { ano?: string; mes?: string; vendedorId?: number; order?: string } = {}
+  ): Observable<any> {
+    const query = new URLSearchParams({
+      page: String(page),
+      limit: String(limit)
+    });
+
+    Object.entries(extraParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        query.set(key, String(value));
+      }
+    });
+
+    return this.http.get<any>(`${this.API_URL}?${query.toString()}`, { headers: this.getHeaders() });
   }
 
   findOne(id: number): Observable<any> {

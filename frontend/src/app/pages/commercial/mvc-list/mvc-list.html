@@ -24,6 +24,25 @@
 </po-page-dynamic-table>
 
 <po-modal
+  #modalAdvancedFilters
+  p-title="Busca avancada"
+  [p-primary-action]="{ label: 'Aplicar filtros', action: applyAdvancedFilters.bind(this) }"
+  [p-secondary-action]="{ label: 'Limpar', action: clearDraftAdvancedFilters.bind(this) }">
+  @if (isGerente()) {
+    <div class="po-row">
+      <po-select
+        class="po-sm-12 po-md-12"
+        name="vendedorFiltro"
+        [ngModel]="draftAdvancedFilterVendedorId()"
+        (p-change)="updateDraftAdvancedFilterVendedor($event)"
+        p-label="Vendedor"
+        [p-options]="vendedores()">
+      </po-select>
+    </div>
+  }
+</po-modal>
+
+<po-modal
   #modalAtendimento
   p-title="Registrar Atendimento"
   [p-primary-action]="{ label: 'Salvar Registro', action: saveAtendimento.bind(this) }">

@@ -28,8 +28,17 @@ export class MetaVendedorController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query('ano') ano?: string,
+    @Query('mes') mes?: string,
+    @Query('vendedorId') vendedorId?: number,
+    @Query('order') order?: string,
   ) {
-    const [items, total] = await this.metaService.findAll(page, limit);
+    const [items, total] = await this.metaService.findAll(page, limit, {
+      ano,
+      mes,
+      vendedorId: vendedorId ? Number(vendedorId) : undefined,
+      order,
+    });
     return { items, total };
   }
 
