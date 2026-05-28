@@ -169,6 +169,8 @@ export class VendedorListComponent implements OnInit {
       return;
     }
 
+    this.items = [];
+    this.isLoading = true;
     this.sortOrder = sort.type === PoTableColumnSortType.Descending ? `-${property}` : property;
     this.loadData(this.filtroAtual);
   }

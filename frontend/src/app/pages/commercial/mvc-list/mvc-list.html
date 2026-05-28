@@ -20,27 +20,10 @@
   [p-table-custom-actions]="tableCustomActions"
   [p-page-custom-actions]="pageCustomActions"
   [p-concat-filters]="true"
+  [p-virtual-scroll]="false"
   p-quick-search-param="search">
 </po-page-dynamic-table>
 
-<po-modal
-  #modalAdvancedFilters
-  p-title="Busca avancada"
-  [p-primary-action]="{ label: 'Aplicar filtros', action: applyAdvancedFilters.bind(this) }"
-  [p-secondary-action]="{ label: 'Limpar', action: clearDraftAdvancedFilters.bind(this) }">
-  @if (isGerente()) {
-    <div class="po-row">
-      <po-select
-        class="po-sm-12 po-md-12"
-        name="vendedorFiltro"
-        [ngModel]="draftAdvancedFilterVendedorId()"
-        (p-change)="updateDraftAdvancedFilterVendedor($event)"
-        p-label="Vendedor"
-        [p-options]="vendedores()">
-      </po-select>
-    </div>
-  }
-</po-modal>
 
 <po-modal
   #modalAtendimento

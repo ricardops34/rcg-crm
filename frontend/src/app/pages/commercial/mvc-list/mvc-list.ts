@@ -49,7 +49,6 @@ interface IAtendimento {
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
-  @ViewChild("modalAdvancedFilters", { static: true }) modalAdvancedFilters!: PoModalComponent;
   @ViewChild("dynamicTable") dynamicTable!: PoPageDynamicTableComponent;
 
   private analyticsService = inject(AnalyticsService);
@@ -67,8 +66,6 @@ export class MvcListComponent implements OnInit {
   tiposAtendimento = signal<Array<PoSelectOption>>([]);
   fields = signal<Array<PoPageDynamicTableField>>([]);
   quickFilterDisclaimers = signal<Array<PoDisclaimer>>([]);
-  advancedFilterVendedorId = signal<number | undefined>(undefined);
-  draftAdvancedFilterVendedorId = signal<number | undefined>(undefined);
 
   atendimento = signal<IAtendimento>({
     atendimentoTipoId: undefined,
@@ -97,7 +94,6 @@ export class MvcListComponent implements OnInit {
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
     { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
-    { label: "Busca avancada", action: () => this.openAdvancedFilters(), icon: "an an-magnifying-glass" },
     { label: "Limpar Filtros", action: () => this.clearAllFilters(), icon: "an an-funnel" },
     { label: "Inatividade: até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
     { label: "Inatividade: 16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
@@ -229,6 +225,14 @@ export class MvcListComponent implements OnInit {
 
     if (this.isGerente()) {
       newFields.push({ property: "vendedor_reduzido", label: "Vendedor", width: "150px" });
+      newFields.push({
+        property: "vendedorId",
+        label: "Vendedor (Filtro)",
+        visible: false,
+        filter: true,
+        options: this.vendedores(),
+        gridColumns: 12
+      } as any);
     }
 
     this.fields.set(newFields);
@@ -250,71 +254,40 @@ export class MvcListComponent implements OnInit {
       const filtrosAtuais = { ...(dynTable.params || {}) };
       delete filtrosAtuais["diasDe"];
       delete filtrosAtuais["diasAte"];
-      delete filtrosAtuais["vendedorId"];
       delete filtrosAtuais["page"];
 
       const filtrosBase = {
         ...filtrosAtuais,
-        ...this.quickFilterParams,
-        ...(this.advancedFilterVendedorId() ? { vendedorId: this.advancedFilterVendedorId() } : {})
+        ...this.quickFilterParams
       };
 
       dynTable.params = { ...filtrosBase };
-      if (typeof dynTable.updateDataTable === 'function') {
-        dynTable.updateDataTable({ page: 1, ...filtrosBase });
-      }
-    }
+      dynTable.updateDataTable?.({ page: 1, ...filtrosBase });
 
-    this.loadKpis(undefined, undefined, this.advancedFilterVendedorId());
+      const vendedorIdForKpi = filtrosBase["vendedorId"] ? parseInt(filtrosBase["vendedorId"]) : undefined;
+      this.loadKpis(undefined, undefined, vendedorIdForKpi);
+    } else {
+      this.loadKpis();
+    }
   }
 
   removeQuickFilter(disclaimer: PoDisclaimer) {
     if (disclaimer.property === "diasFaixa") {
       this.quickFilterParams = {};
     }
-
-    if (disclaimer.property === "vendedorId") {
-      this.advancedFilterVendedorId.set(undefined);
-      this.draftAdvancedFilterVendedorId.set(undefined);
-    }
-
     this.rebuildDisclaimers();
     this.refreshTable();
   }
 
   clearAllFilters() {
     this.quickFilterParams = {};
-    this.advancedFilterVendedorId.set(undefined);
-    this.draftAdvancedFilterVendedorId.set(undefined);
     this.quickFilterDisclaimers.set([]);
     if (this.dynamicTable) {
       const dynTable: any = this.dynamicTable;
       dynTable.params = {};
-      if (typeof dynTable.updateDataTable === 'function') {
-        dynTable.updateDataTable({ page: 1 });
-      }
+      dynTable.updateDataTable?.({ page: 1 });
     }
     this.loadKpis();
-  }
-
-  openAdvancedFilters() {
-    this.draftAdvancedFilterVendedorId.set(this.advancedFilterVendedorId());
-    this.modalAdvancedFilters.open();
-  }
-
-  applyAdvancedFilters() {
-    this.advancedFilterVendedorId.set(this.draftAdvancedFilterVendedorId());
-    this.rebuildDisclaimers();
-    this.modalAdvancedFilters.close();
-    this.refreshTable();
-  }
-
-  clearDraftAdvancedFilters() {
-    this.draftAdvancedFilterVendedorId.set(undefined);
-  }
-
-  updateDraftAdvancedFilterVendedor(vendedorId: number | undefined) {
-    this.draftAdvancedFilterVendedorId.set(vendedorId);
   }
 
   openAtendimento(item: any) {
@@ -380,14 +353,6 @@ export class MvcListComponent implements OnInit {
         label: "Inatividade",
         property: "diasFaixa",
         value: `Acima de ${this.quickFilterParams["diasDe"]} dias`
-      });
-    }
-
-    if (this.advancedFilterVendedorId()) {
-      disclaimers.push({
-        label: "Vendedor",
-        property: "vendedorId",
-        value: this.vendedores().find((item) => item.value === this.advancedFilterVendedorId())?.label || String(this.advancedFilterVendedorId())
       });
     }
 
