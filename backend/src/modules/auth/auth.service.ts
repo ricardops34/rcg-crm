@@ -226,6 +226,7 @@ export class AuthService {
       name: user.name,
       login: user.login,
       email: user.email,
+      avatar: user.avatar || null,
       unit: user.systemUnit || (allowedUnits.length > 0 ? allowedUnits[0] : null),
       allowedUnits,
       vendedorId: vendedor?.id || null,

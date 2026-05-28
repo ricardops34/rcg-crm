@@ -39,6 +39,7 @@ export class MeController {
     if (data.password) {
       safeData.password = data.password;
     }
-    return this.usersService.update(req.user.userId, safeData);
+    await this.usersService.update(req.user.userId, safeData);
+    return this.authService.getProfile(req.user.userId);
   }
 }
