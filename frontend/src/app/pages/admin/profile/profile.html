@@ -5,14 +5,11 @@
   <div class="po-row">
     <div class="po-md-2 po-text-center">
       <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/default-avatar.png'"></po-avatar>
-      <po-upload 
+      <po-button 
         class="po-mt-1"
-        name="avatarUpload"
         p-label="Trocar Foto"
-        [p-hide-send-button]="true"
-        (p-on-change)="onUpload($event)"
-        [p-auto-upload]="false">
-      </po-upload>
+        (p-click)="openAvatarSelection()">
+      </po-button>
     </div>
     
     <div class="po-md-10">
@@ -41,3 +38,17 @@
   </div>
 
 </po-page-default>
+
+<po-modal #avatarModal p-title="Selecione seu Avatar" p-size="lg">
+  <div class="po-row" style="justify-content: center; gap: 16px;">
+    @for (avatar of availableAvatars; track avatar) {
+      <div 
+        (click)="selectAvatar(avatar)"
+        style="cursor: pointer; border-radius: 50%; padding: 4px; border: 2px solid transparent; transition: border 0.2s"
+        onmouseover="this.style.borderColor='var(--color-brand-01)'"
+        onmouseout="this.style.borderColor='transparent'">
+        <po-avatar p-size="md" [p-src]="avatar"></po-avatar>
+      </div>
+    }
+  </div>
+</po-modal>

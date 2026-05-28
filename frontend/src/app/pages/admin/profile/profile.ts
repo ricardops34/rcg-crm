@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   PoModule,
   PoNotificationService,
-  PoPageAction
+  PoPageAction,
+  PoModalComponent
 } from "@po-ui/ng-components";
 import { AuthService } from "../../../services/auth";
 import { AuthUser } from "../../../services/models/auth.model";
@@ -16,6 +17,8 @@ import { AuthUser } from "../../../services/models/auth.model";
   templateUrl: "./profile.html"
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('avatarModal', { static: true }) avatarModal!: PoModalComponent;
+
   private authService = inject(AuthService);
   private poNotification = inject(PoNotificationService);
 
@@ -26,6 +29,8 @@ export class ProfileComponent implements OnInit {
     new: "",
     confirm: ""
   };
+
+  availableAvatars = Array.from({ length: 13 }, (_, i) => `assets/avatar/avatar_${(i + 1).toString().padStart(2, '0')}.png`);
 
   readonly actions: Array<PoPageAction> = [
     { label: "Salvar Alterações", action: this.saveProfile.bind(this), icon: "po-icon-ok" }
@@ -75,16 +80,12 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onUpload(event: Event | { file: Blob }) {
-    const file = "file" in event ? event.file : null;
-    if (!file) {
-      return;
-    }
+  openAvatarSelection() {
+    this.avatarModal.open();
+  }
 
-    const reader = new FileReader();
-    reader.onload = (loadEvent: ProgressEvent<FileReader>) => {
-      this.user.avatar = loadEvent.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+  selectAvatar(avatarPath: string) {
+    this.user.avatar = avatarPath;
+    this.avatarModal.close();
   }
 }

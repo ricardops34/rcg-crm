@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
         if (user.unit.logo) {
           this.logo = user.unit.logo;
         } else {
-          this.logo = "logo_padrao.png";
+          this.logo = "logo_bj.png";
         }
         this.toolbarTitle = `CRM - ${user.unit.name || ''}`;
         this.updateFavicon(user.unit.favicon);
