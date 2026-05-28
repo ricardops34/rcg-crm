@@ -2,21 +2,26 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { ClienteListComponent } from './pages/commercial/cliente-list/cliente-list';
 import { ClienteFormComponent } from './pages/commercial/cliente-form/cliente-form';
+import { ClienteDetailComponent } from './pages/commercial/cliente-detail/cliente-detail';
 import { Cliente360Component } from './pages/commercial/cliente-360/cliente-360';
 import { DashboardComponent } from './pages/analytics/dashboard/dashboard';
 import { MvcListComponent } from './pages/commercial/mvc-list/mvc-list';
 import { VendedorListComponent } from './pages/commercial/vendedor-list/vendedor-list';
 import { VendedorFormComponent } from './pages/commercial/vendedor-form/vendedor-form';
+import { VendedorDetailComponent } from './pages/commercial/vendedor-detail/vendedor-detail';
 import { AgendaAtendimentoComponent } from './pages/commercial/agenda-atendimento/agenda-atendimento';
 import { ProductListComponent } from './pages/catalog/product-list/product-list';
 import { ProductFormComponent } from './pages/catalog/product-form/product-form';
+import { ProductDetailComponent } from './pages/catalog/product-detail/product-detail';
 import { NotaListComponent } from './pages/billing/nota-list/nota-list';
 import { NotaDetailComponent } from './pages/billing/nota-detail/nota-detail';
 import { ComodatoListComponent } from './pages/billing/comodato-list/comodato-list';
 import { MetaListComponent } from './pages/commercial/meta-list/meta-list';
 import { MetaFormComponent } from './pages/commercial/meta-form/meta-form';
+import { MetaDetailComponent } from './pages/commercial/meta-detail/meta-detail';
 import { TabelaPrecoListComponent } from './pages/commercial/tabela-preco-list/tabela-preco-list';
 import { TabelaPrecoFormComponent } from './pages/commercial/tabela-preco-form/tabela-preco-form';
+import { TabelaPrecoDetailComponent } from './pages/commercial/tabela-preco-detail/tabela-preco-detail';
 import { UserListComponent } from './pages/admin/user-list/user-list';
 import { UserFormComponent } from './pages/admin/user-form/user-form';
 import { TermsFormComponent } from './pages/admin/terms-form/terms-form';
@@ -46,22 +51,27 @@ export const routes: Routes = [
       { path: 'clientes/360/:id', component: Cliente360Component, data: { controller: 'PosisaoClienteFormView' } },
       { path: 'clientes/new', component: ClienteFormComponent, data: { controller: 'ClienteList' } },
       { path: 'clientes/edit/:id', component: ClienteFormComponent, data: { controller: 'ClienteList' } },
+      { path: 'clientes/detail/:id', component: ClienteDetailComponent, data: { controller: 'ClienteList' } },
       { path: 'vendedores', component: VendedorListComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/new', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
       { path: 'vendedores/edit/:id', component: VendedorFormComponent, data: { controller: 'VendedorList' } },
+      { path: 'vendedores/detail/:id', component: VendedorDetailComponent, data: { controller: 'VendedorList' } },
       { path: 'agenda-atendimento', component: AgendaAtendimentoComponent, data: { controller: 'MvcList' } },
       { path: 'produtos', component: ProductListComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/new', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
       { path: 'produtos/edit/:id', component: ProductFormComponent, data: { controller: 'ProdutoList' } },
+      { path: 'produtos/detail/:id', component: ProductDetailComponent, data: { controller: 'ProdutoList' } },
       { path: 'faturamento/notas', component: NotaListComponent, data: { controller: 'NotaSaidaList' } },
       { path: 'faturamento/notas/:id', component: NotaDetailComponent, data: { controller: 'NotaSaidaList' } },
       { path: 'faturamento/comodatos', component: ComodatoListComponent, data: { controller: 'NotaSaidaList' } },
       { path: 'metas', component: MetaListComponent, data: { controller: 'MetaList' } },
       { path: 'metas/new', component: MetaFormComponent, data: { controller: 'MetaList' } },
       { path: 'metas/edit/:id', component: MetaFormComponent, data: { controller: 'MetaList' } },
+      { path: 'metas/detail/:id', component: MetaDetailComponent, data: { controller: 'MetaList' } },
       { path: 'tabelas-precos', component: TabelaPrecoListComponent, data: { controller: 'TabelaPrecoList' } },
       { path: 'tabelas-precos/new', component: TabelaPrecoFormComponent, data: { controller: 'TabelaPrecoList' } },
       { path: 'tabelas-precos/edit/:id', component: TabelaPrecoFormComponent, data: { controller: 'TabelaPrecoList' } },
+      { path: 'tabelas-precos/detail/:id', component: TabelaPrecoDetailComponent, data: { controller: 'TabelaPrecoList' } },
       { path: 'mvc', component: MvcListComponent, data: { controller: 'MvcList' } },
       { path: 'admin/users', component: UserListComponent, data: { controller: 'SystemUserList' } },
       { path: 'admin/users/new', component: UserFormComponent, data: { controller: 'SystemUserList' } },

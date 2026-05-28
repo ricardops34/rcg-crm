@@ -1,0 +1,35 @@
+<po-page-detail
+  [p-title]="title"
+  [p-breadcrumb]="breadcrumb"
+  (p-back)="back()">
+
+  <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
+
+  <div *ngIf="action === 'delete'" class="po-row po-mb-2">
+    <div class="po-md-12">
+      <po-button p-label="Confirmar Exclusão" p-danger="true" p-icon="po-icon-delete" (p-click)="confirmDelete()" class="po-mr-1"></po-button>
+      <po-button p-label="Cancelar" (p-click)="back()"></po-button>
+    </div>
+  </div>
+
+  <div *ngIf="action === 'view'" class="po-row po-mb-2">
+    <div class="po-md-12">
+      <po-button p-label="Editar" p-icon="po-icon-edit" (p-click)="edit()" class="po-mr-1"></po-button>
+    </div>
+  </div>
+
+  <br><br>
+
+  <po-dynamic-view
+    [p-fields]="fields"
+    [p-value]="tabela">
+  </po-dynamic-view>
+
+  <po-divider p-label="Itens e Preços"></po-divider>
+  <div class="po-row">
+    <div class="po-sm-12 po-md-12">
+      <po-table [p-columns]="itemColumns" [p-items]="tabela.items || []" p-container="shadow"></po-table>
+    </div>
+  </div>
+
+</po-page-detail>

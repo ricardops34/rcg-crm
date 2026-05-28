@@ -64,8 +64,9 @@ export class TabelaPrecoListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
+    { label: "Visualizar", action: (row: any) => this.router.navigate(["/tabelas-precos/detail", row.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
     { label: "Editar", action: (row: any) => this.router.navigate(["/tabelas-precos/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: (row: any) => this.remove(row), icon: "po-icon-delete" }
+    { label: "Excluir", action: (row: any) => this.router.navigate(["/tabelas-precos/detail", row.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
   ];
 
   readonly columns: Array<PoTableColumn> = [

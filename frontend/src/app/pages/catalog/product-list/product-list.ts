@@ -84,8 +84,9 @@ export class ProductListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
+    { label: "Visualizar", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
     { label: "Editar", action: (row: any) => this.router.navigate(["/produtos/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.deleteProduct.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Excluir", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
   ];
 
   ngOnInit(): void {

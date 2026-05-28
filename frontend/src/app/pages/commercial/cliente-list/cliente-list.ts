@@ -61,9 +61,10 @@ export class ClienteListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-eye" },
+    { label: "Visualizar", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
+    { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-chart-columns" },
     { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.deleteCliente.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Excluir", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
   ];
 
   ngOnInit(): void {

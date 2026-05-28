@@ -94,6 +94,7 @@ export class MvcListComponent implements OnInit {
 
   readonly pageCustomActions: Array<PoPageDynamicTableCustomAction> = [
     { label: "Atualizar", action: () => this.refreshTable(), icon: "an an-arrows-clockwise" },
+    { label: "Limpar Filtros", action: () => this.clearAllFilters(), icon: "po-icon-filter" },
     { label: "Inatividade: até 15 Dias", action: () => this.aplicarFiltroRapido(0, 15) },
     { label: "Inatividade: 16 a 30 Dias", action: () => this.aplicarFiltroRapido(16, 30) },
     { label: "Inatividade: 31 a 60 Dias", action: () => this.aplicarFiltroRapido(31, 60) },
@@ -120,7 +121,7 @@ export class MvcListComponent implements OnInit {
 
   aplicarFiltroRapido(diasDe?: number, diasAte?: number) {
     this.quickFilterParams = {};
-    
+
     if (diasDe !== undefined) {
       this.quickFilterParams["diasDe"] = diasDe;
     }
@@ -187,7 +188,7 @@ export class MvcListComponent implements OnInit {
         property: "statusIcons",
         label: "Situação",
         type: "icon",
-        width: "120px",
+        width: "200px",
         sortable: false,
         icons: [
           { value: "SIT_A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
@@ -202,26 +203,27 @@ export class MvcListComponent implements OnInit {
       { property: "codigo", label: "Código", width: "110px" },
       { property: "cliente_nome", label: "Razão Social", filter: true },
       { property: "fantasia", label: "Nome Fantasia", filter: true },
-      { 
-        property: "difference", 
-        label: "Dif. Média", 
-        type: "currency", 
-        format: "BRL", 
-        width: "140px",
-        color: (row: any) => row.difference < 0 ? 'color-07 negative-diff' : undefined
+      {
+        property: "difference",
+        label: "Dif. Média",
+        type: "currency",
+        format: "BRL",
+        width: "180px",
+        color: (row: any) => row.difference < 0 ? 'color-07 negative-diff' : 'color-10'
       } as any,
-      { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "130px" },
-      { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "130px" },
-      { 
-        property: "dias", 
-        label: "Dias", 
-        type: "number", 
-        width: "110px", 
+      { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "180px" },
+      { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "180px" },
+      {
+        property: "dias",
+        label: "Dias",
+        type: "number",
+        width: "110px",
         filter: true,
         color: (row: any) => {
           if (row.dias > 180) return 'color-07';
           if (row.dias >= 90) return 'color-08';
           if (row.dias >= 60) return 'color-09';
+          if (row.dias >= 30 return 'color-04';
           return 'color-10';
         }
       } as any
@@ -259,7 +261,7 @@ export class MvcListComponent implements OnInit {
 
       dynTable.params = { ...filtrosBase };
       if (typeof dynTable.updateDataTable === 'function') {
-         dynTable.updateDataTable({ page: 1, ...filtrosBase });
+        dynTable.updateDataTable({ page: 1, ...filtrosBase });
       }
     }
 
@@ -274,10 +276,17 @@ export class MvcListComponent implements OnInit {
     }
   }
 
-  clearQuickFilters() {
+  clearAllFilters() {
     this.quickFilterParams = {};
     this.quickFilterDisclaimers.set([]);
-    this.refreshTable();
+    if (this.dynamicTable) {
+      const dynTable: any = this.dynamicTable;
+      dynTable.params = {};
+      if (typeof dynTable.updateDataTable === 'function') {
+        dynTable.updateDataTable({ page: 1 });
+      }
+    }
+    this.loadKpis();
   }
 
   openAtendimento(item: any) {
@@ -314,11 +323,11 @@ export class MvcListComponent implements OnInit {
   }
 
   updateAtendimentoTipo(id: number) {
-    this.atendimento.update(a => ({...a, atendimentoTipoId: id}));
+    this.atendimento.update(a => ({ ...a, atendimentoTipoId: id }));
   }
 
   updateObservacao(obs: string) {
-    this.atendimento.update(a => ({...a, observacao: obs}));
+    this.atendimento.update(a => ({ ...a, observacao: obs }));
   }
 
   updateRetorno(dt: string | Date) {
@@ -326,6 +335,6 @@ export class MvcListComponent implements OnInit {
     if (dt) {
       dateObj = typeof dt === 'string' ? new Date(dt) : dt;
     }
-    this.atendimento.update(a => ({...a, retorno: dateObj}));
+    this.atendimento.update(a => ({ ...a, retorno: dateObj }));
   }
 }

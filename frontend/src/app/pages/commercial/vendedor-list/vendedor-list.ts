@@ -67,8 +67,9 @@ export class VendedorListComponent implements OnInit {
   ];
 
   readonly actions: Array<PoTableAction> = [
+    { label: "Visualizar", action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
     { label: "Editar", action: (row: any) => this.router.navigate(["/vendedores/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: (row: any) => this.remove(row), icon: "po-icon-delete" }
+    { label: "Excluir", action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
   ];
 
   ngOnInit(): void {
