@@ -5,6 +5,22 @@ import { DataSource } from 'typeorm';
 export class ClienteDetailsService {
   constructor(private dataSource: DataSource) {}
 
+  async getVenda30d(clienteId: number): Promise<number> {
+    try {
+      const result = await this.dataSource.query(
+        `SELECT COALESCE(SUM(vlr_bruto), 0) AS total
+         FROM nota_saida
+         WHERE cliente_id = $1
+           AND reg_ativo = 'S'
+           AND dt_emissao >= CURRENT_DATE - INTERVAL '30 days'`,
+        [clienteId],
+      );
+      return parseFloat(result[0]?.total ?? '0');
+    } catch {
+      return 0;
+    }
+  }
+
   async getComodato(clienteId: number) {
     try {
       console.log('[360-DEBUG][BACK] getComodato clienteId=', clienteId);
@@ -49,22 +65,25 @@ export class ClienteDetailsService {
 
   async getFinanceiro(clienteId: number) {
     try {
-      console.log('[360-DEBUG][BACK] getFinanceiro clienteId=', clienteId);
+      console.log('[360-DEBUG][BACK] getFinanceiro (abertos) clienteId=', clienteId);
       const result = await this.dataSource.query(
         `SELECT
-          id, numero, parcela, prefixo, emissao, venc_real as vencimento, baixa, saldo, valor,
+          id, numero, parcela, prefixo, emissao,
+          venc_real AS vencimento,
+          saldo, valor,
           CASE
-            WHEN venc_real < CURRENT_DATE AND baixa IS NULL THEN 'Vencido'
-            WHEN venc_real = CURRENT_DATE AND baixa IS NULL THEN 'Vencendo'
-            WHEN baixa IS NOT NULL THEN 'Pago'
+            WHEN venc_real < CURRENT_DATE THEN 'Vencido'
+            WHEN venc_real = CURRENT_DATE THEN 'Vencendo'
             ELSE 'A Vencer'
-          END as status
+          END AS status
          FROM titulo_receber
-         WHERE cliente_id = $1 AND reg_ativo = 'S' AND saldo > 0
+         WHERE cliente_id = $1
+           AND reg_ativo = 'S'
+           AND saldo > 0
          ORDER BY venc_real ASC`,
         [clienteId],
       );
-      console.log('[360-DEBUG][BACK] getFinanceiro OK total=', result.length);
+      console.log('[360-DEBUG][BACK] getFinanceiro (abertos) OK total=', result.length);
       return result;
     } catch (err) {
       console.error('[360-DEBUG][BACK] getFinanceiro ERRO', { clienteId, message: err.message, detail: err.detail });
@@ -72,9 +91,45 @@ export class ClienteDetailsService {
     }
   }
 
+  async getFinanceiroBaixados(clienteId: number) {
+    try {
+      console.log('[360-DEBUG][BACK] getFinanceiroBaixados clienteId=', clienteId);
+      const result = await this.dataSource.query(
+        `SELECT
+          id, numero, parcela, prefixo,
+          emissao,
+          venc_real AS vencimento,
+          baixa AS dt_baixa,
+          valor
+         FROM titulo_receber
+         WHERE cliente_id = $1
+           AND reg_ativo = 'S'
+           AND saldo = 0
+           AND baixa IS NOT NULL
+           AND baixa >= CURRENT_DATE - INTERVAL '6 months'
+         ORDER BY baixa DESC`,
+        [clienteId],
+      );
+      console.log('[360-DEBUG][BACK] getFinanceiroBaixados OK total=', result.length);
+      return result;
+    } catch (err) {
+      console.error('[360-DEBUG][BACK] getFinanceiroBaixados ERRO', { clienteId, message: err.message, detail: err.detail });
+      throw err;
+    }
+  }
+
   async getNotasFiscais(clienteId: number, monthsOffset: number = 0, monthsWindow: number = 12) {
     try {
       console.log('[360-DEBUG][BACK] getNotasFiscais clienteId=', clienteId, 'monthsOffset=', monthsOffset, 'monthsWindow=', monthsWindow);
+
+      // Calcula as datas de corte no JS para passar como strings — evita cast de int->interval no PG
+      const now = new Date();
+      const dtFim = new Date(now.getFullYear(), now.getMonth() - monthsOffset, now.getDate());
+      const dtInicio = new Date(now.getFullYear(), now.getMonth() - (monthsOffset + monthsWindow), now.getDate());
+      const dtOlder = new Date(dtInicio);
+
+      const toIso = (d: Date) => d.toISOString().split('T')[0];
+
       const items = await this.dataSource.query(
         `SELECT
           id,
@@ -82,23 +137,25 @@ export class ClienteDetailsService {
           serie_fiscal,
           dt_emissao,
           vlr_bruto,
-          COALESCE(vlr_itens, vlr_mercadoria, vlr_bruto) as vlr_liquido,
-          nome as vendedor_nome
+          COALESCE(vlr_itens, vlr_mercadoria, vlr_bruto) AS vlr_liquido,
+          nome AS vendedor_nome
          FROM cliente_notafiscal
          WHERE cliente_id = $1
-           AND dt_emissao >= (CURRENT_DATE - (($2 + $3) || ' months')::interval)
-           AND dt_emissao < (CURRENT_DATE - ($2 || ' months')::interval + INTERVAL '1 day')
+           AND dt_emissao >= $2
+           AND dt_emissao < $3
          ORDER BY dt_emissao DESC`,
-        [clienteId, monthsOffset, monthsWindow],
+        [clienteId, toIso(dtInicio), toIso(dtFim)],
       );
+
       const olderRows = await this.dataSource.query(
         `SELECT 1
          FROM cliente_notafiscal
          WHERE cliente_id = $1
-           AND dt_emissao < (CURRENT_DATE - (($2 + $3) || ' months')::interval)
+           AND dt_emissao < $2
          LIMIT 1`,
-        [clienteId, monthsOffset, monthsWindow],
+        [clienteId, toIso(dtOlder)],
       );
+
       console.log('[360-DEBUG][BACK] getNotasFiscais OK total=', items.length, 'hasNext=', olderRows.length > 0);
       return {
         items,

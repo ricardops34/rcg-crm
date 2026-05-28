@@ -30,6 +30,7 @@ export class Cliente360Component implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   cliente: any = {};
+  venda30d: number | null = null;
   comodatoItems: Array<any> = [];
   mixItems: Array<any> = [];
   financeiroItems: Array<any> = [];
@@ -152,11 +153,12 @@ export class Cliente360Component implements OnInit, OnDestroy {
     this.clienteService.findOne(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.cliente = res;
-        // Dados cadastrais já estão no objeto cliente — aba ativa por padrão, sem request extra
         this.loadedTabs["cadastro"] = true;
         this.isLoadingCliente = false;
-        // Não pré-carrega nenhuma aba: o carregamento é 100% lazy,
-        // acionado apenas pelo clique do usuário via onTabActivated().
+        // Carrega venda30d de forma assíncrona sem bloquear a tela
+        this.clienteService.getVenda30d(id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({ next: (r) => { this.venda30d = r.venda30d; } });
       },
       error: () => {
         this.poNotification.error("Erro ao carregar dados do cliente.");

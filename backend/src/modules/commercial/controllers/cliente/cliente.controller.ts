@@ -55,6 +55,13 @@ export class ClienteController {
     return this.clienteService.findOne(id);
   }
 
+  @Get(':id/venda30d')
+  @ApiOperation({ summary: 'Retorna o total faturado nos últimos 30 dias para o cliente' })
+  async getVenda30d(@Param('id', ParseIntPipe) id: number) {
+    const total = await this.detailsService.getVenda30d(id);
+    return { venda30d: total };
+  }
+
   @Get(':id/comodato')
   @ApiOperation({ summary: 'Obtem lista de itens em comodato do cliente' })
   async getComodato(@Param('id', ParseIntPipe) id: number) {

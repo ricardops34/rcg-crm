@@ -39,6 +39,10 @@ export class ClienteService {
     return this.http.get<Cliente>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 
+  getVenda30d(id: number): Observable<{ venda30d: number }> {
+    return this.http.get<{ venda30d: number }>(`${this.API_URL}/${id}/venda30d`, { headers: this.getHeaders() });
+  }
+
   create(data: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(this.API_URL, data, { headers: this.getHeaders() });
   }

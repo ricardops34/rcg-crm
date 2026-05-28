@@ -23,8 +23,11 @@
       <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.ultimaCompra | date:'dd/MM/yyyy') || 'N/A' }}</div>
     </po-widget>
 
-    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Limite">
-      <div class="po-font-subtitle po-text-center po-py-1">{{ (cliente.limite | currency:'BRL') || 'R$ 0,00' }}</div>
+    <po-widget class="po-sm-12 po-md-3 po-mb-2" p-title="Venda 30d">
+      <div class="po-font-subtitle po-text-center po-py-1">
+        @if (venda30d === null) { <span class="po-text-color-neutral-mid-3">Carregando...</span> }
+        @else { {{ venda30d | currency:'BRL' }} }
+      </div>
     </po-widget>
   </div>
 
