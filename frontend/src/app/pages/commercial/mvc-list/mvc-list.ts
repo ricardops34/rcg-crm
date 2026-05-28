@@ -44,7 +44,8 @@ interface IAtendimento {
   selector: "app-mvc-list",
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule, PoPageDynamicTableModule],
-  templateUrl: "./mvc-list.html"
+  templateUrl: "./mvc-list.html",
+  styleUrl: "./mvc-list.css"
 })
 export class MvcListComponent implements OnInit {
   @ViewChild("modalAtendimento", { static: true }) modalAtendimento!: PoModalComponent;
@@ -187,6 +188,7 @@ export class MvcListComponent implements OnInit {
         label: "Situação",
         type: "icon",
         width: "120px",
+        sortable: false,
         icons: [
           { value: "SIT_A", color: "color-10", icon: "an an-lock-open", tooltip: "Cliente ATIVO" },
           { value: "SIT_B", color: "color-07", icon: "an an-lock", tooltip: "Cliente BLOQUEADO" },
@@ -200,10 +202,29 @@ export class MvcListComponent implements OnInit {
       { property: "codigo", label: "Código", width: "110px" },
       { property: "cliente_nome", label: "Razão Social", filter: true },
       { property: "fantasia", label: "Nome Fantasia", filter: true },
-      { property: "difference", label: "Dif. Média", type: "currency", format: "BRL", width: "140px" },
+      { 
+        property: "difference", 
+        label: "Dif. Média", 
+        type: "currency", 
+        format: "BRL", 
+        width: "140px",
+        color: (row: any) => row.difference < 0 ? 'color-07 negative-diff' : undefined
+      } as any,
       { property: "venda_mes", label: "Venda 30d", type: "currency", format: "BRL", width: "130px" },
       { property: "average3Months", label: "Média 90d", type: "currency", format: "BRL", width: "130px" },
-      { property: "dias", label: "Dias", type: "number", width: "110px", filter: true }
+      { 
+        property: "dias", 
+        label: "Dias", 
+        type: "number", 
+        width: "110px", 
+        filter: true,
+        color: (row: any) => {
+          if (row.dias > 180) return 'color-07';
+          if (row.dias >= 90) return 'color-08';
+          if (row.dias >= 60) return 'color-09';
+          return 'color-10';
+        }
+      } as any
     ];
 
     if (this.isGerente()) {

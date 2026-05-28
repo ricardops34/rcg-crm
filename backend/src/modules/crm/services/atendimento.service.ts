@@ -71,11 +71,6 @@ export class AtendimentoService {
       .where("(COALESCE(tipo.atendimento, 'N') = 'S' OR COALESCE(tipo.venda, 'N') = 'S')")
       .orderBy('tipo.descricao', 'ASC');
 
-    // Filtro de Multitenancy (system_unit_id) obrigatório
-    if (user?.unitId) {
-      query.andWhere('tipo.systemUnitId = :unitId', { unitId: user.unitId });
-    }
-
     return query.getMany();
   }
 

@@ -52,6 +52,26 @@ body.po-theme-dark .po-widget {
     border-radius: 2px !important;
 }
 
+/* Fix for squashed avatars in PO-UI */
+po-avatar,
+.po-avatar,
+.po-header-user-avatar {
+    aspect-ratio: 1/1 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+po-avatar img,
+.po-avatar img,
+.po-header-user-avatar img,
+.po-header-user img,
+.po-avatar-image {
+    aspect-ratio: 1/1 !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
+
 /* Correção do espaçamento superior de páginas para evitar sobreposição sob o Header fixo */
 .po-wrapper po-page-default,
 .po-wrapper po-page-list,

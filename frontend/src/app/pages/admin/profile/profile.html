@@ -2,36 +2,36 @@
 
   <po-loading-overlay [p-screen-lock]="true" *ngIf="isLoading"></po-loading-overlay>
 
-  <div class="po-row">
-    <div class="po-md-2 po-text-center">
+  <div class="po-row po-mb-3 po-mt-2">
+    <div class="po-md-12" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
       <po-avatar p-size="xl" [p-src]="user.avatar || 'assets/avatar/avatar_00.png'"></po-avatar>
-      <po-button class="po-mt-1" p-label="Trocar Foto" (p-click)="openAvatarSelection()">
-      </po-button>
-    </div>
-
-    <div class="po-md-10">
-      <div class="po-row">
-        <po-input class="po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome de Exibição" p-required></po-input>
-        <po-input class="po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
-      </div>
-      <div class="po-row">
-        <po-info class="po-md-6" p-label="Login (Não alterável)" [p-value]="user.login"></po-info>
-        <po-info class="po-md-6" p-label="Unidade" [p-value]="user.unit?.name"></po-info>
-      </div>
+      <po-button p-label="Trocar Foto" (p-click)="openAvatarSelection()" p-icon="an an-camera"></po-button>
     </div>
   </div>
 
-  <po-divider p-label="Alterar Senha"></po-divider>
+  <po-divider p-label="Dados Principais"></po-divider>
+
+  <div class="po-row po-mb-2">
+    <po-input class="po-sm-12 po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome de Exibição" p-required></po-input>
+    <po-input class="po-sm-12 po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
+  </div>
 
   <div class="po-row">
-    <po-password class="po-md-4" name="newPassword" [(ngModel)]="passwordData.new" p-label="Nova Senha"></po-password>
-    <po-password class="po-md-4" name="confirmPassword" [(ngModel)]="passwordData.confirm"
+    <po-info class="po-sm-12 po-md-6 po-mb-2 po-mb-md-0" p-label="Login (Não alterável)" [p-value]="user.login"></po-info>
+    <po-info class="po-sm-12 po-md-6" p-label="Unidade" [p-value]="user.unit?.name"></po-info>
+  </div>
+
+  <po-divider p-label="Segurança e Acesso"></po-divider>
+
+  <div class="po-row">
+    <po-password class="po-sm-12 po-md-6" name="newPassword" [(ngModel)]="passwordData.new" p-label="Nova Senha"></po-password>
+    <po-password class="po-sm-12 po-md-6" name="confirmPassword" [(ngModel)]="passwordData.confirm"
       p-label="Confirmar Nova Senha"></po-password>
   </div>
 
-  <div class="po-row po-mt-2">
-    <p class="po-font-text-smaller po-md-12 po-text-color-07">
-      * Deixe os campos de senha vazios se não desejar alterá-la.
+  <div class="po-row po-mt-1">
+    <p class="po-font-text-small po-text-color-07 po-pl-2">
+      <span class="po-icon po-icon-info"></span> Deixe os campos de senha vazios se não desejar alterá-la.
     </p>
   </div>
 
@@ -42,11 +42,11 @@
 
 </po-page-slide>
 
-  <po-modal #avatarModal p-title="Selecione seu Avatar" p-size="lg">
-    <div class="po-row" style="justify-content: center; gap: 16px;">
+  <po-modal #avatarModal p-title="Selecione seu Avatar" p-size="auto">
+    <div class="po-row" style="justify-content: center; flex-wrap: wrap; gap: 16px;">
       @for (avatar of availableAvatars; track avatar) {
       <div (click)="selectAvatar(avatar)"
-        style="cursor: pointer; border-radius: 50%; padding: 4px; border: 2px solid transparent; transition: border 0.2s"
+        style="cursor: pointer; border-radius: 50%; padding: 4px; border: 2px solid transparent; transition: border 0.2s; display: inline-block;"
         onmouseover="this.style.borderColor='var(--color-brand-01)'" onmouseout="this.style.borderColor='transparent'">
         <po-avatar p-size="md" [p-src]="avatar"></po-avatar>
       </div>

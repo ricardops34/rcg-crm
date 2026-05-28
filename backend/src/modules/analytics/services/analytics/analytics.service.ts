@@ -217,6 +217,7 @@ export class AnalyticsService {
         FROM mvc
         LEFT JOIN pivot_venda_mes_cliente p ON p.cliente_id = mvc.id AND p.ano = $1 AND p.system_unit_id = $2
         ${where}
+        ORDER BY mvc.dias ASC
       `;
 
       console.log('[MVC-DEBUG][BACK][SERVICE] getMvcData SQL final', {

@@ -1,0 +1,7 @@
+::ng-deep .po-table-row:has(.negative-diff) {
+  background-color: #FFF7A8 !important;
+}
+
+::ng-deep .po-table-row:has(.negative-diff):hover {
+  background-color: #FFF275 !important;
+}

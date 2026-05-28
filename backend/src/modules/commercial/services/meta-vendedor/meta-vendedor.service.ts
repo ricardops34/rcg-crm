@@ -19,7 +19,7 @@ export class MetaVendedorService {
 
     const where: any = {};
     if (systemUnitId) {
-      where.systemUnitId = systemUnitId;
+      where.vendedor = { systemUnitId };
     }
 
     return this.metaRepository.findAndCount({
@@ -37,7 +37,7 @@ export class MetaVendedorService {
 
     const where: any = { id };
     if (systemUnitId) {
-      where.systemUnitId = systemUnitId;
+      where.vendedor = { systemUnitId };
     }
 
     return this.metaRepository.findOne({
@@ -50,9 +50,7 @@ export class MetaVendedorService {
     const user = this.cls.get('user');
     const systemUnitId = user?.unitId;
 
-    if (systemUnitId && !data.systemUnitId) {
-      data.systemUnitId = systemUnitId;
-    }
+    // meta_vendedor_mes does not have system_unit_id, it is derived from the vendedor.
 
     return this.metaRepository.save(data);
   }
