@@ -41,6 +41,10 @@ export class ParameterService {
     return this.http.delete<any>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 
+  testSmtp(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/test-smtp`, data, { headers: this.getHeaders() });
+  }
+
   /**
    * Inicializa o cache reativo de parâmetros de sistema a partir do banco de dados
    */

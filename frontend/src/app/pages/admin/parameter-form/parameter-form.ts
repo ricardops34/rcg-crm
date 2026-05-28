@@ -45,6 +45,7 @@ interface ParameterFormData {
             name="parameter"
             [(ngModel)]="parameter.parameter"
             p-label="Parametro"
+            [p-disabled]="parameter.system === 'N' ? 'true' : 'false'"
             p-required
             p-clean>
           </po-input>
@@ -56,6 +57,7 @@ interface ParameterFormData {
             (ngModelChange)="onTypeChange($event)"
             p-label="Tipo"
             [p-options]="typeOptions"
+            [p-disabled]="parameter.system === 'N'"
             p-required>
           </po-select>
         </div>
@@ -67,6 +69,7 @@ interface ParameterFormData {
             name="description"
             [(ngModel)]="parameter.description"
             p-label="Descrição explicativa do parâmetro"
+            [p-disabled]="parameter.system === 'N' ? 'true' : 'false'"
             p-clean>
           </po-input>
         </div>
@@ -116,7 +119,8 @@ interface ParameterFormData {
             (p-change)="parameter.system = $event ? 'S' : 'N'"
             p-label="Parametro de Usuario?"
             p-label-off="Nao (Sistema)"
-            p-label-on="Sim">
+            p-label-on="Sim"
+            [p-disabled]="true">
           </po-switch>
         </div>
 
@@ -144,7 +148,7 @@ export class ParameterFormComponent implements OnInit {
     parameter: "",
     type: "CARACTER",
     content: "",
-    system: "N",
+    system: "S",
     description: ""
   };
 

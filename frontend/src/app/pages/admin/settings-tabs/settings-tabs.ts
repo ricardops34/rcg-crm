@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, OnInit, inject, signal, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { PoBreadcrumb, PoModule, PoNotificationService, PoSelectOption } from "@po-ui/ng-components";
+import { PoBreadcrumb, PoModule, PoNotificationService, PoSelectOption, PoModalComponent } from "@po-ui/ng-components";
 import { ParameterService } from "../../../services/parameter";
+import { AuthService } from "../../../services/auth";
 import { forkJoin, Observable } from "rxjs";
 
 interface ParameterState {
@@ -23,12 +24,16 @@ interface ParameterState {
   styleUrl: "./settings-tabs.css"
 })
 export class SettingsTabsComponent implements OnInit {
+  @ViewChild('modalTestSmtp', { static: true }) modalTestSmtp!: PoModalComponent;
+
   private readonly parameterService = inject(ParameterService);
+  private readonly authService = inject(AuthService);
   private readonly poNotification = inject(PoNotificationService);
   private readonly router = inject(Router);
 
   isLoading = signal<boolean>(false);
   isTesting = signal<boolean>(false);
+  testTargetEmail = signal<string>("");
 
   // Signals para campos de E-mail
   smtpHost = signal<string>("");
@@ -190,17 +195,46 @@ export class SettingsTabsComponent implements OnInit {
 
   testEmailConnection() {
     if (!this.smtpHost() || !this.smtpPort() || !this.smtpUser() || !this.smtpPass() || !this.smtpFrom()) {
-      this.poNotification.warning("Por favor, preencha todos os campos SMTP para testar a conexão.");
+      this.poNotification.warning("Por favor, preencha todos os campos SMTP antes de testar a conexão.");
       return;
     }
 
-    this.isTesting.set(true);
+    // Preenche com o e-mail do usuário atual como sugestão padrão
+    const currentUserEmail = this.authService.getUser()?.email || "";
+    this.testTargetEmail.set(currentUserEmail);
     
-    // Simula delay de rede de 1.5s
-    setTimeout(() => {
-      this.isTesting.set(false);
-      this.poNotification.success(`Teste concluído! Conexão SMTP estabelecida com sucesso em ${this.smtpHost()}:${this.smtpPort()}`);
-    }, 1500);
+    this.modalTestSmtp.open();
+  }
+
+  confirmSendTestEmail() {
+    if (!this.testTargetEmail()?.trim()) {
+      this.poNotification.warning("Por favor, informe um e-mail de destino válido para o teste.");
+      return;
+    }
+
+    this.modalTestSmtp.close();
+    this.isTesting.set(true);
+
+    const testPayload = {
+      host: this.smtpHost(),
+      port: this.smtpPort(),
+      user: this.smtpUser(),
+      pass: this.smtpPass(),
+      from: this.smtpFrom(),
+      secure: this.smtpSecure(),
+      to: this.testTargetEmail()
+    };
+
+    this.parameterService.testSmtp(testPayload).subscribe({
+      next: (res) => {
+        this.isTesting.set(false);
+        this.poNotification.success(`E-mail de teste enviado com sucesso para ${this.testTargetEmail()}! Conexão validada.`);
+      },
+      error: (err) => {
+        this.isTesting.set(false);
+        this.poNotification.error(err?.error?.message || "Falha na conexão SMTP ou no envio do e-mail de teste.");
+      }
+    });
   }
 
   cancel() {

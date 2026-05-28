@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermission } from '../auth/decorators/permissions.decorator';
 import { ParametersService } from './parameters.service';
+import { MailService } from './services/mail.service';
 import { CreateParameterDto, UpdateParameterDto } from './dto/admin-forms.dto';
 
 @ApiTags('Admin / Parameters')
@@ -12,7 +13,10 @@ import { CreateParameterDto, UpdateParameterDto } from './dto/admin-forms.dto';
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @RequirePermission('SystemParameterList')
 export class ParametersController {
-  constructor(private readonly parametersService: ParametersService) {}
+  constructor(
+    private readonly parametersService: ParametersService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Lista todos os parametros do sistema' })
@@ -47,5 +51,12 @@ export class ParametersController {
   @ApiResponse({ status: 200, description: 'Parametro removido com sucesso' })
   async remove(@Param('id') id: string) {
     return this.parametersService.remove(+id);
+  }
+
+  @Post('test-smtp')
+  @ApiOperation({ summary: 'Testa a conexao SMTP enviando um e-mail de teste real' })
+  @ApiResponse({ status: 200, description: 'Conexao testada com sucesso' })
+  async testSmtp(@Body() data: any) {
+    return this.mailService.testSmtpConnection(data);
   }
 }
