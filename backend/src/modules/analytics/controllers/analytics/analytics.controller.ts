@@ -171,7 +171,7 @@ export class AnalyticsController {
     const legacyNegativeDiffRowColor = '#FFF7A8';
 
     const mappedItems = paginated.items.map((item: any) => {
-      const statusIcons = [];
+      const statusIcons: string[] = [];
       
       // Situação (Cadeado)
       if (item.situacao === 'A') statusIcons.push('SIT_A');
