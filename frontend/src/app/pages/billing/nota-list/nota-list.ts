@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ViewChild } from "@angular/core";
+﻿import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -66,9 +66,9 @@ export class NotaListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Gerar Etiquetas", action: this.printSelectedLabels.bind(this), icon: "po-icon-print" },
-    { label: "Consultar Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "po-icon-box" },
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Gerar Etiquetas", action: this.printSelectedLabels.bind(this), icon: "an an-printer" },
+    { label: "Consultar Comodatos", action: () => this.router.navigate(["/faturamento/comodatos"]), icon: "an an-package" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -86,9 +86,9 @@ export class NotaListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Visualizar DANFE", action: (row: any) => this.billingService.viewDanfe(row.id), icon: "po-icon-document" },
-    { label: "Download XML", action: (row: any) => this.billingService.downloadXml(row.id), icon: "po-icon-download" },
-    { label: "Detalhes da Nota", action: (row: any) => this.router.navigate(["/faturamento/notas", row.id]), icon: "po-icon-eye" }
+    { label: "Visualizar DANFE", action: (row: any) => this.billingService.viewDanfe(row.id), icon: "an an-file-text" },
+    { label: "Download XML", action: (row: any) => this.billingService.downloadXml(row.id), icon: "an an-download-simple" },
+    { label: "Detalhes da Nota", action: (row: any) => this.router.navigate(["/faturamento/notas", row.id]), icon: "an an-eye" }
   ];
 
   ngOnInit(): void {

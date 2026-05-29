@@ -1,49 +1,60 @@
 .advanced-filters-panel {
   margin-bottom: 16px;
-  padding: 18px 20px;
-  border: 1px solid #e6e8ef;
-  border-radius: 8px;
-  background: #ffffff;
+  padding: 12px 16px;
+  border: 1px solid var(--color-neutral-light-20);
+  border-radius: var(--border-radius-md);
+  background: var(--color-neutral-light-00);
 }
 
 .advanced-filters-title {
-  margin-bottom: 14px;
-  color: #2f3c4d;
-  font-size: 16px;
+  margin-bottom: 10px;
+  color: var(--color-neutral-dark-70);
+  font-family: var(--font-family-theme);
+  font-size: 13px;
   font-weight: 600;
 }
 
 .advanced-filters-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+  align-items: center;
 }
 
 .advanced-filter-clear,
 .advanced-filter-tag {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 34px;
-  padding: 6px 14px;
+  gap: 6px;
+  padding: 4px 12px;
   border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 1;
+  border-radius: var(--border-radius-pill, 999px);
+  font-family: var(--font-family-theme);
+  font-size: 13px;
+  line-height: 1.4;
   cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.advanced-filter-clear:hover,
+.advanced-filter-tag:hover {
+  opacity: 0.8;
 }
 
 .advanced-filter-clear {
-  color: #9f3d23;
-  background: #fdebe6;
+  color: var(--color-feedback-negative-darkest, #9f3d23);
+  background: var(--color-feedback-negative-lightest, #fdebe6);
+  border-color: var(--color-feedback-negative-light, #f4b8a8);
 }
 
 .advanced-filter-tag {
-  color: #26438b;
-  background: #e8edff;
+  color: var(--color-action-default);
+  background: var(--color-brand-01-lighter);
+  border-color: var(--color-brand-01-light);
 }
 
 .advanced-filter-tag-close {
-  font-size: 16px;
-  text-transform: lowercase;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.6;
 }

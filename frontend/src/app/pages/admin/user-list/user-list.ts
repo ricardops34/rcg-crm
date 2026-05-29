@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+﻿import { Component, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -141,13 +141,13 @@ export class UserListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo Usuario", action: () => this.router.navigate(["/admin/users/new"]), icon: "po-icon-user-add" },
-    { label: "Configurar Termos/LGPD", action: () => this.router.navigate(["/admin/users/terms"]), icon: "po-icon-document" }
+    { label: "Novo Usuario", action: () => this.router.navigate(["/admin/users/new"]), icon: "an an-user-plus" },
+    { label: "Configurar Termos/LGPD", action: () => this.router.navigate(["/admin/users/terms"]), icon: "an an-file-text" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.deleteUser.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/users/edit/${row.id}`]), icon: "an an-pencil-simple" },
+    { label: "Excluir", action: this.deleteUser.bind(this), icon: "an an-trash", type: "danger" }
   ];
 
   readonly columns: Array<PoTableColumn> = [

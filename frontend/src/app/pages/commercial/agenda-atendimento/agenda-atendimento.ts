@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+﻿import { CommonModule } from "@angular/common";
 import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
@@ -68,9 +68,9 @@ export class AgendaAtendimentoComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Hoje", action: () => this.goToday(), icon: "po-icon-calendar" },
-    { label: "Novo Atendimento", action: () => this.openAtendimento(), icon: "po-icon-plus" },
-    { label: "Atualizar", action: () => this.refreshAgenda(), icon: "po-icon-refresh" }
+    { label: "Hoje", action: () => this.goToday(), icon: "an an-calendar-blank" },
+    { label: "Novo Atendimento", action: () => this.openAtendimento(), icon: "an an-plus" },
+    { label: "Atualizar", action: () => this.refreshAgenda(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly infoOrientation = PoInfoOrientation.Horizontal;

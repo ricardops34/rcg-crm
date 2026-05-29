@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -62,8 +62,8 @@ export class ProductListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Novo Produto", action: () => this.router.navigate(["/produtos/new"]), icon: "po-icon-plus" },
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Novo Produto", action: () => this.router.navigate(["/produtos/new"]), icon: "an an-plus" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -84,9 +84,9 @@ export class ProductListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Visualizar", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
-    { label: "Editar", action: (row: any) => this.router.navigate(["/produtos/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
+    { label: "Visualizar", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'view' } }), icon: "an an-eye" },
+    { label: "Editar", action: (row: any) => this.router.navigate(["/produtos/edit", row.id]), icon: "an an-pencil-simple" },
+    { label: "Excluir", action: (row: any) => this.router.navigate(["/produtos/detail", row.id], { queryParams: { action: 'delete' } }), icon: "an an-trash", type: "danger" }
   ];
 
   ngOnInit(): void {

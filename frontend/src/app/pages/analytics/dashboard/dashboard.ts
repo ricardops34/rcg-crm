@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+﻿import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,7 +21,8 @@ import { VendedorService } from '../../../services/vendedor';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
   @ViewChild("modalDetails", { static: true }) modalDetails!: PoModalComponent;
@@ -58,7 +59,7 @@ export class DashboardComponent implements OnInit {
   selectedItem: any = {};
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: 'Atualizar Dados', action: this.loadAllData.bind(this), icon: 'po-icon-refresh' }
+    { label: 'Atualizar Dados', action: this.loadAllData.bind(this), icon: 'an an-arrows-clockwise' }
   ];
 
   readonly mvcColumns: Array<PoTableColumn> = [
@@ -80,7 +81,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   readonly mvcActions: Array<PoTableAction> = [
-    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" }
+    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "an an-eye" }
   ];
 
   ngOnInit(): void {

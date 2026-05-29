@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+﻿import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -147,8 +147,8 @@ export class MetaListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Novo Objetivo", action: () => this.router.navigate(["/metas/new"]), icon: "po-icon-target" },
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Novo Objetivo", action: () => this.router.navigate(["/metas/new"]), icon: "an an-target" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -177,9 +177,9 @@ export class MetaListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Visualizar", action: (row: any) => this.router.navigate(["/metas/detail", row.id], { queryParams: { action: "view" } }), icon: "po-icon-eye" },
-    { label: "Editar", action: (row: any) => this.router.navigate(["/metas/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: (row: any) => this.router.navigate(["/metas/detail", row.id], { queryParams: { action: "delete" } }), icon: "po-icon-delete", type: "danger" }
+    { label: "Visualizar", action: (row: any) => this.router.navigate(["/metas/detail", row.id], { queryParams: { action: "view" } }), icon: "an an-eye" },
+    { label: "Editar", action: (row: any) => this.router.navigate(["/metas/edit", row.id]), icon: "an an-pencil-simple" },
+    { label: "Excluir", action: (row: any) => this.router.navigate(["/metas/detail", row.id], { queryParams: { action: "delete" } }), icon: "an an-trash", type: "danger" }
   ];
 
   get appliedFilters(): Array<{ key: keyof MetaFilters; label: string }> {

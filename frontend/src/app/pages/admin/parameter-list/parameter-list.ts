@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -72,21 +72,21 @@ export class ParameterListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Novo Parametro", action: () => this.router.navigate(["/admin/parameters/new"]), icon: "po-icon-plus" }
+    { label: "Novo Parametro", action: () => this.router.navigate(["/admin/parameters/new"]), icon: "an an-plus" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/parameters/edit/${row.id}`]), icon: "po-icon-edit" },
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/parameters/edit/${row.id}`]), icon: "an an-pencil-simple" },
     {
       label: "Tornar por Unidade",
       action: (row: any) => this.confirmSplitByUnit(row),
-      icon: "po-icon-share",
+      icon: "an an-share-network",
       visible: (row: any) => row.systemUnitId === null
     },
     {
       label: "Excluir",
       action: (row: any) => this.confirmDelete(row),
-      icon: "po-icon-delete",
+      icon: "an an-trash",
       type: "danger",
       disabled: (row: any) => row.system === "N"
     }

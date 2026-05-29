@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -84,11 +84,11 @@ export class ProgramListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Nova Rotina", action: () => this.router.navigate(["/admin/programs/new"]), icon: "po-icon-plus" }
+    { label: "Nova Rotina", action: () => this.router.navigate(["/admin/programs/new"]), icon: "an an-plus" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/programs/edit/${row.id}`]), icon: "po-icon-edit" }
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/programs/edit/${row.id}`]), icon: "an an-pencil-simple" }
   ];
 
   readonly columns: Array<PoTableColumn> = [

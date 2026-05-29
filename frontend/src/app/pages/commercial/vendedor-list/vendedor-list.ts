@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+﻿import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -28,7 +28,8 @@ type VendedorAdvancedFilters = {
   selector: "app-vendedor-list",
   standalone: true,
   imports: [CommonModule, FormsModule, PoModule],
-  templateUrl: "./vendedor-list.html"
+  templateUrl: "./vendedor-list.html",
+  styleUrl: ./vendedor-list.css"
 })
 export class VendedorListComponent implements OnInit {
   @ViewChild("advancedFilterModal", { static: true }) advancedFilterModal!: PoModalComponent;
@@ -70,8 +71,8 @@ export class VendedorListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Novo Vendedor", action: this.create.bind(this), icon: "po-icon-user-add" },
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Novo Vendedor", action: this.create.bind(this), icon: "an an-user-plus" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -100,12 +101,12 @@ export class VendedorListComponent implements OnInit {
   readonly actions: Array<PoTableAction> = [
     {
       label: "Visualizar",
-      icon: "po-icon-eye",
+      icon: "an an-eye",
       action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'view' } })
     },
     {
       label: "Editar",
-      icon: "po-icon-edit",
+      icon: "an an-pencil-simple",
       action: (row: any) => this.router.navigate(["/vendedores/edit", row.id])
     },
     {

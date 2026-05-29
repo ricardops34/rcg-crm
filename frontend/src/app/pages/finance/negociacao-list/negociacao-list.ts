@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -63,7 +63,7 @@ export class NegociacaoListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -80,8 +80,8 @@ export class NegociacaoListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Nova Negociação", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id], { queryParams: { tab: "cobranca" } }), icon: "po-icon-finance" },
-    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "po-icon-eye" }
+    { label: "Nova Negociação", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id], { queryParams: { tab: "cobranca" } }), icon: "an an-currency-dollar" },
+    { label: "Visão 360", action: (item: any) => this.router.navigate(["/clientes/360", item.cliente_id]), icon: "an an-eye" }
   ];
 
   ngOnInit(): void {

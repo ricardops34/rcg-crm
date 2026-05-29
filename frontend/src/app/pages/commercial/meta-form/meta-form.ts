@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -16,7 +16,8 @@ import { VendedorService } from "../../../services/vendedor";
   selector: "app-meta-form",
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
-  templateUrl: "./meta-form.html"
+  templateUrl: "./meta-form.html",
+  styleUrl: ./meta-form.css"
 })
 export class MetaFormComponent implements OnInit {
   private metaService = inject(MetaVendedorService);

@@ -124,13 +124,16 @@ export class VendedorService {
 
     const linkedUserId = saved.systemUsersId;
     if (linkedUserId) {
-      await this.usersService.syncFromVendedor(linkedUserId, {
+      // Sync em background — falhas não bloqueiam o retorno do save
+      this.usersService.syncFromVendedor(linkedUserId, {
         nomeReduzido: data.nomeReduzido,
         email: data.email,
         status: data.status,
         systemUnitId: saved.systemUnitId,
         dtNascimento: data.dtNascimento,
-      });
+      }).catch(err =>
+        console.warn(`[VENDEDOR] Sync usuário ${linkedUserId} falhou: ${err?.message}`)
+      );
     }
 
     return saved;

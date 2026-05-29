@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -59,7 +59,7 @@ export class ComodatoListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly columns: Array<PoTableColumn> = [
@@ -71,7 +71,7 @@ export class ComodatoListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Visualizar Nota", action: (row: any) => this.router.navigate(["/faturamento/notas", row.id]), icon: "po-icon-eye" }
+    { label: "Visualizar Nota", action: (row: any) => this.router.navigate(["/faturamento/notas", row.id]), icon: "an an-eye" }
   ];
 
   ngOnInit(): void {

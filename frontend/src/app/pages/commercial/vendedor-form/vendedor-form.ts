@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -16,7 +16,8 @@ import { UnitService } from "../../../services/unit";
   selector: "app-vendedor-form",
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
-  templateUrl: "./vendedor-form.html"
+  templateUrl: "./vendedor-form.html",
+  styleUrl: ./vendedor-form.css"
 })
 export class VendedorFormComponent implements OnInit {
   private vendedorService = inject(VendedorService);

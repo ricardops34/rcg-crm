@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -17,7 +17,8 @@ import { ParameterService } from "../../../services/parameter";
   selector: "app-cliente-list",
   standalone: true,
   imports: [CommonModule, PoModule],
-  templateUrl: "./cliente-list.html"
+  templateUrl: "./cliente-list.html",
+  styleUrl: ./cliente-list.css"
 })
 export class ClienteListComponent implements OnInit {
   private clienteService = inject(ClienteService);
@@ -44,8 +45,8 @@ export class ClienteListComponent implements OnInit {
   };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Novo Cliente", action: this.create.bind(this), icon: "po-icon-user-add" },
-    { label: "Atualizar", action: () => this.loadData(), icon: "po-icon-refresh" }
+    { label: "Novo Cliente", action: this.create.bind(this), icon: "an an-user-plus" },
+    { label: "Atualizar", action: () => this.loadData(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly filter: PoPageFilter = {
@@ -66,10 +67,10 @@ export class ClienteListComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Visualizar", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
-    { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "po-icon-chart-columns" },
-    { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" },
-    { label: "Excluir", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
+    { label: "Visualizar", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'view' } }), icon: "an an-eye" },
+    { label: "Posição 360", action: (item: any) => this.router.navigate(["/clientes/360", item.id]), icon: "an an-chart-bar" },
+    { label: "Editar", action: this.edit.bind(this), icon: "an an-pencil-simple" },
+    { label: "Excluir", action: (item: any) => this.router.navigate(["/clientes/detail", item.id], { queryParams: { action: 'delete' } }), icon: "an an-trash", type: "danger" }
   ];
 
   ngOnInit(): void {

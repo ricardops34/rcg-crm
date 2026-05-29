@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from "@angular/core";
+﻿import { Component, OnInit, OnDestroy, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -58,8 +58,8 @@ export class Cliente360Component implements OnInit, OnDestroy {
   negociacao: any = { observacao: "" };
 
   readonly pageActions: Array<PoPageAction> = [
-    { label: "Voltar", action: this.close.bind(this), icon: "po-icon-arrow-left" },
-    { label: "Atualizar", action: () => this.reloadCurrentTab(), icon: "po-icon-refresh" }
+    { label: "Voltar", action: this.close.bind(this), icon: "an an-arrow-left" },
+    { label: "Atualizar", action: () => this.reloadCurrentTab(), icon: "an an-arrows-clockwise" }
   ];
 
   readonly estoqueColumns: Array<PoTableColumn> = [

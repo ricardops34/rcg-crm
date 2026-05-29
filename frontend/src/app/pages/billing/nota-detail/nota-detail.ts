@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { 
@@ -63,9 +63,9 @@ export class NotaDetailComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Visualizar DANFE", action: () => this.billingService.viewDanfe(this.nota.id), icon: "po-icon-document" },
-    { label: "Download XML", action: () => this.billingService.downloadXml(this.nota.id), icon: "po-icon-download" },
-    { label: "Voltar", action: () => this.router.navigate(["/faturamento/notas"]), icon: "po-icon-arrow-left" }
+    { label: "Visualizar DANFE", action: () => this.billingService.viewDanfe(this.nota.id), icon: "an an-file-text" },
+    { label: "Download XML", action: () => this.billingService.downloadXml(this.nota.id), icon: "an an-download-simple" },
+    { label: "Voltar", action: () => this.router.navigate(["/faturamento/notas"]), icon: "an an-arrow-left" }
   ];
 
   readonly itemColumns: Array<PoTableColumn> = [

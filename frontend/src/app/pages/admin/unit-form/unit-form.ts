@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { 
@@ -32,7 +32,7 @@ import { UnitService } from "../../../services/unit";
           <!-- Upload da Logo -->
           <div class="po-md-6 po-mb-2">
             <span class="po-field-title" style="display: block; margin-bottom: 8px;">Logomarca Personalizada</span>
-            <po-button p-label="Selecionar Imagem da Logo" p-icon="po-icon-upload" (p-click)="logoInput.click()"></po-button>
+            <po-button p-label="Selecionar Imagem da Logo" p-icon="an an-upload-simple" (p-click)="logoInput.click()"></po-button>
             <input #logoInput type="file" (change)="onLogoSelected($event)" style="display: none" accept="image/*">
             
             <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">
@@ -48,7 +48,7 @@ import { UnitService } from "../../../services/unit";
           <!-- Upload do Favicon -->
           <div class="po-md-6 po-mb-2">
             <span class="po-field-title" style="display: block; margin-bottom: 8px;">Favicon Personalizado (.ico/.png)</span>
-            <po-button p-label="Selecionar Imagem do Favicon" p-icon="po-icon-upload" (p-click)="faviconInput.click()"></po-button>
+            <po-button p-label="Selecionar Imagem do Favicon" p-icon="an an-upload-simple" (p-click)="faviconInput.click()"></po-button>
             <input #faviconInput type="file" (change)="onFaviconSelected($event)" style="display: none" accept="image/x-icon, image/png, image/jpeg">
             
             <div class="po-mt-2" style="display: flex; align-items: center; gap: 12px; min-height: 80px;">

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
@@ -68,12 +68,12 @@ export class UnitListComponent implements OnInit {
   };
 
   readonly actions: Array<PoPageAction> = [
-    { label: "Nova Unidade", action: () => this.router.navigate(["/admin/units/new"]), icon: "po-icon-plus" }
+    { label: "Nova Unidade", action: () => this.router.navigate(["/admin/units/new"]), icon: "an an-plus" }
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/units/edit/${row.id}`]), icon: "po-icon-edit" },
-    { label: "Excluir", action: this.deleteUnit.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Editar", action: (row: any) => this.router.navigate([`/admin/units/edit/${row.id}`]), icon: "an an-pencil-simple" },
+    { label: "Excluir", action: this.deleteUnit.bind(this), icon: "an an-trash", type: "danger" }
   ];
 
   readonly columns: Array<PoTableColumn> = [

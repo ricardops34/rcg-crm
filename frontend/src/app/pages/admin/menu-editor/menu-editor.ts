@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ViewChild } from "@angular/core";
+﻿import { Component, OnInit, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { forkJoin } from "rxjs";
 import { Router } from "@angular/router";
@@ -251,12 +251,12 @@ export class MenuEditorComponent implements OnInit {
     {
       label: "Gerenciar Rotinas",
       action: () => this.router.navigate(["/admin/programs"]),
-      icon: "po-icon-list"
+      icon: "an an-list"
     },
     {
       label: "Gerenciar Módulos",
       action: () => this.router.navigate(["/admin/modules"]),
-      icon: "po-icon-settings"
+      icon: "an an-gear-six"
     }
   ];
 
@@ -268,18 +268,18 @@ export class MenuEditorComponent implements OnInit {
   ];
 
   readonly tableActions: Array<PoTableAction> = [
-    { label: "Editar", action: (row: any) => this.openEdit(row), icon: "po-icon-edit" },
+    { label: "Editar", action: (row: any) => this.openEdit(row), icon: "an an-pencil-simple" },
     {
       label: "Retirar do menu",
       action: (row: any) => this.detachFromMenu(row),
-      icon: "po-icon-minus",
+      icon: "an an-minus",
       type: "danger"
     }
   ];
 
   readonly orphanTableActions: Array<PoTableAction> = [
-    { label: "Adicionar ao menu", action: (row: any) => this.attachToMenu(row), icon: "po-icon-plus" },
-    { label: "Editar", action: (row: any) => this.openEdit(row), icon: "po-icon-edit" }
+    { label: "Adicionar ao menu", action: (row: any) => this.attachToMenu(row), icon: "an an-plus" },
+    { label: "Editar", action: (row: any) => this.openEdit(row), icon: "an an-pencil-simple" }
   ];
 
   primaryAction = {
@@ -323,7 +323,7 @@ export class MenuEditorComponent implements OnInit {
         this.allModules = mods.map(m => ({
           id: m.id,
           name: m.name,
-          icon: m.icon || "po-icon-more",
+          icon: m.icon || "an an-dots-three",
           programs: progs
             .filter(p => p.systemModuleId === m.id)
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))

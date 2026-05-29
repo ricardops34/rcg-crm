@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { 
@@ -18,7 +18,8 @@ import { LocationService } from "../../../services/location";
   selector: "app-cliente-form",
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
-  templateUrl: "./cliente-form.html"
+  templateUrl: "./cliente-form.html",
+  styleUrl: ./cliente-form.css"
 })
 export class ClienteFormComponent implements OnInit {
   private clienteService = inject(ClienteService);
@@ -65,7 +66,7 @@ export class ClienteFormComponent implements OnInit {
   ];
 
   readonly contatoActions: Array<PoTableAction> = [
-    { label: "Remover", action: this.removeContato.bind(this), icon: "po-icon-delete", type: "danger" }
+    { label: "Remover", action: this.removeContato.bind(this), icon: "an an-trash", type: "danger" }
   ];
 
   ngOnInit(): void {

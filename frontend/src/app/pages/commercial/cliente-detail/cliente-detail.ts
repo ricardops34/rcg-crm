@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+﻿import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -81,13 +81,13 @@ export class ClienteDetailComponent implements OnInit {
     if (this.action === 'delete') {
       this.title = "Excluir Cliente";
       this.pageActions = [
-        { label: "Confirmar", action: this.confirmDelete.bind(this), type: "danger", icon: "po-icon-delete" },
+        { label: "Confirmar", action: this.confirmDelete.bind(this), type: "danger", icon: "an an-trash" },
         { label: "Cancelar", action: this.back.bind(this) }
       ];
     } else {
       this.title = "Visualizar Cliente";
       this.pageActions = [
-        { label: "Editar", action: this.edit.bind(this), icon: "po-icon-edit" },
+        { label: "Editar", action: this.edit.bind(this), icon: "an an-pencil-simple" },
         { label: "Voltar", action: this.back.bind(this) }
       ];
     }
