@@ -29,7 +29,7 @@ type VendedorAdvancedFilters = {
   standalone: true,
   imports: [CommonModule, FormsModule, PoModule],
   templateUrl: "./vendedor-list.html",
-  styleUrl: ./vendedor-list.css"
+  styleUrl: './vendedor-list.css'
 })
 export class VendedorListComponent implements OnInit {
   @ViewChild("advancedFilterModal", { static: true }) advancedFilterModal!: PoModalComponent;

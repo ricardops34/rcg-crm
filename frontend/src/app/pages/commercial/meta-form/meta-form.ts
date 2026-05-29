@@ -17,7 +17,7 @@ import { VendedorService } from "../../../services/vendedor";
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
   templateUrl: "./meta-form.html",
-  styleUrl: ./meta-form.css"
+  styleUrl: './meta-form.css'
 })
 export class MetaFormComponent implements OnInit {
   private metaService = inject(MetaVendedorService);

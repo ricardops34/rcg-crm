@@ -18,7 +18,7 @@ import { ParameterService } from "../../../services/parameter";
   standalone: true,
   imports: [CommonModule, PoModule],
   templateUrl: "./cliente-list.html",
-  styleUrl: ./cliente-list.css"
+  styleUrl: './cliente-list.css'
 })
 export class ClienteListComponent implements OnInit {
   private clienteService = inject(ClienteService);

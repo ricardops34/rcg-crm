@@ -19,7 +19,7 @@ import { LocationService } from "../../../services/location";
   standalone: true,
   imports: [CommonModule, PoModule, FormsModule],
   templateUrl: "./cliente-form.html",
-  styleUrl: ./cliente-form.css"
+  styleUrl: './cliente-form.css'
 })
 export class ClienteFormComponent implements OnInit {
   private clienteService = inject(ClienteService);
