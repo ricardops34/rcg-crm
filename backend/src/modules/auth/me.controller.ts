@@ -35,6 +35,7 @@ export class MeController {
       name: data.name,
       email: data.email,
       avatar: data.avatar,
+      birthday: data.birthday || null,
     };
     if (data.password) {
       safeData.password = data.password;

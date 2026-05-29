@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -66,6 +68,20 @@ export class VendedorController {
   @ApiResponse({ status: 200, type: VendedorResponseDto })
   async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateVendedorDto) {
     return this.vendedorService.save({ ...data, id });
+  }
+
+  @Post(':id/create-user')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cria usuário de sistema para o vendedor e envia senha por e-mail' })
+  async createUser(@Param('id', ParseIntPipe) id: number) {
+    return this.vendedorService.createUserAndSendPassword(id);
+  }
+
+  @Post(':id/send-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Gera e envia senha temporária para o e-mail do vendedor' })
+  async sendPassword(@Param('id', ParseIntPipe) id: number) {
+    return this.vendedorService.sendPassword(id);
   }
 
   @Delete(':id')

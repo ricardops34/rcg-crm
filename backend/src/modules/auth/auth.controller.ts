@@ -109,6 +109,24 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Troca a senha quando obrigado pelo administrador' })
+  async changePassword(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { newPassword: string },
+  ) {
+    if (req.user.scope !== 'CHANGE_PASSWORD') {
+      throw new UnauthorizedException('Token inválido para esta operação');
+    }
+    if (!body.newPassword || body.newPassword.length < 6) {
+      throw new UnauthorizedException('A senha deve ter no mínimo 6 caracteres');
+    }
+    return this.authService.changePassword(req.user.userId, body.newPassword);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post('switch-unit')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Chaveia a unidade ativa do usuário gerando um novo token JWT' })

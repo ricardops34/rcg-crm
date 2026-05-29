@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
 
   @ViewChild("modal2fa", { static: true }) modal2fa!: PoModalComponent;
   @ViewChild("modalTerms", { static: true }) modalTerms!: PoModalComponent;
+  @ViewChild("modalChangePassword", { static: true }) modalChangePassword!: PoModalComponent;
 
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -31,6 +32,8 @@ export class LoginComponent implements OnInit {
   termsAccepted: boolean = false;
   termsContent: string = "";
   termsVersion: string = "";
+  newPassword: string = "";
+  confirmNewPassword: string = "";
   loginLogo: string = this.authService.getLoginLogo();
   loginUnits: LoginUnitOption[] = [];
   selectedUnitId?: number;
@@ -83,7 +86,12 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.poNotification.error("Usuário ou senha incorretos.");
+        const msg: string = err?.error?.message || '';
+        if (msg.toLowerCase().includes('bloqueada')) {
+          this.poNotification.error(msg);
+        } else {
+          this.poNotification.error("Usuário ou senha incorretos.");
+        }
       }
     });
   }
@@ -146,12 +154,39 @@ export class LoginComponent implements OnInit {
       this.modal2fa.open();
     } else if (res.nextStep === "TERMS") {
       this.modalTerms.open();
+    } else if (res.nextStep === "CHANGE_PASSWORD") {
+      this.newPassword = "";
+      this.confirmNewPassword = "";
+      this.modalChangePassword.open();
     } else {
       const user = res.user;
       this.loginLogo = this.authService.getLoginLogo();
       this.poNotification.success(`Bem-vindo, ${user?.name}!`);
       this.router.navigate(["/home"]);
     }
+  }
+
+  confirmChangePassword() {
+    if (!this.newPassword || this.newPassword.length < 6) {
+      this.poNotification.error("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+    if (this.newPassword !== this.confirmNewPassword) {
+      this.poNotification.error("As senhas não conferem.");
+      return;
+    }
+    this.isLoading.set(true);
+    this.authService.changePassword(this.newPassword).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        this.modalChangePassword.close();
+        this.handleNextStep(res);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.poNotification.error(err?.error?.message || "Erro ao alterar senha.");
+      }
+    });
   }
 
   confirm2fa() {

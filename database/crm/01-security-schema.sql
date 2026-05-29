@@ -50,7 +50,11 @@ CREATE TABLE IF NOT EXISTS public.system_users (
     two_factor_type VARCHAR(100),
     two_factor_secret VARCHAR(255),
     current_session_id VARCHAR(255),
-    avatar TEXT
+    avatar TEXT,
+    birthday DATE,
+    force_password_change CHAR(1) DEFAULT 'N',
+    failed_login_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMP NULL
 );
 
 CREATE TABLE IF NOT EXISTS public.system_group (

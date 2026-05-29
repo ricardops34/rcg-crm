@@ -45,4 +45,20 @@ export class VendedorService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
+
+  createUser(id: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.API_URL}/${id}/create-user`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+  sendPassword(id: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.API_URL}/${id}/send-password`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
 }

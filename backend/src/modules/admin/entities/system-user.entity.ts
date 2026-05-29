@@ -77,6 +77,18 @@ export class SystemUser {
   @Column({ type: 'text', nullable: true })
   avatar: string;
 
+  @Column({ type: 'date', nullable: true })
+  birthday: string;
+
+  @Column({ name: 'force_password_change', type: 'char', length: 1, nullable: true, default: 'N' })
+  forcePasswordChange: string;
+
+  @Column({ name: 'failed_login_attempts', type: 'integer', default: 0 })
+  failedLoginAttempts: number;
+
+  @Column({ name: 'locked_until', type: 'timestamp', nullable: true })
+  lockedUntil: Date | null;
+
   @OneToMany(() => SystemUserGroup, (ug) => ug.systemUser)
   userGroups: SystemUserGroup[];
 

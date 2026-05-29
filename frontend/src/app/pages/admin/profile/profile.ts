@@ -60,7 +60,8 @@ export class ProfileComponent implements OnInit {
     const updateData: Partial<AuthUser> & { password?: string } = {
       name: this.user.name,
       email: this.user.email,
-      avatar: this.user.avatar
+      avatar: this.user.avatar,
+      birthday: this.user.birthday
     };
 
     if (this.passwordData.new) {

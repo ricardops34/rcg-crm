@@ -13,7 +13,8 @@
 
   <div class="po-row po-mb-2">
     <po-input class="po-sm-12 po-md-6" name="name" [(ngModel)]="user.name" p-label="Nome de Exibição" p-required></po-input>
-    <po-input class="po-sm-12 po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
+    <po-input class="po-sm-12 po-md-4" name="email" [(ngModel)]="user.email" p-label="E-mail" p-required></po-input>
+    <po-datepicker class="po-sm-12 po-md-2" name="birthday" [(ngModel)]="user.birthday" p-label="Nascimento" p-iso-format="date" p-clean></po-datepicker>
   </div>
 
   <div class="po-row">

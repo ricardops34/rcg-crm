@@ -28,6 +28,7 @@ export interface AuthUser {
   name?: string;
   email?: string;
   avatar?: string;
+  birthday?: string;
   unit?: {
     id?: number;
     name?: string;
@@ -52,7 +53,7 @@ export interface AuthUser {
 export interface AuthResponse {
   accessToken?: string;
   user?: AuthUser;
-  nextStep?: '2FA' | 'TERMS';
+  nextStep?: '2FA' | 'TERMS' | 'CHANGE_PASSWORD';
 }
 
 export interface LoginPayload {

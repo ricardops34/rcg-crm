@@ -12,6 +12,18 @@
   </div>
 </po-modal>
 
+<po-modal #modalChangePassword p-title="Troca de Senha Obrigatória"
+  [p-primary-action]="{ label: 'Salvar Nova Senha', action: confirmChangePassword.bind(this), loading: isLoading() }">
+  <div class="po-row">
+    <po-info class="po-sm-12" p-label="Atenção"
+      p-value="O administrador exige que você defina uma nova senha antes de continuar."></po-info>
+    <po-password class="po-sm-12 po-md-6" name="newPassword" [(ngModel)]="newPassword"
+      p-label="Nova Senha" p-required p-clean></po-password>
+    <po-password class="po-sm-12 po-md-6" name="confirmNewPassword" [(ngModel)]="confirmNewPassword"
+      p-label="Confirmar Nova Senha" p-required p-clean></po-password>
+  </div>
+</po-modal>
+
 <po-modal #modalTerms p-title="Termos de Uso e LGPD"
   [p-primary-action]="{ label: 'Aceitar e Continuar', action: confirmTerms.bind(this), disabled: !termsAccepted }">
   <div class="po-row">

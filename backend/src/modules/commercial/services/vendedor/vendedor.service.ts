@@ -1,8 +1,10 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClsService } from 'nestjs-cls';
 import { Vendedor } from '../../entities/vendedor.entity';
+import { UsersService } from '../../../admin/users.service';
+import { MailService } from '../../../admin/services/mail.service';
 
 @Injectable()
 export class VendedorService {
@@ -10,6 +12,8 @@ export class VendedorService {
     @InjectRepository(Vendedor)
     private readonly vendedorRepository: Repository<Vendedor>,
     private readonly cls: ClsService,
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
   ) {}
 
   async findAll(
@@ -116,7 +120,125 @@ export class VendedorService {
       data.systemUnitId = systemUnitId;
     }
 
-    return this.vendedorRepository.save(data);
+    const saved = await this.vendedorRepository.save(data);
+
+    const linkedUserId = saved.systemUsersId;
+    if (linkedUserId) {
+      await this.usersService.syncFromVendedor(linkedUserId, {
+        nomeReduzido: data.nomeReduzido,
+        email: data.email,
+        status: data.status,
+        systemUnitId: saved.systemUnitId,
+        dtNascimento: data.dtNascimento,
+      });
+    }
+
+    return saved;
+  }
+
+  async createUserAndSendPassword(id: number): Promise<{ success: boolean; message: string }> {
+    const vendedor = await this.vendedorRepository.findOne({ where: { id } });
+
+    if (!vendedor) {
+      throw new BadRequestException('Vendedor não encontrado.');
+    }
+    if (vendedor.systemUsersId) {
+      throw new BadRequestException('Este vendedor já possui um usuário de sistema vinculado.');
+    }
+    if (!vendedor.email) {
+      throw new BadRequestException('Este vendedor não possui e-mail cadastrado.');
+    }
+
+    // Login é o próprio e-mail do vendedor
+    const login = vendedor.email.toLowerCase().trim();
+    const existing = await this.usersService.findByLogin(login);
+    if (existing) {
+      throw new BadRequestException(
+        `O e-mail "${login}" já está cadastrado como login de outro usuário.`
+      );
+    }
+
+    const tempPassword = this.generateTempPassword();
+
+    const nomeCurto = vendedor.nomeReduzido || vendedor.nome;
+    const birthday = vendedor.dtNascimento
+      ? new Date(vendedor.dtNascimento).toISOString().split('T')[0]
+      : undefined;
+
+    const newUser = await this.usersService.createMinimal({
+      login,
+      name: nomeCurto,
+      email: vendedor.email,
+      password: tempPassword,
+      systemUnitId: vendedor.systemUnitId,
+      active: vendedor.status === 'A' ? 'Y' : 'N',
+      birthday,
+      forcePasswordChange: 'Y',
+      acceptedTermPolicy: 'N',
+      failedLoginAttempts: 0,
+    });
+
+    // Atribuir perfil VENDEDOR ao novo usuário
+    await this.usersService.assignGroupByRole(newUser.id, 'VENDEDOR');
+
+    // Vincular o usuário criado ao vendedor
+    await this.vendedorRepository.update(id, { systemUsersId: newUser.id });
+
+    await this.mailService.sendVendedorTempPassword(
+      vendedor.email,
+      nomeCurto,
+      login,
+      tempPassword,
+      vendedor.systemUnitId,
+    );
+
+    return {
+      success: true,
+      message: `Usuário "${login}" criado e senha enviada para ${vendedor.email}`,
+    };
+  }
+
+  async sendPassword(id: number): Promise<{ success: boolean; message: string }> {
+    const vendedor = await this.vendedorRepository.findOne({ where: { id } });
+
+    if (!vendedor) {
+      throw new BadRequestException('Vendedor não encontrado.');
+    }
+    if (!vendedor.systemUsersId) {
+      throw new BadRequestException('Este vendedor não possui um usuário de sistema vinculado.');
+    }
+    if (!vendedor.email) {
+      throw new BadRequestException('Este vendedor não possui e-mail cadastrado.');
+    }
+
+    const tempPassword = this.generateTempPassword();
+    const userLogin = await this.usersService.setTemporaryPassword(vendedor.systemUsersId, tempPassword);
+
+    await this.mailService.sendVendedorTempPassword(
+      vendedor.email,
+      vendedor.nomeReduzido || vendedor.nome,
+      userLogin,
+      tempPassword,
+      vendedor.systemUnitId,
+    );
+
+    return { success: true, message: `Senha temporária enviada para ${vendedor.email}` };
+  }
+
+  private generateTempPassword(): string {
+    const upper = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+    const lower = 'abcdefghjkmnpqrstuvwxyz';
+    const digits = '23456789';
+    const all = upper + lower + digits;
+
+    let password = '';
+    password += upper[Math.floor(Math.random() * upper.length)];
+    password += lower[Math.floor(Math.random() * lower.length)];
+    password += digits[Math.floor(Math.random() * digits.length)];
+    for (let i = 0; i < 7; i++) {
+      password += all[Math.floor(Math.random() * all.length)];
+    }
+    return password.split('').sort(() => Math.random() - 0.5).join('');
   }
 
   async remove(id: number): Promise<void> {

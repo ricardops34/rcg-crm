@@ -17,8 +17,12 @@
     
     <div class="po-row">
       <po-input class="po-sm-12 po-md-6" name="email" [(ngModel)]="user.email" p-label="E-mail Corporativo" p-required p-clean p-icon="po-icon-mail"></po-input>
+      <po-datepicker class="po-sm-12 po-md-3" name="birthday" [(ngModel)]="user.birthday" p-label="Data de Nascimento" p-iso-format="date" p-clean></po-datepicker>
       <po-select class="po-sm-12 po-md-3" name="systemUnitId" [ngModel]="user.systemUnitId" (p-change)="user.systemUnitId = $event" p-label="Unidade / Filial" [p-options]="unitOptions" p-required="true"></po-select>
+    </div>
+    <div class="po-row">
       <po-select class="po-sm-12 po-md-3" name="active" [ngModel]="user.active" (p-change)="user.active = $event" p-label="Status do Usuário" [p-options]="activeOptions"></po-select>
+      <po-select class="po-sm-12 po-md-5" name="forcePasswordChange" [ngModel]="user.forcePasswordChange || 'N'" (p-change)="user.forcePasswordChange = $event" p-label="Forçar Troca de Senha no Próximo Login" [p-options]="forcePasswordOptions"></po-select>
     </div>
 
     <po-divider p-label="Permissões e Acesso"></po-divider>

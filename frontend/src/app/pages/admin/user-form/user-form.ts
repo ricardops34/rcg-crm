@@ -44,7 +44,12 @@ export class UserFormComponent implements OnInit {
   };
 
   readonly activeOptions = [
-    { label: "Sim", value: "Y" },
+    { label: "Ativo", value: "Y" },
+    { label: "Inativo", value: "N" }
+  ];
+
+  readonly forcePasswordOptions = [
+    { label: "Sim — exigir nova senha no próximo login", value: "Y" },
     { label: "Não", value: "N" }
   ];
 

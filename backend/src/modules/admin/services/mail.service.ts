@@ -158,6 +158,50 @@ export class MailService {
     }
   }
 
+  async sendVendedorTempPassword(
+    email: string,
+    nome: string,
+    login: string,
+    tempPassword: string,
+    systemUnitId?: number,
+  ) {
+    const frontUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:4200';
+    const subject = 'Senha Temporária de Acesso - RCG CRM';
+    const body = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #4097CC;">RCG CRM — Senha de Acesso</h2>
+        <p>Olá, <strong>${nome}</strong>!</p>
+        <p>Uma senha temporária foi gerada para o seu acesso ao sistema.</p>
+
+        <div style="background: #f4f8fb; border-left: 4px solid #4097CC; padding: 16px 20px; border-radius: 4px; margin: 20px 0;">
+          <p style="margin: 4px 0;"><strong>Login:</strong> ${login}</p>
+          <p style="margin: 4px 0;"><strong>Senha temporária:</strong>
+            <span style="font-size: 20px; font-weight: bold; color: #17242A; letter-spacing: 2px;">${tempPassword}</span>
+          </p>
+        </div>
+
+        <p><strong>Como acessar:</strong></p>
+        <ol style="line-height: 2;">
+          <li>Acesse: <a href="${frontUrl}" style="color: #4097CC;">${frontUrl}</a></li>
+          <li>Informe o login e a senha temporária acima</li>
+          <li>O sistema solicitará que você defina uma nova senha pessoal</li>
+          <li>Guarde sua nova senha em local seguro</li>
+        </ol>
+
+        <p style="background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 4px; color: #856404;">
+          ⚠️ <strong>Atenção:</strong> Esta senha é temporária e expira após o primeiro acesso.
+          Você deverá criar uma nova senha imediatamente após entrar no sistema.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;"/>
+        <p style="color: #999; font-size: 12px;">
+          Este é um e-mail automático gerado pelo RCG CRM. Não responda a esta mensagem.
+        </p>
+      </div>
+    `;
+    return this.sendMail(email, subject, body, systemUnitId);
+  }
+
   async send2FAToken(email: string, token: string, systemUnitId?: number) {
     const subject = 'Seu código de acesso - RCG CRM';
     const body = `Olá, seu código de verificação é: <b>${token}</b>. Ele expira em 10 minutos.`;

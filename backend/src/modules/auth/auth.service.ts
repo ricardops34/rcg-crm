@@ -22,6 +22,7 @@ export interface AuthUser {
   twoFactorEnabled?: string;
   twoFactorVerified?: boolean;
   acceptedTermPolicy?: string;
+  forcePasswordChange?: string;
   systemUnitId?: number;
 }
 
@@ -42,14 +43,16 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+  private readonly MAX_LOGIN_ATTEMPTS = 5;
+  private readonly LOCKOUT_MINUTES = 15;
+
   async validateUser(
     login: string,
     pass: string,
   ): Promise<Partial<SystemUser> | null> {
     const normalizedLogin = login.toLowerCase().trim();
     console.log(`[AUTH] 🔐 Tentativa de login: "${normalizedLogin}"`);
-    
-    // Busca insensível a maiúsculas/minúsculas e aceita 'Y' ou null (se for o caso)
+
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where('LOWER(user.login) = :login', { login: normalizedLogin })
@@ -57,27 +60,38 @@ export class AuthService {
       .getOne();
 
     if (!user) {
-      console.warn(`[AUTH] ❌ Usuário não encontrado ou inativo no banco: "${normalizedLogin}"`);
-      // Log extra para depurar se o usuário existe mas está inativo
+      console.warn(`[AUTH] ❌ Usuário não encontrado ou inativo: "${normalizedLogin}"`);
       const anyUser = await this.userRepository.findOne({ where: { login: normalizedLogin } });
       if (anyUser) console.log(`[AUTH] ℹ️ Usuário existe mas status é: "${anyUser.active}"`);
       return null;
     }
 
+    // Verificar bloqueio temporário
+    if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+      const minutesLeft = Math.ceil((new Date(user.lockedUntil).getTime() - Date.now()) / 60000);
+      throw new UnauthorizedException(
+        `Conta bloqueada por tentativas inválidas. Tente novamente em ${minutesLeft} minuto(s).`
+      );
+    }
+
     let isMatch = false;
     const dbHash = user.password;
     console.log(`[AUTH] ℹ️ Hash encontrado no banco: "${dbHash.substring(0, 10)}..."`);
-    
-    // 1. MD5
+
+    // 1. MD5 — auto-migra para bcrypt
     if (dbHash.length === 32) {
       const passMd5 = crypto.createHash('md5').update(pass).digest('hex');
       if (passMd5 === dbHash) {
         isMatch = true;
-        console.log(`[AUTH] ✅ MD5 OK. Migrando...`);
-        user.password = await bcrypt.hash(pass, 10);
-        await this.userRepository.save(user);
+        console.log(`[AUTH] ✅ MD5 OK. Migrando para bcrypt...`);
+        const newHash = await bcrypt.hash(pass, 10);
+        await this.userRepository.update(user.id, {
+          password: newHash,
+          failedLoginAttempts: 0,
+          lockedUntil: null,
+        });
       }
-    } 
+    }
     // 2. Bcrypt ($2y$, $2a$, $2b$)
     else if (dbHash.startsWith('$2')) {
       const compatibleHash = dbHash.replace(/^\$2y\$/, '$2a$');
@@ -90,11 +104,28 @@ export class AuthService {
 
     if (isMatch) {
       console.log(`[AUTH] ✅ Login autorizado: ${user.login}`);
+      // Bcrypt: resetar tentativas se necessário (MD5 já resetou dentro do bloco de migração)
+      if (dbHash.startsWith('$2') && (user.failedLoginAttempts > 0 || user.lockedUntil)) {
+        await this.userRepository.update(user.id, { failedLoginAttempts: 0, lockedUntil: null });
+      }
       const { password, ...result } = user;
       return result as Partial<SystemUser>;
     }
 
-    console.warn(`[AUTH] ❌ Senha não confere para: ${user.login}`);
+    // Senha incorreta — incrementar contador e bloquear se necessário
+    const attempts = (user.failedLoginAttempts || 0) + 1;
+    const failUpdate: any = { failedLoginAttempts: attempts };
+
+    if (attempts >= this.MAX_LOGIN_ATTEMPTS) {
+      const lockedUntil = new Date();
+      lockedUntil.setMinutes(lockedUntil.getMinutes() + this.LOCKOUT_MINUTES);
+      failUpdate.lockedUntil = lockedUntil;
+      console.warn(`[AUTH] 🔒 Conta bloqueada: ${user.login} (${attempts} tentativas)`);
+    } else {
+      console.warn(`[AUTH] ❌ Senha incorreta: ${user.login} (tentativa ${attempts}/${this.MAX_LOGIN_ATTEMPTS})`);
+    }
+
+    await this.userRepository.update(user.id, failUpdate);
     return null;
   }
 
@@ -136,6 +167,20 @@ export class AuthService {
       return {
         nextStep: 'TERMS',
         accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
+      };
+    }
+
+    // Troca de senha obrigatória
+    if (user.forcePasswordChange === 'Y') {
+      const payload = {
+        sub: user.id,
+        username: user.login,
+        scope: 'CHANGE_PASSWORD',
+        unitId: user.systemUnitId,
+      };
+      return {
+        nextStep: 'CHANGE_PASSWORD',
+        accessToken: this.jwtService.sign(payload, { expiresIn: '10m' }),
       };
     }
 
@@ -227,6 +272,7 @@ export class AuthService {
       login: user.login,
       email: user.email,
       avatar: user.avatar || null,
+      birthday: user.birthday || null,
       unit: user.systemUnit || (allowedUnits.length > 0 ? allowedUnits[0] : null),
       allowedUnits,
       vendedorId: vendedor?.id || null,
@@ -241,6 +287,18 @@ export class AuthService {
       } : null,
       programs: programs,
     };
+  }
+
+  async changePassword(userId: number, newPassword: string) {
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.update(userId, {
+      password: hashed,
+      forcePasswordChange: 'N',
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    return this.login({ ...(user as any), twoFactorVerified: true });
   }
 
   async switchUnit(userId: number, targetUnitId: number) {

@@ -125,6 +125,14 @@ export class AuthService {
     return user.programs.some((p) => p.controller === controller);
   }
 
+  changePassword(newPassword: string): Observable<AuthResponse> {
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+    return this.http.post<AuthResponse>(`${this.API_URL}/change-password`, { newPassword }, { headers }).pipe(
+      tap(res => this.handleAuthResponse(res))
+    );
+  }
+
   updateProfile(data: Partial<AuthUser>): Observable<AuthUser> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);

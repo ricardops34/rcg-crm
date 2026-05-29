@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   PoBreadcrumb,
+  PoDialogService,
   PoModalComponent,
   PoModule,
   PoPageFilter,
@@ -35,6 +36,7 @@ export class VendedorListComponent implements OnInit {
   private vendedorService = inject(VendedorService);
   private router = inject(Router);
   private poNotification = inject(PoNotificationService);
+  private poDialog = inject(PoDialogService);
   private paginaAtual = 1;
   private readonly itensPorPagina = 20;
   private filtroAtual = "";
@@ -96,9 +98,30 @@ export class VendedorListComponent implements OnInit {
   ];
 
   readonly actions: Array<PoTableAction> = [
-    { label: "Visualizar", action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'view' } }), icon: "po-icon-eye" },
-    { label: "Editar", action: (row: any) => this.router.navigate(["/vendedores/edit", row.id]), icon: "po-icon-edit" },
-    { label: "Excluir", action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'delete' } }), icon: "po-icon-delete", type: "danger" }
+    {
+      label: "Visualizar",
+      icon: "po-icon-eye",
+      action: (row: any) => this.router.navigate(["/vendedores/detail", row.id], { queryParams: { action: 'view' } })
+    },
+    {
+      label: "Editar",
+      icon: "po-icon-edit",
+      action: (row: any) => this.router.navigate(["/vendedores/edit", row.id])
+    },
+    {
+      label: "Criar Usuário",
+      icon: "an an-user-plus",
+      visible: (row: any) => !row.systemUsersId,
+      disabled: (row: any) => !row.email,
+      action: (row: any) => this.confirmCreateUser(row)
+    },
+    {
+      label: "Enviar Senha",
+      icon: "an an-envelope-simple",
+      visible: (row: any) => !!row.systemUsersId,
+      disabled: (row: any) => !row.email,
+      action: (row: any) => this.confirmSendPassword(row)
+    }
   ];
 
   ngOnInit(): void {
@@ -226,20 +249,58 @@ export class VendedorListComponent implements OnInit {
     this.router.navigate(["/vendedores/new"]);
   }
 
-  remove(row: any) {
-    if (!confirm(`Excluir o vendedor "${row.nome}"?`)) {
+  confirmCreateUser(row: any) {
+    const semEmail = !row.email;
+    if (semEmail) {
+      this.poNotification.warning('Este vendedor não possui e-mail cadastrado. Cadastre um e-mail antes de criar o usuário.');
       return;
     }
+    this.poDialog.confirm({
+      title: 'Criar Usuário de Acesso',
+      message: `Deseja criar um usuário de sistema para o vendedor <strong>${row.nome}</strong>?
+                <br><br>
+                Um login será gerado automaticamente a partir do e-mail <strong>${row.email}</strong>
+                e uma senha temporária será enviada para este endereço.
+                <br><br>
+                O vendedor deverá trocar a senha no primeiro acesso.`,
+      confirm: () => this.createUser(row),
+    });
+  }
 
+  createUser(row: any) {
     this.isLoading = true;
-    this.vendedorService.delete(row.id).subscribe({
-      next: () => {
-        this.poNotification.success("Vendedor excluído com sucesso!");
+    this.vendedorService.createUser(row.id).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.poNotification.success(res.message);
         this.loadData(this.filtroAtual);
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
-        this.poNotification.error("Erro ao excluir vendedor.");
+        this.poNotification.error(err?.error?.message || 'Erro ao criar usuário.');
+      }
+    });
+  }
+
+  confirmSendPassword(row: any) {
+    this.poDialog.confirm({
+      title: 'Enviar Senha Temporária',
+      message: `Deseja gerar e enviar uma senha temporária para <strong>${row.nome}</strong> (${row.email})?
+                <br><br>O vendedor receberá um e-mail com as instruções de acesso e será obrigado a criar uma nova senha no primeiro login.`,
+      confirm: () => this.sendPassword(row),
+    });
+  }
+
+  sendPassword(row: any) {
+    this.isLoading = true;
+    this.vendedorService.sendPassword(row.id).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.poNotification.success(res.message);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.poNotification.error(err?.error?.message || 'Erro ao enviar senha.');
       }
     });
   }

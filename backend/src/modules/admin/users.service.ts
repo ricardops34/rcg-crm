@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SystemUser } from './entities/system-user.entity';
+import { SystemGroup } from './entities/system-group.entity';
 import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemUserUnit } from './entities/system-user-unit.entity';
 import { SystemUserProgram } from './entities/system-user-program.entity';
@@ -13,6 +14,8 @@ export class UsersService {
   constructor(
     @InjectRepository(SystemUser, 'security')
     private userRepository: Repository<SystemUser>,
+    @InjectRepository(SystemGroup, 'security')
+    private groupRepository: Repository<SystemGroup>,
     @InjectRepository(SystemUserGroup, 'security')
     private userGroupRepository: Repository<SystemUserGroup>,
     @InjectRepository(SystemUserUnit, 'security')
@@ -120,6 +123,86 @@ export class UsersService {
         this.userProgramRepository.create({ systemUserId: userId, systemProgramId: progId })
       );
       await this.userProgramRepository.save(userPrograms);
+    }
+  }
+
+  async findByLogin(login: string): Promise<SystemUser | null> {
+    return this.userRepository.findOne({ where: { login } });
+  }
+
+  async assignGroupByRole(userId: number, role: string): Promise<void> {
+    const group = await this.groupRepository.findOne({ where: { role } });
+    if (!group) return;
+    const userGroup = this.userGroupRepository.create({
+      systemUserId: userId,
+      systemGroupId: group.id,
+    });
+    await this.userGroupRepository.save(userGroup);
+  }
+
+  async findUniqueLogin(baseLogin: string): Promise<string> {
+    let login = baseLogin;
+    let counter = 2;
+    while (await this.userRepository.findOne({ where: { login } })) {
+      login = `${baseLogin}${counter}`;
+      counter++;
+    }
+    return login;
+  }
+
+  async createMinimal(data: {
+    login: string;
+    name: string;
+    email: string;
+    password: string;
+    systemUnitId?: number;
+    active?: string;
+    birthday?: string;
+    forcePasswordChange?: string;
+    acceptedTermPolicy?: string;
+    failedLoginAttempts?: number;
+  }): Promise<SystemUser> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const user = this.userRepository.create({
+      ...data,
+      password: hashedPassword,
+    });
+    return this.userRepository.save(user) as Promise<SystemUser>;
+  }
+
+  async setTemporaryPassword(userId: number, tempPassword: string): Promise<string> {
+    const hashed = await bcrypt.hash(tempPassword, 10);
+    await this.userRepository.update(userId, {
+      password: hashed,
+      forcePasswordChange: 'Y',
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    });
+    const user = await this.userRepository.findOne({ where: { id: userId }, select: ['login'] });
+    return user?.login || '';
+  }
+
+  async syncFromVendedor(userId: number, data: {
+    nomeReduzido?: string;
+    email?: string;
+    status?: string;
+    systemUnitId?: number;
+    dtNascimento?: Date | string | null;
+  }) {
+    const update: Partial<SystemUser> = {};
+
+    if (data.nomeReduzido !== undefined) update.name = data.nomeReduzido;
+    if (data.email !== undefined) update.email = data.email;
+    if (data.systemUnitId !== undefined) update.systemUnitId = data.systemUnitId;
+    if (data.status !== undefined) update.active = data.status === 'A' ? 'Y' : 'N';
+    if (data.dtNascimento !== undefined) {
+      update.birthday = data.dtNascimento
+        ? new Date(data.dtNascimento).toISOString().split('T')[0]
+        : null;
+    }
+
+    if (Object.keys(update).length > 0) {
+      await this.userRepository.update(userId, update);
     }
   }
 
