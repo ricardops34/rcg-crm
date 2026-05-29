@@ -6,7 +6,8 @@ import {
   PoModule,
   PoNotificationService,
   PoModalComponent,
-  PoPageSlideComponent
+  PoPageSlideComponent,
+  PoDatepickerIsoFormat
 } from "@po-ui/ng-components";
 import { AuthService } from "../../../services/auth";
 import { AuthUser } from "../../../services/models/auth.model";
@@ -34,6 +35,7 @@ export class ProfileComponent implements OnInit {
     confirm: ""
   };
 
+  readonly isoFormatDate = PoDatepickerIsoFormat.Basic;
   availableAvatars = Array.from({ length: 14 }, (_, i) => `assets/avatar/avatar_${i.toString().padStart(2, '0')}.png`);
 
   ngOnInit() {

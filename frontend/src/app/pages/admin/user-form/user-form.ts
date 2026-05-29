@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { 
-  PoModule, 
-  PoNotificationService, 
-  PoSelectOption, 
+import {
+  PoModule,
+  PoNotificationService,
+  PoSelectOption,
   PoMultiselectOption,
-  PoBreadcrumb
+  PoBreadcrumb,
+  PoDatepickerIsoFormat
 } from "@po-ui/ng-components";
 import { FormsModule } from "@angular/forms";
 import { UserService } from "../../../services/user";
@@ -42,6 +43,8 @@ export class UserFormComponent implements OnInit {
       { label: "Manutenção" }
     ]
   };
+
+  readonly isoFormatDate = PoDatepickerIsoFormat.Basic;
 
   readonly activeOptions = [
     { label: "Ativo", value: "Y" },
