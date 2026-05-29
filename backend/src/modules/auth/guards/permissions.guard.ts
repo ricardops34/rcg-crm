@@ -26,8 +26,14 @@ export class PermissionsGuard implements CanActivate {
       return false;
     }
 
-    // Fast-path: admin pelo login ou pelo role já resolvido no JWT strategy
-    if (user.username === 'admin' || user.roles?.includes('ADMIN')) {
+    // Fast-path 1: role ADMIN já resolvida pelo JWT strategy (evita query extra)
+    if (Array.isArray(user.roles) && user.roles.includes('ADMIN')) {
+      return true;
+    }
+
+    // Fast-path 2: verifica ADMIN via banco (cobre tokens antigos sem roles populados)
+    const isAdmin = await this.permissionsService.isAdminUser(user.userId);
+    if (isAdmin) {
       return true;
     }
 

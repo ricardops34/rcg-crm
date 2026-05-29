@@ -19,6 +19,19 @@ export class PermissionsService {
     private userProgramRepository: Repository<SystemUserProgram>,
   ) {}
 
+  async isAdminUser(userId: number): Promise<boolean> {
+    const userGroups = await this.userGroupRepository.find({
+      where: { systemUserId: userId },
+      relations: ['systemGroup'],
+    });
+    return userGroups.some(
+      (ug) =>
+        ug.systemGroup &&
+        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
+    );
+  }
+
   async hasPermission(userId: number, controller: string): Promise<boolean> {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
