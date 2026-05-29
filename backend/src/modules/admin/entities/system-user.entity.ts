@@ -78,7 +78,7 @@ export class SystemUser {
   avatar: string;
 
   @Column({ type: 'date', nullable: true })
-  birthday: string;
+  birthday: string | null;
 
   @Column({ name: 'force_password_change', type: 'char', length: 1, nullable: true, default: 'N' })
   forcePasswordChange: string;
