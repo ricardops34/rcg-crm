@@ -27,7 +27,10 @@
       <po-select class="po-sm-12 po-md-3" name="systemUnitId" [ngModel]="vendedor.systemUnitId" (p-change)="vendedor.systemUnitId = $event" p-label="Unidade Principal" [p-options]="units" p-required></po-select>
       <po-select class="po-sm-12 po-md-3" name="status" [ngModel]="vendedor.status" (p-change)="vendedor.status = $event" p-label="Status do Vendedor" [p-options]="statusOptions" p-required></po-select>
       <po-datepicker class="po-sm-12 po-md-3" name="dtNascimento" [(ngModel)]="vendedor.dtNascimento" p-label="Data de Nascimento"></po-datepicker>
-      <po-input class="po-sm-12 po-md-3" name="systemUsersId" [(ngModel)]="vendedor.systemUsersId" p-label="ID Usuario Relacionado" p-help="ID da tabela system_users" p-type="number"></po-input>
+      <po-info class="po-sm-12 po-md-3" p-label="Usuário Vinculado"
+        [p-value]="vendedor.systemUsersId ? 'Sim (ID ' + vendedor.systemUsersId + ')' : 'Sem vínculo'"
+        [p-icon]="vendedor.systemUsersId ? 'an an-user-check' : 'an an-user-minus'">
+      </po-info>
     </div>
 
     <div class="po-row">

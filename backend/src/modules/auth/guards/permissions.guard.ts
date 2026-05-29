@@ -21,13 +21,18 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    
+
     if (!user || !user.userId) {
       return false;
     }
 
+    // Fast-path: admin pelo login ou pelo role já resolvido no JWT strategy
+    if (user.username === 'admin' || user.roles?.includes('ADMIN')) {
+      return true;
+    }
+
     const hasPermission = await this.permissionsService.hasPermission(user.userId, requiredPermission);
-    
+
     if (!hasPermission) {
       throw new ForbiddenException(`Você não tem permissão para acessar o recurso: ${requiredPermission}`);
     }

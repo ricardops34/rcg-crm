@@ -189,12 +189,7 @@ export class VendedorListComponent implements OnInit {
 
   onSort(sort: PoTableColumnSort) {
     const property = sort.column?.property;
-    if (!property) {
-      return;
-    }
-
-    this.items = [];
-    this.isLoading = true;
+    if (!property) return;
     this.sortOrder = sort.type === PoTableColumnSortType.Descending ? `-${property}` : property;
     this.loadData(this.filtroAtual);
   }

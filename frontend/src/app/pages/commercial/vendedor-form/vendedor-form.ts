@@ -114,7 +114,17 @@ export class VendedorFormComponent implements OnInit {
 
   save() {
     this.isLoading = true;
-    const payload = { ...this.vendedor };
+
+    // Monta payload somente com colunas escalares — exclui objetos de relação
+    // e garante que IDs numéricos cheguem como number (po-input pode emitir string)
+    const { filial, ...rest } = this.vendedor;
+    const payload = {
+      ...rest,
+      filialId:      rest.filialId      ? Number(rest.filialId)      : undefined,
+      systemUnitId:  rest.systemUnitId  ? Number(rest.systemUnitId)  : undefined,
+      supervisorId:  rest.supervisorId  ? Number(rest.supervisorId)  : undefined,
+      systemUsersId: rest.systemUsersId ? Number(rest.systemUsersId) : undefined,
+    };
 
     this.vendedorService.save(payload).pipe(
       finalize(() => {
