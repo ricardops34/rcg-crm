@@ -5,6 +5,7 @@ import { SystemUserGroup } from './entities/system-user-group.entity';
 import { SystemGroupProgram } from './entities/system-group-program.entity';
 import { SystemProgram } from './entities/system-program.entity';
 import { SystemUserProgram } from './entities/system-user-program.entity';
+import { SystemUser } from './entities/system-user.entity';
 
 @Injectable()
 export class PermissionsService {
@@ -17,19 +18,28 @@ export class PermissionsService {
     private programRepository: Repository<SystemProgram>,
     @InjectRepository(SystemUserProgram, 'security')
     private userProgramRepository: Repository<SystemUserProgram>,
+    @InjectRepository(SystemUser, 'security')
+    private systemUserRepository: Repository<SystemUser>,
   ) {}
+
+  private async isSuperAdmin(userId: number): Promise<boolean> {
+    const user = await this.systemUserRepository.findOne({ where: { id: userId } });
+    return user?.login?.toLowerCase() === 'admin';
+  }
 
   async isAdminUser(userId: number): Promise<boolean> {
     const userGroups = await this.userGroupRepository.find({
       where: { systemUserId: userId },
       relations: ['systemGroup'],
     });
-    return userGroups.some(
+    const adminByGroup = userGroups.some(
       (ug) =>
         ug.systemGroup &&
         (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
           ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
     );
+    if (adminByGroup) return true;
+    return this.isSuperAdmin(userId);
   }
 
   async hasPermission(userId: number, controller: string): Promise<boolean> {
@@ -38,13 +48,13 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    // ... (rest of method)
-    const isAdmin = userGroups.some(
-      (ug) =>
-        ug.systemGroup &&
-        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
-    );
+    const isAdmin =
+      userGroups.some(
+        (ug) =>
+          ug.systemGroup &&
+          (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+            ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
+      ) || (await this.isSuperAdmin(userId));
     if (isAdmin) return true;
 
     // Verificar Permissões Diretas do Usuário
@@ -78,12 +88,13 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    const isAdmin = userGroups.some(
-      (ug) =>
-        ug.systemGroup &&
-        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
-    );
+    const isAdmin =
+      userGroups.some(
+        (ug) =>
+          ug.systemGroup &&
+          (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+            ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
+      ) || (await this.isSuperAdmin(userId));
 
     if (isAdmin) {
       // ADMIN: Retorna apenas programas vinculados a um módulo (exclui legados sem módulo)
@@ -141,7 +152,7 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    return userGroups
+    const roles = userGroups
       .map((ug) => {
         const roleStr = (ug.systemGroup?.role || '').toUpperCase();
         if (!roleStr && ug.systemGroup?.name?.toUpperCase().includes('ADMIN')) {
@@ -150,6 +161,12 @@ export class PermissionsService {
         return roleStr;
       })
       .filter((r) => r);
+
+    if (roles.length === 0 && await this.isSuperAdmin(userId)) {
+      return ['ADMIN'];
+    }
+
+    return roles;
   }
 
   async getMenuStructure(userId: number) {
@@ -158,12 +175,13 @@ export class PermissionsService {
       relations: ['systemGroup'],
     });
 
-    const isAdmin = userGroups.some(
-      (ug) =>
-        ug.systemGroup &&
-        (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
-          ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
-    );
+    const isAdmin =
+      userGroups.some(
+        (ug) =>
+          ug.systemGroup &&
+          (ug.systemGroup.role?.toUpperCase() === 'ADMIN' ||
+            ug.systemGroup.name?.toUpperCase().includes('ADMIN')),
+      ) || (await this.isSuperAdmin(userId));
 
     const menuMap = new Map();
 

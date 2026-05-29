@@ -31,7 +31,12 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    // Fast-path 2: verifica ADMIN via banco (cobre tokens antigos sem roles populados)
+    // Fast-path 2: superusuário do sistema (login 'admin' tem acesso total incondicional)
+    if (user.username?.toLowerCase() === 'admin') {
+      return true;
+    }
+
+    // Fast-path 3: verifica ADMIN via banco (cobre usuários ADMIN criados pela UI)
     const isAdmin = await this.permissionsService.isAdminUser(user.userId);
     if (isAdmin) {
       return true;
